@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify staticfiles %}
+{% load i18n admin_modify feincms_admin_tags staticfiles %}
 
 {% block extrahead %}{{ block.super }}
 
@@ -7,17 +7,109 @@
 <script type="text/javascript" src="{% static 'feincms/jquery-ui-1.11.4.custom.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'feincms/item_editor.js' %}"></script>
 
-{% include "admin/feincms/_messages_js.html" %}
 {% include "admin/feincms/_regions_js.html" %}
-{% include "admin/feincms/_content_type_buttons.html" %}
-
-{% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
+{% load feincms_admin_tags %}
+<script type="text/javascript">
+/*
+type: content type identifier (required)
+cssclass: quickbutton CSS class
+raw_id_picker: URL of raw_id_fields picker which should be automatically opened
+after: callback, receives new fieldset as argument
+keep: keep entry in content type dropdown (defaults to false)
+*/
+{% url "admin:medialibrary_mediafile_changelist" as media_library_url %}
+var CONTENT_TYPE_BUTTONS = [
+    {
+        type: 'richtextcontent',
+        keep: true
+    }, {
+        type: 'imagecontent',
+        keep: true
+    }, {
+        type: 'filecontent',
+        keep: true,
+        cssclass: 'pdfcontent'
+    }, {
+        type: 'filerimagecontent',
+        keep: true,
+        cssclass: 'imagecontent'
+    }, {
+        type: 'filerfilecontent',
+        keep: true,
+        cssclass: 'pdfcontent'
+    }, {
+        type: 'videocontent',
+        keep: true,
+        cssclass: 'oembedcontent'
+{% if media_library_url %}
+    }, {
+        type: 'mediafilecontent',
+        keep: true,
+        cssclass: 'imagecontent',
+        raw_id_picker: '{{ media_library_url }}?type__exact=image&_popup=1'
+    }, {
+        type: 'gallerycontent',
+        keep: true
+    }, {
+        type: 'mediafilecontent',
+        keep: true,
+        cssclass: 'pdfcontent',
+        raw_id_picker: '{{ media_library_url }}?type__exact=pdf&_popup=1'
+{% endif %}
+    }, {
+        type: 'oembedcontent',
+        keep: true
+{% if media_library_url %}
+    }, {
+        type: 'mediafilecontent',
+        keep: true,
+        cssclass: 'audiocontent',
+        raw_id_picker: '{{ media_library_url }}?type__exact=audio&_popup=1'
+{% endif %}
+    }
+];
+</script>
 
 <script type="text/javascript">
+    var FEINCMS_ITEM_EDITOR_GETTEXT = {
+        'DELETE_MESSAGE': "{% trans 'Really delete item?' %}",
+        'CHANGE_TEMPLATE': "{% trans 'Really change template? All changes are saved.' %}",
+        'CHANGE_TEMPLATE_WITH_MOVE': "{% trans 'Really change template? All changes are saved and content from %(source_regions)s is moved to %(target_region)s.' %}",
+        'MOVE_TO_REGION': "{% trans 'Move to region:' %}"
+    };
+
+    IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
+
+    REGION_MAP = [{% for region in original.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+    REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+    ACTIVE_REGION = 0;
+
+    CONTENT_NAMES = {
+        {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    /* TODO Use events instead */
+    var contentblock_init_handlers = [];
+    var contentblock_move_handlers = {poorify: [
+            function(item) {item.find('.item-content').hide();},
+            function(item) {item.find('input[type=radio][checked]').addClass('radiochecked');}
+        ], richify: [
+            function(item) {item.find('.item-content').show();},
+            function(item) {item.find('input.radiochecked').removeClass('radiochecked').trigger('click');}
+        ]};
+
+    var template_regions = {
+            {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+    };
+
     django.jQuery(document).ready(function($){
         {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
     });
 </script>
+{% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
+
 {% endblock %}
 
 {% block form_top %}
@@ -45,7 +137,43 @@
 {% block after_related_objects %} {# as good a place as any... #}
   {{ block.super }}
   <div id="content-editor-fieldset" style="display: none">
-    {% include "admin/feincms/content_editor.html" %}
+    <div id="main_wrapper">
+        {% for region in original.template.regions %}
+            <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
+        {% endfor %}
+        <div id="main">
+            {% for region in original.template.regions %}
+            <div id="{{ region.key }}_body" class="panel">
+                <div class="empty-machine-msg">
+
+                    {% if adding_translation and forloop.first %}
+                        <div>
+                            <p>
+                                <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
+                            </p>
+                        </div>
+                    {% else %}
+                        {% trans "Region empty" %}
+                    {% endif %}
+
+                </div>
+                <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
+                    {% if region.inherited %}
+                        {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
+                    {% endif %}
+                </div>
+
+                <div class="order-machine"></div>
+
+                <div class="machine-control">
+                    <div class="control-unit">
+                        {% show_content_type_selection_widget region %}
+                    </div>
+                </div>
+             </div>
+            {% endfor %}
+        </div>
+    </div>
   </div>
   <script type="text/javascript">
     django.jQuery(function($){
