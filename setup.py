@@ -12,7 +12,7 @@ def read(filename):
 
 
 setup(
-    name='FeinCMS',
+    name='feincms2-content',
     version=__import__('feincms').__version__,
     description='Django-based Page CMS and CMS building toolkit.',
     long_description=read('README.rst'),
