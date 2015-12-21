@@ -16,7 +16,6 @@ from django.http import Http404
 
 from feincms import ensure_completely_loaded
 from feincms.extensions import ExtensionModelAdmin
-from feincms.signals import itemeditor_post_save_related
 
 
 # ------------------------------------------------------------------------
@@ -202,14 +201,6 @@ class ItemEditor(ExtensionModelAdmin):
         kwargs['extra_context'] = context
         return super(ItemEditor, self).change_view(
             request, object_id, **kwargs)
-
-    def save_related(self, request, form, formsets, change):
-        super(ItemEditor, self).save_related(
-            request, form, formsets, change)
-        itemeditor_post_save_related.send(
-            sender=form.instance.__class__,
-            instance=form.instance,
-            created=not change)
 
     @property
     def change_form_template(self):
