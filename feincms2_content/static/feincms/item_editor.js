@@ -600,4 +600,4 @@ if (!Array.prototype.indexOf) {
         }
     };
 
-})(feincms.jQuery);
+})(django.jQuery);
