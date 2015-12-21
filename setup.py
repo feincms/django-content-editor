@@ -38,7 +38,7 @@ setup(
         ],
     },
     install_requires=[
-        'Django>=1.6',
+        'Django>=1.7',
         'django-mptt>=0.7.1',
         'Pillow>=2.0.0',
         'pytz>=2014.10',

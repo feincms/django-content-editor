@@ -6,7 +6,6 @@ from __future__ import absolute_import, unicode_literals
 
 import copy
 import logging
-import warnings
 
 from django import forms
 from django.contrib.admin.options import InlineModelAdmin
@@ -37,7 +36,7 @@ class ItemEditorForm(forms.ModelForm):
 
 
 # ------------------------------------------------------------------------
-class FeinCMSInline(InlineModelAdmin):
+class ItemEditorInline(InlineModelAdmin):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
@@ -86,37 +85,31 @@ class ItemEditor(ExtensionModelAdmin):
 
     def get_feincms_inlines(self, model, request):
         """ Generate genuine django inlines for registered content types. """
+        # TODO memoize?
+
         model._needs_content_types()
 
         inlines = []
         for content_type in model._feincms_content_types:
+            # TODO Ignore perms on content types?
             if not self.can_add_content(request, content_type):
                 continue
+
+            inline = getattr(
+                content_type,
+                'feincms_item_editor_inline',
+                ItemEditorInline)
 
             attrs = {
                 '__module__': model.__module__,
                 'model': content_type,
+                'form': inline.form,
             }
 
-            if hasattr(content_type, 'feincms_item_editor_inline'):
-                inline = content_type.feincms_item_editor_inline
-                attrs['form'] = inline.form
-
-                if hasattr(content_type, 'feincms_item_editor_form'):
-                    warnings.warn(
-                        'feincms_item_editor_form on %s is ignored because '
-                        'feincms_item_editor_inline is set too' % content_type,
-                        RuntimeWarning)
-
-            else:
-                inline = FeinCMSInline
-                attrs['form'] = getattr(
-                    content_type, 'feincms_item_editor_form', inline.form)
-
-            name = '%sFeinCMSInline' % content_type.__name__
-            # TODO: We generate a new class every time. Is that really wanted?
-            inline_class = type(str(name), (inline,), attrs)
-            inlines.append(inline_class)
+            inlines.append(type(
+                str('%s_ItemEditorInline' % content_type.__name__),
+                (inline,),
+                attrs))
         return inlines
 
     def get_content_type_map(self, request):
@@ -129,50 +122,32 @@ class ItemEditor(ExtensionModelAdmin):
                     (content_name, content_type.__name__.lower()))
         return content_types
 
-    def get_extra_context(self, request):
-        """ Return extra context parameters for add/change views. """
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        extra_context = extra_context or {}
 
-        extra_context = {
-            'request': request,
-            'model': self.model,
-            'available_templates': getattr(
-                self.model, '_feincms_templates', ()),
-            'has_parent_attribute': hasattr(self.model, 'parent'),
-            'content_types': self.get_content_type_map(request),
-            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
-        }
+        if not object_id:
+            # insert dummy object as 'original' so template code can grab defaults
+            # for template, etc.
+            extra_context['original'] = self.model()
 
-        for processor in self.model.feincms_item_editor_context_processors:
-            extra_context.update(processor(request))
+            # If there are errors in the form, we need to preserve the object's
+            # template as it was set when the user attempted to save it, so that
+            # the same regions appear on screen.
+            if request.method == 'POST' and \
+                    hasattr(self.model, '_feincms_templates'):
+                extra_context['original'].template_key = request.POST['template_key']
 
-        return extra_context
-
-    def add_view(self, request, **kwargs):
-        if not self.has_add_permission(request):
-            logger.warning(
-                "Denied adding %s to \"%s\" (no add permission)",
-                self.model,
-                request.user
+            extra_context.update(
+                'request': request,
+                'model': self.model,
+                'available_templates': getattr(
+                    self.model, '_feincms_templates', ()),
+                'has_parent_attribute': hasattr(self.model, 'parent'),
+                'content_types': self.get_content_type_map(request),
+                'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             )
-            raise Http404
-
-        context = {}
-
-        # insert dummy object as 'original' so template code can grab defaults
-        # for template, etc.
-        context['original'] = self.model()
-
-        # If there are errors in the form, we need to preserve the object's
-        # template as it was set when the user attempted to save it, so that
-        # the same regions appear on screen.
-        if request.method == 'POST' and \
-                hasattr(self.model, '_feincms_templates'):
-            context['original'].template_key = request.POST['template_key']
-
-        context.update(self.get_extra_context(request))
-        context.update(kwargs.get('extra_context', {}))
-        kwargs['extra_context'] = context
-        return super(ItemEditor, self).add_view(request, **kwargs)
+        return super(ItemEditor, self).changeform_view(
+            request, object_id, form_url, extra_context)
 
     def render_change_form(self, request, context, **kwargs):
         if kwargs.get('add'):
@@ -184,23 +159,6 @@ class ItemEditor(ExtensionModelAdmin):
                 # used to render the initial regions in the item editor
         return super(
             ItemEditor, self).render_change_form(request, context, **kwargs)
-
-    def change_view(self, request, object_id, **kwargs):
-        obj = self.get_object(request, unquote(object_id))
-        if not self.has_change_permission(request, obj):
-            logger.warning(
-                "Denied editing %s to \"%s\" (no edit permission)",
-                self.model,
-                request.user
-            )
-            raise Http404
-
-        context = {}
-        context.update(self.get_extra_context(request))
-        context.update(kwargs.get('extra_context', {}))
-        kwargs['extra_context'] = context
-        return super(ItemEditor, self).change_view(
-            request, object_id, **kwargs)
 
     @property
     def change_form_template(self):
