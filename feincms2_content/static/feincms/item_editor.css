@@ -222,10 +222,6 @@ div.order-machine div.inline-related > h3{
     display: none;
 }
 
-.hidden-form-row {
-    display: none;
-}
-
 #extension_options_wrapper {
   border-bottom: 1px solid #eee;
 }

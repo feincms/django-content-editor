@@ -233,21 +233,6 @@ if (!Array.prototype.indexOf) {
             contentblock_init_handlers[i]();
     }
 
-    function hide_form_rows_with_hidden_widgets(){
-        /* This is not normally done in django -- the fields are shown
-           with visible labels and invisible widgets, but FeinCMS used to
-           use custom form rendering to hide rows for hidden fields.
-           This is an attempt to preserve that behaviour. */
-        $('div.feincms_inline div.form-row').each(function(){
-            var child_count = $(this).find('*').length;
-            var invisible_types = 'div, label, input[type=hidden], p.help';
-            var invisible_count = $(this).find(invisible_types).length;
-            if(invisible_count == child_count){
-                $(this).addClass('hidden-form-row');
-            }
-        });
-    }
-
     function init_content_type_buttons() {
         $('#main > .panel').each(function() {
             var $select = $('select[name=order-machine-add-select]', this),
@@ -346,8 +331,6 @@ if (!Array.prototype.indexOf) {
     var current_template;
 
     $(document).ready(function($){
-        hide_form_rows_with_hidden_widgets();
-
         create_tabbed('#main_wrapper', '#main', function(tab_str){
             ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
             // make it possible to open current tab on page reload
