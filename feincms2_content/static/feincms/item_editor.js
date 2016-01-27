@@ -1,3 +1,4 @@
+/* global interpolate */
 // IE<9 lacks Array.prototype.indexOf
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function(needle) {
@@ -15,17 +16,6 @@ if (!Array.prototype.indexOf) {
         Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
         Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
-    }
-
-    function feincms_gettext(s) {
-        // Unfortunately, we cannot use Django's jsi18n view for this
-        // because it only sends translations from the package
-        // "django.conf" -- our own djangojs domain strings won't be
-        // picked up
-
-        if (FEINCMS_ITEM_EDITOR_GETTEXT[s])
-            return FEINCMS_ITEM_EDITOR_GETTEXT[s];
-        return s;
     }
 
     function create_new_item_from_form(form, modname, modvar){
@@ -81,7 +71,7 @@ if (!Array.prototype.indexOf) {
         if (REGION_MAP.length > 1) {
             var wrp = [];
             wrp.push('<div class="item-control-unit move-control"><select name="item-move-select">');
-            wrp.push('<option disabled selected>' + feincms_gettext('MOVE_TO_REGION') + '</option>');
+            wrp.push('<option disabled selected>' + ItemEditor.messages.moveToRegion + '</option>');
 
             for (var i=0; i < REGION_MAP.length; i++) {
                 if (i != target_region_id) { // Do not put the target region in the list
@@ -400,7 +390,7 @@ if (!Array.prototype.indexOf) {
 
         $(document.body).on('click', 'h2 img.item-delete', function() {
             var item = $(this).parents(".order-item");
-            if (confirm(feincms_gettext('DELETE_MESSAGE'))) {
+            if (confirm(ItemEditor.messages.delete)) {
                 var in_database = item.find(".delete-field").length;
                 if(in_database==0){ // remove on client-side only
                     var id = item.find(".item-content > div").attr('id');
@@ -451,10 +441,10 @@ if (!Array.prototype.indexOf) {
                 if(new_regions.indexOf(current_regions[i])==-1)
                     not_in_new.push(current_regions[i]);
 
-            var msg = feincms_gettext('CHANGE_TEMPLATE');
+            var msg = ItemEditor.messages.changeTemplate;
 
             if(not_in_new.length) {
-                msg = interpolate(feincms_gettext('CHANGE_TEMPLATE_WITH_MOVE'), {
+                msg = interpolate(ItemEditor.messages.changeTemplateWithMove, {
                     'source_regions': not_in_new,
                     'target_region': new_regions[0]
                 }, true);
@@ -587,6 +577,7 @@ if (!Array.prototype.indexOf) {
     $(window).load(init_contentblocks);
 
     // externally accessible helpers
+    /*
     window.ItemEditor = {
         add_content: function(type, region) {
             var new_fieldset = create_new_fieldset_from_module(type, CONTENT_NAMES[type]);
@@ -599,5 +590,6 @@ if (!Array.prototype.indexOf) {
             return ItemEditor.add_content(type, ACTIVE_REGION);
         }
     };
+    */
 
 })(django.jQuery);
