@@ -110,7 +110,7 @@ textarea {
 
 .item-controls {
     position: absolute;
-    top: 2px;
+    top: 5px;
     right: 32px;
 }
 
@@ -120,6 +120,7 @@ textarea {
 
 .item-controls select {
     margin-left: 7px;
+    height: 24px;
 }
 
 .machine-control {
