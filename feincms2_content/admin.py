@@ -8,13 +8,7 @@ import copy
 import logging
 
 from django import forms
-from django.contrib.admin.options import InlineModelAdmin
-from django.contrib.admin.utils import unquote
-from django.contrib.auth import get_permission_codename
-from django.http import Http404
-
-from feincms import ensure_completely_loaded
-from feincms.extensions import ExtensionModelAdmin
+from django.contrib.admin.options import ModelAdmin, StackedInline
 
 
 # ------------------------------------------------------------------------
@@ -36,7 +30,7 @@ class ItemEditorForm(forms.ModelForm):
 
 
 # ------------------------------------------------------------------------
-class ItemEditorInline(InlineModelAdmin):
+class ItemEditorInline(StackedInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
@@ -49,7 +43,7 @@ class ItemEditorInline(InlineModelAdmin):
 
 
 # ------------------------------------------------------------------------
-class ItemEditor(ExtensionModelAdmin):
+class ItemEditor(ModelAdmin):
     """
     The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with :class:`feincms.models.Base`
@@ -59,94 +53,40 @@ class ItemEditor(ExtensionModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    def __init__(self, model, admin_site):
-        ensure_completely_loaded()
-
-        super(ItemEditor, self).__init__(model, admin_site)
-
-    def get_inline_instances(self, request, *args, **kwargs):
-        inline_instances = super(ItemEditor, self).get_inline_instances(
-            request, *args, **kwargs)
-        self.append_feincms_inlines(inline_instances, request)
-        return inline_instances
-
-    def append_feincms_inlines(self, inline_instances, request):
-        """
-        Append generated FeinCMS content inlines to native django inlines.
-        """
-        for inline_class in self.get_feincms_inlines(self.model, request):
-            inline_instance = inline_class(self.model, self.admin_site)
-            inline_instances.append(inline_instance)
-
-    def can_add_content(self, request, content_type):
-        perm = '.'.join((
-            content_type._meta.app_label,
-            get_permission_codename('add', content_type._meta)))
-        return request.user.has_perm(perm)
-
-    def get_feincms_inlines(self, model, request):
-        """ Generate genuine django inlines for registered content types. """
-        # TODO memoize?
-
-        model._needs_content_types()
-
-        inlines = []
-        for content_type in model._feincms_content_types:
-            # TODO Ignore perms on content types?
-            if not self.can_add_content(request, content_type):
-                continue
-
-            inline = getattr(
-                content_type,
-                'feincms_item_editor_inline',
-                ItemEditorInline)
-
-            attrs = {
-                '__module__': model.__module__,
-                'model': content_type,
-                'form': inline.form,
-            }
-
-            inlines.append(type(
-                str('%s_ItemEditorInline' % content_type.__name__),
-                (inline,),
-                attrs))
-        return inlines
-
     def get_content_type_map(self, request):
         """ Prepare mapping of content types to their prettified names. """
         content_types = []
-        for content_type in self.model._feincms_content_types:
-            if self.model == content_type._feincms_content_class:
-                content_name = content_type._meta.verbose_name
-                content_types.append(
-                    (content_name, content_type.__name__.lower()))
+        for content_type in self.model.plugins.values():
+            content_name = content_type._meta.verbose_name
+            content_types.append(
+                (content_name, content_type.__name__.lower()))
         return content_types
 
-    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+    def changeform_view(self, request, object_id=None, form_url='',
+                        extra_context=None):
         extra_context = extra_context or {}
 
         if not object_id:
-            # insert dummy object as 'original' so template code can grab defaults
-            # for template, etc.
+            # insert dummy object as 'original' so template code can grab
+            # defaults for template, etc.
             extra_context['original'] = self.model()
 
             # If there are errors in the form, we need to preserve the object's
-            # template as it was set when the user attempted to save it, so that
-            # the same regions appear on screen.
+            # template as it was set when the user attempted to save it, so
+            # that the same regions appear on screen.
             if request.method == 'POST' and \
                     hasattr(self.model, '_feincms_templates'):
-                extra_context['original'].template_key = request.POST['template_key']
+                extra_context['original'].template_key =\
+                    request.POST['template_key']
 
-            extra_context.update(
-                'request': request,
-                'model': self.model,
-                'available_templates': getattr(
-                    self.model, '_feincms_templates', ()),
-                'has_parent_attribute': hasattr(self.model, 'parent'),
-                'content_types': self.get_content_type_map(request),
-                'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
-            )
+        extra_context.update({
+            'request': request,
+            'model': self.model,
+            'available_templates': getattr(
+                self.model, '_feincms_templates', ()),
+            'content_types': self.get_content_type_map(request),
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
+        })
         return super(ItemEditor, self).changeform_view(
             request, object_id, form_url, extra_context)
 

@@ -60,9 +60,14 @@ class ContentProxy(object):
         parents = set()
 
         for plugin in self.item.plugins.values():
-            queryset = plugin.get_queryset().filter(
-                parent__in=self.item.get_ancestors(include_self=True),
-            )
+            if hasattr(self.item, 'get_ancestors'):
+                queryset = plugin.get_queryset().filter(
+                    parent__in=self.item.get_ancestors(include_self=True),
+                )
+            else:
+                queryset = plugin.get_queryset().filter(
+                    parent=self.item,
+                )
 
             # queryset._known_related_objects[
             #     self.item._meta.get_field('parent')
@@ -126,7 +131,7 @@ def create_plugin_base(content_model):
 
     @python_2_unicode_compatible
     class PluginBase(models.Model):
-        parent = models.ForeignKey(content_model, related_name='+')
+        parent = models.ForeignKey(content_model)
         region = models.CharField(max_length=255)
         ordering = models.IntegerField(_('ordering'), default=0)
 
@@ -264,7 +269,6 @@ def create_content_base(inherit_from=models.Model):
                 (model, cls._plugin_base),
                 attrs,
             )
-            cls._feincms_content_types.append(new_type)
 
             # customization hook.
             if hasattr(new_type, 'initialize_type'):

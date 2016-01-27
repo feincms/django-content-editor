@@ -6,9 +6,6 @@
 <link rel="stylesheet" type="text/css" href="{% static 'feincms/item_editor.css' %}">
 <script type="text/javascript" src="{% static 'feincms/jquery-ui-1.11.4.custom.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'feincms/item_editor.js' %}"></script>
-
-{% include "admin/feincms/_regions_js.html" %}
-{% load feincms_admin_tags %}
 <script type="text/javascript">
 /*
 type: content type identifier (required)
@@ -80,7 +77,7 @@ var CONTENT_TYPE_BUTTONS = [
 
     IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
 
-    REGION_MAP = [{% for region in original.template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
+    REGION_MAP = [{% for region in original.template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
 
@@ -100,7 +97,7 @@ var CONTENT_TYPE_BUTTONS = [
         ]};
 
     var template_regions = {
-            {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.key }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+            {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
             {% endfor %}
     };
 
@@ -112,38 +109,16 @@ var CONTENT_TYPE_BUTTONS = [
 
 {% endblock %}
 
-{% block form_top %}
-{% with original.available_translations as translations %}
-{% for translation in translations %}
-{# look for something the translation extension's available_translations method might return #}
-{% if translation.id %}
-    {% if forloop.first %}
-      <div style="float: right;padding: 5px 0 0 0" id="available_translations">
-        {% trans "available translations" %}:
-    {% endif %}
-          <a href="../{{ translation.id }}/" title="{{ translation }}">{{ translation.language|upper }}</a>{% if not forloop.last %},{% endif %}
-    {% if forloop.last %}
-      </div>
-      <script type="text/javascript">
-        django.jQuery(function($){
-            $('#id_language').parent().prepend($('#available_translations'));
-        });
-      </script>
-    {% endif %}
-{% endif %}{% endfor %}
-{% endwith %}
-{% endblock %}
-
 {% block after_related_objects %} {# as good a place as any... #}
   {{ block.super }}
   <div id="content-editor-fieldset" style="display: none">
     <div id="main_wrapper">
         {% for region in original.template.regions %}
-            <div class="navi_tab" id="{{ region.key }}_tab">{{ region.title }}</div>
+            <div class="navi_tab" id="{{ region.name }}_tab">{{ region.title }}</div>
         {% endfor %}
         <div id="main">
             {% for region in original.template.regions %}
-            <div id="{{ region.key }}_body" class="panel">
+            <div id="{{ region.name }}_body" class="panel">
                 <div class="empty-machine-msg">
 
                     {% if adding_translation and forloop.first %}

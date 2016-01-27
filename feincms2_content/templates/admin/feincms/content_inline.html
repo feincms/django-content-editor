@@ -1,4 +1,4 @@
-{% load i18n admin_urls admin_static feincms_admin_tags %}
+{% load i18n admin_urls admin_static %}
 <div class="inline-group feincms_inline" id="{{ inline_admin_formset.formset.prefix }}-group">
   <h2>{{ inline_admin_formset.opts.verbose_name_plural|capfirst }}</h2>
 {{ inline_admin_formset.formset.management_form }}
@@ -12,7 +12,6 @@
   </h3>
   {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
   {% for fieldset in inline_admin_form %}
-    {% post_process_fieldsets fieldset %}
     {% include "admin/includes/fieldset.html" %}
   {% endfor %}
   {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
