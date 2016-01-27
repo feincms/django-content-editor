@@ -40,7 +40,7 @@ if (!Array.prototype.indexOf) {
     }
 
 
-    SELECTS = {};
+    var SELECTS = {};
     function save_content_type_selects() {
         $('#main>.panel').each(function() {
             SELECTS[this.id.replace(/_body$/, '')] = $("select[name=order-machine-add-select]", this).clone().removeAttr("name");
