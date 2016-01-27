@@ -523,10 +523,6 @@ if (!Array.prototype.indexOf) {
         // add quick buttons to order machine control
         init_content_type_buttons();
 
-        // DRY object-tools addition
-        $(".extra-object-tools li").appendTo("ul.object-tools");
-        $(".extra-object-tools").remove();
-
         /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
         $(document.documentElement).keydown(function(event) {
             if(event.which == 83 && event.metaKey) {
