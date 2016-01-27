@@ -223,8 +223,7 @@ if (!Array.prototype.indexOf) {
 
     function init_content_type_buttons() {
         $('#main > .panel').each(function() {
-            var $select = $('select[name=order-machine-add-select]', this),
-                to_remove = [];
+            var $select = $('select[name=order-machine-add-select]', this);
 
             $select.change(function() {
                 var modvar = $select.val();
@@ -270,13 +269,7 @@ if (!Array.prototype.indexOf) {
                 })(c));
 
                 $select.parent().append($button);
-
-                if (!c.keep)
-                    to_remove.push($option);
             }
-
-            for (var i=0; i<to_remove.length; i++)
-                to_remove[i].remove();
 
             if ($select.find('option').length == 0) {
                 // hide the content type select box and the add button if
