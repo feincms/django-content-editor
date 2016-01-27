@@ -1,6 +1,6 @@
 {% load i18n %}
 <select name="order-machine-add-select">
-  <option selected value>{% trans 'Insert new content:' %}</option>
+  <option disabled selected>{% trans 'Insert new content:' %}</option>
   {% for group, cts in types.items %}
     {% if group %}<optgroup label="{{ group }}">{% endif %}
       {% for v, n in cts %}
