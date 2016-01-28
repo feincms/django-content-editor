@@ -105,7 +105,7 @@ django.jQuery(function($){
     // Fill in ordering field and try to keep the current region tab (location hash).
     $('form').submit(function(){
         $('.field-ordering input').each(function assignOrdering(index) {
-            this.value = index;
+            this.value = index + 1; // Avoid default=0 just because.
         });
 
         var form = $(this);
