@@ -1,40 +1,31 @@
-# ------------------------------------------------------------------------
 # coding=utf-8
-# ------------------------------------------------------------------------
-
 from __future__ import absolute_import, unicode_literals
 
 import copy
-import logging
+import json
 
 from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
+from django.utils.text import capfirst
 
 
-# ------------------------------------------------------------------------
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
-logger = logging.getLogger(__name__)
 
-
-# ------------------------------------------------------------------------
 class ItemEditorForm(forms.ModelForm):
     """
     The item editor form contains hidden region and ordering fields and should
     be used for all content type inlines.
     """
-
     region = forms.CharField(widget=forms.HiddenInput())
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
-# ------------------------------------------------------------------------
 class ItemEditorInline(StackedInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
-
     form = ItemEditorForm
     extra = 0
     fk_name = 'parent'
@@ -49,7 +40,6 @@ class ItemEditorInline(StackedInline):
         return Inline
 
 
-# ------------------------------------------------------------------------
 class ItemEditor(ModelAdmin):
     """
     The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
@@ -62,12 +52,11 @@ class ItemEditor(ModelAdmin):
 
     def get_content_type_map(self, request):
         """ Prepare mapping of content types to their prettified names. """
-        content_types = []
-        for content_type in self.model.plugins.values():
-            content_name = content_type._meta.verbose_name
-            content_types.append(
-                (content_name, content_type.__name__.lower()))
-        return content_types
+        return json.dumps({
+            content_type.__name__.lower(): capfirst(
+                content_type._meta.verbose_name)
+            for content_type in self.model.plugins.values()
+        })
 
     def changeform_view(self, request, object_id=None, form_url='',
                         extra_context=None):
@@ -124,6 +113,7 @@ class ItemEditor(ModelAdmin):
         Is it reasonable to assume this should always be included?
         """
 
+        # TODO Find some other way, and remove this code.
         fieldsets = copy.deepcopy(
             super(ItemEditor, self).get_fieldsets(request, obj)
         )
