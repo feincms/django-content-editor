@@ -76,7 +76,13 @@ django.jQuery(function($){
 
     $('.order-machine').sortable({
         handle: 'h3',
-        placeholder: 'placeholder'
+        placeholder: 'placeholder',
+        start: function(event, ui) {
+            ui.item.find('fieldset').hide();
+        },
+        stop: function(event, ui) {
+            ui.item.find('fieldset').show();
+        }
     });
     $('.order-machine').on('click', '.delete>input[type=checkbox]', function() {
         $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');
