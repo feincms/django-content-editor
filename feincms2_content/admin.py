@@ -41,6 +41,13 @@ class ItemEditorInline(StackedInline):
     template = 'admin/feincms/content_inline.html'
     classes = ('feincms',)  # noqa https://github.com/django/django/commit/5399ccc0f4257676981ef7937ea84be36f7058a6
 
+    @classmethod
+    def create(cls, model_class):
+        class Inline(cls):
+            model = model_class
+
+        return Inline
+
 
 # ------------------------------------------------------------------------
 class ItemEditor(ModelAdmin):
