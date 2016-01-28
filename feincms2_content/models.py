@@ -50,14 +50,14 @@ class ContentProxy(object):
     regions (including inherited regions)
     """
 
-    def __init__(self, item):
+    def __init__(self, item, plugins):
         self.item = item
-        self.db = item._state.db
+        self.plugins = plugins
 
         contents = defaultdict(lambda: defaultdict(list))
         parents = set()
 
-        for plugin in self.item.plugins.values():
+        for plugin in self.plugins:
             if hasattr(self.item, 'get_ancestors'):
                 queryset = plugin.get_queryset().filter(
                     parent__in=self.item.get_ancestors(include_self=True),
