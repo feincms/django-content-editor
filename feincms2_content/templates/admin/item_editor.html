@@ -74,6 +74,14 @@ django.jQuery(function($) {
         form.attr('action', form.attr('action') + window.location.hash);
         return true;
     });
+
+    $(document).keydown(function handleCmdS(event) {
+        if(event.which == 83 && event.metaKey) {
+            $('form input[name=' + (event.shiftKey ? '_continue' : '_save') + ']').click();
+            return false;
+        }
+    });
+
 });
 
 /*
