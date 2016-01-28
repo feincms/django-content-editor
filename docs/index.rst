@@ -12,27 +12,19 @@ Implement a rich text plugin with CKEditor
 Python
 ======
 
-``plugins.py``::
-
-    class Richtext(models.Model):
-        text = models.TextField(blank=True)
-
-        class Meta:
-            abstract = True
-            verbose_name = 'rich text'
-            verbose_name_plural = 'rich texts'
-
-
 ``models.py``::
 
     from django.db import models
 
-    from feincms2_content.models import Template, Region, create_content_base
+    from feincms2_content.models import (
+        Template,
+        Region,
+        ContentProxy,
+        create_plugin_base
+    )
 
-    from .plugins import Richtext
 
-
-    class Page(create_content_base()):
+    class Page(models.Model):
         title = models.CharField(max_length=200)
 
         template = Template(
@@ -45,8 +37,19 @@ Python
         def __str__(self):
             return self.title
 
+        def content(self):
+            return ContentProxy(self, plugins=[Richtext])
 
-    RichtextPlugin = Page.create_plugin(Richtext)
+
+    PagePlugin = create_plugin_base(Page)
+
+
+    class Richtext(PagePlugin):
+        text = models.TextField(blank=True)
+
+        class Meta:
+            verbose_name = 'rich text'
+            verbose_name_plural = 'rich texts'
 
 
 ``admin.py``::
@@ -55,11 +58,11 @@ Python
 
     from feincms2_content.admin import ItemEditor, ItemEditorInline
 
-    from .models import Page, RichtextPlugin
+    from .models import Page, Richtext
 
 
     class RichtextInline(ItemEditorInline):
-        model = RichtextPlugin
+        model = Richtext
 
         class Media:
             js = (
@@ -150,9 +153,11 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
 Why?
 ====
 
-Good question. When I'm finished there will be absolutely **no magic** going
-on behind the scenes. The FeinCMS code sometimes mysteriously broke down,
-monkey patching was required, and too much was implicit instead of explicit.
+Good question. There is **absolutely no magic** going on behind the scenes,
+no dynamic model generation or anything. The FeinCMS code sometimes
+mysteriously broke down, monkey patching was required, and too much was
+implicit instead of explicit. In the end, this probably also prevented people
+from contributing because FeinCMS was seen as *here be dragons*.
 
 Also, ``feincms2_content`` follows the philosophy "Libraries, not Frameworks".
 
