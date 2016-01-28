@@ -17,45 +17,48 @@ django.jQuery(function($){
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
-    /* .dataset.context instead of getAttribute would be nicer */
+    // .dataset.context instead of getAttribute would be nicer
     var ItemEditor = JSON.parse(
-            document.getElementById('item-editor-script').getAttribute('data-context')),
-        currentRegion;
+            document.getElementById('item-editor-script').getAttribute('data-context'));
 
+    // Move the item editor to its place
     $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
 
-    var inlineGroups = (function() {
-        var selector = [];
-        $.each(ItemEditor.plugins, function(key, value) {
-            selector.push('#' + key + '_set-group');
-        });
-        return $(selector.join(', '));
-    })();
+    var currentRegion,
+        orderMachine = $('.order-machine'),
+        pluginInlineGroups = (function selectPluginInlineGroups() {
+            var selector = [];
+            $.each(ItemEditor.plugins, function(key, value) {
+                selector.push('#' + key + '_set-group');
+            });
+            return $(selector.join(', '));
+        })();
 
-    var inlines = inlineGroups.find('.inline-related').detach();
+    // Order inlines according to their `ordering` value
+    var inlines = pluginInlineGroups.find('.inline-related').detach();
     inlines.sort(function inlinesCompareFunction(a, b) {
         var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
         var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
         return Math.sign(aOrdering - bOrdering);
     });
-    $('.order-machine').append(inlines);
-
-    $('.order-machine .inline-related').not('.empty-form').each(function assignRegionDataAttribute() {
-        var $this = $(this),
-            region = $this.find('.field-region input').val();
-
-        // Have to use attr() here because we want the data attribute to
-        // be visible to selectors.
-        $this.attr('data-region', region);
-    });
+    orderMachine.append(inlines);
 
     function moveEmptyFormsToEnd() {
-        $('.order-machine').append(
-            $('.order-machine .empty-form').detach()
-        );
+        orderMachine.append(orderMachine.find('.empty-form').detach());
     }
     moveEmptyFormsToEnd();
 
+    // Assing data-region to all inlines.
+    // We also want to the data attribute to be visible to selectors (that's why we're using $.attr)
+    orderMachine.find('.inline-related:not(.empty-form)').each(function assignRegionDataAttribute() {
+        var $this = $(this),
+            region = $this.find('.field-region input').val();
+
+        $this.attr('data-region', region);
+    });
+
+    // Always move empty forms to the end, because new plugins are inserted
+    // just before its empty form. Also, assign region data.
     $(document).on('formset:added', function newForm(event, row, optionsPrefix) {
         moveEmptyFormsToEnd();
 
@@ -63,18 +66,29 @@ django.jQuery(function($){
         row.attr('data-region', currentRegion);
     });
 
+    // Initialize tabs and currentRegion.
     (function() {
-        var tabs = $('.tabs>div');
+        var tabs = $('.tabs>div'), tab;
         tabs.on('click', function() {
             currentRegion = $(this).data('region');
             $('.tabs>div').removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
-            $('.order-machine .inline-related').not('.empty-form').hide().filter('[data-region="' + currentRegion + '"]').show();
+            orderMachine.find('.inline-related:not(.empty-form)').hide().filter('[data-region="' + currentRegion + '"]').show();
+            window.location.hash = 'tab_' + currentRegion;
         });
-        tabs.eq(0).trigger('click');
+
+        // Restore tab if location hash matches.
+        if (window.location.hash && (tab = tabs.filter('[data-region="' + window.location.hash.substr(5) + '"]'))) {
+            tab.click();
+        } else {
+            tabs.eq(0).click();
+        }
+
+        // Hide tabs if only one.
         if (tabs.length <= 1) tabs.hide();
     })();
 
-    $('.order-machine').sortable({
+    // Start sortable; hide fieldsets when dragging, and hide fieldsets of to-be-deleted inlines.
+    orderMachine.sortable({
         handle: 'h3',
         placeholder: 'placeholder',
         start: function(event, ui) {
@@ -83,11 +97,11 @@ django.jQuery(function($){
         stop: function(event, ui) {
             ui.item.find('fieldset').show();
         }
-    });
-    $('.order-machine').on('click', '.delete>input[type=checkbox]', function() {
+    }).on('click', '.delete>input[type=checkbox]', function toggleForDeletionClass() {
         $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');
     });
 
+    // Fill in ordering field and try to keep the current region tab (location hash).
     $('form').submit(function(){
         $('.field-ordering input').each(function assignOrdering(index) {
             this.value = index;
@@ -98,12 +112,13 @@ django.jQuery(function($){
         return true;
     });
 
+    // Cmd-S and Escape behavior.
     $(document).keydown(function handleKeys(event) {
         if (event.which == 83 && event.metaKey) {
             $('form input[name=' + (event.shiftKey ? '_continue' : '_save') + ']').click();
             return false;
         } else if (event.which == 27) {
-            $('.order-machine').sortable('cancel');
+            orderMachine.sortable('cancel');
         }
     });
 
