@@ -47,7 +47,7 @@ if (!Array.prototype.indexOf) {
 
 
     var SELECTS = {};
-    function save_content_type_selects() {
+    function save_plugin_selects() {
         $('#main>.panel').each(function() {
             SELECTS[this.id.replace(/_body$/, '')] = $("select[name=order-machine-add-select]", this).clone().removeAttr("name");
         });
@@ -227,7 +227,7 @@ if (!Array.prototype.indexOf) {
             contentblock_init_handlers[i]();
     }
 
-    function init_content_type_buttons() {
+    function init_plugin_buttons() {
         $('#main > .panel').each(function() {
             var $select = $('select[name=order-machine-add-select]', this);
 
@@ -356,7 +356,7 @@ if (!Array.prototype.indexOf) {
         /* Done morphing extension options into tabs */
 
         // save content type selects for later use
-        save_content_type_selects();
+        save_plugin_selects();
 
         $(document.body).on('click', 'h2 img.item-delete', function() {
             var item = $(this).parents(".order-item");
@@ -477,10 +477,10 @@ if (!Array.prototype.indexOf) {
                 var region_id = ItemEditor.regionNames.indexOf(
                     elem.find(".region-choice-field").val());
                 if (ItemEditor.regionNames[region_id] != undefined) {
-                    var content_type = elem.attr("id").substr(
+                    var plugin = elem.attr("id").substr(
                         0, elem.attr("id").lastIndexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, ItemEditor.plugins[content_type], content_type);
+                        elem, ItemEditor.plugins[plugin], plugin);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }
@@ -508,7 +508,7 @@ if (!Array.prototype.indexOf) {
         $('div.feincms_inline').hide();
 
         // add quick buttons to order machine control
-        init_content_type_buttons();
+        init_plugin_buttons();
 
         /* handle Cmd-S and Cmd-Shift-S as save-and-continue and save respectively */
         $(document.documentElement).keydown(function(event) {

@@ -13,7 +13,7 @@ with django-reversion_:
 * Add ``'reversion'`` to the list of installed applications.
 * Add ``'reversion.middleware.RevisionMiddleware'`` to ``MIDDLEWARE_CLASSES``.
 * Call ``Page.register_with_reversion()`` after all content types have been
-  created (after all ``create_content_type`` invocations).
+  created (after all ``create_plugin`` invocations).
 * Add ``FEINCMS_USE_PAGE_ADMIN = False`` to your ``settings`` file.
 
 Now, you need to create your own model admin subclass inheriting from both

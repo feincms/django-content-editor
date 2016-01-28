@@ -61,12 +61,12 @@ class ItemEditor(ModelAdmin):
             # XXX Duplicated code here and in feincms_admin_tags...
             'plugins': {
                 '%s_%s' % (
-                    content_type._meta.app_label,
-                    content_type._meta.model_name,
+                    plugin._meta.app_label,
+                    plugin._meta.model_name,
                 ): capfirst(
-                    content_type._meta.verbose_name
+                    plugin._meta.verbose_name
                 )
-                for content_type in self.model.plugins.values()
+                for plugin in self.model.plugins.values()
             },
             'messages': {
                 'delete': ugettext('Really delete item?'),

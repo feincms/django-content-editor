@@ -21,7 +21,7 @@ create a content type for a media file as follows::
     from feincms.module.page.models import Page
     from feincms.content.medialibrary.v2 import MediaFileContent
 
-    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+    Page.create_plugin(MediaFileContent, TYPE_CHOICES=(
             ('default', _('default')),
             ('lightbox', _('lightbox')),
             ))

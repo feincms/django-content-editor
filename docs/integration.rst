@@ -122,7 +122,7 @@ It's as simple as that::
     from feincms.content.application.models import ApplicationContent
     from feincms.module.page.models import Page
 
-    Page.create_content_type(ApplicationContent, APPLICATIONS=(
+    Page.create_plugin(ApplicationContent, APPLICATIONS=(
         ('news.urls', 'News application'),
         ))
 
@@ -163,7 +163,7 @@ Django's standard functionality::
 The only difference is that you do not only have to specify the view name
 (``entry_detail``) but also the URLconf file (``news.urls``) for this
 specific ``permalink`` decorator. The URLconf string must correspond to the
-specification used in the ``APPLICATIONS`` list in the ``create_content_type``
+specification used in the ``APPLICATIONS`` list in the ``create_plugin``
 call.
 
 .. note::
@@ -288,7 +288,7 @@ Django template code.
 The function works almost like Django's own ``reverse()`` method except
 that it resolves URLs from application contents. The second argument,
 ``urlconf``, has to correspond to the URLconf parameter passed in the
-``APPLICATIONS`` list to ``Page.create_content_type``::
+``APPLICATIONS`` list to ``Page.create_plugin``::
 
     from feincms.content.application.models import app_reverse
     app_reverse('mymodel-detail', 'myapp.urls', args=...)
@@ -331,7 +331,7 @@ Additional customization possibilities
 
 The ``ApplicationContent`` offers additional customization possibilites for those who
 need them. All of these must be specified in the ``APPLICATIONS`` argument to
-``create_content_type``.
+``create_plugin``.
 
 * ``urls``: Making it easier to swap the URLconf file:
 
@@ -341,7 +341,7 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
   URLs from a 3rd party application, f.e. replace ``registration.urls`` with
   ``yourapp.registration_urls``::
 
-      Page.create_content_type(ApplicationContent, APPLICATIONS=(
+      Page.create_plugin(ApplicationContent, APPLICATIONS=(
         ('registration', 'Account creation and management', {
             'urls': 'yourapp.registration_urls',
             }),
@@ -365,7 +365,7 @@ need them. All of these must be specified in the ``APPLICATIONS`` argument to
                 ),
             }
 
-      Page.create_content_type(ApplicationContent, APPLICATIONS=(
+      Page.create_plugin(ApplicationContent, APPLICATIONS=(
         ('registration', 'Account creation and management', {
             'urls': 'yourapp.registration_urls',
             'admin_fields': registration_admin_fields,

@@ -64,11 +64,11 @@ allows easily extending the interface with additional parameters. But more
 on this later.
 
 FeinCMS offers a method on :class:`feincms.models.Base` called
-:func:`create_content_type` which will create concrete content types from
+:func:`create_plugin` which will create concrete content types from
 your abstract content types. Since content types can be used for different
 CMS base models such as pages and blog entries (implementing a rich text
 or an image content once and using it for both models makes lots of sense)
-your implementation needs to be abstract. :func:`create_content_type` adds
+your implementation needs to be abstract. :func:`create_plugin` adds
 a few utility methods and a few model fields to build the concrete type,
 a foreign key to the base model (f.e. the :class:`Page`) and
 several properties indicating where the content block will be positioned
@@ -98,11 +98,11 @@ type is shown here::
         def render(self, **kwargs):
             return markdown(self.content)
 
-    Page.create_content_type(MarkdownPageContent)
+    Page.create_plugin(MarkdownPageContent)
 
 
 There are three field names you should not use because they are added
-by ``create_content_type``: These are ``parent``, ``region`` and ``ordering``.
+by ``create_plugin``: These are ``parent``, ``region`` and ``ordering``.
 These fields are used to specify the place where the content will be
 placed in the output.
 
@@ -346,7 +346,7 @@ Inline images
 Simple content types holding just an image with a
 position. You should probably use the MediaFileContent though.
 
-Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+Additional arguments for :func:`~feincms.models.Base.create_plugin`:
 
 * ``POSITION_CHOICES``
 
@@ -360,7 +360,7 @@ Media library integration
 Mini-framework for arbitrary file types with customizable rendering
 methods per-filetype.  Add 'feincms.module.medialibrary' to INSTALLED_APPS.
 
-Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+Additional arguments for :func:`~feincms.models.Base.create_plugin`:
 
 * ``TYPE_CHOICES``: (mandatory)
 
@@ -417,7 +417,7 @@ you can do this as follows::
         'TINYMCE_JS_URL': '/your_custom_path/tiny_mce.js',
     }
 
-Additional arguments for :func:`~feincms.models.Base.create_content_type`:
+Additional arguments for :func:`~feincms.models.Base.create_plugin`:
 
 * ``cleanse``:
 
@@ -513,9 +513,9 @@ Restricting a content type to a subset of regions
 Imagine that you have developed a content type which really only makes sense in
 the sidebar, not in the main content area. It is very simple to restrict a
 content type to a subset of regions, the only thing you have to do is pass a
-tuple of region keys to the create_content_type method::
+tuple of region keys to the create_plugin method::
 
-    Page.create_content_type(SomeSidebarContent, regions=('sidebar',))
+    Page.create_plugin(SomeSidebarContent, regions=('sidebar',))
 
 
 Note that the restriction only influences the content types shown in the
@@ -549,7 +549,7 @@ So you'd like to check whether Django is properly configured for your content
 type, or maybe add model/form fields depending on arguments passed at content
 type creation time? This is very easy to achieve. The only thing you need to
 do is adding a classmethod named :func:`initialize_type` to your content type, and
-pass additional keyword arguments to :func:`create_content_type`.
+pass additional keyword arguments to :func:`create_plugin`.
 
 If you want to see an example of these two uses, have a look at the
 :class:`~feincms.content.medialibrary.v2.MediaFileContent`.
@@ -571,17 +571,17 @@ concrete content type?
 There are two recommended ways. The example use a ``RawContent`` content type and
 the Page CMS base class.
 
-You could take advantage of the fact that ``create_content_type`` returns the
+You could take advantage of the fact that ``create_plugin`` returns the
 created model::
 
     from feincms.module.page.models import Page
     from feincms.content.raw.models import RawContent
 
-    PageRawContent = Page.create_content_type(RawContent)
+    PageRawContent = Page.create_plugin(RawContent)
 
 
-Or you could use :func:`content_type_for`::
+Or you could use :func:`plugin_for`::
 
     from feincms.content.raw.models import RawContent
 
-    PageRawContent = Page.content_type_for(RawContent)
+    PageRawContent = Page.plugin_for(RawContent)

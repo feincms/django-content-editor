@@ -33,7 +33,7 @@ CMS without being forced to use whatever the developers deemed best::
         def render(self, **kwargs):
             return markdown(self.content)
 
-    Page.create_content_type(MarkdownPageContent)
+    Page.create_plugin(MarkdownPageContent)
 
 
 That's it. Only ten lines of code for your own page content type.

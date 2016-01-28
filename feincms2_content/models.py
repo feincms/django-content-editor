@@ -123,7 +123,7 @@ def create_plugin_base(content_model):
     """
     This is purely an internal method. Here, we create a base class for
     the concrete content types, which are built in
-    ``create_content_type``.
+    ``create_plugin``.
 
     The three fields added to build a concrete content type class/model
     are ``parent``, ``region`` and ``ordering``.
@@ -215,7 +215,7 @@ def create_content_base(inherit_from=models.Model):
             shadow all subsequent content types. You can work around it by
             specifying the content type class name using the ``class_name``
             argument. Please note that this will have an effect on the entries
-            in ``django_content_type``, on ``related_name`` and on the table
+            in ``django_plugin``, on ``related_name`` and on the table
             name used and should therefore not be changed after running
             ``syncdb`` for the first time.
 

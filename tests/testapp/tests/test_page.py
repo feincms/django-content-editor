@@ -616,7 +616,7 @@ class PagesTestCase(TestCase):
         # only create the content type to test the item editor
         # customization hooks
         tmp = Page._feincms_plugins[:]
-        type = Page.create_content_type(
+        type = Page.create_plugin(
             RichTextContent, regions=('notexists',))
         Page._feincms_plugins = tmp
 
@@ -985,7 +985,7 @@ class PagesTestCase(TestCase):
         # do not register this model in the internal FeinCMS bookkeeping
         # structures
         tmp = Page._feincms_plugins[:]
-        type = Page.create_content_type(Something, regions=('notexists',))
+        type = Page.create_plugin(Something, regions=('notexists',))
         Page._feincms_plugins = tmp
 
         s = type(region='main', ordering='1')

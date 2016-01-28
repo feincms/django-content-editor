@@ -26,14 +26,14 @@ Page.register_templates({
         ('sidebar', 'Sidebar', 'inherited'),
     ),
 })
-Page.create_content_type(RawContent)
-Page.create_content_type(
+Page.create_plugin(RawContent)
+Page.create_plugin(
     MediaFileContent,
     TYPE_CHOICES=(
         ('default', 'Default position'),
     )
 )
-Page.create_content_type(TemplateContent, TEMPLATES=[
+Page.create_plugin(TemplateContent, TEMPLATES=[
     ('templatecontent_1.html', 'template 1'),
 ])
 Page.register_request_processor(processors.etag_request_processor)
@@ -55,7 +55,7 @@ def get_admin_fields(form, *args, **kwargs):
         'custom_field': forms.CharField(),
     }
 
-Page.create_content_type(
+Page.create_plugin(
     ApplicationContent,
     APPLICATIONS=(
         ('whatever', 'Test Urls', {
@@ -122,5 +122,5 @@ MyModel.register_regions(('main', 'Main region'))
 
 
 unchanged = CustomContentType
-MyModel.create_content_type(CustomContentType)
+MyModel.create_plugin(CustomContentType)
 assert CustomContentType is unchanged

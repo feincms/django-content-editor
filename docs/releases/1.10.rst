@@ -15,7 +15,7 @@ The only change is that we cannot test for name clashes in content types
 anymore. This only concerns you if you were using more than one
 ``feincms.models.Base`` subclass inside the same app using the same content
 types. You should be using the ``class_name`` argument to
-``create_content_type`` already anyway.  The technical reason for this change
+``create_plugin`` already anyway.  The technical reason for this change
 is that the name clash test requires the app registry to be ready (which it
 isn't yet when creating content types).
 

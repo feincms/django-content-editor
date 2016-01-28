@@ -17,9 +17,9 @@ manage content with the :class:`~feincms.admin.item_editor.ItemEditor`.
    Beware not to name subclass field `content` as this will overshadow `ContentProxy` and you will
    not be able to reference `ContentProxy`. 
 
-.. method:: Base.create_content_type(model, regions=None, [**kwargs])
+.. method:: Base.create_plugin(model, regions=None, [**kwargs])
 
-.. method:: Base.content_type_for(model)
+.. method:: Base.plugin_for(model)
 
 .. method:: Base.copy_content_from(obj)
 

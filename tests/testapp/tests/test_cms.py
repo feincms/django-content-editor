@@ -34,15 +34,15 @@ class SubRawContent(RawContent):
 
 
 class CMSBaseTest(TestCase):
-    def test_01_simple_content_type_creation(self):
-        self.assertEqual(ExampleCMSBase.content_type_for(RawContent), None)
+    def test_01_simple_plugin_creation(self):
+        self.assertEqual(ExampleCMSBase.plugin_for(RawContent), None)
 
-        ExampleCMSBase.create_content_type(RawContent, regions=('main2',))
-        ExampleCMSBase.create_content_type(RichTextContent)
+        ExampleCMSBase.create_plugin(RawContent, regions=('main2',))
+        ExampleCMSBase.create_plugin(RichTextContent)
 
-        # content_type_for should return None if it does not have a subclass
+        # plugin_for should return None if it does not have a subclass
         # registered
-        self.assertEqual(ExampleCMSBase.content_type_for(Empty), None)
+        self.assertEqual(ExampleCMSBase.plugin_for(Empty), None)
 
         self.assertTrue(
             'rawcontent' not in dict(
@@ -54,9 +54,9 @@ class CMSBaseTest(TestCase):
         # no TYPE_CHOICES, should raise
         self.assertRaises(
             ImproperlyConfigured,
-            lambda: ExampleCMSBase.create_content_type(MediaFileContent))
+            lambda: ExampleCMSBase.create_plugin(MediaFileContent))
 
-    def test_05_non_abstract_content_type(self):
+    def test_05_non_abstract_plugin(self):
         # Should not be able to create a content type from a non-abstract base
         # type
         class TestContentType(models.Model):
@@ -64,7 +64,7 @@ class CMSBaseTest(TestCase):
 
         self.assertRaises(
             ImproperlyConfigured,
-            lambda: ExampleCMSBase.create_content_type(TestContentType))
+            lambda: ExampleCMSBase.create_plugin(TestContentType))
 
     def test_07_default_render_method(self):
         class SomethingElse(models.Model):
@@ -74,7 +74,7 @@ class CMSBaseTest(TestCase):
             def render_region(self):
                 return 'hello'
 
-        type = ExampleCMSBase.create_content_type(SomethingElse)
+        type = ExampleCMSBase.create_plugin(SomethingElse)
         obj = type()
         self.assertRaises(NotImplementedError, lambda: obj.render())
 
@@ -82,16 +82,16 @@ class CMSBaseTest(TestCase):
         self.assertEqual(obj.render(), 'hello')
 
     def test_08_creating_two_plugins_in_same_application(self):
-        ExampleCMSBase.create_content_type(RawContent)
-        ct = ExampleCMSBase.content_type_for(RawContent)
+        ExampleCMSBase.create_plugin(RawContent)
+        ct = ExampleCMSBase.plugin_for(RawContent)
         self.assertEqual(
             ct._meta.db_table,
             'testapp_examplecmsbase_rawcontent')
 
-        ExampleCMSBase2.create_content_type(
+        ExampleCMSBase2.create_plugin(
             RawContent,
             class_name='RawContent2')
-        ct2 = ExampleCMSBase2.content_type_for(RawContent)
+        ct2 = ExampleCMSBase2.plugin_for(RawContent)
         self.assertEqual(
             ct2._meta.db_table,
             'testapp_examplecmsbase2_rawcontent2')
@@ -134,19 +134,19 @@ class CMSBaseTest(TestCase):
             class Meta:
                 abstract = True
 
-        ExampleCMSBase.create_content_type(AnyContent)
+        ExampleCMSBase.create_plugin(AnyContent)
 
         self.assertTrue(hasattr(ExampleCMSBase, 'test_related_name'))
         self.assertTrue(hasattr(Attachment, 'anycontents'))
 
-    def test_10_content_type_subclasses(self):
+    def test_10_plugin_subclasses(self):
         """
         See:
         https://github.com/feincms/feincms/issues/339
         """
-        ExampleCMSBase.create_content_type(SubRawContent)
-        ExampleCMSBase.create_content_type(RawContent)
+        ExampleCMSBase.create_plugin(SubRawContent)
+        ExampleCMSBase.create_plugin(RawContent)
 
-        ct = ExampleCMSBase.content_type_for(RawContent)
-        ct2 = ExampleCMSBase.content_type_for(SubRawContent)
+        ct = ExampleCMSBase.plugin_for(RawContent)
+        ct2 = ExampleCMSBase.plugin_for(SubRawContent)
         self.assertNotEqual(ct, ct2)

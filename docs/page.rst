@@ -53,8 +53,8 @@ by adding the following lines somewhere into your project, for example in a
         ),
     })
 
-    Page.create_content_type(RichTextContent)
-    Page.create_content_type(MediaFileContent, TYPE_CHOICES=(
+    Page.create_plugin(RichTextContent)
+    Page.create_plugin(MediaFileContent, TYPE_CHOICES=(
         ('default', _('default')),
         ('lightbox', _('lightbox')),
     ))
@@ -131,7 +131,7 @@ attributes added.
                 'images': self.gallery.image_set.order_by('?')[:5],
             })
 
-    Page.create_content_type(GalleryContent)
+    Page.create_plugin(GalleryContent)
 
 
 The newly created :class:`GalleryContent` for :class:`~feincms.module.page.models.Page`
