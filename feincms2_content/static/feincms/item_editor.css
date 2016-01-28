@@ -163,10 +163,3 @@ a.audiocontent:hover { background-position: -350px -70px; }
     margin-left: 7em;
     padding-left: 30px;
 }
-
-
-/* various overrides */
-#id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */
-
-/* overwrite flat theme default label width because of problems with the CKEditor */
-.aligned .text label { width: auto; }
