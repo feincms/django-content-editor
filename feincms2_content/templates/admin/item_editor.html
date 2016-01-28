@@ -1,79 +1,13 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify feincms_admin_tags staticfiles %}
+{% load i18n admin_modify staticfiles %}
 
 {% block extrahead %}{{ block.super }}
-
 <link rel="stylesheet" type="text/css" href="{% static 'feincms/item_editor.css' %}">
 <script type="text/javascript" src="{% static 'feincms/jquery-ui-1.11.4.custom.min.js' %}"></script>
 <script id="item-editor-script"
         type="text/javascript"
         src="{% static 'feincms/item_editor.js' %}"
         data-context="{{ item_editor_context }}"></script>
-<script type="text/javascript">
-/*
-type: content type identifier (required)
-cssclass: quickbutton CSS class
-raw_id_picker: URL of raw_id_fields picker which should be automatically opened
-after: callback, receives new fieldset as argument
-*/
-{% url "admin:medialibrary_mediafile_changelist" as media_library_url %}
-var PLUGIN_BUTTONS = [
-    {
-        type: 'richtextcontent'
-    }, {
-        type: 'imagecontent'
-    }, {
-        type: 'filecontent',
-        cssclass: 'pdfcontent'
-    }, {
-        type: 'filerimagecontent',
-        cssclass: 'imagecontent'
-    }, {
-        type: 'filerfilecontent',
-        cssclass: 'pdfcontent'
-    }, {
-        type: 'videocontent',
-        cssclass: 'oembedcontent'
-{% if media_library_url %}
-    }, {
-        type: 'mediafilecontent',
-        cssclass: 'imagecontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=image&_popup=1'
-    }, {
-        type: 'gallerycontent'
-    }, {
-        type: 'mediafilecontent',
-        cssclass: 'pdfcontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=pdf&_popup=1'
-{% endif %}
-    }, {
-        type: 'oembedcontent'
-{% if media_library_url %}
-    }, {
-        type: 'mediafilecontent',
-        cssclass: 'audiocontent',
-        raw_id_picker: '{{ media_library_url }}?type__exact=audio&_popup=1'
-{% endif %}
-    }
-];
-</script>
-
-<script type="text/javascript">
-    /* TODO Use events instead */
-    var contentblock_init_handlers = [];
-    var contentblock_move_handlers = {poorify: [
-            function(item) {item.find('.item-content').hide();},
-            function(item) {item.find('input[type=radio][checked]').addClass('radiochecked');}
-        ], richify: [
-            function(item) {item.find('.item-content').show();},
-            function(item) {item.find('input.radiochecked').removeClass('radiochecked').trigger('click');}
-        ]};
-
-    var template_regions = {
-            {% for template in available_templates.values %}'{{ template.name }}': [{% for region in template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
-            {% endfor %}
-    };
-</script>
 {% endblock %}
 
 {% block after_related_objects %} {# as good a place as any... #}
@@ -109,7 +43,6 @@ var PLUGIN_BUTTONS = [
 
             <div class="machine-control">
                 <div class="control-unit">
-                    {# % show_plugin_selection_widget region % #}
                 </div>
             </div>
         </div>

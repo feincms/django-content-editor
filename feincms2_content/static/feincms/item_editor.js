@@ -31,8 +31,6 @@ django.jQuery(function($){
         return $(selector.join(', '));
     })();
 
-    console.log(inlineGroups);
-
     var inlines = inlineGroups.find('.inline-related').detach();
     inlines.sort(function inlinesCompareFunction(a, b) {
         var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
