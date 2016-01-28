@@ -318,11 +318,14 @@ if (!Array.prototype.indexOf) {
     var current_template;
 
     $(document).ready(function($){
+
         create_tabbed('#main_wrapper', '#main', function(tab_str){
             ACTIVE_REGION = ItemEditor.regionNames.indexOf(tab_str);
             // make it possible to open current tab on page reload
             window.location.replace('#tab_'+tab_str);
         });
+
+        return;
 
         // save content type selects for later use
         save_plugin_selects();

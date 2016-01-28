@@ -1,3 +1,27 @@
+.inline-related fieldset {
+    /* Animate out of view REAL FAST */
+    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
+    max-height: 2000px;
+}
+
+.inline-related.for-deletion fieldset {
+    max-height: 0;
+}
+
+/* Replace the broken content type counter for new contents with a "new" label */
+.last-related .inline_label {
+    color: #f8f8f8;
+}
+.last-related .inline_label:before {
+    color: #666;
+    content: 'new';
+}
+
+
+
+
+
+
 .navi_tab {
     float:left;
     padding: 8px 10px;
@@ -24,7 +48,7 @@
 }
 
 .panel {
-     display:none;
+     /* display:none; */
      position:relative;
      padding-bottom: 39px;
 }
@@ -205,22 +229,6 @@ td span select {
     padding-left: 30px;
 }
 
-/* Allow nested lists in error items */
-ul.errorlist ul {
-    margin-left: 1em;
-    padding-left: 0;
-    list-style-type: square;
-}
-
-ul.errorlist li li {
-    /* Avoid repeating the warning image every time*/
-    background-image:none;
-    padding: 0;
-}
-
-div.order-machine div.inline-related > h3{
-    display: none;
-}
 
 /* various overrides */
 #id_redirect_to { width: 20em; } /* raw_id_fields act-a-like for redirect_to */

@@ -10,6 +10,54 @@
         src="{% static 'feincms/item_editor.js' %}"
         data-context="{{ item_editor_context }}"></script>
 <script type="text/javascript">
+
+
+django.jQuery(function($) {
+    var inlines = $('.feincms_inline .inline-related').detach();
+    inlines.sort(function inlinesCompareFunction(a, b) {
+        var $a = $(a), $b = $(b);
+        if ($a.is('.empty-form')) {
+            return 1;
+        } else if ($b.is('.empty-form')) {
+            return -1;
+        } else {
+            var aOrdering = $a.find('.field-ordering input').val() || 1e9;
+            var bOrdering = $b.find('.field-ordering input').val() || 1e9;
+
+            return Math.sign(aOrdering - bOrdering);
+        }
+    });
+    $('#main_body .order-machine').append(inlines);
+
+    $(document).on('formset:added', function() {
+        console.log('Re-adding empty forms');
+        $('.order-machine').append(
+            $('.order-machine .empty-form').detach()
+        );
+    });
+
+
+    $('.order-machine').sortable({
+        handle: 'h3'
+    });
+    $('.order-machine').on('click', '.delete>input[type=checkbox]', function() {
+        $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');
+    });
+
+    $('form').submit(function(){
+        $('.field-ordering input').each(function assignOrdering(index) {
+            this.value = index;
+        });
+        $('.field-region input').each(function assignRegion() {
+            this.value = 'main';
+        });
+
+        var form = $(this);
+        form.attr('action', form.attr('action') + window.location.hash);
+        return true;
+    });
+});
+
 /*
 type: content type identifier (required)
 cssclass: quickbutton CSS class
