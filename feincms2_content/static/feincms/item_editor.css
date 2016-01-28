@@ -52,11 +52,6 @@
     content: 'new';
 }
 
-
-
-
-
-
 .tabs>div {
     float:left;
     padding: 8px 10px;
@@ -69,24 +64,24 @@
     border: 1px solid #eee;
     text-transform: uppercase;
 }
+
 .tabs>.active {
     background: #79aec8;
     color: white;
     border-color: #79aec8;
 }
 
-.highlight, .helper {
+.placeholder {
     height: 34px;
-    margin: 0 0 10px 0;
+    margin: 10px 0 0 0;
     border: none;
     opacity: 0.3;
     background: #79aec8;
 }
 
-.helper {
-    height: 25px !important;
-    opacity: 1;
-}
+
+
+
 
 
 .item-controls {
