@@ -95,10 +95,23 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
         // Activate and deactivate the CKEDITOR because it does not like
         // getting dragged or its underlying ID changed
 
+        CKEDITOR.config.width = '787';
+        CKEDITOR.config.height= '300';
+        CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4;pre';
+        CKEDITOR.config.toolbar = [[
+            'Maximize','-',
+            'Format','-',
+            'Bold','Italic','Underline','Strike','-',
+            'Subscript','Superscript','-',
+            'NumberedList','BulletedList','-',
+            'Anchor','Link','Unlink','-',
+            'Source'
+        ]];
+
         function initEditor() {
-            $('textarea[name^=app_richtext_set-]').each(function() {
+            $('textarea[name^=app_test_set-]').each(function() {
                 if (this.id.indexOf('__prefix__') === -1) {
-                    CKEDITOR.replace(this);
+                    CKEDITOR.replace(this, CKEDITOR.config);
                 }
             });
         }
@@ -106,7 +119,7 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
         function addEditor(row) {
             var id = row.find('textarea').attr('id');
             if (id) {
-                CKEDITOR.replace(id);
+                CKEDITOR.replace(id, CKEDITOR.config);
             }
         }
 
