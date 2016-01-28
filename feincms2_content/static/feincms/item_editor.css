@@ -79,34 +79,8 @@
     background: #79aec8;
 }
 
-
-
-
-
-
-.item-controls {
-    position: absolute;
-    top: 5px;
-    right: 32px;
-}
-
-.item-control-unit {
-    float:left;
-}
-
-.item-controls select {
-    margin-left: 7px;
-    height: 24px;
-}
-
-
-.machine-control .button {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
 .control-unit {
-    float:left;
+    float: left;
     padding: 0 20px 0 5px;
     border-left: 1px solid #eee;
 }
@@ -115,9 +89,15 @@
     border-left: none;
 }
 
-.control-unit span {
-    font-weight:bold;
+.control-unit select {
+    float: left;
+    position: relative;
+    top: 13px;
 }
+
+
+
+
 
 a.actionbutton {
     display: block;
@@ -147,17 +127,10 @@ a.pdfcontent:hover { background-position: -210px -70px; }
 a.audiocontent { background: url(img/plugins.png) no-repeat -350px 0; }
 a.audiocontent:hover { background-position: -350px -70px; }
 
-.control-unit select {
-    float: left;
-    position: relative;
-    top: 13px;
-}
-
 .empty-machine-msg {
     margin:10px 0px 20px 20px;
     font-size:14px;
 }
-
 
 .change-template-button {
     margin-left: 7em;
