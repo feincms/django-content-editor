@@ -123,10 +123,10 @@ class ItemEditor(ModelAdmin):
     def change_form_template(self):
         opts = self.model._meta
         return [
-            'admin/feincms/%s/%s/item_editor.html' % (
+            'admin/%s/%s/item_editor.html' % (
                 opts.app_label, opts.object_name.lower()),
-            'admin/feincms/%s/item_editor.html' % opts.app_label,
-            'admin/feincms/item_editor.html',
+            'admin/%s/item_editor.html' % opts.app_label,
+            'admin/item_editor.html',
         ]
 
     def get_fieldsets(self, request, obj=None):
