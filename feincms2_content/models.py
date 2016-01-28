@@ -12,7 +12,6 @@ import operator
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.functional import cached_property
 
 
 class _DataType(object):
@@ -79,7 +78,11 @@ class ContentProxy(object):
 
         def _assign_contents(self, item, region):
             c = contents[item][region.name]
-            setattr(self, region.name, c)
+            setattr(
+                self,
+                region.name,
+                sorted(c, key=operator.attrgetter('ordering')))
+
             if c or not region.inherited:
                 # We have contents, or an empty non-inheritable region
                 del regions[region.name]
