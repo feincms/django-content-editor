@@ -5,7 +5,10 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'feincms/item_editor.css' %}">
 <script type="text/javascript" src="{% static 'feincms/jquery-ui-1.11.4.custom.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'feincms/item_editor.js' %}"></script>
+<script id="item-editor-script"
+        type="text/javascript"
+        src="{% static 'feincms/item_editor.js' %}"
+        data-context="{{ item_editor_context }}"></script>
 <script type="text/javascript">
 /*
 type: content type identifier (required)
@@ -56,22 +59,11 @@ var CONTENT_TYPE_BUTTONS = [
 </script>
 
 <script type="text/javascript">
-    var ItemEditor = {
-        messages: {
-            delete: "{% trans 'Really delete item?' %}",
-            changeTemplate: "{% trans 'Really change template? All changes are saved.' %}",
-            changeTemplateWithMove: "{% trans 'Really change template? All changes are saved and content from %(source_regions)s is moved to %(target_region)s.' %}",
-            moveToRegion: "{% trans 'Move to region:' %}"
-        }
-    };
-
     IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
 
     REGION_MAP = [{% for region in original.template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
-
-    CONTENT_NAMES = {{ content_types|safe }};
 
     /* TODO Use events instead */
     var contentblock_init_handlers = [];

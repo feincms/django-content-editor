@@ -18,6 +18,10 @@ if (!Array.prototype.indexOf) {
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
+    /* .dataset.context instead of getAttribute would be nicer */
+    var ItemEditor = JSON.parse(
+        document.getElementById('item-editor-script').getAttribute('data-context'));
+
     function create_new_item_from_form(form, modname, modvar){
 
         var fieldset = $("<fieldset>").addClass("module aligned order-item item-wrapper-" + modvar);
@@ -248,7 +252,7 @@ if (!Array.prototype.indexOf) {
                     continue;
 
                 var $button = $('<a href="#" class="actionbutton" />');
-                $button.attr('title', CONTENT_NAMES[c.type]);
+                $button.attr('title', ItemEditor.contentTypes[c.type]);
 
                 $button.addClass(c.cssclass ? c.cssclass : c.type).bind('click', (function(c) {
                     return function() {
@@ -474,7 +478,7 @@ if (!Array.prototype.indexOf) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").lastIndexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, CONTENT_NAMES[content_type], content_type);
+                        elem, ItemEditor.contentTypes[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }

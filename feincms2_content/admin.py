@@ -7,6 +7,7 @@ import json
 from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.utils.text import capfirst
+from django.utils.translation import ugettext
 
 
 FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
@@ -50,12 +51,25 @@ class ItemEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    def get_content_type_map(self, request):
-        """ Prepare mapping of content types to their prettified names. """
+    def _item_editor_context(self, request):
         return json.dumps({
-            content_type.__name__.lower(): capfirst(
-                content_type._meta.verbose_name)
-            for content_type in self.model.plugins.values()
+            'contentTypes': {
+                content_type.__name__.lower(): capfirst(
+                    content_type._meta.verbose_name)
+                for content_type in self.model.plugins.values()
+            },
+            'messages': {
+                'delete': ugettext('Really delete item?'),
+                'changeTemplate': ugettext(
+                    'Really change template? All changes are saved.'
+                ),
+                'changeTemplateWithMove': ugettext(
+                    'Really change template? All changes are saved and'
+                    ' content from %(source_regions)s is moved to'
+                    ' %(target_region)s.'
+                ),
+                'moveToRegion': ugettext('Move to region:'),
+            },
         })
 
     def changeform_view(self, request, object_id=None, form_url='',
@@ -76,11 +90,11 @@ class ItemEditor(ModelAdmin):
                     request.POST['template_key']
 
         extra_context.update({
+            'item_editor_context': self._item_editor_context(request),
             'request': request,
             'model': self.model,
             'available_templates': getattr(
                 self.model, '_feincms_templates', ()),
-            'content_types': self.get_content_type_map(request),
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
         })
         return super(ItemEditor, self).changeform_view(
