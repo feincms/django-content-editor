@@ -59,7 +59,7 @@ class ItemEditor(ModelAdmin):
     def _item_editor_context(self, request, instance):
         return json.dumps({
             # XXX Duplicated code here and in feincms_admin_tags...
-            'contentTypes': {
+            'plugins': {
                 '%s_%s' % (
                     content_type._meta.app_label,
                     content_type._meta.model_name,

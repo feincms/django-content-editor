@@ -46,7 +46,7 @@ class CMSBaseTest(TestCase):
 
         self.assertTrue(
             'rawcontent' not in dict(
-                ExampleCMSBase.template.regions[0].content_types).keys())
+                ExampleCMSBase.template.regions[0].plugins).keys())
 
     def test_04_mediafilecontent_creation(self):
         # the medialibrary needs to be enabled, otherwise this test fails
@@ -81,7 +81,7 @@ class CMSBaseTest(TestCase):
         obj.region = 'region'
         self.assertEqual(obj.render(), 'hello')
 
-    def test_08_creating_two_content_types_in_same_application(self):
+    def test_08_creating_two_plugins_in_same_application(self):
         ExampleCMSBase.create_content_type(RawContent)
         ct = ExampleCMSBase.content_type_for(RawContent)
         self.assertEqual(

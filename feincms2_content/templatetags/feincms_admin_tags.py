@@ -19,7 +19,7 @@ def show_content_type_selection_widget(context, region):
     user = context['request'].user
     types = OrderedDict({None: []})
 
-    for ct in region._content_types:
+    for ct in region._plugins:
         # Skip cts that we shouldn't be adding anyway
         opts = ct._meta
         perm = opts.app_label + "." + get_permission_codename('add', opts)

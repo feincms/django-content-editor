@@ -585,7 +585,7 @@ class PagesTestCase(TestCase):
         self.assertEqual(page2._ct_inventory, {})
 
         # Prime Django content type cache
-        for ct in Page._feincms_content_types:
+        for ct in Page._feincms_plugins:
             ContentType.objects.get_for_model(ct)
 
         if hasattr(self, 'assertNumQueries'):
@@ -615,10 +615,10 @@ class PagesTestCase(TestCase):
     def test_14_richtext(self):
         # only create the content type to test the item editor
         # customization hooks
-        tmp = Page._feincms_content_types[:]
+        tmp = Page._feincms_plugins[:]
         type = Page.create_content_type(
             RichTextContent, regions=('notexists',))
-        Page._feincms_content_types = tmp
+        Page._feincms_plugins = tmp
 
         from django.utils.safestring import SafeData
         obj = type()
@@ -984,9 +984,9 @@ class PagesTestCase(TestCase):
 
         # do not register this model in the internal FeinCMS bookkeeping
         # structures
-        tmp = Page._feincms_content_types[:]
+        tmp = Page._feincms_plugins[:]
         type = Page.create_content_type(Something, regions=('notexists',))
-        Page._feincms_content_types = tmp
+        Page._feincms_plugins = tmp
 
         s = type(region='main', ordering='1')
 

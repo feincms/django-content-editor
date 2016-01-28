@@ -86,13 +86,13 @@ class ContentObjectMixin(TemplateResponseMixin):
         if r:
             return r
 
-        r = self.process_content_types()
+        r = self.process_plugins()
         if r:
             return r
 
         response = self.render_to_response(self.get_context_data())
 
-        r = self.finalize_content_types(response)
+        r = self.finalize_plugins(response)
         if r:
             return r
 
@@ -162,7 +162,7 @@ class ContentObjectMixin(TemplateResponseMixin):
             if r:
                 return r
 
-    def process_content_types(self):
+    def process_plugins(self):
         """
         Run the ``process`` method of all content types sporting one
         """
@@ -173,7 +173,7 @@ class ContentObjectMixin(TemplateResponseMixin):
         successful = False
 
         for content in self.object.content.all_of_type(tuple(
-                self.object._feincms_content_types_with_process)):
+                self.object._feincms_plugins_with_process)):
 
             try:
                 r = content.process(self.request, view=self)
@@ -201,14 +201,14 @@ class ContentObjectMixin(TemplateResponseMixin):
                     self.object,
                 ))
 
-    def finalize_content_types(self, response):
+    def finalize_plugins(self, response):
         """
         Runs finalize() on content types having such a method, adds headers and
         returns the final response.
         """
 
         for content in self.object.content.all_of_type(tuple(
-                self.object._feincms_content_types_with_finalize)):
+                self.object._feincms_plugins_with_finalize)):
 
             r = content.finalize(self.request, response)
             if r:

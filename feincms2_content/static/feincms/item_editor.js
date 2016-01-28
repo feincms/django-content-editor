@@ -204,7 +204,7 @@ if (!Array.prototype.indexOf) {
       return  v1 > v2 ? 1 : -1;
     }
 
-    function give_ordering_to_content_types() {
+    function give_ordering_to_plugins() {
       for (var i=0; i<ItemEditor.regionNames.length;i++) {
         var container = $("#"+ItemEditor.regionNames[i]+"_body div.order-machine");
         for (var j=0; j<container.children().length; j++) {
@@ -213,7 +213,7 @@ if (!Array.prototype.indexOf) {
       }
     }
 
-    function order_content_types_in_regions() {
+    function order_plugins_in_regions() {
       for (var i=0; i<ItemEditor.regionNames.length;i++) {
         var container = $("#"+ItemEditor.regionNames[i]+"_body div.order-machine");
         container.children().sort(sort_by_ordering).each(function() {
@@ -246,15 +246,15 @@ if (!Array.prototype.indexOf) {
             });
 
 
-            for (var i=0; i<CONTENT_TYPE_BUTTONS.length; i++) {
-                var c = CONTENT_TYPE_BUTTONS[i],
+            for (var i=0; i<PLUGIN_BUTTONS.length; i++) {
+                var c = PLUGIN_BUTTONS[i],
                     $option = $select.find('option[value=' + c.type + ']');
 
                 if (!$option.length)
                     continue;
 
                 var $button = $('<a href="#" class="actionbutton" />');
-                $button.attr('title', ItemEditor.contentTypes[c.type]);
+                $button.attr('title', ItemEditor.plugins[c.type]);
 
                 $button.addClass(c.cssclass ? c.cssclass : c.type).bind('click', (function(c) {
                     return function() {
@@ -455,7 +455,7 @@ if (!Array.prototype.indexOf) {
         template_key_select.data('original_value', template_key_select.val());
 
         $('form').submit(function(){
-            give_ordering_to_content_types();
+            give_ordering_to_plugins();
             var form = $(this);
             form.attr('action', form.attr('action')+window.location.hash);
             return true;
@@ -480,7 +480,7 @@ if (!Array.prototype.indexOf) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").lastIndexOf("_"));
                     var item = create_new_item_from_form(
-                        elem, ItemEditor.contentTypes[content_type], content_type);
+                        elem, ItemEditor.plugins[content_type], content_type);
                     add_fieldset(region_id, item, {where:'append'});
                     update_item_controls(item, region_id);
                 }
@@ -502,7 +502,7 @@ if (!Array.prototype.indexOf) {
             }
         });
 
-        order_content_types_in_regions();
+        order_plugins_in_regions();
 
         // hide now-empty formsets
         $('div.feincms_inline').hide();
