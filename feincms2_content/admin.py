@@ -82,6 +82,7 @@ class ItemEditor(ModelAdmin):
             },
             'regionNames': [r.name for r in instance.template.regions],
             'regionTitles': [r.title for r in instance.template.regions],
+            'feincmsContentFieldsetName': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
     def render_change_form(self, request, context, **kwargs):
