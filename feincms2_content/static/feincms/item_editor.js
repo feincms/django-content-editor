@@ -1,4 +1,3 @@
-/* global interpolate */
 // IE<9 lacks Array.prototype.indexOf
 if (!Array.prototype.indexOf) {
     Array.prototype.indexOf = function(needle) {
@@ -22,9 +21,19 @@ django.jQuery(function($){
     var ItemEditor = JSON.parse(
         document.getElementById('item-editor-script').getAttribute('data-context'));
 
-    $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'))
+    $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
 
-    var inlines = $('.feincms_inline .inline-related').detach();
+    var inlineGroups = (function() {
+        var selector = [];
+        $.each(ItemEditor.plugins, function(key, value) {
+            selector.push('#' + key + '_set-group');
+        });
+        return $(selector.join(', '));
+    })();
+
+    console.log(inlineGroups);
+
+    var inlines = inlineGroups.find('.inline-related').detach();
     inlines.sort(function inlinesCompareFunction(a, b) {
         var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
         var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
