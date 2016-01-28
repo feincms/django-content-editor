@@ -28,9 +28,9 @@ django.jQuery(function($){
         orderMachine = $('.order-machine'),
         pluginInlineGroups = (function selectPluginInlineGroups() {
             var selector = [];
-            $.each(ItemEditor.plugins, function(key, value) {
-                selector.push('#' + key + '_set-group');
-            });
+            for (var i=0; i < ItemEditor.plugins.length; i++) {
+                selector.push('#' + ItemEditor.plugins[i][0] + '_set-group');
+            }
             return $(selector.join(', '));
         })();
 
@@ -42,6 +42,7 @@ django.jQuery(function($){
         return Math.sign(aOrdering - bOrdering);
     });
     orderMachine.append(inlines);
+    pluginInlineGroups.hide();
 
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
@@ -121,5 +122,22 @@ django.jQuery(function($){
             orderMachine.sortable('cancel');
         }
     });
+
+
+    (function buildPluginDropdown() {
+        var select = document.createElement('select');
+        select.options[0] = new Option(ItemEditor.messages.createNew, '', true);
+
+        for (var i=0; i<ItemEditor.plugins.length; i++) {
+            select.options[i + 1] = new Option(ItemEditor.plugins[i][1], ItemEditor.plugins[i][0]);
+        }
+
+        select.addEventListener('change', function() {
+            $('#' + select.value + '_set-group .add-row a').click();
+            select.value = '';
+        });
+
+        $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
+    })();
 
 });

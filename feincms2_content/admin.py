@@ -64,16 +64,13 @@ class ItemEditor(ModelAdmin):
         instance = context.get('original')
 
         return json.dumps({
-            # XXX Duplicated code here and in feincms_admin_tags...
-            'plugins': {
+            'plugins': [(
                 '%s_%s' % (
                     plugin._meta.app_label,
                     plugin._meta.model_name,
-                ): capfirst(
-                    plugin._meta.verbose_name
-                )
-                for plugin in plugins
-            },
+                ),
+                capfirst(plugin._meta.verbose_name)
+            ) for plugin in plugins],
             'messages': {
                 'delete': ugettext('Really delete item?'),
                 'changeTemplate': ugettext(
@@ -85,6 +82,7 @@ class ItemEditor(ModelAdmin):
                     ' %(target_region)s.'
                 ),
                 'moveToRegion': ugettext('Move to region:'),
+                'createNew': ugettext('Create new element'),
             },
             'regionNames': [r.name for r in instance.template.regions],
             'regionTitles': [r.title for r in instance.template.regions],
