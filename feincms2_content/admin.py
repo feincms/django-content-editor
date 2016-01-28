@@ -30,6 +30,7 @@ class ItemEditorInline(StackedInline):
     form = ItemEditorForm
     extra = 0
     fk_name = 'parent'
+    plugin = True
 
     @classmethod
     def create(cls, model, **kwargs):
@@ -54,7 +55,14 @@ class ItemEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    def _item_editor_context(self, request, instance):
+    def _item_editor_context(self, request, context):
+        plugins = [
+            iaf.opts.model
+            for iaf in context.get('inline_admin_formsets', [])
+            if getattr(iaf.opts, 'plugin', False)
+        ]
+        instance = context.get('original')
+
         return json.dumps({
             # XXX Duplicated code here and in feincms_admin_tags...
             'plugins': {
@@ -64,7 +72,7 @@ class ItemEditor(ModelAdmin):
                 ): capfirst(
                     plugin._meta.verbose_name
                 )
-                for plugin in self.model.plugins.values()
+                for plugin in plugins
             },
             'messages': {
                 'delete': ugettext('Really delete item?'),
@@ -112,7 +120,7 @@ class ItemEditor(ModelAdmin):
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             'item_editor_context': self._item_editor_context(
                 request,
-                context.get('original'),
+                context,
             ),
         })
         return super(ItemEditor, self).render_change_form(
