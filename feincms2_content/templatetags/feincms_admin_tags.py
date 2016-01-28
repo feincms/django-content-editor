@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 from django import template
 from django.contrib.auth import get_permission_codename
+from django.utils.text import capfirst
 
 
 register = template.Library()
@@ -28,6 +29,12 @@ def show_content_type_selection_widget(context, region):
         types.setdefault(
             getattr(ct, 'optgroup', None),
             [],
-        ).append((ct.__name__.lower, ct._meta.verbose_name))
+        ).append((
+            '%s_%s' % (
+                ct._meta.app_label,
+                ct._meta.model_name,
+            ),
+            capfirst(ct._meta.verbose_name),
+        ))
 
     return {'types': types}

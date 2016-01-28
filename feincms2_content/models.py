@@ -131,7 +131,10 @@ def create_plugin_base(content_model):
 
     @python_2_unicode_compatible
     class PluginBase(models.Model):
-        parent = models.ForeignKey(content_model)
+        parent = models.ForeignKey(
+            content_model,
+            related_name='%(app_label)s_%(class)s_set',
+        )
         region = models.CharField(max_length=255)
         ordering = models.IntegerField(_('ordering'), default=0)
 

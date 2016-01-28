@@ -34,11 +34,16 @@ class ItemEditorInline(StackedInline):
     classes = ('feincms',)  # noqa https://github.com/django/django/commit/5399ccc0f4257676981ef7937ea84be36f7058a6
 
     @classmethod
-    def create(cls, model_class):
-        class Inline(cls):
-            model = model_class
-
-        return Inline
+    def create(cls, model, **kwargs):
+        kwargs['model'] = model
+        return type(
+            str('ItemEditorInline_%s_%s' % (
+                model._meta.app_label,
+                model._meta.model_name,
+            )),
+            (cls,),
+            kwargs,
+        )
 
 
 class ItemEditor(ModelAdmin):
@@ -53,9 +58,14 @@ class ItemEditor(ModelAdmin):
 
     def _item_editor_context(self, request, instance):
         return json.dumps({
+            # XXX Duplicated code here and in feincms_admin_tags...
             'contentTypes': {
-                content_type.__name__.lower(): capfirst(
-                    content_type._meta.verbose_name)
+                '%s_%s' % (
+                    content_type._meta.app_label,
+                    content_type._meta.model_name,
+                ): capfirst(
+                    content_type._meta.verbose_name
+                )
                 for content_type in self.model.plugins.values()
             },
             'messages': {
