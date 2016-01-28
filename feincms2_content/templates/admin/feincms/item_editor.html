@@ -71,10 +71,7 @@ var CONTENT_TYPE_BUTTONS = [
     REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
     ACTIVE_REGION = 0;
 
-    CONTENT_NAMES = {
-        {% for name, value in content_types %}'{{ value }}': '{{ name|capfirst }}'{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    };
+    CONTENT_NAMES = {{ content_types|safe }};
 
     /* TODO Use events instead */
     var contentblock_init_handlers = [];
