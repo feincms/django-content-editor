@@ -22,6 +22,8 @@ if (!Array.prototype.indexOf) {
     var ItemEditor = JSON.parse(
         document.getElementById('item-editor-script').getAttribute('data-context'));
 
+    var ACTIVE_REGION = 0;
+
     function create_new_item_from_form(form, modname, modvar){
 
         var fieldset = $("<fieldset>").addClass("module aligned order-item item-wrapper-" + modvar);
@@ -57,7 +59,7 @@ if (!Array.prototype.indexOf) {
 
         // Insert control unit
         var insert_control = $("<div>").addClass("item-control-unit");
-        var select_content = SELECTS[REGION_MAP[target_region_id]].clone();
+        var select_content = SELECTS[ItemEditor.regionNames[target_region_id]].clone();
 
         select_content.change(function() {
             var modvar = select_content.val();
@@ -72,14 +74,14 @@ if (!Array.prototype.indexOf) {
         item_controls.append(insert_control);
 
         // Move control unit
-        if (REGION_MAP.length > 1) {
+        if (ItemEditor.regionNames.length > 1) {
             var wrp = [];
             wrp.push('<div class="item-control-unit move-control"><select name="item-move-select">');
             wrp.push('<option disabled selected>' + ItemEditor.messages.moveToRegion + '</option>');
 
-            for (var i=0; i < REGION_MAP.length; i++) {
+            for (var i=0; i < ItemEditor.regionNames.length; i++) {
                 if (i != target_region_id) { // Do not put the target region in the list
-                    wrp.push('<option value="'+REGION_MAP[i]+'">'+REGION_NAMES[i]+'</option>');
+                    wrp.push('<option value="'+ItemEditor.regionNames[i]+'">'+ItemEditor.regionTitles[i]+'</option>');
                 }
             }
             wrp.push('</select>');
@@ -87,7 +89,7 @@ if (!Array.prototype.indexOf) {
             var move_control = $(wrp.join(""));
             move_control.find("select").change(function(){
                 var move_to = $(this).val();
-                move_item(REGION_MAP.indexOf(move_to), item);
+                move_item(ItemEditor.regionNames.indexOf(move_to), item);
             });
             item_controls.append(move_control); // Add new one
         }
@@ -116,7 +118,7 @@ if (!Array.prototype.indexOf) {
 
         item.hide();
         if(how.where == 'append' || how.where == 'prepend'){
-            $("#"+ REGION_MAP[region_id] +"_body").children("div.order-machine")[how.where](item);
+            $("#"+ ItemEditor.regionNames[region_id] +"_body").children("div.order-machine")[how.where](item);
         }
         else if(how.where == 'insertBefore' || how.where == 'insertAfter'){
             if(how.relative_to){
@@ -154,18 +156,18 @@ if (!Array.prototype.indexOf) {
         if (field=="delete-field")
             item.find("."+field).attr("checked",value);
         else if (field=="region-choice-field") {
-            var old_region_id = REGION_MAP.indexOf(item.find("."+field).val());
-            item.find("."+field).val(REGION_MAP[value]);
+            var old_region_id = ItemEditor.regionNames.indexOf(item.find("."+field).val());
+            item.find("."+field).val(ItemEditor.regionNames[value]);
 
             // show/hide the empty machine message in the source and
             // target region.
-            old_region_item = $("#"+REGION_MAP[old_region_id]+"_body");
+            old_region_item = $("#"+ItemEditor.regionNames[old_region_id]+"_body");
             if (old_region_item.children("div.order-machine").children().length == 0)
                 old_region_item.children("div.empty-machine-msg").show();
             else
                 old_region_item.children("div.empty-machine-msg").hide();
 
-            new_region_item = $("#"+REGION_MAP[value]+"_body");
+            new_region_item = $("#"+ItemEditor.regionNames[value]+"_body");
             new_region_item.children("div.empty-machine-msg").hide();
         }
         else
@@ -203,8 +205,8 @@ if (!Array.prototype.indexOf) {
     }
 
     function give_ordering_to_content_types() {
-      for (var i=0; i<REGION_MAP.length;i++) {
-        var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
+      for (var i=0; i<ItemEditor.regionNames.length;i++) {
+        var container = $("#"+ItemEditor.regionNames[i]+"_body div.order-machine");
         for (var j=0; j<container.children().length; j++) {
           set_item_field_value(container.find("fieldset.order-item:eq("+j+")"), "order-field", j);
         }
@@ -212,8 +214,8 @@ if (!Array.prototype.indexOf) {
     }
 
     function order_content_types_in_regions() {
-      for (var i=0; i<REGION_MAP.length;i++) {
-        var container = $("#"+REGION_MAP[i]+"_body div.order-machine");
+      for (var i=0; i<ItemEditor.regionNames.length;i++) {
+        var container = $("#"+ItemEditor.regionNames[i]+"_body div.order-machine");
         container.children().sort(sort_by_ordering).each(function() {
           container.append(this);
         });
@@ -317,7 +319,7 @@ if (!Array.prototype.indexOf) {
 
     $(document).ready(function($){
         create_tabbed('#main_wrapper', '#main', function(tab_str){
-            ACTIVE_REGION = REGION_MAP.indexOf(tab_str);
+            ACTIVE_REGION = ItemEditor.regionNames.indexOf(tab_str);
             // make it possible to open current tab on page reload
             window.location.replace('#tab_'+tab_str);
         });
@@ -382,7 +384,7 @@ if (!Array.prototype.indexOf) {
                     set_item_field_value(item,"delete-field","checked");
                 }
                 item.fadeOut(200, function() {
-                  var region_item = $("#"+REGION_MAP[ACTIVE_REGION]+"_body");
+                  var region_item = $("#"+ItemEditor.regionNames[ACTIVE_REGION]+"_body");
                   if (region_item.children("div.order-machine").children(":visible").length == 0) {
                       region_item.children("div.empty-machine-msg").show();
                   }
@@ -472,9 +474,9 @@ if (!Array.prototype.indexOf) {
             elem.find("input[name$=-ordering]").addClass("order-field");
 
             if (!elem.hasClass("empty-form")){
-                var region_id = REGION_MAP.indexOf(
+                var region_id = ItemEditor.regionNames.indexOf(
                     elem.find(".region-choice-field").val());
-                if (REGION_MAP[region_id] != undefined) {
+                if (ItemEditor.regionNames[region_id] != undefined) {
                     var content_type = elem.attr("id").substr(
                         0, elem.attr("id").lastIndexOf("_"));
                     var item = create_new_item_from_form(

@@ -51,7 +51,7 @@ class ItemEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    def _item_editor_context(self, request):
+    def _item_editor_context(self, request, instance):
         return json.dumps({
             'contentTypes': {
                 content_type.__name__.lower(): capfirst(
@@ -70,6 +70,8 @@ class ItemEditor(ModelAdmin):
                 ),
                 'moveToRegion': ugettext('Move to region:'),
             },
+            'regionNames': [r.name for r in instance.template.regions],
+            'regionTitles': [r.title for r in instance.template.regions],
         })
 
     def changeform_view(self, request, object_id=None, form_url='',
@@ -90,7 +92,6 @@ class ItemEditor(ModelAdmin):
                     request.POST['template_key']
 
         extra_context.update({
-            'item_editor_context': self._item_editor_context(request),
             'request': request,
             'model': self.model,
             'available_templates': getattr(
@@ -108,6 +109,11 @@ class ItemEditor(ModelAdmin):
                         context['adminform'].form.initial['template_key'])
                 # ensure that initially-selected template in form is also
                 # used to render the initial regions in the item editor
+
+        context['item_editor_context'] = self._item_editor_context(
+            request,
+            context.get('original'),
+        )
         return super(
             ItemEditor, self).render_change_form(request, context, **kwargs)
 

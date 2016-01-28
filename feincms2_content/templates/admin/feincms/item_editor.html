@@ -61,10 +61,6 @@ var CONTENT_TYPE_BUTTONS = [
 <script type="text/javascript">
     IMG_DELETELINK_PATH = "{% static 'feincms/img/icon_deletelink.gif' %}";
 
-    REGION_MAP = [{% for region in original.template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
-    REGION_NAMES = [{% for region in original.template.regions %}'{{ region.title|capfirst }}'{% if not forloop.last %}, {% endif %}{% endfor %}];
-    ACTIVE_REGION = 0;
-
     /* TODO Use events instead */
     var contentblock_init_handlers = [];
     var contentblock_move_handlers = {poorify: [
