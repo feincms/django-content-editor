@@ -324,37 +324,6 @@ if (!Array.prototype.indexOf) {
             window.location.replace('#tab_'+tab_str);
         });
 
-        /* Rearrange the options fieldsets so we can wrap them into a tab bar */
-        var options_fieldsets = $('fieldset.collapse');
-        options_fieldsets.wrapAll('<div id="extension_options_wrapper" />');
-        var option_wrapper = $('#extension_options_wrapper');
-        var panels = [];
-
-        options_fieldsets.each(function(idx, elem) {
-            var option_title = $('h2', $(elem)).text();
-            var c = $(elem).children('div');
-            var id_base = 'extension_option_'+ idx;
-
-            $(elem).remove();
-
-            var paren = option_title.indexOf(' (');
-            if(paren > 0)
-                option_title = option_title.substr(0, paren);
-
-            option_wrapper.append('<div class="navi_tab" id="'+ id_base +'_tab">' +
-                                   option_title +
-                                   '</div>');
-            var panel = $('<fieldset class="module aligned" style="clear: both; display: none" id="' + id_base + '_body"></fieldset>');
-            panel.html(c);
-            panels.push(panel);
-        });
-
-        option_wrapper.append('<div id="extension_options" />');
-        $('#extension_options').html(panels);
-
-        create_tabbed('#extension_options_wrapper', '#extension_options');
-        /* Done morphing extension options into tabs */
-
         // save content type selects for later use
         save_plugin_selects();
 
