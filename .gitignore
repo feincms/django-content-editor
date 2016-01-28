@@ -16,3 +16,4 @@ tests/test.zip
 /tests/.coverage
 /tests/htmlcov
 venv
+/feincms2_content.egg-info
