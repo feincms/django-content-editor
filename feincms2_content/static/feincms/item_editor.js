@@ -19,7 +19,8 @@ django.jQuery(function($){
 
     /* .dataset.context instead of getAttribute would be nicer */
     var ItemEditor = JSON.parse(
-        document.getElementById('item-editor-script').getAttribute('data-context'));
+            document.getElementById('item-editor-script').getAttribute('data-context')),
+        currentRegion;
 
     $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
 
@@ -58,21 +59,20 @@ django.jQuery(function($){
     $(document).on('formset:added', function newForm(event, row, optionsPrefix) {
         moveEmptyFormsToEnd();
 
-        var currentRegion = $('.tabs>.active').data('region');
         row.find('.field-region input').val(currentRegion);
         row.attr('data-region', currentRegion);
     });
 
-    function selectRegion(name) {
-        $('.tabs>div').removeClass('active').filter('[data-region="' + name + '"]').addClass('active');
-        $('.order-machine .inline-related').not('.empty-form').hide().filter('[data-region="' + name + '"]').show();
-    }
-
-    $(document).on('click', '.tabs>div', function() {
-        selectRegion($(this).data('region'));
-    });
-
-    $('.tabs>div:first').trigger('click');
+    (function() {
+        var tabs = $('.tabs>div');
+        tabs.on('click', function() {
+            currentRegion = $(this).data('region');
+            $('.tabs>div').removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
+            $('.order-machine .inline-related').not('.empty-form').hide().filter('[data-region="' + currentRegion + '"]').show();
+        });
+        tabs.eq(0).trigger('click');
+        if (tabs.length <= 1) tabs.hide();
+    })();
 
     $('.order-machine').sortable({
         handle: 'h3',
