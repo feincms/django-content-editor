@@ -44,6 +44,16 @@ django.jQuery(function($) {
         row.find('.field-region input').val('main');  // TODO Current region.
     });
 
+    function selectRegion(name) {
+        $('.tabs>div').removeClass('active').filter('[data-region="' + name + '"]').addClass('active');
+        $('.order-machine .inline-related').not('.empty-form').hide().filter('[data-region="' + name + '"]').show();
+    }
+
+    $(document).on('click', '.tabs>div', function() {
+        selectRegion($(this).data('region'));
+    });
+
+    $('.tabs>div:first').trigger('click');
 
     $('.order-machine').sortable({
         handle: 'h3'
@@ -135,9 +145,9 @@ var PLUGIN_BUTTONS = [
   {{ block.super }}
   <div id="content-editor-fieldset" style="display: none">
     <div id="main_wrapper">
-        <div class="tabs clearfix">
+        <div class="tabs">
             {% for region in original.template.regions %}
-                <div class="navi_tab" id="{{ region.name }}_tab">{{ region.title }}</div>
+                <div data-region="{{ region.name }}">{{ region.title }}</div>
             {% endfor %}
         </div>
         <div class="panel">

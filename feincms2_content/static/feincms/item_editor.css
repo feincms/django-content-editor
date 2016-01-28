@@ -57,9 +57,7 @@
 
 
 
-
-
-.navi_tab {
+.tabs>div {
     float:left;
     padding: 8px 10px;
     cursor:pointer;
@@ -71,54 +69,10 @@
     border: 1px solid #eee;
     text-transform: uppercase;
 }
-.tab_active {
+.tabs>.active {
     background: #79aec8;
     color: white;
     border-color: #79aec8;
-}
-
-#main {
-    clear:both;
-    padding: 10px 10px 10px 10px;
-    border: 1px solid #eee;
-    margin: 0 0 10px 0;
-}
-
-.order-item {
-    margin: 0 0 10px 0;
-    position:relative;
-
-}
-
-.order-item h2 {
-    background-image: url('img/arrow-move.png');
-    background-repeat: no-repeat;
-    background-position: 6px 9px;
-}
-
-.order-item .handle {
-    display: inline-block;
-    height: 14px;
-    width: 15px;
-    cursor: move;
-}
-
-.order-item .collapse {
-    cursor: pointer;
-    /*color: #444;*/
-    font-weight: normal;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
-}
-
-.order-item .collapse:hover {
-    opacity: 0.7;
-}
-
-.item-delete {
-    cursor:pointer;
-    float:right;
-    margin: 4px 3px 0px 0;
 }
 
 .highlight, .helper {
@@ -129,31 +83,11 @@
     background: #79aec8;
 }
 
-.helper{
+.helper {
     height: 25px !important;
     opacity: 1;
 }
 
-.button {
-    margin:5px; padding:5px;
-    font-weight: bold;
-    cursor:pointer;
-    border: 1px solid #678;
-}
-
-select {
-    max-width: 580px;
-}
-
-textarea {
-    width: 580px;
-    margin-top:5px;
-    margin-bottom:5px;
-}
-
-.inline-group .tabular textarea {
-    width: auto;
-}
 
 .item-controls {
     position: absolute;
@@ -229,10 +163,6 @@ a.audiocontent:hover { background-position: -350px -70px; }
     font-size:14px;
 }
 
-td span select {
-    width:600px;
-}
-
 
 .change-template-button {
     margin-left: 7em;
@@ -245,39 +175,3 @@ td span select {
 
 /* overwrite flat theme default label width because of problems with the CKEditor */
 .aligned .text label { width: auto; }
-
-
-/* django suit hacks */
-/*********************/
-
-#suit-center #main {
-    clear:none;
-}
-
-#suit-center .panel {
-    padding-top: 15px;
-}
-
-#suit-center .form-horizontal .inline-related fieldset {
-    margin-top: 10px;
-}
-
-#suit-center .panel h2 {
-    color: white;
-    font-size: 13px;
-    line-height: 12px;
-    margin-left: 0;
-    text-shadow: none;
-}
-
-#suit-center .item-delete {
-    margin: 3px 5px 0 0;
-}
-
-#suit-center .order-item .handle {
-    height: 36px;
-}
-
-#suit-center .order-machine .order-item {
-    margin-top: 10px;
-}
