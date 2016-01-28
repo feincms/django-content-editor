@@ -13,13 +13,24 @@
 
 
 django.jQuery(function($) {
+    $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
+
     var inlines = $('.feincms_inline .inline-related').detach();
     inlines.sort(function inlinesCompareFunction(a, b) {
         var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
         var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
         return Math.sign(aOrdering - bOrdering);
     });
-    $('#main_body .order-machine').append(inlines);
+    $('.order-machine').append(inlines);
+
+    $('.order-machine .inline-related').not('.empty-form').each(function assignRegionDataAttribute() {
+        var $this = $(this),
+            region = $this.find('.field-region input').val();
+
+        // Have to use attr() here because we want the data attribute to
+        // be visible to selectors.
+        $this.attr('data-region', region);
+    });
 
     function moveEmptyFormsToEnd() {
         $('.order-machine').append(
@@ -124,46 +135,39 @@ var PLUGIN_BUTTONS = [
   {{ block.super }}
   <div id="content-editor-fieldset" style="display: none">
     <div id="main_wrapper">
-        {% for region in original.template.regions %}
-            <div class="navi_tab" id="{{ region.name }}_tab">{{ region.title }}</div>
-        {% endfor %}
-        <div id="main">
+        <div class="tabs clearfix">
             {% for region in original.template.regions %}
-            <div id="{{ region.name }}_body" class="panel">
-                <div class="empty-machine-msg">
-
-                    {% if adding_translation and forloop.first %}
-                        <div>
-                            <p>
-                                <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
-                            </p>
-                        </div>
-                    {% else %}
-                        {% trans "Region empty" %}
-                    {% endif %}
-
-                </div>
-                <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
-                    {% if region.inherited %}
-                        {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
-                    {% endif %}
-                </div>
-
-                <div class="order-machine"></div>
-
-                <div class="machine-control">
-                    <div class="control-unit">
-                        {% show_plugin_selection_widget region %}
-                    </div>
-                </div>
-             </div>
+                <div class="navi_tab" id="{{ region.name }}_tab">{{ region.title }}</div>
             {% endfor %}
+        </div>
+        <div class="panel">
+            {% comment %}<!--
+            <div class="empty-machine-msg">
+                {% if adding_translation and forloop.first %}
+                    <div>
+                        <p>
+                            <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
+                        </p>
+                    </div>
+                {% else %}
+                    {% trans "Region empty" %}
+                {% endif %}
+            </div>
+            <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
+                {% if region.inherited %}
+                    {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
+                {% endif %}
+            </div>
+            -->{% endcomment %}
+
+            <div class="order-machine"></div>
+
+            <div class="machine-control">
+                <div class="control-unit">
+                    {# % show_plugin_selection_widget region % #}
+                </div>
+            </div>
         </div>
     </div>
   </div>
-  <script type="text/javascript">
-    django.jQuery(function($){
-      $("h2:contains('{{ FEINCMS_CONTENT_FIELDSET_NAME }}')").parent().replaceWith($("#main_wrapper"));
-    });
-  </script>
 {% endblock %}
