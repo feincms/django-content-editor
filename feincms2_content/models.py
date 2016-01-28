@@ -136,7 +136,7 @@ def create_plugin_base(content_model):
             related_name='%(app_label)s_%(class)s_set',
         )
         region = models.CharField(max_length=255)
-        ordering = models.IntegerField(_('ordering'), default=0)
+        ordering = models.IntegerField(default=0)
 
         class Meta:
             abstract = True
