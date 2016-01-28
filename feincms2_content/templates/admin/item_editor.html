@@ -41,7 +41,10 @@ django.jQuery(function($) {
 
     $(document).on('formset:added', function newForm(event, row, optionsPrefix) {
         moveEmptyFormsToEnd();
-        row.find('.field-region input').val('main');  // TODO Current region.
+
+        var currentRegion = $('.tabs>.active').data('region');
+        row.find('.field-region input').val(currentRegion);
+        row.attr('data-region', currentRegion);
     });
 
     function selectRegion(name) {
