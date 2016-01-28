@@ -72,16 +72,10 @@ var CONTENT_TYPE_BUTTONS = [
         ]};
 
     var template_regions = {
-            {% for template in available_templates.values %}'{{ template.key }}': [{% for region in template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
+            {% for template in available_templates.values %}'{{ template.name }}': [{% for region in template.regions %}'{{ region.name }}'{% if not forloop.last %}, {% endif %}{% endfor %}]{% if not forloop.last %},{% endif %}
             {% endfor %}
     };
-
-    django.jQuery(document).ready(function($){
-        {% block extra-init-js %}{# /* do not use this block, use feincms_item_editor_includes instead */ #}{% endblock %}
-    });
 </script>
-{% for inc in model.feincms_item_editor_includes.head %}{% include inc %}{% endfor %}
-
 {% endblock %}
 
 {% block after_related_objects %} {# as good a place as any... #}
