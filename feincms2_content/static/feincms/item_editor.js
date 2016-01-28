@@ -92,10 +92,12 @@ django.jQuery(function($){
         return true;
     });
 
-    $(document).keydown(function handleCmdS(event) {
-        if(event.which == 83 && event.metaKey) {
+    $(document).keydown(function handleKeys(event) {
+        if (event.which == 83 && event.metaKey) {
             $('form input[name=' + (event.shiftKey ? '_continue' : '_save') + ']').click();
             return false;
+        } else if (event.which == 27) {
+            $('.order-machine').sortable('cancel');
         }
     });
 
