@@ -79,8 +79,9 @@ django.jQuery(function($){
         row.find('.field-region input').val(currentRegion);
         row.attr('data-region', currentRegion);
 
-        // The formset has already been added at this time — select the next-to-last
-        // instead of the last.
+        // Fill in some ordering value, because when inserting inlines
+        // in-between other inlines we might want to be able to sort
+        // by ordering again.
         var nextToLast = orderMachine.find('.field-ordering input:not([name*=__prefix__])').eq(-2);
         row.find('.field-ordering input').val(10 + +nextToLast.val());
     });
