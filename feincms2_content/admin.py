@@ -92,6 +92,11 @@ class ItemEditor(ModelAdmin):
         })
 
     def render_change_form(self, request, context, **kwargs):
+        # insert dummy object as 'original' if no original set yet so
+        # template code can grabdefaults for template, etc.
+        if not context.get('original'):
+            context['original'] = self.model()
+
         if kwargs.get('add'):
             if request.method == 'GET' and 'adminform' in context:
                 if 'template_key' in context['adminform'].form.initial:
@@ -99,10 +104,6 @@ class ItemEditor(ModelAdmin):
                         context['adminform'].form.initial['template_key'])
                 # ensure that initially-selected template in form is also
                 # used to render the initial regions in the item editor
-
-        # insert dummy object as 'original' if no original set yet so
-        # template code can grabdefaults for template, etc.
-        context.setdefault('original', self.model())
 
         # If there are errors in the form, we need to preserve the object's
         # template as it was set when the user attempted to save it, so
