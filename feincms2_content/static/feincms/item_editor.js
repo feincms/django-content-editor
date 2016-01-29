@@ -19,44 +19,57 @@ django.jQuery(function($){
 
     // .dataset.context instead of getAttribute would be nicer
     var ItemEditor = JSON.parse(
-            document.getElementById('item-editor-script').getAttribute('data-context'));
+        document.getElementById('item-editor-script').getAttribute('data-context'));
 
     // Move the item editor to its place
     $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
 
     var currentRegion,
-        orderMachine = $('.order-machine'),
-        pluginInlineGroups = (function selectPluginInlineGroups() {
-            var selector = [];
-            for (var i=0; i < ItemEditor.plugins.length; i++) {
-                selector.push('#' + ItemEditor.plugins[i][0] + '_set-group');
-            }
-            return $(selector.join(', '));
-        })();
-
-    // Order inlines according to their `ordering` value
-    var inlines = pluginInlineGroups.find('.inline-related').detach();
-    inlines.sort(function inlinesCompareFunction(a, b) {
-        var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
-        var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
-        return Math.sign(aOrdering - bOrdering);
-    });
-    orderMachine.append(inlines);
-    pluginInlineGroups.hide();
+        orderMachine = $('.order-machine');
 
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
     }
-    moveEmptyFormsToEnd();
+
+    function reorderInlines(context) {
+        var inlines = context.find('.inline-related').detach();
+        inlines.sort(function inlinesCompareFunction(a, b) {
+            var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
+            var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
+            return Math.sign(aOrdering - bOrdering);
+        });
+        orderMachine.append(inlines);
+        moveEmptyFormsToEnd();
+    }
 
     // Assing data-region to all inlines.
     // We also want to the data attribute to be visible to selectors (that's why we're using $.attr)
-    orderMachine.find('.inline-related:not(.empty-form)').each(function assignRegionDataAttribute() {
-        var $this = $(this),
-            region = $this.find('.field-region input').val();
+    function assignRegionDataAttribute() {
+        orderMachine.find('.inline-related:not(.empty-form)').each(function() {
+            var $this = $(this),
+                region = $this.find('.field-region input').val();
 
-        $this.attr('data-region', region);
-    });
+            $this.attr('data-region', region);
+        });
+    }
+
+
+
+
+    var pluginInlineGroups = (function selectPluginInlineGroups() {
+        var selector = [];
+        for (var i=0; i < ItemEditor.plugins.length; i++) {
+            selector.push('#' + ItemEditor.plugins[i][0] + '_set-group');
+        }
+        return $(selector.join(', '));
+    })();
+
+    reorderInlines(pluginInlineGroups);
+    pluginInlineGroups.hide();
+    assignRegionDataAttribute();
+
+
+
 
     // Always move empty forms to the end, because new plugins are inserted
     // just before its empty form. Also, assign region data.
@@ -65,6 +78,11 @@ django.jQuery(function($){
 
         row.find('.field-region input').val(currentRegion);
         row.attr('data-region', currentRegion);
+
+        // The formset has already been added at this time — select the next-to-last
+        // instead of the last.
+        var nextToLast = orderMachine.find('.field-ordering input:not([name*=__prefix__])').eq(-2);
+        row.find('.field-ordering input').val(10 + +nextToLast.val());
     });
 
     // Initialize tabs and currentRegion.
@@ -105,7 +123,7 @@ django.jQuery(function($){
     // Fill in ordering field and try to keep the current region tab (location hash).
     $('form').submit(function(){
         $('.field-ordering input').each(function assignOrdering(index) {
-            this.value = index + 1; // Avoid default=0 just because.
+            this.value = 10 * (index + 1); // Avoid default=0 just because.
         });
 
         var form = $(this);
