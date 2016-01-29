@@ -32,9 +32,9 @@ django.jQuery(function($){
     }
 
     function reorderInlines(context) {
-        var context = context || orderMachine;
+        context = context || orderMachine;
         var inlines = context.find('.inline-related');
-        inlines.each(function() {
+        inlines.not('.empty-form').each(function() {
             $(document).trigger('itemeditor:deactivate', [$(this)]);
         });
         inlines.detach();
@@ -45,7 +45,7 @@ django.jQuery(function($){
         });
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();
-        inlines.each(function() {
+        inlines.not('.empty-form').each(function() {
             $(document).trigger('itemeditor:activate', [$(this)]);
         });
 
@@ -119,7 +119,7 @@ django.jQuery(function($){
     });
 
     $(document).on('formset:removed', function resetInlines(event, row, optionsPrefix) {
-        orderMachine.find('.inline-related.last-related').each(function() {
+        orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
             $(document).trigger('itemeditor:deactivate', [$(this)]);
         });
 
