@@ -40,6 +40,7 @@ django.jQuery(function($){
         });
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();
+        // TODO breaks CKEDITOR
     }
 
     function buildDropdown(items, title) {
@@ -60,6 +61,14 @@ django.jQuery(function($){
 
             $this.attr('data-region', region);
         });
+    }
+
+    function setBiggestOrdering(row) {
+        var orderings = [];
+        $('.field-ordering input').each(function() {
+            if (!isNaN(+this.value)) orderings.push(+this.value);
+        });
+        row.find('.field-ordering input').val(10 + Math.max.apply(null, orderings));
     }
 
 
@@ -87,11 +96,7 @@ django.jQuery(function($){
         row.find('.field-region input').val(currentRegion);
         row.attr('data-region', currentRegion);
 
-        // Fill in some ordering value, because when inserting inlines
-        // in-between other inlines we might want to be able to sort
-        // by ordering again.
-        var nextToLast = orderMachine.find('.field-ordering input:not([name*=__prefix__])').eq(-2);
-        row.find('.field-ordering input').val(10 + +nextToLast.val());
+        setBiggestOrdering(row);
     });
 
     // Initialize tabs and currentRegion.
@@ -174,6 +179,8 @@ django.jQuery(function($){
                 inlineRegionInput.val(select.value);
                 inline.attr('data-region', select.value);
                 orderMachine.find('.inline-related:not(.empty-form)').hide().filter('[data-region="' + currentRegion + '"]').show();
+                setBiggestOrdering(inline);
+                reorderInlines(orderMachine);
             }
             select.value = '';
         });
