@@ -42,6 +42,15 @@ django.jQuery(function($){
         moveEmptyFormsToEnd();
     }
 
+    function buildDropdown(items, title) {
+        var select = document.createElement('select');
+        select.options[0] = new Option(title, '', true);
+        for (var i=0; i<items.length; i++) {
+            select.options[i + 1] = new Option(items[i][1], items[i][0]);
+        }
+        return select;
+    }
+
     // Assing data-region to all inlines.
     // We also want to the data attribute to be visible to selectors (that's why we're using $.attr)
     function assignRegionDataAttribute() {
@@ -52,7 +61,6 @@ django.jQuery(function($){
             $this.attr('data-region', region);
         });
     }
-
 
 
 
@@ -142,21 +150,34 @@ django.jQuery(function($){
         }
     });
 
-
     (function buildPluginDropdown() {
-        var select = document.createElement('select');
-        select.options[0] = new Option(ItemEditor.messages.createNew, '', true);
-
-        for (var i=0; i<ItemEditor.plugins.length; i++) {
-            select.options[i + 1] = new Option(ItemEditor.plugins[i][1], ItemEditor.plugins[i][0]);
-        }
-
+        var select = buildDropdown(ItemEditor.plugins, ItemEditor.messages.createNew);
         select.addEventListener('change', function() {
             $('#' + select.value + '_set-group .add-row a').click();
             select.value = '';
         });
-
         $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
     })();
 
+    orderMachine.find('.inline-related').each(function() {
+        var inline = $(this),
+            controls = document.createElement('div'),
+            select = buildDropdown(ItemEditor.regions, 'Move to region');
+        controls.className = 'inline-controls';
+        controls.appendChild(select);
+        $(controls).appendTo(this);
+
+        select.addEventListener('change', function() {
+            var inlineRegionInput = inline.find('.field-region input'),
+                currentInlineRegion = inlineRegionInput.val();
+            if (select.value && currentInlineRegion != select.value) {
+                inlineRegionInput.val(select.value);
+                inline.attr('data-region', select.value);
+                orderMachine.find('.inline-related:not(.empty-form)').hide().filter('[data-region="' + currentRegion + '"]').show();
+            }
+            select.value = '';
+        });
+    });
+
+    console.log(JSON.stringify(ItemEditor));
 });

@@ -95,6 +95,23 @@
     top: 13px;
 }
 
+.inline-controls {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 150px;
+    transition: opacity .5s ease-in-out;
+    opacity: 0;
+}
+
+.inline-controls:hover {
+    opacity: 1;
+}
+
+.inline-controls select {
+    width: 100%;
+}
+
 
 
 

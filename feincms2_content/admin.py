@@ -71,6 +71,10 @@ class ItemEditor(ModelAdmin):
                 ),
                 capfirst(plugin._meta.verbose_name)
             ) for plugin in plugins],
+            'regions': [(
+                region.name,
+                region.title,
+            ) for region in instance.template.regions],
             'messages': {
                 # 'delete': ugettext('Really delete item?'),
                 # 'changeTemplate': ugettext(
@@ -84,8 +88,6 @@ class ItemEditor(ModelAdmin):
                 # 'moveToRegion': ugettext('Move to region:'),
                 'createNew': ugettext('Create new element'),
             },
-            'regionNames': [r.name for r in instance.template.regions],
-            'regionTitles': [r.title for r in instance.template.regions],
             'feincmsContentFieldsetName': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
