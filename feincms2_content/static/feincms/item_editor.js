@@ -48,8 +48,6 @@ django.jQuery(function($){
         inlines.not('.empty-form').each(function() {
             $(document).trigger('itemeditor:activate', [$(this)]);
         });
-
-        // TODO breaks CKEDITOR
     }
 
     function buildDropdown(items, title) {
