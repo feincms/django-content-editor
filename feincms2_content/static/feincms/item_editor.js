@@ -35,7 +35,7 @@ django.jQuery(function($){
         var context = context || orderMachine;
         var inlines = context.find('.inline-related');
         inlines.each(function() {
-            $(document).trigger('itemeditor:sleep', [$(this)]);
+            $(document).trigger('itemeditor:deactivate', [$(this)]);
         });
         inlines.detach();
         inlines.sort(function inlinesCompareFunction(a, b) {
@@ -46,7 +46,7 @@ django.jQuery(function($){
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();
         inlines.each(function() {
-            $(document).trigger('itemeditor:wakeup', [$(this)]);
+            $(document).trigger('itemeditor:activate', [$(this)]);
         });
 
         // TODO breaks CKEDITOR
@@ -115,18 +115,18 @@ django.jQuery(function($){
 
         setBiggestOrdering(row);
 
-        $(document).trigger('itemeditor:wakeup', [row]);
+        $(document).trigger('itemeditor:activate', [row]);
     });
 
     $(document).on('formset:removed', function resetInlines(event, row, optionsPrefix) {
         orderMachine.find('.inline-related.last-related').each(function() {
-            $(document).trigger('itemeditor:sleep', [$(this)]);
+            $(document).trigger('itemeditor:deactivate', [$(this)]);
         });
 
         // As soon as possible, but not sooner (let the inline.js code run to the end first)
         setTimeout(function() {
             orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
-                $(document).trigger('itemeditor:wakeup', [$(this)]);
+                $(document).trigger('itemeditor:activate', [$(this)]);
             });
         }, 0);
     });
@@ -153,12 +153,12 @@ django.jQuery(function($){
     })();
 
     $(document).on(
-        'itemeditor:sleep',
+        'itemeditor:deactivate',
         function(event, row) {
             row.find('fieldset').hide();
         }
     ).on(
-        'itemeditor:wakeup',
+        'itemeditor:activate',
         function(event, row) {
             row.find('fieldset').show();
         }
@@ -169,10 +169,10 @@ django.jQuery(function($){
         handle: 'h3',
         placeholder: 'placeholder',
         start: function(event, ui) {
-            $(document).trigger('itemeditor:sleep', [ui.item]);
+            $(document).trigger('itemeditor:deactivate', [ui.item]);
         },
         stop: function(event, ui) {
-            $(document).trigger('itemeditor:wakeup', [ui.item]);
+            $(document).trigger('itemeditor:activate', [ui.item]);
         }
     }).on('click', '.delete>input[type=checkbox]', function toggleForDeletionClass() {
         $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');

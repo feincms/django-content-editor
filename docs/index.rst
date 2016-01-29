@@ -110,14 +110,14 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
         ]];
 
         $(document).on(
-            'itemeditor:wakeup',
+            'itemeditor:activate',
             function(event, row) {
                 if (!row.hasClass('dynamic-app_richtext_set')) return;
 
                 CKEDITOR.replace(row.find('textarea').attr('id'), CKEDITOR.config);
             }
         ).on(
-            'itemeditor:sleep',
+            'itemeditor:deactivate',
             function(event, row) {
                 if (!row.hasClass('dynamic-app_richtext_set')) return;
 
