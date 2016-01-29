@@ -72,16 +72,16 @@ class ItemEditor(ModelAdmin):
                 capfirst(plugin._meta.verbose_name)
             ) for plugin in plugins],
             'messages': {
-                'delete': ugettext('Really delete item?'),
-                'changeTemplate': ugettext(
-                    'Really change template? All changes are saved.'
-                ),
-                'changeTemplateWithMove': ugettext(
-                    'Really change template? All changes are saved and'
-                    ' content from %(source_regions)s is moved to'
-                    ' %(target_region)s.'
-                ),
-                'moveToRegion': ugettext('Move to region:'),
+                # 'delete': ugettext('Really delete item?'),
+                # 'changeTemplate': ugettext(
+                #     'Really change template? All changes are saved.'
+                # ),
+                # 'changeTemplateWithMove': ugettext(
+                #     'Really change template? All changes are saved and'
+                #     ' content from %(source_regions)s is moved to'
+                #     ' %(target_region)s.'
+                # ),
+                # 'moveToRegion': ugettext('Move to region:'),
                 'createNew': ugettext('Create new element'),
             },
             'regionNames': [r.name for r in instance.template.regions],
