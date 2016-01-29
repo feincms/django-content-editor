@@ -85,7 +85,7 @@ class ItemEditor(ModelAdmin):
                 #     ' content from %(source_regions)s is moved to'
                 #     ' %(target_region)s.'
                 # ),
-                # 'moveToRegion': ugettext('Move to region:'),
+                'moveToRegion': ugettext('Move to region:'),
                 'createNew': ugettext('Create new element'),
             },
             'feincmsContentFieldsetName': FEINCMS_CONTENT_FIELDSET_NAME,

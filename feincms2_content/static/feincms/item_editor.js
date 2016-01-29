@@ -209,7 +209,7 @@ django.jQuery(function($){
     orderMachine.find('.inline-related').each(function() {
         var inline = $(this),
             controls = document.createElement('div'),
-            select = buildDropdown(ItemEditor.regions, 'Move to region');
+            select = buildDropdown(ItemEditor.regions, ItemEditor.messages.moveToRegion);
         controls.className = 'inline-controls';
         controls.appendChild(select);
         $(controls).appendTo(this);
