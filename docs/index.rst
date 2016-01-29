@@ -12,7 +12,7 @@ Implement a rich text plugin with CKEditor
 Python
 ======
 
-``models.py``::
+``app/models.py``::
 
     from django.db import models
 
@@ -31,6 +31,7 @@ Python
             name='test',
             regions=[
                 Region(name='main', title='main region'),
+                Region(name='sidebar', title='sidebar region'),
             ],
         )
 
@@ -52,7 +53,7 @@ Python
             verbose_name_plural = 'rich texts'
 
 
-``admin.py``::
+``app/admin.py``::
 
     from django.contrib import admin
 
@@ -108,58 +109,22 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
             'Source'
         ]];
 
-        function initEditor() {
-            $('textarea[name^=app_test_set-]').each(function() {
-                if (this.id.indexOf('__prefix__') === -1) {
-                    CKEDITOR.replace(this, CKEDITOR.config);
-                }
-            });
-        }
-
-        function addEditor(row) {
-            var id = row.find('textarea').attr('id');
-            if (id) {
-                CKEDITOR.replace(id, CKEDITOR.config);
-            }
-        }
-
-        function removeEditor(row) {
-            var id = row.find('textarea').attr('id');
-            if (id) {
-                CKEDITOR.instances[id].destroy();
-            }
-        }
-
-        $('.order-machine').on(
-            'sortcreate',
-            initEditor
-        ).on(
-            'sortstart',
-            function(event, ui) { removeEditor(ui.item); }
-        ).on(
-            'sortstop',
-            function(event, ui) { addEditor(ui.item); }
-        );
-
         $(document).on(
-            'formset:added',
-            function(event, row, optionsPrefix) { addEditor(row); }
+            'itemeditor:wakeup',
+            function(event, row) {
+                if (!row.hasClass('dynamic-app_richtext_set')) return;
+
+                CKEDITOR.replace(row.find('textarea').attr('id'), CKEDITOR.config);
+            }
         ).on(
-            'formset:removed',
-            function fixEditor(event, row, optionsPrefix) {
-                if (!row.is('[id^=app_richtext_set-]')) return;
+            'itemeditor:sleep',
+            function(event, row) {
+                if (!row.hasClass('dynamic-app_richtext_set')) return;
 
-                // Initiate emergency procedure. Django insists on
-                // renumbering formsets.
-                $('textarea[name^=app_richtext_set-]').each(function() {
-                    CKEDITOR.instances[this.id] && CKEDITOR.instances[this.id].destroy();
-                });
-
-                // Call as soon as possible, but not sooner.
-                setTimeout(initEditor, 0);
+                var editor = CKEDITOR.instances[row.find('textarea').attr('id')];
+                editor && editor.destroy();
             }
         );
-
     });
 
 

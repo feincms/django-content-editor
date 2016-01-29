@@ -32,7 +32,12 @@ django.jQuery(function($){
     }
 
     function reorderInlines(context) {
-        var inlines = context.find('.inline-related').detach();
+        var context = context || orderMachine;
+        var inlines = context.find('.inline-related');
+        inlines.each(function() {
+            $(document).trigger('itemeditor:sleep', [$(this)]);
+        });
+        inlines.detach();
         inlines.sort(function inlinesCompareFunction(a, b) {
             var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
             var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
@@ -40,6 +45,10 @@ django.jQuery(function($){
         });
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();
+        inlines.each(function() {
+            $(document).trigger('itemeditor:wakeup', [$(this)]);
+        });
+
         // TODO breaks CKEDITOR
     }
 
@@ -71,6 +80,14 @@ django.jQuery(function($){
         row.find('.field-ordering input').val(10 + Math.max.apply(null, orderings));
     }
 
+    function hideInlinesFromOtherRegions() {
+        orderMachine.find(
+            '.inline-related:not(.empty-form)'
+        ).hide().filter(
+            '[data-region="' + currentRegion + '"]'
+        ).show();
+    }
+
 
 
     var pluginInlineGroups = (function selectPluginInlineGroups() {
@@ -97,6 +114,21 @@ django.jQuery(function($){
         row.attr('data-region', currentRegion);
 
         setBiggestOrdering(row);
+
+        $(document).trigger('itemeditor:wakeup', [row]);
+    });
+
+    $(document).on('formset:removed', function resetInlines(event, row, optionsPrefix) {
+        orderMachine.find('.inline-related.last-related').each(function() {
+            $(document).trigger('itemeditor:sleep', [$(this)]);
+        });
+
+        // As soon as possible, but not sooner (let the inline.js code run to the end first)
+        setTimeout(function() {
+            orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
+                $(document).trigger('itemeditor:wakeup', [$(this)]);
+            });
+        }, 0);
     });
 
     // Initialize tabs and currentRegion.
@@ -105,7 +137,7 @@ django.jQuery(function($){
         tabs.on('click', function() {
             currentRegion = $(this).data('region');
             $('.tabs>div').removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
-            orderMachine.find('.inline-related:not(.empty-form)').hide().filter('[data-region="' + currentRegion + '"]').show();
+            hideInlinesFromOtherRegions();
             window.location.hash = 'tab_' + currentRegion;
         });
 
@@ -120,15 +152,27 @@ django.jQuery(function($){
         if (tabs.length <= 1) tabs.hide();
     })();
 
+    $(document).on(
+        'itemeditor:sleep',
+        function(event, row) {
+            row.find('fieldset').hide();
+        }
+    ).on(
+        'itemeditor:wakeup',
+        function(event, row) {
+            row.find('fieldset').show();
+        }
+    );
+
     // Start sortable; hide fieldsets when dragging, and hide fieldsets of to-be-deleted inlines.
     orderMachine.sortable({
         handle: 'h3',
         placeholder: 'placeholder',
         start: function(event, ui) {
-            ui.item.find('fieldset').hide();
+            $(document).trigger('itemeditor:sleep', [ui.item]);
         },
         stop: function(event, ui) {
-            ui.item.find('fieldset').show();
+            $(document).trigger('itemeditor:wakeup', [ui.item]);
         }
     }).on('click', '.delete>input[type=checkbox]', function toggleForDeletionClass() {
         $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');
@@ -178,13 +222,12 @@ django.jQuery(function($){
             if (select.value && currentInlineRegion != select.value) {
                 inlineRegionInput.val(select.value);
                 inline.attr('data-region', select.value);
-                orderMachine.find('.inline-related:not(.empty-form)').hide().filter('[data-region="' + currentRegion + '"]').show();
+
+                hideInlinesFromOtherRegions();
                 setBiggestOrdering(inline);
-                reorderInlines(orderMachine);
+                reorderInlines();
             }
             select.value = '';
         });
     });
-
-    console.log(JSON.stringify(ItemEditor));
 });
