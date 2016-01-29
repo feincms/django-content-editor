@@ -54,15 +54,14 @@
 
 .tabs>div {
     float:left;
-    padding: 8px 10px;
+    padding: 10px 15px;
     cursor:pointer;
-    margin-top:3px;
+    margin-right: 4px;
     font-weight: bold;
-    font-size: 11px;
+    font-size: 13px;
     color: #666;
     background: #f6f6f6;
     border: 1px solid #eee;
-    text-transform: uppercase;
 }
 
 .tabs>.active {
@@ -97,11 +96,10 @@
 
 .inline-controls {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
-    width: 150px;
+    right: 100px;
+    top: 2px;
     transition: opacity .5s ease-in-out;
-    opacity: 0;
+    opacity: 0.5;
 }
 
 .inline-controls:hover {
@@ -109,7 +107,7 @@
 }
 
 .inline-controls select {
-    width: 100%;
+    height: 25px;
 }
 
 
