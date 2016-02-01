@@ -98,6 +98,12 @@
 
 .inline-controls select {
     height: 25px;
+    border-color: #f8f8f8;
+}
+
+.ui-sortable-handle .delete {
+    position: relative;
+    top: -1px;
 }
 
 
