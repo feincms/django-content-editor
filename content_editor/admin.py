@@ -25,7 +25,6 @@ class ContentEditorInline(StackedInline):
     form = ContentEditorForm
     extra = 0
     fk_name = 'parent'
-    plugin = True
 
     @classmethod
     def create(cls, model, **kwargs):
@@ -54,7 +53,7 @@ class ContentEditor(ModelAdmin):
         plugins = [
             iaf.opts.model
             for iaf in context.get('inline_admin_formsets', [])
-            if getattr(iaf.opts, 'plugin', False)
+            if isinstance(iaf.opts, ContentEditorInline)
         ]
         instance = context.get('original')
 
