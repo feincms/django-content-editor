@@ -3,6 +3,6 @@ include CONTRIBUTING.rst
 include LICENSE
 include MANIFEST.in
 include README.rst
-recursive-include feincms/static *
-recursive-include feincms/locale *
-recursive-include feincms/templates *
+recursive-include content_editor/static *
+recursive-include content_editor/locale *
+recursive-include content_editor/templates *

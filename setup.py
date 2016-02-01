@@ -12,13 +12,13 @@ def read(filename):
 
 
 setup(
-    name='feincms2-content',
-    version=__import__('feincms').__version__,
-    description='Django-based Page CMS and CMS building toolkit.',
+    name='django-content-editor',
+    version=__import__('content_editor').__version__,
+    description='The component formerly known as FeinCMS\' ItemEditor',
     long_description=read('README.rst'),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
-    url='http://github.com/feincms/feincms/',
+    url='https://github.com/matthiask/django-content-editor/',
     license='BSD License',
     platforms=['OS Independent'],
     packages=find_packages(
@@ -26,10 +26,10 @@ setup(
     ),
     package_data={
         '': ['*.html', '*.txt'],
-        'feincms': [
+        'content_editor': [
             'locale/*/*/*.*',
-            'static/feincms/*.*',
-            'static/feincms/*/*.*',
+            'static/content_editor/*.*',
+            'static/content_editor/*/*.*',
             'templates/*.*',
             'templates/*/*.*',
             'templates/*/*/*.*',
@@ -39,12 +39,9 @@ setup(
     },
     install_requires=[
         'Django>=1.9',
-        'django-mptt>=0.8',
-        'Pillow>=3.0.0',
-        'pytz>=2014.10',
     ],
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        # 'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
@@ -52,10 +49,8 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',

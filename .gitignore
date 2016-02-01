@@ -1,11 +1,11 @@
-*.pyc
+*.py?
 *~
-.*.swp
+*.sw?
 \#*#
 /secrets.py
 .DS_Store
 ._*
-/FeinCMS.egg-info
+/*.egg-info
 /MANIFEST
 /_build
 /build
@@ -16,4 +16,3 @@ tests/test.zip
 /tests/.coverage
 /tests/htmlcov
 venv
-/feincms2_content.egg-info

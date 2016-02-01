@@ -113,35 +113,6 @@
 
 
 
-
-a.actionbutton {
-    display: block;
-    background-repeat: no-repeat;
-    width:50px;
-    height:50px;
-    float:left;
-    margin: 5px 0 0 20px;
-    text-indent:-7000px;
-}
-
-a.richtextcontent { background: url(img/plugins.png) no-repeat 0 0; }
-a.richtextcontent:hover { background-position: 0 -70px; }
-
-a.imagecontent { background: url(img/plugins.png) no-repeat -70px 0; }
-a.imagecontent:hover { background-position: -70px -70px; }
-
-a.gallerycontent { background: url(img/plugins.png) no-repeat -140px 0; }
-a.gallerycontent:hover { background-position: -140px -70px; }
-
-a.oembedcontent { background: url(img/plugins.png) no-repeat -280px 0; }
-a.oembedcontent:hover { background-position: -280px -70px; }
-
-a.pdfcontent { background: url(img/plugins.png) no-repeat -210px 0; }
-a.pdfcontent:hover { background-position: -210px -70px; }
-
-a.audiocontent { background: url(img/plugins.png) no-repeat -350px 0; }
-a.audiocontent:hover { background-position: -350px -70px; }
-
 .empty-machine-msg {
     margin:10px 0px 20px 20px;
     font-size:14px;

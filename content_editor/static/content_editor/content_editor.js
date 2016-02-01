@@ -18,11 +18,11 @@ django.jQuery(function($){
     }
 
     // .dataset.context instead of getAttribute would be nicer
-    var ItemEditor = JSON.parse(
-        document.getElementById('item-editor-script').getAttribute('data-context'));
+    var ContentEditor = JSON.parse(
+        document.getElementById('content-editor-script').getAttribute('data-context'));
 
-    // Move the item editor to its place
-    $('h2:contains(' + ItemEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
+    // Move the content editor to its place
+    $('h2:contains(' + ContentEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
 
     var currentRegion,
         orderMachine = $('.order-machine');
@@ -35,7 +35,7 @@ django.jQuery(function($){
         context = context || orderMachine;
         var inlines = context.find('.inline-related');
         inlines.not('.empty-form').each(function() {
-            $(document).trigger('itemeditor:deactivate', [$(this)]);
+            $(document).trigger('content-editor:deactivate', [$(this)]);
         });
         inlines.detach();
         inlines.sort(function inlinesCompareFunction(a, b) {
@@ -46,15 +46,15 @@ django.jQuery(function($){
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();
         inlines.not('.empty-form').each(function() {
-            $(document).trigger('itemeditor:activate', [$(this)]);
+            $(document).trigger('content-editor:activate', [$(this)]);
         });
     }
 
-    function buildDropdown(items, title) {
+    function buildDropdown(contents, title) {
         var select = document.createElement('select');
         select.options[0] = new Option(title, '', true);
-        for (var i=0; i<items.length; i++) {
-            select.options[i + 1] = new Option(items[i][1], items[i][0]);
+        for (var i=0; i<contents.length; i++) {
+            select.options[i + 1] = new Option(contents[i][1], contents[i][0]);
         }
         return select;
     }
@@ -90,8 +90,8 @@ django.jQuery(function($){
 
     var pluginInlineGroups = (function selectPluginInlineGroups() {
         var selector = [];
-        for (var i=0; i < ItemEditor.plugins.length; i++) {
-            selector.push('#' + ItemEditor.plugins[i][0] + '_set-group');
+        for (var i=0; i < ContentEditor.plugins.length; i++) {
+            selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');
         }
         return $(selector.join(', '));
     })();
@@ -113,18 +113,18 @@ django.jQuery(function($){
 
         setBiggestOrdering(row);
 
-        $(document).trigger('itemeditor:activate', [row]);
+        $(document).trigger('content-editor:activate', [row]);
     });
 
     $(document).on('formset:removed', function resetInlines(event, row, optionsPrefix) {
         orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
-            $(document).trigger('itemeditor:deactivate', [$(this)]);
+            $(document).trigger('content-editor:deactivate', [$(this)]);
         });
 
         // As soon as possible, but not sooner (let the inline.js code run to the end first)
         setTimeout(function() {
             orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
-                $(document).trigger('itemeditor:activate', [$(this)]);
+                $(document).trigger('content-editor:activate', [$(this)]);
             });
         }, 0);
     });
@@ -151,12 +151,12 @@ django.jQuery(function($){
     })();
 
     $(document).on(
-        'itemeditor:deactivate',
+        'content-editor:deactivate',
         function(event, row) {
             row.find('fieldset').hide();
         }
     ).on(
-        'itemeditor:activate',
+        'content-editor:activate',
         function(event, row) {
             row.find('fieldset').show();
         }
@@ -167,10 +167,10 @@ django.jQuery(function($){
         handle: 'h3',
         placeholder: 'placeholder',
         start: function(event, ui) {
-            $(document).trigger('itemeditor:deactivate', [ui.item]);
+            $(document).trigger('content-editor:deactivate', [ui.item]);
         },
         stop: function(event, ui) {
-            $(document).trigger('itemeditor:activate', [ui.item]);
+            $(document).trigger('content-editor:activate', [ui.item]);
         }
     }).on('click', '.delete>input[type=checkbox]', function toggleForDeletionClass() {
         $(this).closest('.inline-related')[this.checked ? 'addClass' : 'removeClass']('for-deletion');
@@ -198,7 +198,7 @@ django.jQuery(function($){
     });
 
     (function buildPluginDropdown() {
-        var select = buildDropdown(ItemEditor.plugins, ItemEditor.messages.createNew);
+        var select = buildDropdown(ContentEditor.plugins, ContentEditor.messages.createNew);
         select.addEventListener('change', function() {
             $('#' + select.value + '_set-group .add-row a').click();
             select.value = '';
@@ -209,7 +209,7 @@ django.jQuery(function($){
     orderMachine.find('.inline-related').each(function() {
         var inline = $(this),
             controls = document.createElement('div'),
-            select = buildDropdown(ItemEditor.regions, ItemEditor.messages.moveToRegion);
+            select = buildDropdown(ContentEditor.regions, ContentEditor.messages.moveToRegion);
         controls.className = 'inline-controls';
         controls.appendChild(select);
         $(controls).appendTo(this);

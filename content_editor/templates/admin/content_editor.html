@@ -2,12 +2,12 @@
 {% load i18n admin_modify staticfiles %}
 
 {% block extrahead %}{{ block.super }}
-<link rel="stylesheet" type="text/css" href="{% static 'feincms/item_editor.css' %}">
-<script type="text/javascript" src="{% static 'feincms/jquery-ui-1.11.4.custom.min.js' %}"></script>
-<script id="item-editor-script"
+<link rel="stylesheet" type="text/css" href="{% static 'content_editor/content_editor.css' %}">
+<script type="text/javascript" src="{% static 'content_editor/jquery-ui-1.11.4.custom.min.js' %}"></script>
+<script id="content-editor-script"
         type="text/javascript"
-        src="{% static 'feincms/item_editor.js' %}"
-        data-context="{{ item_editor_context }}"></script>
+        src="{% static 'content_editor/content_editor.js' %}"
+        data-context="{{ content_editor_context }}"></script>
 {% endblock %}
 
 {% block after_related_objects %} {# as good a place as any... #}

@@ -1,6 +1,9 @@
-===============================================
-feincms2-content -- ItemEditor and nothing else
-===============================================
+===================================================
+django-content-editor -- Editing structured content
+===================================================
+
+Tagline: *The component formerly known as FeinCMS' ItemEditor*
+
 
 ========================================
 FeinCMS - An extensible Django-based CMS

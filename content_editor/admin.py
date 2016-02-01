@@ -14,7 +14,7 @@ FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
 FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
 
 
-class ItemEditorForm(forms.ModelForm):
+class ContentEditorForm(forms.ModelForm):
     """
     The item editor form contains hidden region and ordering fields and should
     be used for all content type inlines.
@@ -23,11 +23,11 @@ class ItemEditorForm(forms.ModelForm):
     ordering = forms.IntegerField(widget=forms.HiddenInput())
 
 
-class ItemEditorInline(StackedInline):
+class ContentEditorInline(StackedInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
-    form = ItemEditorForm
+    form = ContentEditorForm
     extra = 0
     fk_name = 'parent'
     plugin = True
@@ -36,7 +36,7 @@ class ItemEditorInline(StackedInline):
     def create(cls, model, **kwargs):
         kwargs['model'] = model
         return type(
-            str('ItemEditorInline_%s_%s' % (
+            str('ContentEditorInline_%s_%s' % (
                 model._meta.app_label,
                 model._meta.model_name,
             )),
@@ -45,9 +45,9 @@ class ItemEditorInline(StackedInline):
         )
 
 
-class ItemEditor(ModelAdmin):
+class ContentEditor(ModelAdmin):
     """
-    The ``ItemEditor`` is a drop-in replacement for ``ModelAdmin`` with the
+    The ``ContentEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with :class:`feincms.models.Base`
     subclasses and associated plugins.
 
@@ -55,7 +55,7 @@ class ItemEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    def _item_editor_context(self, request, context):
+    def _content_editor_context(self, request, context):
         plugins = [
             iaf.opts.model
             for iaf in context.get('inline_admin_formsets', [])
@@ -119,22 +119,22 @@ class ItemEditor(ModelAdmin):
             'available_templates': getattr(
                 self.model, '_feincms_templates', ()),
             'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
-            'item_editor_context': self._item_editor_context(
+            'content_editor_context': self._content_editor_context(
                 request,
                 context,
             ),
         })
-        return super(ItemEditor, self).render_change_form(
+        return super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
 
     @property
     def change_form_template(self):
         opts = self.model._meta
         return [
-            'admin/%s/%s/item_editor.html' % (
+            'admin/%s/%s/content_editor.html' % (
                 opts.app_label, opts.object_name.lower()),
-            'admin/%s/item_editor.html' % opts.app_label,
-            'admin/item_editor.html',
+            'admin/%s/content_editor.html' % opts.app_label,
+            'admin/content_editor.html',
         ]
 
     def get_fieldsets(self, request, obj=None):
@@ -145,7 +145,7 @@ class ItemEditor(ModelAdmin):
 
         # TODO Find some other way, and remove this code.
         fieldsets = copy.deepcopy(
-            super(ItemEditor, self).get_fieldsets(request, obj)
+            super(ContentEditor, self).get_fieldsets(request, obj)
         )
         names = [f[0] for f in fieldsets]
 
@@ -162,5 +162,5 @@ class ItemEditor(ModelAdmin):
     def render_revision_form(self, request, obj, version, context,
                              revert=False, recover=False):
         context.update(self.get_extra_context(request))  # FIXME
-        return super(ItemEditor, self).render_revision_form(
+        return super(ContentEditor, self).render_revision_form(
             request, obj, version, context, revert, recover)
