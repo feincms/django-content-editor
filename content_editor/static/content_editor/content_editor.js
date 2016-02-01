@@ -55,6 +55,28 @@ django.jQuery(function($){
         return select;
     }
 
+    function attachMoveToRegionDropdown(inline) {
+        var controls = document.createElement('div'),
+            select = buildDropdown(ContentEditor.regions, ContentEditor.messages.moveToRegion);
+        controls.className = 'inline-controls';
+        controls.appendChild(select);
+        inline.append(controls)
+
+        select.addEventListener('change', function() {
+            var inlineRegionInput = inline.find('.field-region input'),
+                currentInlineRegion = inlineRegionInput.val();
+            if (select.value && currentInlineRegion != select.value) {
+                inlineRegionInput.val(select.value);
+                inline.attr('data-region', select.value);
+
+                hideInlinesFromOtherRegions();
+                setBiggestOrdering(inline);
+                reorderInlines();
+            }
+            select.value = '';
+        });
+    }
+
     // Assing data-region to all inlines.
     // We also want to the data attribute to be visible to selectors (that's why we're using $.attr)
     function assignRegionDataAttribute() {
@@ -63,6 +85,7 @@ django.jQuery(function($){
                 region = $this.find('.field-region input').val();
 
             $this.attr('data-region', region);
+            attachMoveToRegionDropdown($this);
         });
     }
 
@@ -108,6 +131,7 @@ django.jQuery(function($){
         row.attr('data-region', currentRegion);
 
         setBiggestOrdering(row);
+        attachMoveToRegionDropdown(row);
 
         $(document).trigger('content-editor:activate', [row]);
     });
@@ -202,26 +226,4 @@ django.jQuery(function($){
         $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
     })();
 
-    orderMachine.find('.inline-related').each(function() {
-        var inline = $(this),
-            controls = document.createElement('div'),
-            select = buildDropdown(ContentEditor.regions, ContentEditor.messages.moveToRegion);
-        controls.className = 'inline-controls';
-        controls.appendChild(select);
-        $(controls).appendTo(this);
-
-        select.addEventListener('change', function() {
-            var inlineRegionInput = inline.find('.field-region input'),
-                currentInlineRegion = inlineRegionInput.val();
-            if (select.value && currentInlineRegion != select.value) {
-                inlineRegionInput.val(select.value);
-                inline.attr('data-region', select.value);
-
-                hideInlinesFromOtherRegions();
-                setBiggestOrdering(inline);
-                reorderInlines();
-            }
-            select.value = '';
-        });
-    });
 });
