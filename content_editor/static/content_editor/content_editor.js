@@ -19,12 +19,8 @@ django.jQuery(function($){
 
     // .dataset.context instead of getAttribute would be nicer
     var ContentEditor = JSON.parse(
-        document.getElementById('content-editor-script').getAttribute('data-context'));
-
-    // Move the content editor to its place
-    $('h2:contains(' + ContentEditor.feincmsContentFieldsetName + ')').parent().replaceWith($('#main_wrapper'));
-
-    var currentRegion,
+            document.getElementById('content-editor-script').getAttribute('data-context')),
+        currentRegion,
         orderMachine = $('.order-machine');
 
     function moveEmptyFormsToEnd() {

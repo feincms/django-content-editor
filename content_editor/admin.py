@@ -10,10 +10,6 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
 
-FEINCMS_CONTENT_FIELDSET_NAME = 'FEINCMS_CONTENT'
-FEINCMS_CONTENT_FIELDSET = (FEINCMS_CONTENT_FIELDSET_NAME, {'fields': ()})
-
-
 class ContentEditorForm(forms.ModelForm):
     """
     The item editor form contains hidden region and ordering fields and should
@@ -88,7 +84,6 @@ class ContentEditor(ModelAdmin):
                 'moveToRegion': ugettext('Move to region:'),
                 'createNew': ugettext('Create new element'),
             },
-            'feincmsContentFieldsetName': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
     def _add_content_editor_context(self, request, context):
@@ -97,7 +92,6 @@ class ContentEditor(ModelAdmin):
             'model': self.model,
             'available_templates': getattr(
                 self.model, '_feincms_templates', ()),
-            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
             'content_editor_context': self._content_editor_context(
                 request,
                 context,
@@ -139,23 +133,6 @@ class ContentEditor(ModelAdmin):
             'admin/%s/content_editor.html' % opts.app_label,
             'admin/content_editor.html',
         ]
-
-    def get_fieldsets(self, request, obj=None):
-        """
-        Insert FEINCMS_CONTENT_FIELDSET it not present.
-        Is it reasonable to assume this should always be included?
-        """
-
-        # TODO Find some other way, and remove this code.
-        fieldsets = copy.deepcopy(
-            super(ContentEditor, self).get_fieldsets(request, obj)
-        )
-        names = [f[0] for f in fieldsets]
-
-        if FEINCMS_CONTENT_FIELDSET_NAME not in names:
-            fieldsets.append(FEINCMS_CONTENT_FIELDSET)
-
-        return fieldsets
 
     # These next are only used if later we use a subclass of this class
     # which also inherits from VersionAdmin.

@@ -10,38 +10,34 @@
         data-context="{{ content_editor_context }}"></script>
 {% endblock %}
 
-{% block after_related_objects %} {# as good a place as any... #}
-  {{ block.super }}
-  <div id="content-editor-fieldset" style="display: none">
-    <div id="main_wrapper">
-        <div class="tabs">
-            {% for region in original.template.regions %}
-                <div data-region="{{ region.name }}">{{ region.title }}</div>
-            {% endfor %}
-        </div>
-        <div class="panel">
-            {% comment %}<!--
-            <div class="empty-machine-msg">
-                {% if adding_translation and forloop.first %}
-                    <div>
-                        <p>
-                            <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
-                        </p>
-                    </div>
-                {% else %}
-                    {% trans "Region empty" %}
-                {% endif %}
-            </div>
-            <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
-                {% if region.inherited %}
-                    {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
-                {% endif %}
-            </div>
-            -->{% endcomment %}
-
-            <div class="order-machine"></div>
-            <div class="machine-control"></div>
-        </div>
-    </div>
+{% block after_field_sets %}
+{{ block.super }}
+<div class="tabs">
+  {% for region in original.template.regions %}
+    <div data-region="{{ region.name }}">{{ region.title }}</div>
+  {% endfor %}
+</div>
+<div class="module">
+  {% comment %}<!--
+  <div class="empty-machine-msg">
+    {% if adding_translation and forloop.first %}
+      <div>
+        <p>
+          <input type="checkbox" name="_copy_content_from_original" id="_copy_content_from_original" checked="checked" /> <label for="_copy_content_from_original">{% trans "Copy content from the original" %} ("{{ translation_of }}", {% trans translation_of.get_language_display %})</label>
+        </p>
+      </div>
+    {% else %}
+      {% trans "Region empty" %}
+    {% endif %}
   </div>
+  <div class="empty-machine-msg" style="margin-left:20px; margin-top:20px;">
+    {% if region.inherited %}
+      {% trans "Content from the parent site is automatically inherited. To override this behaviour, add some content." %}
+    {% endif %}
+  </div>
+  -->{% endcomment %}
+
+  <div class="order-machine"></div>
+  <div class="machine-control"></div>
+</div>
 {% endblock %}

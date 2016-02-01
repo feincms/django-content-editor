@@ -2,10 +2,6 @@
 .clearfix:before, .clearfix:after { content: " "; display: table; }
 .clearfix:after { clear: both; }
 
-#main_wrapper {
-    margin: 0 0 30px 0;
-}
-
 .order-machine {
     clear: both;
     padding: 0 10px 10px 10px;
