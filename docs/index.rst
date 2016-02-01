@@ -16,7 +16,7 @@ Python
 
     from django.db import models
 
-    from feincms2_content.models import (
+    from content_editor.models import (
         Template,
         Region,
         ContentProxy,
@@ -57,12 +57,12 @@ Python
 
     from django.contrib import admin
 
-    from feincms2_content.admin import ItemEditor, ItemEditorInline
+    from content_editor.admin import ContentEditor, ContentEditorInline
 
     from .models import Page, Richtext
 
 
-    class RichtextInline(ItemEditorInline):
+    class RichtextInline(ContentEditorInline):
         model = Richtext
 
         class Media:
@@ -73,7 +73,7 @@ Python
 
     admin.site.register(
         Page,
-        ItemEditor,
+        ContentEditor,
         inlines=[
             RichtextInline,
         ],
@@ -110,14 +110,14 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
         ]];
 
         $(document).on(
-            'itemeditor:activate',
+            'content-editor:activate',
             function(event, row) {
                 if (!row.hasClass('dynamic-app_richtext_set')) return;
 
                 CKEDITOR.replace(row.find('textarea').attr('id'), CKEDITOR.config);
             }
         ).on(
-            'itemeditor:deactivate',
+            'content-editor:deactivate',
             function(event, row) {
                 if (!row.hasClass('dynamic-app_richtext_set')) return;
 

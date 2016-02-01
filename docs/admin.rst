@@ -1,98 +1,11 @@
 .. _admin:
 
-=========================
-Administration interfaces
-=========================
+==================
+The content editor
+==================
 
-FeinCMS provides two ModelAdmin classes, :class:`~feincms.admin.item_editor.ItemEditor`,
-and :class:`~feincms.admin.tree_editor.TreeEditor`. Their purpose and
-their customization hooks are briefly discussed here.
-
-
-The tree editor
-===============
-
-.. module:: feincms.admin.tree_editor
-.. class:: TreeEditor
-
-The tree editor replaces the standard change list interface with a collapsible
-item tree. The model must be registered with `django-mptt <http://github.com/django-mptt/django-mptt/>`_
-for this to work.
-
-.. image:: images/tree_editor.png
-
-Usage is as follows::
-
-    from django.db import models
-    from mptt.fields import TreeForeignKey
-    from mptt.models import MPTTModel
-
-    class YourModel(MPTTModel):
-        # model field definitions
-
-        parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-
-        class Meta:
-            ordering = ['tree_id', 'lft']  # The TreeEditor needs this ordering definition
-
-And inside your ``admin.py`` file::
-
-    from django.contrib import admin
-    from feincms.admin import tree_editor
-    from yourapp.models import YourModel
-
-    class YourModelAdmin(tree_editor.TreeEditor):
-        pass
-
-    admin.site.register(YourModel, YourModelAdmin)
-
-
-All standard :class:`~django.contrib.admin.options.ModelAdmin` attributes such as
-:attr:`ModelAdmin.list_display`, :attr:`ModelAdmin.list_editable`,
-:attr:`ModelAdmin.list_filter` work as normally. The only exception to this
-rule is the column showing the tree structure (the second column in the image).
-There, we always show the value of :attr:`Model.__str__` currently.
-
-
-AJAX checkboxes
----------------
-
-The tree editor allows you to define boolean columns which let the website
-administrator change the value of the boolean using a simple click on the icon.
-These boolean columns can be aware of the tree structure. For example, if an object's
-``active`` flag influences the state of its descendants, the tree editor interface
-is able to show not only the state of the modified element, but also the state of
-all its descendants without having to reload the page.
-
-Currently, documentation for this feature is not available yet. You can take a
-look at the implementation of the ``is_visible`` and ``in_navigation`` columns of
-the page editor however.
-
-Usage::
-
-    from django.contrib import admin
-    from feincms.admin import tree_editor
-    import mptt
-
-    class Category(models.Model):
-        active = models.BooleanField()
-        name = models.CharField(...)
-        parent = models.ForeignKey('self', blank=True, null=True)
-
-        # ...
-    mptt.register(Category)
-
-    class CategoryAdmin(tree_editor.TreeEditor):
-        list_display = ('__str__', 'active_toggle')
-        active_toggle = tree_editor.ajax_editable_boolean('active', _('active'))
-
-
-
-The item editor
-===============
-
-.. module:: feincms.admin.item_editor
-.. class:: ItemEditor
+.. module:: content_editor.admin
+.. class:: ContentEditor
 
 The tabbed interface below is used to edit content and other properties of the
 edited object. A tab is shown for every region of the template or element,
@@ -108,36 +21,8 @@ and all content blocks can be reordered using drag and drop:
          the item editor probably won't have a use for them.
 
 
-Customizing the item editor
----------------------------
-
-.. versionadded:: 1.2.0
-
-* The :class:`~feincms.admin.item_editor.ItemEditor` now plays nicely with
-  standard Django ``fieldsets``; the content-editor is rendered as a
-  replacement for a fieldset with the placeholder name matching
-  :const:`~feincms.admin.item_editor.FEINCMS_CONTENT_FIELDSET_NAME`. If no
-  such fieldset is present, one is inserted at the top automatically. If you
-  wish to customise the location of the content-editor, simple include this
-  fieldset at the desired location::
-
-    from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
-
-    class MyAdmin(ItemEditor):
-        fieldsets = (
-            ('Important things', {'fields': ('title', 'slug', 'etc')}),
-            FEINCMS_CONTENT_FIELDSET,
-            ('Less important things',
-                {
-                    'fields': ('copyright', 'soforth'),
-                    'classes': ('collapse',)
-                }
-            )
-        )
-
-
-Customizing the individual content type forms
----------------------------------------------
+Customizing the individual plugin forms
+---------------------------------------
 
 Customizing the individual content type editors is easily possible through four
 settings on the content type model itself:
