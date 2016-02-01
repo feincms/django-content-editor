@@ -91,6 +91,19 @@ class ContentEditor(ModelAdmin):
             'feincmsContentFieldsetName': FEINCMS_CONTENT_FIELDSET_NAME,
         })
 
+    def _add_content_editor_context(self, request, context):
+        context.update({
+            'request': request,
+            'model': self.model,
+            'available_templates': getattr(
+                self.model, '_feincms_templates', ()),
+            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
+            'content_editor_context': self._content_editor_context(
+                request,
+                context,
+            ),
+        })
+
     def render_change_form(self, request, context, **kwargs):
         # insert dummy object as 'original' if no original set yet so
         # template code can grabdefaults for template, etc.
@@ -113,17 +126,7 @@ class ContentEditor(ModelAdmin):
             context['original'].template_key =\
                 request.POST['template_key']
 
-        context.update({
-            'request': request,
-            'model': self.model,
-            'available_templates': getattr(
-                self.model, '_feincms_templates', ()),
-            'FEINCMS_CONTENT_FIELDSET_NAME': FEINCMS_CONTENT_FIELDSET_NAME,
-            'content_editor_context': self._content_editor_context(
-                request,
-                context,
-            ),
-        })
+        self._add_content_editor_context(request, context)
         return super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
 
@@ -156,11 +159,13 @@ class ContentEditor(ModelAdmin):
 
     # These next are only used if later we use a subclass of this class
     # which also inherits from VersionAdmin.
-    revision_form_template = "admin/feincms/revision_form.html"
-    recover_form_template = "admin/feincms/recover_form.html"
+    revision_form_template = 'admin/content_editor/revision_form.html'
+    recover_form_template = 'admin/content_editor/recover_form.html'
 
     def render_revision_form(self, request, obj, version, context,
                              revert=False, recover=False):
-        context.update(self.get_extra_context(request))  # FIXME
+        if not context.get('original'):
+            context['original'] = self.model()
+        self._add_content_editor_context(request, context)
         return super(ContentEditor, self).render_revision_form(
             request, obj, version, context, revert, recover)
