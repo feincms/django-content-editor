@@ -12,11 +12,7 @@
 
 {% block after_field_sets %}
 {{ block.super }}
-<div class="tabs">
-  {% for region in original.template.regions %}
-    <div data-region="{{ region.name }}">{{ region.title }}</div>
-  {% endfor %}
-</div>
+<div class="tabs"></div>
 <div class="module">
   {% comment %}<!--
   <div class="empty-machine-msg">

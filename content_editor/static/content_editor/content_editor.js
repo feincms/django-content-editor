@@ -151,7 +151,16 @@ django.jQuery(function($){
 
     // Initialize tabs and currentRegion.
     (function() {
-        var tabs = $('.tabs>div'), tab;
+
+        var tabContainer = $('.tabs');
+        for (var i=0; i < ContentEditor.regions.length; i++) {
+            var t = document.createElement('div');
+            t.textContent = ContentEditor.regions[i][1];
+            t.setAttribute('data-region', ContentEditor.regions[i][0]);
+            tabContainer.append(t);
+        }
+
+        var tabs = tabContainer.children(), tab;
         tabs.on('click', function() {
             currentRegion = $(this).data('region');
             $('.tabs>div').removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
