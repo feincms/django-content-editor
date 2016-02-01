@@ -81,7 +81,7 @@ class ContentEditor(ModelAdmin):
                 #     ' %(target_region)s.'
                 # ),
                 'moveToRegion': ugettext('Move to region:'),
-                'createNew': ugettext('Create new element'),
+                'createNew': ugettext('Add new item'),
             },
         })
 
