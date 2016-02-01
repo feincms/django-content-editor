@@ -80,7 +80,6 @@ class ContentEditor(ModelAdmin):
                 #     ' content from %(source_regions)s is moved to'
                 #     ' %(target_region)s.'
                 # ),
-                'moveToRegion': ugettext('Move to region:'),
                 'createNew': ugettext('Add new item'),
             },
         })

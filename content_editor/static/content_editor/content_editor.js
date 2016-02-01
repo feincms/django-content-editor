@@ -47,33 +47,34 @@ django.jQuery(function($){
     }
 
     function buildDropdown(contents, title) {
-        var select = document.createElement('select');
-        select.options[0] = new Option(title, '', true);
-        for (var i=0; i<contents.length; i++) {
-            select.options[i + 1] = new Option(contents[i][1], contents[i][0]);
+        var select = document.createElement('select'),
+            idx = 0;
+
+        if (title)
+            select.options[idx++] = new Option(title, '', true);
+
+        for (var i = 0; i < contents.length; i++) {
+            select.options[idx++] = new Option(contents[i][1], contents[i][0]);
         }
         return select;
     }
 
     function attachMoveToRegionDropdown(inline) {
         var controls = document.createElement('div'),
-            select = buildDropdown(ContentEditor.regions, ContentEditor.messages.moveToRegion);
+            select = buildDropdown(ContentEditor.regions),
+            regionInput = inline.find('.field-region input');
+
+        select.value = regionInput.val();
         controls.className = 'inline-controls';
         controls.appendChild(select);
         inline.append(controls)
 
         select.addEventListener('change', function() {
-            var inlineRegionInput = inline.find('.field-region input'),
-                currentInlineRegion = inlineRegionInput.val();
-            if (select.value && currentInlineRegion != select.value) {
-                inlineRegionInput.val(select.value);
-                inline.attr('data-region', select.value);
-
-                hideInlinesFromOtherRegions();
-                setBiggestOrdering(inline);
-                reorderInlines();
-            }
-            select.value = '';
+            inline.attr('data-region', select.value);
+            regionInput.val(select.value);
+            hideInlinesFromOtherRegions();
+            setBiggestOrdering(inline);
+            reorderInlines();
         });
     }
 
