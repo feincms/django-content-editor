@@ -60,6 +60,8 @@ django.jQuery(function($){
     }
 
     function attachMoveToRegionDropdown(inline) {
+        if (ContentEditor.regions.length < 2) return;
+
         var controls = document.createElement('div'),
             select = buildDropdown(ContentEditor.regions),
             regionInput = inline.find('.field-region input');
@@ -164,7 +166,7 @@ django.jQuery(function($){
         var tabs = tabContainer.children(), tab;
         tabs.on('click', function() {
             currentRegion = $(this).data('region');
-            $('.tabs>div').removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
+            tabs.removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
             hideInlinesFromOtherRegions();
             window.location.hash = 'tab_' + currentRegion;
         });
@@ -176,8 +178,8 @@ django.jQuery(function($){
             tabs.eq(0).click();
         }
 
-        // Hide tabs if only one.
-        if (tabs.length <= 1) tabs.hide();
+        // Hide tabs if only one.  XXX Maybe not? No clear separation without at least a tab.
+//        if (tabs.length <= 1) tabs.hide();
     })();
 
     $(document).on(
