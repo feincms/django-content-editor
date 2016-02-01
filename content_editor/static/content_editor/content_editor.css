@@ -94,12 +94,6 @@
     position: absolute;
     right: 100px;
     top: 2px;
-    transition: opacity .5s ease-in-out;
-    opacity: 0.5;
-}
-
-.inline-controls:hover {
-    opacity: 1;
 }
 
 .inline-controls select {
