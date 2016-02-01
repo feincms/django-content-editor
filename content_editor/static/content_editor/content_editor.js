@@ -169,7 +169,7 @@ django.jQuery(function($){
         });
 
         // Restore tab if location hash matches.
-        if (window.location.hash && (tab = tabs.filter('[data-region="' + window.location.hash.substr(5) + '"]'))) {
+        if (window.location.hash && (tab = tabs.filter('[data-region="' + window.location.hash.substr(5) + '"]')) && tab.length) {
             tab.click();
         } else {
             tabs.eq(0).click();
