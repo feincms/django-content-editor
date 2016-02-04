@@ -6,7 +6,7 @@ Implement a rich text plugin with CKEditor
 
 .. warning::
 
-   This is not production ready — everything barely works, but that's it.
+   This is not production ready — everything works, but that's it.
 
 
 Python
