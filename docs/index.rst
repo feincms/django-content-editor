@@ -55,15 +55,28 @@ Python
 
 ``app/admin.py``::
 
+    from django import forms
     from django.contrib import admin
+    from django.db import models
 
     from content_editor.admin import ContentEditor, ContentEditorInline
 
     from .models import Page, Richtext
 
 
+    class RichTextarea(forms.Textarea):
+        def __init__(self, attrs=None):
+            default_attrs = {'class': 'richtext'}
+            if attrs:
+                default_attrs.update(attrs)
+            super(RichTextarea, self).__init__(default_attrs)
+
+
     class RichtextInline(ContentEditorInline):
         model = Richtext
+        formfield_overrides = {
+            models.TextField: {'widget': RichTextarea},
+        }
 
         class Media:
             js = (
@@ -85,6 +98,7 @@ JavaScript
 
 Put this in ``app/static/app/plugin_ckeditor.js``::
 
+    /* global django, CKEDITOR */
     django.jQuery(function($) {
 
         /* Improve spacing */
@@ -112,20 +126,20 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
         $(document).on(
             'content-editor:activate',
             function(event, row) {
-                if (!row.hasClass('dynamic-app_richtext_set')) return;
-
-                CKEDITOR.replace(row.find('textarea').attr('id'), CKEDITOR.config);
+                row.find('textarea.richtext').each(function() {
+                    CKEDITOR.replace(this.id, CKEDITOR.config);
+                });
             }
         ).on(
             'content-editor:deactivate',
             function(event, row) {
-                if (!row.hasClass('dynamic-app_richtext_set')) return;
-
-                var editor = CKEDITOR.instances[row.find('textarea').attr('id')];
-                editor && editor.destroy();
+                row.find('textarea.richtext').each(function() {
+                    CKEDITOR.instances[this.id] && CKEDITOR.instances[this.id].destroy();
+                });
             }
         );
     });
+
 
 
 Why?
