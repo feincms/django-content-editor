@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 import os
 
-SITE_ID = 1
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DATABASES = {
     'default': {
@@ -19,11 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.sitemaps',
     'django.contrib.sites',
     'django.contrib.staticfiles',
-    'feincms',
-    'feincms.module.medialibrary',
-    'feincms.module.page',
-    'mptt',
     'testapp',
+    'content_editor',
 ]
 
 MEDIA_URL = '/media/'

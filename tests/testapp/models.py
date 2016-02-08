@@ -1,126 +1,37 @@
-from __future__ import absolute_import, unicode_literals
-
-from django import forms
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
 
-from feincms.apps import ApplicationContent
-from feincms.contents import RawContent, TemplateContent
-from feincms.models import Base, create_base_model
-from feincms.module.medialibrary.contents import MediaFileContent
-from feincms.module.page.models import Page
-from feincms.module.page import processors
+from content_editor.models import (
+    Template,
+    Region,
+    ContentProxy,
+    create_plugin_base
+)
 
-from mptt.models import MPTTModel
 
-from .content import CustomContentType
+class Page(models.Model):
+    title = models.CharField(max_length=200)
 
-Page.register_templates({
-    'key': 'base',
-    'title': 'Base Template',
-    'path': 'base.html',
-    'regions': (
-        ('main', 'Main region'),
-        ('sidebar', 'Sidebar', 'inherited'),
-    ),
-})
-Page.create_plugin(RawContent)
-Page.create_plugin(
-    MediaFileContent,
-    TYPE_CHOICES=(
-        ('default', 'Default position'),
+    template = Template(
+        name='test',
+        regions=[
+            Region(name='main', title='main region'),
+            Region(name='sidebar', title='sidebar region'),
+        ],
     )
-)
-Page.create_plugin(TemplateContent, TEMPLATES=[
-    ('templatecontent_1.html', 'template 1'),
-])
-Page.register_request_processor(processors.etag_request_processor)
-Page.register_response_processor(processors.etag_response_processor)
-Page.register_response_processor(
-    processors.debug_sql_queries_response_processor())
-
-
-def get_admin_fields(form, *args, **kwargs):
-    return {
-        'exclusive_subpages': forms.BooleanField(
-            label=capfirst(_('exclusive subpages')),
-            required=False,
-            initial=form.instance.parameters.get('exclusive_subpages', False),
-            help_text=_(
-                'Exclude everything other than the application\'s content'
-                ' when rendering subpages.'),
-        ),
-        'custom_field': forms.CharField(),
-    }
-
-Page.create_plugin(
-    ApplicationContent,
-    APPLICATIONS=(
-        ('whatever', 'Test Urls', {
-            'admin_fields': get_admin_fields,
-            'urls': 'testapp.applicationcontent_urls',
-        }),
-    )
-)
-
-Page.register_extensions(
-    'feincms.module.page.extensions.navigation',
-    'feincms.module.page.extensions.sites',
-    'feincms.extensions.translations',
-    'feincms.extensions.datepublisher',
-    'feincms.extensions.translations',
-    'feincms.extensions.ct_tracker',
-    'feincms.extensions.seo',
-    'feincms.extensions.changedate',
-    'feincms.extensions.seo',  # duplicate
-    'feincms.module.page.extensions.navigation',
-    'feincms.module.page.extensions.symlinks',
-    'feincms.module.page.extensions.titles',
-    'feincms.module.page.extensions.navigationgroups',
-)
-
-
-@python_2_unicode_compatible
-class Category(MPTTModel):
-    name = models.CharField(max_length=20)
-    slug = models.SlugField()
-    parent = models.ForeignKey(
-        'self', blank=True, null=True, related_name='children')
-
-    class Meta:
-        ordering = ['tree_id', 'lft']
-        verbose_name = 'category'
-        verbose_name_plural = 'categories'
 
     def __str__(self):
-        return self.name
+        return self.title
+
+    def content(self):
+        return ContentProxy(self, plugins=[Richtext])
 
 
-class ExampleCMSBase(Base):
-    pass
-
-ExampleCMSBase.register_regions(
-    ('region', 'region title'),
-    ('region2', 'region2 title'))
+PagePlugin = create_plugin_base(Page)
 
 
-class ExampleCMSBase2(Base):
-        pass
+class Richtext(PagePlugin):
+    text = models.TextField(blank=True)
 
-ExampleCMSBase2.register_regions(
-    ('region', 'region title'),
-    ('region2', 'region2 title'))
-
-
-class MyModel(create_base_model()):
-    pass
-
-
-MyModel.register_regions(('main', 'Main region'))
-
-
-unchanged = CustomContentType
-MyModel.create_plugin(CustomContentType)
-assert CustomContentType is unchanged
+    class Meta:
+        verbose_name = 'rich text'
+        verbose_name_plural = 'rich texts'
