@@ -4,6 +4,12 @@ django-content-editor -- Editing structured content
 
 Tagline: *The component formerly known as FeinCMS' ItemEditor*
 
+Trusted users editing structured content.
+
+No magic.
+
+
+
 
 ========================================
 FeinCMS - An extensible Django-based CMS
