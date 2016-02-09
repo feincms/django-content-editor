@@ -8,7 +8,7 @@ the feincms\_ namespace.
 from __future__ import unicode_literals
 
 from collections import defaultdict
-import operator
+from operator import attrgetter
 
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
@@ -48,7 +48,7 @@ class ContentProxy(object):
         contents = {}
 
         for plugin in plugins:
-            queryset = plugin.get_queryset()
+            queryset = plugin.get_queryset().filter(parent=item)
             queryset._known_related_objects.setdefault(
                 plugin._meta.get_field('parent'),
                 {},
@@ -60,85 +60,59 @@ class ContentProxy(object):
         for region in item.template.regions:
             setattr(self, region.name, sorted(
                 contents.get(region.name, []),
-                key=operator.attrgetter('ordering'),
+                key=attrgetter('ordering'),
             ))
 
 
-class FlexibleContentProxy(object):
-    """
-    The ``ContentProxy`` is responsible for loading the plugins for all
-    regions (including inherited regions)
-    """
-
+class MPTTContentProxy(object):
     def __init__(self, item, plugins):
-        self.item = item
-        self.plugins = plugins
+        contents = {}
+        ancestors = [item] + list(item.get_ancestors(ascending=True))
+        ancestor_dict = {ancestor.pk: ancestor for ancestor in ancestors}
 
-        contents = defaultdict(lambda: defaultdict(list))
-        parents = set()
-
-        for plugin in self.plugins:
-            if hasattr(self.item, 'get_ancestors'):
-                queryset = plugin.get_queryset().filter(
-                    parent__in=self.item.get_ancestors(include_self=True),
-                )
-            else:
-                queryset = plugin.get_queryset().filter(
-                    parent=self.item,
-                )
-
-            # queryset._known_related_objects[
-            #     self.item._meta.get_field('parent')
-            # ] = {self.item.pk: self.item}
+        for plugin in plugins:
+            queryset = plugin.get_queryset().filter(
+                parent__in=ancestor_dict.keys(),
+            )
+            queryset._known_related_objects.setdefault(
+                plugin._meta.get_field('parent'),
+                {},
+            ).update(ancestor_dict)
 
             for obj in queryset:
-                contents[obj.parent][obj.region].append(obj)
-                parents.add(obj.parent)
+                contents.setdefault(
+                    obj.parent,
+                    {},
+                ).setdefault(
+                    obj.region,
+                    [],
+                ).append(obj)
 
-        regions = {r.name: r for r in self.item.template.regions}
+        for region in item.template.regions:
+            setattr(self, region.name, [])
 
-        def _assign_contents(self, item, region):
-            c = contents[item][region.name]
-            setattr(
-                self,
-                region.name,
-                sorted(c, key=operator.attrgetter('ordering')))
+            if region.inherited:
+                for ancestor in ancestors:
+                    try:
+                        content = contents[ancestor][region.name]
+                    except KeyError:
+                        continue
 
-            if c or not region.inherited:
-                # We have contents, or an empty non-inheritable region
-                del regions[region.name]
+                    if content:
+                        setattr(self, region.name, sorted(
+                            content,
+                            key=attrgetter('ordering'),
+                        ))
+                        break
 
-        for region in list(regions.values()):
-            _assign_contents(self, self.item, region)
-
-        if not regions:
-            # Early exit
-            return
-
-        parents = sorted(
-            parents,
-            key=operator.attrgetter(self.item._mptt_meta.level_attr),
-            reverse=True,
-        )
-
-        for obj in parents:
-            for region in list(regions.values()):
-                _assign_contents(self, obj, region)
-
-            if not regions:
-                break
-
-    def all_of_types(self, types):
-        """
-        Returns all plugin instances of the types tuple passed
-        """
-
-        content_list = []
-        for type, contents in self._cache['cts'].items():
-            if any(issubclass(type, t) for t in types):
-                content_list.extend(contents)
-
-        return sorted(content_list, key=lambda c: c.ordering)
+            else:
+                try:
+                    setattr(self, region.name, sorted(
+                        contents[ancestors[0]][region.name],
+                        key=attrgetter('ordering'),
+                    ))
+                except KeyError:
+                    pass
 
 
 def create_plugin_base(content_base):

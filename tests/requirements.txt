@@ -1,3 +1,4 @@
 Django
 coverage
+django-mptt
 pytz

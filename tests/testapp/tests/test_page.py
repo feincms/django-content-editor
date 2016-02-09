@@ -9,9 +9,9 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
-from content_editor.models import ContentProxy
+from content_editor.models import ContentProxy, MPTTContentProxy
 
-from testapp.models import Article, RichText, Download
+from testapp.models import Article, RichText, Download, Page, PageText
 
 
 class ContentEditorTest(TestCase):
@@ -87,3 +87,63 @@ class ContentEditorTest(TestCase):
             content = ContentProxy(article, plugins=[])
 
         self.assertEqual(content.main, [])
+
+    def test_hierarchy(self):
+        page = Page.objects.create(title='root')
+        child = page.children.create(title='child 1')
+        page.refresh_from_db()
+        child.refresh_from_db()
+
+        self.assertEqual(
+            list(child.get_ancestors()),
+            [page],
+        )
+
+        page.testapp_pagetext_set.create(
+            region='main',
+            ordering=10,
+            text='page main text',
+        )
+        page.testapp_pagetext_set.create(
+            region='sidebar',
+            ordering=20,
+            text='page sidebar text',
+        )
+
+        with self.assertNumQueries(2):
+            content = MPTTContentProxy(child, plugins=[PageText])
+            self.assertEqual(
+                content.main,
+                [],
+            )
+            self.assertEqual(
+                [c.text for c in content.sidebar],
+                ['page sidebar text'],
+            )
+
+            self.assertEqual(content.sidebar[0].parent, page)
+
+        child.testapp_pagetext_set.create(
+            region='sidebar',
+            ordering=10,
+            text='child sidebar text',
+        )
+
+        child.testapp_pagetext_set.create(
+            region='main',
+            ordering=20,
+            text='child main text',
+        )
+
+        with self.assertNumQueries(2):
+            content = MPTTContentProxy(child, plugins=[PageText])
+            self.assertEqual(
+                [c.text for c in content.main],
+                ['child main text'],
+            )
+            self.assertEqual(
+                [c.text for c in content.sidebar],
+                ['child sidebar text'],
+            )
+
+            self.assertEqual(content.sidebar[0].parent, child)

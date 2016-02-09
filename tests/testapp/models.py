@@ -5,6 +5,8 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
+from mptt.models import MPTTModel
+
 from content_editor.models import Template, Region, create_plugin_base
 
 
@@ -43,3 +45,35 @@ class Download(ArticlePlugin):
     class Meta:
         verbose_name = 'download'
         verbose_name_plural = 'downloads'
+
+
+class Page(MPTTModel):
+    title = models.CharField(max_length=200)
+    parent = models.ForeignKey(
+        'self', related_name='children', blank=True, null=True)
+
+    template = Template(
+        name='test',
+        regions=[
+            Region(name='main', title='main region'),
+            Region(name='sidebar', title='sidebar region', inherited=True),
+        ],
+    )
+
+    class Meta:
+        verbose_name = 'page'
+        verbose_name_plural = 'pages'
+
+    def get_absolute_url(self):
+        return reverse('page_detail', kwargs={'pk': self.pk})
+
+
+PagePlugin = create_plugin_base(Page)
+
+
+class PageText(PagePlugin):
+    text = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = 'text'
+        verbose_name_plural = 'texts'
