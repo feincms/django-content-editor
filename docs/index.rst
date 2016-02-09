@@ -66,12 +66,20 @@ Example: articles with rich text plugins
     ArticlePlugin = create_plugin_base(Article)
 
 
-    class Richtext(ArticlePlugin):
+    class RichText(ArticlePlugin):
         text = models.TextField(blank=True)
 
         class Meta:
             verbose_name = 'rich text'
             verbose_name_plural = 'rich texts'
+
+
+    class Download(ArticlePlugin):
+        file = models.FileField(upload_to='downloads/%Y/%m/')
+
+        class Meta:
+            verbose_name = 'download'
+            verbose_name_plural = 'downloads'
 
 
 ``app/admin.py``::
@@ -82,7 +90,7 @@ Example: articles with rich text plugins
 
     from content_editor.admin import ContentEditor, ContentEditorInline
 
-    from .models import Article, Richtext
+    from .models import Article, Richtext, Download
 
 
     class RichTextarea(forms.Textarea):
@@ -93,8 +101,8 @@ Example: articles with rich text plugins
             super(RichTextarea, self).__init__(default_attrs)
 
 
-    class RichtextInline(ContentEditorInline):
-        model = Richtext
+    class RichTextInline(ContentEditorInline):
+        model = RichText
         formfield_overrides = {
             models.TextField: {'widget': RichTextarea},
         }
@@ -109,7 +117,8 @@ Example: articles with rich text plugins
         Article,
         ContentEditor,
         inlines=[
-            RichtextInline,
+            RichTextInline,
+            ContentEditorInline.create(model=Download),
         ],
     )
 
@@ -165,15 +174,18 @@ Example: articles with rich text plugins
 
     from content_editor.models import ContentProxy
 
-    from .models import Article, RichText
+    from .models import Article, RichText, Download
 
 
     class ArticleView(generic.DetailView):
         model = Article
 
         def get_context_data(self, **kwargs):
-            return super().get_context_data(
-                content=ContentProxy(self.object, plugins=[RichText]),
+            return super(ArticleView, self).get_context_data(
+                content=ContentProxy(
+                    self.object,
+                    plugins=[RichText, Download],
+                ),
                 **kwargs)
 
 
@@ -187,7 +199,7 @@ Example: articles with rich text plugins
     <h1>{{ article }}</h1>
     {{ article.pub_date }}
 
-    {# Yes, I know. That's not generic or anything at all. #}
+    {# Yes, not generic at all. And also does not render downloads. #}
     {% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
     {% endblock %}
 

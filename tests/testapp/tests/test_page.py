@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover
 
 from content_editor.models import ContentProxy
 
-from testapp.models import Page, Richtext
+from testapp.models import Article, RichText, Download
 
 
 class ContentEditorTest(TestCase):
@@ -29,24 +29,29 @@ class ContentEditorTest(TestCase):
 
     def test_stuff(self):
         # Smoke test some stuff
-        page = Page.objects.create(
+        article = Article.objects.create(
             title='Test',
         )
-        page.testapp_richtext_set.create(
-            text='bla',
+        article.testapp_richtext_set.create(
+            text='<p>bla</p>',
             region='main',
             ordering=10,
         )
 
-        content = ContentProxy(page, plugins=[Richtext])
+        with self.assertNumQueries(2):  # Two content types.
+            content = ContentProxy(article, plugins=[RichText, Download])
 
         self.assertEqual(len(content.main), 1)
         self.assertEqual(len(content.sidebar), 0)
         self.assertRaises(AttributeError, lambda: content.bla)
 
+        response = self.client.get(article.get_absolute_url())
+        self.assertContains(response, '<h1>Test</h1>')
+        self.assertContains(response, '<p>bla</p>')
+
     def test_admin(self):
         self.login()
-        response = self.client.get(reverse('admin:testapp_page_add'))
+        response = self.client.get(reverse('admin:testapp_article_add'))
 
         self.assertContains(response, 'content-editor-script', 1)
         self.assertContains(response, 'class="richtext"', 1)

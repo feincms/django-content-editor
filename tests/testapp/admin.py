@@ -4,7 +4,7 @@ from django.db import models
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 
-from .models import Page, Richtext
+from .models import Article, RichText, Download
 
 
 class RichTextarea(forms.Textarea):
@@ -15,8 +15,8 @@ class RichTextarea(forms.Textarea):
         super(RichTextarea, self).__init__(default_attrs)
 
 
-class RichtextInline(ContentEditorInline):
-    model = Richtext
+class RichTextInline(ContentEditorInline):
+    model = RichText
     formfield_overrides = {
         models.TextField: {'widget': RichTextarea},
     }
@@ -27,10 +27,12 @@ class RichtextInline(ContentEditorInline):
             'app/plugin_ckeditor.js',
         )
 
+
 admin.site.register(
-    Page,
+    Article,
     ContentEditor,
     inlines=[
-        RichtextInline,
+        RichTextInline,
+        ContentEditorInline.create(model=Download),
     ],
 )
