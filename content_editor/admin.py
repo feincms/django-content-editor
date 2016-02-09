@@ -5,7 +5,7 @@ import json
 from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.templatetags.static import static
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
@@ -38,6 +38,49 @@ class ContentEditorInline(StackedInline):
             (cls,),
             kwargs,
         )
+
+
+class _CSPHelperMedia(forms.Media):
+    """
+    Helper class for script tags with additional attached context data
+
+    CSP (Content Security Policy) can be configured for webpages to now
+    allow inline scripts or styles. This ``django.forms.Media`` variant
+    allows outputting script tags with additional attributes that can
+    be read again in the JavaScript code.
+
+    Note that replacement has to happen just before rendering, because
+    Django insists on recreating the media instance using its stock
+    media class when collecting assets in its admin views.
+
+    Usage::
+
+        media = _CSPHelperMedia(context['media'])
+        media.add_csp_js('app/app.js', {
+            'id': 'app-script',
+            'data-context': # ...
+        })
+        context['media'] = media
+    """
+
+    def __init__(self, media):
+        self.__dict__ = media.__dict__
+        self._csp_js = []
+
+    def add_csp_js(self, path, attrs):
+        self._csp_js.append((path, attrs))
+
+    def render_js(self):
+        return super(_CSPHelperMedia, self).render_js() + [format_html(
+            '<script type="text/javascript" src="{}" {}></script>',
+            static(path),
+            format_html_join(
+                ' ',
+                '{}="{}"',
+                attrs.items(),
+            ),
+        ) for path, attrs in self._csp_js]
+        return js
 
 
 class ContentEditor(ModelAdmin):
@@ -115,24 +158,19 @@ class ContentEditor(ModelAdmin):
             context['original'].template_key =\
                 request.POST['template_key']
 
+        media = _CSPHelperMedia(context['media'])
+        media.add_csp_js('content_editor/content_editor.js', {
+            'id': 'content-editor-script',
+            'data-context': self._content_editor_context(request, context),
+        })
+
         context.update({
             'request': request,
             'model': self.model,
             'available_templates': getattr(
                 self.model, '_feincms_templates', ()),
+            'media': media,
         })
-
-        # We replace the `media` context variable with the rendered version
-        # right here, and add our content editor script tag with embedded
-        # JSON data. Oh well...
-        context['media'] = format_html(
-            '{}\n'
-            '<script id="content-editor-script" type="text/javascript"'
-            ' src="{}" data-context="{}"></script>',
-            context['media'],
-            static('content_editor/content_editor.js'),
-            self._content_editor_context(request, context),
-        )
 
         return super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
