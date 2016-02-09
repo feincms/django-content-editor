@@ -15,7 +15,7 @@ from testapp.models import Article, RichText, Download
 
 
 class ContentEditorTest(TestCase):
-    def setUp(self):
+    def login(self):
         u = User(
             username='test',
             is_active=True,
@@ -23,8 +23,6 @@ class ContentEditorTest(TestCase):
             is_superuser=True)
         u.set_password('test')
         u.save()
-
-    def login(self):
         self.assertTrue(self.client.login(username='test', password='test'))
 
     def test_stuff(self):
@@ -55,3 +53,18 @@ class ContentEditorTest(TestCase):
 
         self.assertContains(response, 'content-editor-script', 1)
         self.assertContains(response, 'class="richtext"', 1)
+
+    def test_empty(self):
+        article = Article.objects.create(
+            title='Test',
+        )
+
+        with self.assertNumQueries(2):
+            content = ContentProxy(article, plugins=[RichText, Download])
+
+        self.assertEqual(content.main, [])
+
+        with self.assertNumQueries(0):
+            content = ContentProxy(article, plugins=[])
+
+        self.assertEqual(content.main, [])
