@@ -123,7 +123,7 @@ class ContentEditor(ModelAdmin):
                 region.title,
             ) for region in instance.template.regions],
             'messages': {
-                # 'delete': ugettext('Really delete item?'),
+                'createNew': ugettext('Add new item'),
                 # 'changeTemplate': ugettext(
                 #     'Really change template? All changes are saved.'
                 # ),
@@ -132,7 +132,6 @@ class ContentEditor(ModelAdmin):
                 #     ' content from %(source_regions)s is moved to'
                 #     ' %(target_region)s.'
                 # ),
-                'createNew': ugettext('Add new item'),
             },
         })
 
