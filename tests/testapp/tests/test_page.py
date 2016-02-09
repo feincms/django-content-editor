@@ -53,6 +53,22 @@ class ContentEditorTest(TestCase):
 
         self.assertContains(response, 'content-editor-script', 1)
         self.assertContains(response, 'class="richtext"', 1)
+        self.assertContains(
+            response,
+            '[&quot;testapp_richtext&quot;, &quot;Rich text&quot;]',
+            1,
+        )
+        self.assertContains(
+            response,
+            '[&quot;testapp_download&quot;, &quot;Download&quot;]',
+            1,
+        )
+        self.assertContains(
+            response,
+            '[[&quot;main&quot;, &quot;main region&quot;],'
+            ' [&quot;sidebar&quot;, &quot;sidebar region&quot;]',
+            1,
+        )
 
     def test_empty(self):
         article = Article.objects.create(
