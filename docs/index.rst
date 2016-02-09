@@ -12,8 +12,7 @@ django-content-editor -- Editing structured content
    finished, but the parts pertaining to views and templates need some
    additional thinking. Also, docs and more tests.
 
-**Tagline: The component formerly known as `FeinCMS' <http://feincms.org>`_
-ItemEditor.**
+**Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
 
 Why
@@ -31,6 +30,11 @@ behavior required workarounds such as ``feincms_item_editor_inline`` for
 simple use cases such as specifying ``InlineModelAdmin`` options.
 Furthermore, my long gone fondness for monkey patching made the code even
 more prone to breakage.
+
+With the next version of `django-mptt <https://github.com/django-mptt/django-mptt>`_
+supporting a draggable tree admin (formerly FeinCMS' TreeEditor) it made
+lots of sense extracting the content editor of FeinCMS into its own package,
+and thereby paving the way for a more modular Django-based CMF.
 
 
 Example: articles with rich text plugins

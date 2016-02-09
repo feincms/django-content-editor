@@ -37,7 +37,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'FeinCMS'
+project = u'django-content-editor'
 copyright = u'2016, Feinheit AG and contributors'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -159,7 +159,7 @@ html_static_path = ['_static']
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'FeinCMSdoc'
+htmlhelp_basename = 'django-content-editor-doc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -173,8 +173,8 @@ latex_font_size = '10pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [(
-    'index', 'FeinCMS.tex', u'FeinCMS Documentation',
-    u'Feinheit GmbH and contributors', 'manual'),
+    'index', 'django-content-editor.tex', u'django-content-editor Documentation',
+    u'Feinheit AG and contributors', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
