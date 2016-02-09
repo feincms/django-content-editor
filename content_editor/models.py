@@ -135,6 +135,7 @@ def create_plugin_base(content_base):
         parent = models.ForeignKey(
             content_base,
             related_name='%(app_label)s_%(class)s_set',
+            on_delete=models.CASCADE,
         )
         region = models.CharField(max_length=255)
         ordering = models.IntegerField(default=0)
