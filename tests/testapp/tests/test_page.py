@@ -76,6 +76,18 @@ class ContentEditorTest(TestCase):
             1,
         )
 
+        article = Article.objects.create(title='Test')
+
+        response = self.client.get(reverse(
+            'admin:testapp_article_change',
+            args=(article.pk,),
+        ))
+        self.assertContains(
+            response,
+            'value="Test"',
+            1,
+        )
+
     def test_empty(self):
         article = Article.objects.create(
             title='Test',
