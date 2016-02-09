@@ -36,6 +36,8 @@ supporting a draggable tree admin (formerly FeinCMS' TreeEditor) it made
 lots of sense extracting the content editor of FeinCMS into its own package,
 and thereby paving the way for a more modular Django-based CMF.
 
+Content first! The interface matters, but content matters more.
+
 
 Example: articles with rich text plugins
 ========================================
