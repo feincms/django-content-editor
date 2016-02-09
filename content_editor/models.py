@@ -45,7 +45,7 @@ class Template(_DataType):
 
 class ContentProxy(object):
     def __init__(self, item, plugins):
-        contents = {}
+        contents = defaultdict(list)
 
         for plugin in plugins:
             queryset = plugin.get_queryset().filter(parent=item)
@@ -55,7 +55,7 @@ class ContentProxy(object):
             ).update({item.pk: item})
 
             for obj in queryset:
-                contents.setdefault(obj.region, []).append(obj)
+                contents[obj.region].append(obj)
 
         for region in item.template.regions:
             setattr(self, region.name, sorted(
@@ -66,7 +66,7 @@ class ContentProxy(object):
 
 class MPTTContentProxy(object):
     def __init__(self, item, plugins):
-        contents = {}
+        contents = defaultdict(lambda: defaultdict(list))
         ancestors = [item] + list(item.get_ancestors(ascending=True))
         ancestor_dict = {ancestor.pk: ancestor for ancestor in ancestors}
 
@@ -80,23 +80,14 @@ class MPTTContentProxy(object):
             ).update(ancestor_dict)
 
             for obj in queryset:
-                contents.setdefault(
-                    obj.parent,
-                    {},
-                ).setdefault(
-                    obj.region,
-                    [],
-                ).append(obj)
+                contents[obj.parent][obj.region].append(obj)
 
         for region in item.template.regions:
             setattr(self, region.name, [])
 
             if region.inherited:
                 for ancestor in ancestors:
-                    try:
-                        content = contents[ancestor][region.name]
-                    except KeyError:
-                        continue
+                    content = contents[ancestor][region.name]
 
                     if content:
                         setattr(self, region.name, sorted(
@@ -106,13 +97,10 @@ class MPTTContentProxy(object):
                         break
 
             else:
-                try:
-                    setattr(self, region.name, sorted(
-                        contents[ancestors[0]][region.name],
-                        key=attrgetter('ordering'),
-                    ))
-                except KeyError:
-                    pass
+                setattr(self, region.name, sorted(
+                    contents[ancestors[0]][region.name],
+                    key=attrgetter('ordering'),
+                ))
 
 
 def create_plugin_base(content_base):
