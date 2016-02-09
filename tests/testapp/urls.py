@@ -3,11 +3,15 @@ from __future__ import absolute_import, unicode_literals
 import os
 
 from django.conf import settings
-from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.static import serve
 from django.views import generic
+
+try:
+    from django.urls import url
+except ImportError:  # pragma: no cover
+    from django.conf.urls import url
 
 from testapp.models import Page
 
