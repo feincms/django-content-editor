@@ -2,19 +2,11 @@ language: python
 sudo: false
 python:
   - "2.7"
-  - "3.2"
   - "3.4"
 env:
-  - REQ="Django>=1.7,<1.8 django-mptt"
-  - REQ="Django>=1.8,<1.9 django-mptt"
-  - REQ="Django==1.9a1 https://github.com/django-mptt/django-mptt/archive/master.zip"
-matrix:
-  exclude:
-    - python: "3.2"
-      env: REQ="Django==1.9a1 https://github.com/django-mptt/django-mptt/archive/master.zip"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+  - REQ="Django>=1.9,<1.10 django-mptt"
+  - REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
-  - pip install $REQ Pillow feedparser flake8
+  - pip install $REQ flake8
   - python setup.py -q install
-# command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp && flake8 ."
