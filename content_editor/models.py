@@ -128,7 +128,7 @@ def create_plugin_base(content_base):
             app_label = content_base._meta.app_label
             ordering = ['ordering']
 
-        def __str__(self):
+        def __str__(self):  # pragma: no cover
             return (
                 '%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
                 ' ordering=%d>') % (
@@ -141,7 +141,7 @@ def create_plugin_base(content_base):
                 self.ordering,
             )
 
-        def render(self, **kwargs):
+        def render(self, **kwargs):  # pragma: no cover
             raise NotImplementedError
 
         @classmethod

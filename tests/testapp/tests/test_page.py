@@ -9,7 +9,7 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
-from content_editor.models import ContentProxy, MPTTContentProxy
+from content_editor.models import Region, ContentProxy, MPTTContentProxy
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
@@ -24,6 +24,9 @@ class ContentEditorTest(TestCase):
         u.set_password('test')
         u.save()
         self.assertTrue(self.client.login(username='test', password='test'))
+
+    def test_stupid_coverage(self):
+        self.assertRaises(TypeError, Region, bla='bla')
 
     def test_stuff(self):
         # Smoke test some stuff
