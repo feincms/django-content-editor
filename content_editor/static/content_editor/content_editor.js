@@ -17,6 +17,14 @@ django.jQuery(function($){
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
+    // add basic structure
+    $('.inline-group:first').before(
+        '<div class="tabs regions"></div>' +
+        '<div class="module">' +
+        '<div class="order-machine"></div><div class="machine-control"></div>' +
+        '</div>'
+    );
+
     // .dataset.context instead of getAttribute would be nicer
     var ContentEditor = JSON.parse(
             document.getElementById('content-editor-script').getAttribute('data-context')),

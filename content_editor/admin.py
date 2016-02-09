@@ -4,6 +4,8 @@ import json
 
 from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
+from django.templatetags.static import static
+from django.utils.html import format_html
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
@@ -48,6 +50,15 @@ class ContentEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
+    class Media:
+        css = {'all': (
+            'content_editor/content_editor.css',
+        )}
+        js = (
+            'content_editor/jquery-ui-1.11.4.custom.min.js',
+            'content_editor/tabbed_fieldsets.js',
+        )
+
     def _content_editor_context(self, request, context):
         plugins = [
             iaf.opts.model
@@ -82,18 +93,6 @@ class ContentEditor(ModelAdmin):
             },
         })
 
-    def _add_content_editor_context(self, request, context):
-        context.update({
-            'request': request,
-            'model': self.model,
-            'available_templates': getattr(
-                self.model, '_feincms_templates', ()),
-            'content_editor_context': self._content_editor_context(
-                request,
-                context,
-            ),
-        })
-
     def render_change_form(self, request, context, **kwargs):
         # insert dummy object as 'original' if no original set yet so
         # template code can grabdefaults for template, etc.
@@ -116,29 +115,24 @@ class ContentEditor(ModelAdmin):
             context['original'].template_key =\
                 request.POST['template_key']
 
-        self._add_content_editor_context(request, context)
+        context.update({
+            'request': request,
+            'model': self.model,
+            'available_templates': getattr(
+                self.model, '_feincms_templates', ()),
+        })
+
+        # We replace the `media` context variable with the rendered version
+        # right here, and add our content editor script tag with embedded
+        # JSON data. Oh well...
+        context['media'] = format_html(
+            '{}\n'
+            '<script id="content-editor-script" type="text/javascript"'
+            ' src="{}" data-context="{}"></script>',
+            context['media'],
+            static('content_editor/content_editor.js'),
+            self._content_editor_context(request, context),
+        )
+
         return super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
-
-    @property
-    def change_form_template(self):
-        opts = self.model._meta
-        return [
-            'admin/%s/%s/content_editor.html' % (
-                opts.app_label, opts.object_name.lower()),
-            'admin/%s/content_editor.html' % opts.app_label,
-            'admin/content_editor.html',
-        ]
-
-    # These next are only used if later we use a subclass of this class
-    # which also inherits from VersionAdmin.
-    revision_form_template = 'admin/content_editor/revision_form.html'
-    recover_form_template = 'admin/content_editor/recover_form.html'
-
-    def render_revision_form(self, request, obj, version, context,
-                             revert=False, recover=False):
-        if not context.get('original'):
-            context['original'] = self.model()
-        self._add_content_editor_context(request, context)
-        return super(ContentEditor, self).render_revision_form(
-            request, obj, version, context, revert, recover)
