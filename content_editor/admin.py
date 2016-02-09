@@ -80,7 +80,6 @@ class _CSPHelperMedia(forms.Media):
                 attrs.items(),
             ),
         ) for path, attrs in self._csp_js]
-        return js
 
 
 class ContentEditor(ModelAdmin):
@@ -109,6 +108,8 @@ class ContentEditor(ModelAdmin):
             if isinstance(iaf.opts, ContentEditorInline)
         ]
         instance = context.get('original')
+        if not instance:
+            instance = self.model()
 
         return json.dumps({
             'plugins': [(
@@ -121,9 +122,11 @@ class ContentEditor(ModelAdmin):
             'regions': [(
                 region.name,
                 region.title,
+                # TODO correct template when POSTing
             ) for region in instance.template.regions],
             'messages': {
                 'createNew': ugettext('Add new item'),
+
                 # 'changeTemplate': ugettext(
                 #     'Really change template? All changes are saved.'
                 # ),
@@ -136,27 +139,6 @@ class ContentEditor(ModelAdmin):
         })
 
     def render_change_form(self, request, context, **kwargs):
-        # insert dummy object as 'original' if no original set yet so
-        # template code can grabdefaults for template, etc.
-        if not context.get('original'):
-            context['original'] = self.model()
-
-        if kwargs.get('add'):
-            if request.method == 'GET' and 'adminform' in context:
-                if 'template_key' in context['adminform'].form.initial:
-                    context['original'].template_key = (
-                        context['adminform'].form.initial['template_key'])
-                # ensure that initially-selected template in form is also
-                # used to render the initial regions in the item editor
-
-        # If there are errors in the form, we need to preserve the object's
-        # template as it was set when the user attempted to save it, so
-        # that the same regions appear on screen.
-        if request.method == 'POST' and \
-                hasattr(self.model, '_feincms_templates'):
-            context['original'].template_key =\
-                request.POST['template_key']
-
         media = _CSPHelperMedia(context['media'])
         media.add_csp_js('content_editor/content_editor.js', {
             'id': 'content-editor-script',
