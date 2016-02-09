@@ -1,16 +1,40 @@
-.. _index:
+===================================================
+django-content-editor -- Editing structured content
+===================================================
 
-==========================================
-Implement a rich text plugin with CKEditor
-==========================================
+.. image:: https://travis-ci.org/matthiask/django-content-editor.svg?branch=master
+    :target: https://travis-ci.org/matthiask/django-content-editor
 
 .. warning::
 
-   This is not production ready — everything works, but that's it.
+   Everything is really bare bones here, but works alright. The abstract
+   plugin base model and the administration interface are practically
+   finished, but the parts pertaining to views and templates need some
+   additional thinking. Also, docs and more tests.
+
+**Tagline: The component formerly known as `FeinCMS' <http://feincms.org>`_
+ItemEditor.**
 
 
-Python
-======
+Why
+===
+
+``django-content-editor`` does what FeinCMS should have been all along. A
+really thin layer around ``django.contrib.admin``'s inlines without any
+magical behavior, with proper separation between models, rendering and
+administration as Django did with the
+`newforms admin a long time ago <https://code.djangoproject.com/wiki/NewformsAdminBranch>`_.
+
+Also, there is **absolutely no magic** going on behind the scenes, no
+dynamic model generation or anything similar. The FeinCMS code's dynamic
+behavior required workarounds such as ``feincms_item_editor_inline`` for
+simple use cases such as specifying ``InlineModelAdmin`` options.
+Furthermore, my long gone fondness for monkey patching made the code even
+more prone to breakage.
+
+
+Example: articles with rich text plugins
+========================================
 
 ``app/models.py``::
 
@@ -19,33 +43,30 @@ Python
     from content_editor.models import (
         Template,
         Region,
-        ContentProxy,
         create_plugin_base
     )
 
 
-    class Page(models.Model):
+    class Article(models.Model):
         title = models.CharField(max_length=200)
+        pub_date = models.DateField(blank=True, null=True)
 
         template = Template(
             name='test',
             regions=[
                 Region(name='main', title='main region'),
-                Region(name='sidebar', title='sidebar region'),
+                # Region(name='sidebar', title='sidebar region', inherited=False),
             ],
         )
 
         def __str__(self):
             return self.title
 
-        def content(self):
-            return ContentProxy(self, plugins=[Richtext])
+
+    ArticlePlugin = create_plugin_base(Article)
 
 
-    PagePlugin = create_plugin_base(Page)
-
-
-    class Richtext(PagePlugin):
+    class Richtext(ArticlePlugin):
         text = models.TextField(blank=True)
 
         class Meta:
@@ -61,7 +82,7 @@ Python
 
     from content_editor.admin import ContentEditor, ContentEditorInline
 
-    from .models import Page, Richtext
+    from .models import Article, Richtext
 
 
     class RichTextarea(forms.Textarea):
@@ -85,7 +106,7 @@ Python
             )
 
     admin.site.register(
-        Page,
+        Article,
         ContentEditor,
         inlines=[
             RichtextInline,
@@ -93,10 +114,7 @@ Python
     )
 
 
-JavaScript
-==========
-
-Put this in ``app/static/app/plugin_ckeditor.js``::
+``app/static/app/plugin_ckeditor.js``::
 
     /* global django, CKEDITOR */
     django.jQuery(function($) {
@@ -141,100 +159,37 @@ Put this in ``app/static/app/plugin_ckeditor.js``::
     });
 
 
+``app/views.py``::
 
-Why?
-====
+    from django.views import generic
 
-Good question. There is **absolutely no magic** going on behind the scenes,
-no dynamic model generation or anything. The FeinCMS code sometimes
-mysteriously broke down, monkey patching was required, and too much was
-implicit instead of explicit. In the end, this probably also prevented people
-from contributing because FeinCMS was seen as *here be dragons*.
+    from content_editor.models import ContentProxy
 
-Also, ``feincms2_content`` follows the philosophy "Libraries, not Frameworks".
+    from .models import Article, RichText
 
 
+    class ArticleView(generic.DetailView):
+        model = Article
 
-========================================
-FeinCMS - An extensible Django-based CMS
-========================================
-
-
-.. image:: images/tree_editor.png
-
-FeinCMS is an extremely stupid content management system. It knows
-nothing about content -- just enough to create an admin interface for
-your own page content types. It lets you reorder page content blocks
-using a drag-drop interface, and you can add as many content blocks
-to a region (f.e. the sidebar, the main content region or something
-else which I haven't thought of yet). It provides helper functions,
-which provide ordered lists of page content blocks. That's all.
-
-Adding your own content types is extremely easy. Do you like markdown
-that much, that you'd rather die than using a rich text editor?
-Then add the following code to your project, and you can go on using the
-CMS without being forced to use whatever the developers deemed best::
-
-    from markdown2 import markdown
-    from feincms.module.page.models import Page
-    from django.db import models
-
-    class MarkdownPageContent(models.Model):
-        content = models.TextField()
-
-        class Meta:
-            abstract = True
-
-        def render(self, **kwargs):
-            return markdown(self.content)
-
-    Page.create_plugin(MarkdownPageContent)
+        def get_context_data(self, **kwargs):
+            return super().get_context_data(
+                content=ContentProxy(self.object, plugins=[RichText]),
+                **kwargs)
 
 
-That's it. Only ten lines of code for your own page content type.
+``app/templates/app/article_detail.html``::
 
+    {% extends "base.html" %}
 
+    {% block title %}{{ article }} - {{ block.super }}{% endblock %}
 
-Contents
-========
+    {% block content %}
+    <h1>{{ article }}</h1>
+    {{ article.pub_date }}
 
-.. toctree::
-   :maxdepth: 3
-
-   richtext
-   installation
-   page
-   contenttypes
-   extensions
-   admin
-   integration
-   medialibrary
-   templatetags
-   settings
-   migrations
-   versioning
-   advanced/index
-   faq
-   contributing
-   deprecation
-
-
-Releases
-========
-
-.. toctree::
-   :maxdepth: 1
-
-   releases/1.2
-   releases/1.3
-   releases/1.4
-   releases/1.5
-   releases/1.6
-   releases/1.7
-   releases/1.8
-   releases/1.9
-   releases/1.10
-   releases/1.11
+    {# Yes, I know. That's not generic or anything at all. #}
+    {% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
+    {% endblock %}
 
 
 Indices and tables
