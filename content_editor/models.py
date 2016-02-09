@@ -44,6 +44,27 @@ class Template(_DataType):
 
 
 class ContentProxy(object):
+    def __init__(self, item, plugins):
+        contents = {}
+
+        for plugin in plugins:
+            queryset = plugin.get_queryset()
+            queryset._known_related_objects.setdefault(
+                plugin._meta.get_field('parent'),
+                {},
+            ).update({item.pk: item})
+
+            for obj in queryset:
+                contents.setdefault(obj.region, []).append(obj)
+
+        for region in item.template.regions:
+            setattr(self, region.name, sorted(
+                contents.get(region.name, []),
+                key=operator.attrgetter('ordering'),
+            ))
+
+
+class FlexibleContentProxy(object):
     """
     The ``ContentProxy`` is responsible for loading the plugins for all
     regions (including inherited regions)
@@ -163,6 +184,6 @@ def create_plugin_base(content_base):
 
         @classmethod
         def get_queryset(cls):
-            return cls.objects.select_related()
+            return cls.objects.all()
 
     return PluginBase

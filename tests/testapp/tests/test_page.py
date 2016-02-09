@@ -30,7 +30,7 @@ class ContentEditorTest(TestCase):
         article = Article.objects.create(
             title='Test',
         )
-        article.testapp_richtext_set.create(
+        richtext = article.testapp_richtext_set.create(
             text='<p>bla</p>',
             region='main',
             ordering=10,
@@ -38,6 +38,9 @@ class ContentEditorTest(TestCase):
 
         with self.assertNumQueries(2):  # Two content types.
             content = ContentProxy(article, plugins=[RichText, Download])
+
+            self.assertEqual(content.main[0], richtext)
+            self.assertEqual(content.main[0].parent, article)
 
         self.assertEqual(len(content.main), 1)
         self.assertEqual(len(content.sidebar), 0)
