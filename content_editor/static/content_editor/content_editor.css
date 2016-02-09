@@ -48,11 +48,11 @@
     content: 'new';
 }
 
-.tabs>div {
+.tabs>* {
     float:left;
     padding: 10px 15px;
+    margin: 0 4px 0 0;
     cursor:pointer;
-    margin-right: 4px;
     font-weight: bold;
     font-size: 13px;
     color: #666;
@@ -117,4 +117,13 @@
 .change-template-button {
     margin-left: 7em;
     padding-left: 30px;
+}
+
+#tabbed .modules {
+    margin-bottom: 30px;
+}
+
+#tabbed .module {
+    border: 1px solid #eee;
+    margin-bottom: 0;
 }

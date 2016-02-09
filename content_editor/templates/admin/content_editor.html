@@ -4,6 +4,7 @@
 {% block extrahead %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static 'content_editor/content_editor.css' %}">
 <script type="text/javascript" src="{% static 'content_editor/jquery-ui-1.11.4.custom.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'content_editor/tabbed_fieldsets.js' %}"></script>
 <script id="content-editor-script"
         type="text/javascript"
         src="{% static 'content_editor/content_editor.js' %}"
@@ -12,7 +13,7 @@
 
 {% block after_field_sets %}
 {{ block.super }}
-<div class="tabs"></div>
+<div class="tabs regions"></div>
 <div class="module">
   {% comment %}<!--
   <div class="empty-machine-msg">

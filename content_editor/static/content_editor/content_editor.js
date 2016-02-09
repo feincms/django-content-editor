@@ -155,9 +155,9 @@ django.jQuery(function($){
     // Initialize tabs and currentRegion.
     (function() {
 
-        var tabContainer = $('.tabs');
+        var tabContainer = $('.tabs.regions');
         for (var i=0; i < ContentEditor.regions.length; i++) {
-            var t = document.createElement('div');
+            var t = document.createElement('h2');
             t.textContent = ContentEditor.regions[i][1];
             t.setAttribute('data-region', ContentEditor.regions[i][0]);
             tabContainer.append(t);
