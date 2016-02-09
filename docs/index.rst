@@ -128,7 +128,7 @@ Example: articles with rich text plugins
 ``app/static/app/plugin_ckeditor.js``::
 
     /* global django, CKEDITOR */
-    django.jQuery(function($) {
+    (function($) {
 
         /* Improve spacing */
         var style = document.createElement('style');
@@ -167,7 +167,7 @@ Example: articles with rich text plugins
                 });
             }
         );
-    });
+    })(django.jQuery);
 
 
 ``app/views.py``::
