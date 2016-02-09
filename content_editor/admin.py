@@ -162,14 +162,7 @@ class ContentEditor(ModelAdmin):
             'id': 'content-editor-script',
             'data-context': self._content_editor_context(request, context),
         })
-
-        context.update({
-            'request': request,
-            'model': self.model,
-            'available_templates': getattr(
-                self.model, '_feincms_templates', ()),
-            'media': media,
-        })
+        context['media'] = media
 
         return super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
