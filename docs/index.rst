@@ -154,15 +154,15 @@ Example: articles with rich text plugins
 
         $(document).on(
             'content-editor:activate',
-            function(event, row) {
-                row.find('textarea.richtext').each(function() {
+            function(event, $row, formsetName) {
+                $row.find('textarea.richtext').each(function() {
                     CKEDITOR.replace(this.id, CKEDITOR.config);
                 });
             }
         ).on(
             'content-editor:deactivate',
-            function(event, row) {
-                row.find('textarea.richtext').each(function() {
+            function(event, $row, formsetName) {
+                $row.find('textarea.richtext').each(function() {
                     CKEDITOR.instances[this.id] && CKEDITOR.instances[this.id].destroy();
                 });
             }
