@@ -44,11 +44,7 @@ Example: articles with rich text plugins
 
     from django.db import models
 
-    from content_editor.models import (
-        Template,
-        Region,
-        create_plugin_base
-    )
+    from content_editor.models import Template, Region, create_plugin_base
 
 
     class Article(models.Model):

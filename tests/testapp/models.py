@@ -5,11 +5,7 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
-from content_editor.models import (
-    Template,
-    Region,
-    create_plugin_base
-)
+from content_editor.models import Template, Region, create_plugin_base
 
 
 class Article(models.Model):
