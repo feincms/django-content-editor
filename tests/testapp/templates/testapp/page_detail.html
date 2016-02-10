@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ article }} - {{ block.super }}{% endblock %}
+{% block title %}{{ page }} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>{{ article }}</h1>
-{{ article.pub_date }}
+<h1>{{ page }}</h1>
 
 {# Yes, not generic at all. And also does not render downloads. #}
 {% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
+{% for plugin in content.sidebar %}{{ plugin.text|safe }}{% endfor %}
 {% endblock %}

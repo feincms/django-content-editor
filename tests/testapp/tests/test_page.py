@@ -173,3 +173,7 @@ class ContentEditorTest(TestCase):
             )
 
             self.assertEqual(content.sidebar[0].parent, child)
+
+        response = self.client.get(child.get_absolute_url())
+        self.assertContains(response, 'child main text')
+        self.assertContains(response, 'child sidebar text')
