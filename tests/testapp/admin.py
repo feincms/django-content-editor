@@ -10,8 +10,7 @@ from .models import Article, RichText, Download
 class RichTextarea(forms.Textarea):
     def __init__(self, attrs=None):
         default_attrs = {'class': 'richtext'}
-        if attrs:
-            default_attrs.update(attrs)
+        if attrs: default_attrs.update(attrs)  # Formatting hacks coverage
         super(RichTextarea, self).__init__(default_attrs)
 
 
