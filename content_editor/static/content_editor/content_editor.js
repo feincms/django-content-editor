@@ -1,13 +1,3 @@
-// IE<9 lacks Array.prototype.indexOf
-if (!Array.prototype.indexOf) {
-    Array.prototype.indexOf = function(needle) {
-        for (var i=0, l=this.length; i<l; ++i) {
-            if (this[i] === needle) return i;
-        }
-        return -1;
-    };
-}
-
 django.jQuery(function($){
     // Patch up urlify maps to generate nicer slugs in german
     if(typeof(Downcoder) != "undefined"){
@@ -17,7 +7,8 @@ django.jQuery(function($){
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
-    // add basic structure
+    // Add basic structure. There is always at least one inline group if
+    // we even have any plugins.
     $('.inline-group:first').before(
         '<div class="tabs regions"></div>' +
         '<div class="module">' +
