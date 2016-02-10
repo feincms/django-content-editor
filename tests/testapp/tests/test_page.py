@@ -114,6 +114,17 @@ class ContentEditorTest(TestCase):
             [page],
         )
 
+        with self.assertNumQueries(2):
+            content = MPTTContentProxy(child, plugins=[PageText])
+            self.assertEqual(
+                content.main,
+                [],
+            )
+            self.assertEqual(
+                content.sidebar,
+                [],
+            )
+
         page.testapp_pagetext_set.create(
             region='main',
             ordering=10,
