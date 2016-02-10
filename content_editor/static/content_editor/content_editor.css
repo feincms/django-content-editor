@@ -2,52 +2,6 @@
 .clearfix:before, .clearfix:after { content: " "; display: table; }
 .clearfix:after { clear: both; }
 
-.order-machine {
-    clear: both;
-    padding: 0 10px 10px 10px;
-    border: 1px solid #eee;
-    border-bottom: none;
-    position:relative;
-}
-
-.machine-control {
-    padding: 5px 10px 5px 10px;
-    border: 1px solid #eee;
-    background-color: #edf3fe;
-    background: #f8f8f8;
-    height: 55px;
-}
-
-.inline-related {
-    border: 1px solid #eee;
-    border-bottom-color: #fff;  /* No double border — .form-row already adds one */
-    margin-top: 10px;
-    overflow: hidden;
-}
-
-.inline-related h3 {
-    cursor: move;
-}
-
-.inline-related fieldset {
-    /* Animate out of view REAL FAST */
-    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
-    max-height: 2000px;
-}
-
-.inline-related.for-deletion fieldset {
-    max-height: 0;
-}
-
-/* Replace the broken content type counter for new contents with a "new" label */
-.last-related .inline_label {
-    color: #f8f8f8;
-}
-.last-related .inline_label:before {
-    color: #666;
-    content: 'new';
-}
-
 .tabs>* {
     float:left;
     padding: 10px 15px;
@@ -58,6 +12,7 @@
     color: #666;
     background: #f6f6f6;
     border: 1px solid #eee;
+    border-bottom: none;
 }
 
 .tabs>.active {
@@ -66,12 +21,66 @@
     border-color: #79aec8;
 }
 
+.order-machine {
+    clear: both;
+    padding: 0 10px 10px 10px;
+    border: 1px solid #eee;
+    border-bottom: none;
+    position:relative;
+}
+
+.order-machine .inline-related {
+    border: 1px solid #eee;
+    border-bottom-color: #fff;  /* No double border — .form-row already adds one */
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.order-machine .inline-related h3 {
+    cursor: move;
+    border-top: none;
+}
+
+/* Replace the broken content type counter for new contents with a "new" label */
+.order-machine .last-related .inline_label {
+    color: #f8f8f8;
+}
+.order-machine .last-related .inline_label:before {
+    color: #666;
+    content: 'new';
+}
+
+/* Checkbox & label alignment of existing plugins */
+.ui-sortable-handle .delete {
+    position: relative;
+    top: -1px;
+}
+
+.order-machine .inline-related fieldset {
+    /* Animate out of view REAL FAST */
+    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
+    max-height: 2000px;
+}
+
+.order-machine .inline-related.for-deletion fieldset {
+    max-height: 0;
+}
+
+/* Used when dragging */
 .placeholder {
     height: 34px;
     margin: 10px 0 0 0;
     border: none;
     opacity: 0.3;
     background: #79aec8;
+}
+
+.machine-control {
+    padding: 5px 10px 5px 10px;
+    border: 1px solid #eee;
+    background-color: #edf3fe;
+    background: #f8f8f8;
+    height: 55px;
 }
 
 .control-unit {
@@ -101,29 +110,19 @@
     border-color: #f8f8f8;
 }
 
-.ui-sortable-handle .delete {
-    position: relative;
-    top: -1px;
-}
 
-
-
-
-.empty-machine-msg {
-    margin:10px 0px 20px 20px;
-    font-size:14px;
-}
-
-.change-template-button {
-    margin-left: 7em;
-    padding-left: 30px;
-}
-
+/* tabbed_fieldsets.js support */
 #tabbed .modules {
+    border-bottom: 1px solid #eee;
     margin-bottom: 30px;
 }
 
 #tabbed .module {
     border: 1px solid #eee;
+    border-bottom: none;
     margin-bottom: 0;
+}
+
+#tabbed .form-row:last-child {
+    border: none;
 }
