@@ -1,4 +1,6 @@
 /* global django */
+/* eslint indent:[2,4] */
+/* eslint comma-dangle:[2,"never"] */
 django.jQuery(function($) {
     var tabbed = $('.tabbed');
     if (tabbed.length > 1) {

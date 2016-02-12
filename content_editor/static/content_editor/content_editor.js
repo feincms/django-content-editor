@@ -1,6 +1,6 @@
-/*global django,Downcoder,ContentEditor */
-/*eslint indent:[2,4] */
-/*eslint comma-dangle:[2,"never"] */
+/* global django,Downcoder,ContentEditor */
+/* eslint indent:[2,4] */
+/* eslint comma-dangle:[2,"never"] */
 django.jQuery(function($){
     // Patch up urlify maps to generate nicer slugs in german
     if(typeof(Downcoder) != 'undefined'){
