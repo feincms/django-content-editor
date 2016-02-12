@@ -9,7 +9,7 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
-from content_editor.models import Region, ContentProxy, MPTTContentProxy
+from content_editor.models import ContentProxy, MPTTContentProxy
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
