@@ -25,9 +25,6 @@ class ContentEditorTest(TestCase):
         u.save()
         self.assertTrue(self.client.login(username='test', password='test'))
 
-    def test_stupid_coverage(self):
-        self.assertRaises(TypeError, Region, bla='bla')
-
     def test_stuff(self):
         # Smoke test some stuff
         article = Article.objects.create(

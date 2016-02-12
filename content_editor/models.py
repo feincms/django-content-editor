@@ -9,18 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 class _DataType(object):
     def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            if not hasattr(self, key):
-                raise TypeError(
-                    '%s() received an invalid keyword %r. as_view '
-                    'only accepts arguments that are already '
-                    'attributes of the class.' % (
-                        self.__class__.__name__,
-                        key,
-                    )
-                )
-
-            setattr(self, key, value)
+        self.__dict__.update(kwargs)
 
 
 class Region(_DataType):
