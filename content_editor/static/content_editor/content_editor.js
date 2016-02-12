@@ -7,6 +7,12 @@ django.jQuery(function($){
         Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
     }
 
+    window.ContentEditor = {
+        addContent: function addContent(plugin) {
+            $('#' + plugin + '_set-group .add-row a').click();
+        }
+    };
+
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
     $('.inline-group:first').before(
@@ -17,10 +23,9 @@ django.jQuery(function($){
     );
 
     // .dataset.context instead of getAttribute would be nicer
-    var ContentEditor = JSON.parse(
-            document.getElementById('content-editor-script').getAttribute('data-context')),
-        currentRegion,
-        orderMachine = $('.order-machine');
+    $.extend(window.ContentEditor, JSON.parse(
+        document.getElementById('content-editor-script').getAttribute('data-context')));
+    var orderMachine = $('.order-machine');
 
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
@@ -103,7 +108,7 @@ django.jQuery(function($){
         orderMachine.find(
             '.inline-related:not(.empty-form)'
         ).hide().filter(
-            '[data-region="' + currentRegion + '"]'
+            '[data-region="' + ContentEditor.currentRegion + '"]'
         ).show();
     }
 
@@ -129,8 +134,8 @@ django.jQuery(function($){
     $(document).on('formset:added', function newForm(event, row, optionsPrefix) {
         moveEmptyFormsToEnd();
 
-        row.find('.field-region input').val(currentRegion);
-        row.attr('data-region', currentRegion);
+        row.find('.field-region input').val(ContentEditor.currentRegion);
+        row.attr('data-region', ContentEditor.currentRegion);
 
         setBiggestOrdering(row);
         attachMoveToRegionDropdown(row);
@@ -164,10 +169,10 @@ django.jQuery(function($){
 
         var tabs = tabContainer.children(), tab;
         tabs.on('click', function() {
-            currentRegion = $(this).data('region');
-            tabs.removeClass('active').filter('[data-region="' + currentRegion + '"]').addClass('active');
+            ContentEditor.currentRegion = $(this).data('region');
+            tabs.removeClass('active').filter('[data-region="' + ContentEditor.currentRegion + '"]').addClass('active');
             hideInlinesFromOtherRegions();
-            window.location.hash = 'tab_' + currentRegion;
+            window.location.hash = 'tab_' + ContentEditor.currentRegion;
         });
 
         // Restore tab if location hash matches.
@@ -231,7 +236,7 @@ django.jQuery(function($){
     (function buildPluginDropdown() {
         var select = buildDropdown(ContentEditor.plugins, ContentEditor.messages.createNew);
         select.addEventListener('change', function() {
-            $('#' + select.value + '_set-group .add-row a').click();
+            ContentEditor.addContent(select.value);
             select.value = '';
         });
         $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
