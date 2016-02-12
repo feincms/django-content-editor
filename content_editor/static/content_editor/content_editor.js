@@ -237,4 +237,5 @@ django.jQuery(function($){
         $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
     })();
 
+    $(document).trigger('content-editor:ready');
 });
