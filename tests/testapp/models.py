@@ -47,7 +47,8 @@ class Download(ArticlePlugin):
 class Page(MPTTModel):
     title = models.CharField(max_length=200)
     parent = models.ForeignKey(
-        'self', related_name='children', blank=True, null=True)
+        'self', related_name='children', blank=True, null=True,
+        on_delete=models.CASCADE)
 
     template = Template(
         name='test',
