@@ -123,7 +123,7 @@ class ContentEditor(ModelAdmin):
                 region.name,
                 region.title,
                 # TODO correct template when POSTing
-            ) for region in instance.template.regions],
+            ) for region in instance.regions],
             'messages': {
                 'createNew': ugettext('Add new item'),
 

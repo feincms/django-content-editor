@@ -13,13 +13,10 @@ from content_editor.models import Template, Region, create_plugin_base
 class Article(models.Model):
     title = models.CharField(max_length=200)
 
-    template = Template(
-        name='test',
-        regions=[
-            Region(name='main', title='main region'),
-            Region(name='sidebar', title='sidebar region'),
-        ],
-    )
+    regions = [
+        Region(name='main', title='main region'),
+        Region(name='sidebar', title='sidebar region'),
+    ]
 
     def __str__(self):
         return self.title
@@ -66,6 +63,10 @@ class Page(MPTTModel):
 
     def get_absolute_url(self):
         return reverse('page_detail', kwargs={'pk': self.pk})
+
+    @property
+    def regions(self):
+        return self.template.regions
 
 
 PagePlugin = create_plugin_base(Page)

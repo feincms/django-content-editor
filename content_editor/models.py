@@ -50,7 +50,7 @@ class ContentProxy(object):
             for obj in queryset:
                 contents[obj.region].append(obj)
 
-        for region in item.template.regions:
+        for region in item.regions:
             setattr(self, region.name, sorted(
                 contents.get(region.name, []),
                 key=attrgetter('ordering'),
@@ -75,7 +75,7 @@ class MPTTContentProxy(object):
             for obj in queryset:
                 contents[obj.parent][obj.region].append(obj)
 
-        for region in item.template.regions:
+        for region in item.regions:
             setattr(self, region.name, [])
 
             if region.inherited:
