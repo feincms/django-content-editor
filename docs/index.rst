@@ -53,13 +53,10 @@ Example: articles with rich text plugins
         title = models.CharField(max_length=200)
         pub_date = models.DateField(blank=True, null=True)
 
-        template = Template(
-            name='test',
-            regions=[
-                Region(name='main', title='main region'),
-                # Region(name='sidebar', title='sidebar region', inherited=False),
-            ],
-        )
+        regions = [
+            Region(name='main', title='main region'),
+            # Region(name='sidebar', title='sidebar region', inherited=False),
+        ]
 
         def __str__(self):
             return self.title
@@ -206,9 +203,41 @@ Example: articles with rich text plugins
     {% endblock %}
 
 
-Indices and tables
-==================
+Conventions
+===========
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+Regions
+~~~~~~~
+
+The included ``ContentProxy`` classes and the ``ContentEditor`` admin class
+expect a ``regions`` attribute or property (**not** a method) on their model
+(the ``Article`` model above) which returns a list of ``Region`` instances.
+
+Regions have the following attributes:
+
+* ``title``: Something nice, will be visible in the content editor.
+* ``name``: The region name, used in the content proxy as attribute name for
+  the list of plugins.
+* ``inherited``: Only has an effect if you are using the bundled
+  ``MPTTContentProxy``: Models inherit content from their ancestor chain if a
+  region with ``inherited = True`` is emtpy.
+
+You are free to define additional attributes -- simply pass them when
+instantiating a new region.
+
+
+Templates
+~~~~~~~~~
+
+Various classes will expect the main model to have a ``template`` attribute or
+property which returns a ``Template`` instance. Nothing of the sort is
+implemented yet.
+
+Templates have the following attributes:
+
+* ``title``: Something nice.
+* ``name``: Something machine-readable.
+* ``template_name``: A template path.
+* ``regions``: A list of region instances.
+
+As with the regions above, you are free to define additional attributes.
