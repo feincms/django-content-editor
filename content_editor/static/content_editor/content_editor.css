@@ -76,7 +76,7 @@
 }
 
 .machine-control {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 10px 5px 0;
     border: 1px solid #eee;
     background-color: #edf3fe;
     background: #f8f8f8;
@@ -85,7 +85,7 @@
 
 .control-unit {
     float: left;
-    padding: 0 20px 0 5px;
+    padding: 0 15px;
     border-left: 1px solid #eee;
 }
 
@@ -97,6 +97,12 @@
     float: left;
     position: relative;
     top: 13px;
+}
+
+.control-unit .plugin-button {
+    margin: 0 .5rem;
+    font-size: 2.5rem;
+    cursor: pointer;
 }
 
 .inline-controls {
