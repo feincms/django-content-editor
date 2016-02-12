@@ -1,10 +1,3 @@
-"""
-This is the core of FeinCMS
-
-All models defined here are abstract, which means no tables are created in
-the feincms\_ namespace.
-"""
-
 from __future__ import unicode_literals
 
 from collections import defaultdict
