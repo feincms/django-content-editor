@@ -12,7 +12,6 @@
 /dist
 tests/test.zip
 /docs/_build
-/tests/.tox
-/tests/.coverage
-/tests/htmlcov
+.coverage
+htmlcov
 venv
