@@ -24,11 +24,10 @@ for various use cases.
 Why ``django-content-editor``?
 ==============================
 
-``django-content-editor`` does what FeinCMS should have been all along. A
-really thin layer around ``django.contrib.admin``'s inlines without any
-magical behavior, with proper separation between models, rendering and
-administration as Django did with the
-`newforms admin a long time ago <https://code.djangoproject.com/wiki/NewformsAdminBranch>`_.
+``django-content-editor`` does what FeinCMS_ should have been all along. A
+really thin layer around ``django.contrib.admin``'s inlines without any magical
+behavior, with proper separation between models, rendering and administration
+as Django did with the `newforms admin`_ a long long time ago.
 
 Also, there is **absolutely no magic** going on behind the scenes, no
 dynamic model generation or anything similar. The FeinCMS code's dynamic
@@ -37,12 +36,16 @@ simple use cases such as specifying ``InlineModelAdmin`` options.
 Furthermore, my long gone fondness for monkey patching made the code even
 more prone to breakage.
 
-With the next version of `django-mptt <https://github.com/django-mptt/django-mptt>`_
-supporting a draggable tree admin (formerly FeinCMS' TreeEditor) it made
-lots of sense extracting the content editor of FeinCMS into its own package,
-and thereby paving the way for a more modular Django-based CMF.
+With the next version of django-mptt_ supporting a draggable tree admin
+(formerly FeinCMS' TreeEditor) it made lots of sense extracting the content
+editor of FeinCMS into its own package, and thereby paving the way for a more
+modular Django-based CMF.
 
 Content first! The interface matters, but content matters more.
+
+.. _FeinCMS: https://github.com/feincms/feincms/
+.. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
+.. _django-mptt: https://github.com/django-mptt/django-mptt/
 
 
 Example: articles with rich text plugins
