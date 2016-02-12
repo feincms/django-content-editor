@@ -1,10 +1,13 @@
+/*global django,Downcoder,ContentEditor */
+/*eslint indent:[2,4] */
+/*eslint comma-dangle:[2,"never"] */
 django.jQuery(function($){
     // Patch up urlify maps to generate nicer slugs in german
-    if(typeof(Downcoder) != "undefined"){
+    if(typeof(Downcoder) != 'undefined'){
         Downcoder.Initialize() ;
-        Downcoder.map["ö"] = Downcoder.map["Ö"] = "oe";
-        Downcoder.map["ä"] = Downcoder.map["Ä"] = "ae";
-        Downcoder.map["ü"] = Downcoder.map["Ü"] = "ue";
+        Downcoder.map['ö'] = Downcoder.map['Ö'] = 'oe';
+        Downcoder.map['ä'] = Downcoder.map['Ä'] = 'ae';
+        Downcoder.map['ü'] = Downcoder.map['Ü'] = 'ue';
     }
 
     window.ContentEditor = {
@@ -73,7 +76,7 @@ django.jQuery(function($){
         select.value = regionInput.val();
         controls.className = 'inline-controls';
         controls.appendChild(select);
-        inline.append(controls)
+        inline.append(controls);
 
         select.addEventListener('change', function() {
             inline.attr('data-region', select.value);
@@ -135,7 +138,7 @@ django.jQuery(function($){
 
     // Always move empty forms to the end, because new plugins are inserted
     // just before its empty form. Also, assign region data.
-    $(document).on('formset:added', function newForm(event, row, optionsPrefix) {
+    $(document).on('formset:added', function newForm(event, row) {
         moveEmptyFormsToEnd();
 
         row.find('.field-region input').val(ContentEditor.currentRegion);
@@ -147,7 +150,7 @@ django.jQuery(function($){
         $(document).trigger('content-editor:activate', [row]);
     });
 
-    $(document).on('formset:removed', function resetInlines(event, row, optionsPrefix) {
+    $(document).on('formset:removed', function resetInlines() {
         orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
             $(document).trigger('content-editor:deactivate', [$(this)]);
         });
