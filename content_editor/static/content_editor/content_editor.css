@@ -66,6 +66,12 @@
     max-height: 0;
 }
 
+.order-machine .machine-message {
+    display: block;
+    margin: 1.5em 1em 1em;
+    text-align: center;
+}
+
 /* Used when dragging */
 .placeholder {
     height: 34px;

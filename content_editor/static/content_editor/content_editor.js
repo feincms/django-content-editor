@@ -105,11 +105,15 @@ django.jQuery(function($){
     }
 
     function hideInlinesFromOtherRegions() {
-        orderMachine.find(
-            '.inline-related:not(.empty-form)'
-        ).hide().filter(
-            '[data-region="' + ContentEditor.currentRegion + '"]'
-        ).show();
+        var inlines = orderMachine.find('.inline-related:not(.empty-form)');
+        inlines.hide();
+        var shown = inlines.filter('[data-region="' + ContentEditor.currentRegion + '"]');
+        if (shown.length) {
+            shown.show();
+            orderMachine.find('.machine-message').remove();
+        } else {
+            $('<p class="machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
+        }
     }
 
 

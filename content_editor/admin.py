@@ -126,6 +126,7 @@ class ContentEditor(ModelAdmin):
             ) for region in instance.regions],
             'messages': {
                 'createNew': ugettext('Add new item'),
+                'empty': ugettext('No items'),
 
                 # 'changeTemplate': ugettext(
                 #     'Really change template? All changes are saved.'
