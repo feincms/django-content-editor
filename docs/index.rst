@@ -41,11 +41,30 @@ With the next version of django-mptt_ supporting a draggable tree admin
 editor of FeinCMS into its own package, and thereby paving the way for a more
 modular Django-based CMF.
 
-Content first! The interface matters, but content matters more.
+Content first! The interface matters, but data matters more.
 
+---
+
+FeinCMS_ actually was trying to **be** a really simple and stupid content
+management system. Simply looking at the amount of code in FeinCMS_ is enough
+to decide that we did worse than we should have done. While FeinCMS_ still
+contains less code than `comparable CMS systems`_ it still consists of
+hundreds of lines of comparatively complicated and needlessly dynamic code.
+Reasons are mostly historical of course -- Django_'s administration interface
+did it fact not even have dynamic JavaScript-backed inlines when FeinCMS_ was
+first released, and the necessary events which we require for adding custom
+JavaScript-backed widgets (such as rich text editors) to plugins are only
+available starting with Django_ 1.9 -- the latest release at the time of
+writing.
+
+---
+
+
+.. _Django: https://www.djangoproject.com/
 .. _FeinCMS: https://github.com/feincms/feincms/
 .. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
 .. _django-mptt: https://github.com/django-mptt/django-mptt/
+.. _comparable CMS systems: https://www.djangopackages.com/grids/g/cms/
 
 
 Example: articles with rich text plugins
