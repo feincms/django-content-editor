@@ -111,14 +111,13 @@ django.jQuery(function($){
         var inlines = orderMachine.find('.inline-related:not(.empty-form)');
         inlines.hide();
         var shown = inlines.filter('[data-region="' + ContentEditor.currentRegion + '"]');
+        orderMachine.find('.machine-message').remove();
         if (shown.length) {
             shown.show();
-            orderMachine.find('.machine-message').remove();
         } else {
             $('<p class="machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
         }
     }
-
 
 
     var pluginInlineGroups = (function selectPluginInlineGroups() {
@@ -146,6 +145,8 @@ django.jQuery(function($){
 
         setBiggestOrdering(row);
         attachMoveToRegionDropdown(row);
+
+        orderMachine.find('.machine-message').remove();
 
         $(document).trigger('content-editor:activate', [row]);
     });
