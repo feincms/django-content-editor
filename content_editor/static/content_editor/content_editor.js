@@ -2,14 +2,6 @@
 /* eslint indent:[2,4] */
 /* eslint comma-dangle:[2,"never"] */
 django.jQuery(function($){
-    // Patch up urlify maps to generate nicer slugs in german
-    if(typeof(Downcoder) != 'undefined'){
-        Downcoder.Initialize() ;
-        Downcoder.map['ö'] = Downcoder.map['Ö'] = 'oe';
-        Downcoder.map['ä'] = Downcoder.map['Ä'] = 'ae';
-        Downcoder.map['ü'] = Downcoder.map['Ü'] = 'ue';
-    }
-
     var context = document.getElementById('content-editor-context');
     if (!context) return;
 
