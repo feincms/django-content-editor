@@ -48,7 +48,25 @@ class JS(object):
     """
     Use this to insert a script tag via ``forms.Media`` containing additional
     attributes (such as ``id`` and ``data-*`` for CSP-compatible data
-    injection.)
+    injection.)::
+
+        media.add_js([
+            JS('asset.js', {
+                'id': 'asset-script',
+                'data-the-answer': '"42"',
+            }),
+        ])
+
+    The rendered media tag (via ``{{ media.js }}`` or ``{{ media }}`` will
+    now contain a script tag as follows, without line breaks::
+
+        <script type="text/javascript" src="/static/asset.js"
+            data-answer="&quot;42&quot;" id="asset-script"></script>
+
+    The attributes are automatically escaped. The data attributes may now be
+    accessed inside ``asset.js``::
+
+        var answer = document.querySelector('#asset-script').dataset.answer;
     """
     def __init__(self, js, attrs):
         self.js = js
@@ -60,10 +78,10 @@ class JS(object):
 
     def __html__(self):
         return format_html(
-            '{}" {}',
+            '{}"{}',
             static(self.js),
-            mark_safe(flatatt(self.attrs).rstrip('"')),
-        )
+            mark_safe(flatatt(self.attrs)),
+        ).rstrip('"')
 
 
 class ContentEditor(ModelAdmin):
@@ -75,16 +93,6 @@ class ContentEditor(ModelAdmin):
     It does not have any public API except from everything inherited from'
     the standard ``ModelAdmin`` class.
     """
-
-    class Media:
-        css = {'all': (
-            'content_editor/content_editor.css',
-        )}
-        js = (
-            'content_editor/jquery-ui-1.11.4.custom.min.js',
-            'content_editor/tabbed_fieldsets.js',
-            # 'content_editor/content_editor.js',  Look below
-        )
 
     def _content_editor_context(self, request, context):
         plugins = [
@@ -119,7 +127,12 @@ class ContentEditor(ModelAdmin):
         response = super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
 
+        response.context_data['media'].add_css({'all': (
+            'content_editor/content_editor.css',
+        )})
         response.context_data['media'].add_js((
+            'content_editor/jquery-ui-1.11.4.custom.min.js',
+            'content_editor/tabbed_fieldsets.js',
             JS('content_editor/content_editor.js', {
                 'id': 'content-editor-context',
                 'data-context': self._content_editor_context(
