@@ -6,7 +6,6 @@ from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.forms.utils import flatatt
 from django.templatetags.static import static
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import format_html, mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
@@ -42,7 +41,6 @@ class ContentEditorInline(StackedInline):
         )
 
 
-@python_2_unicode_compatible
 class JS(object):
     """
     Use this to insert a script tag via ``forms.Media`` containing additional
