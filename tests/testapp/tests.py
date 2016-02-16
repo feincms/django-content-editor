@@ -54,7 +54,7 @@ class ContentEditorTest(TestCase):
         self.login()
         response = self.client.get(reverse('admin:testapp_article_add'))
 
-        self.assertContains(response, 'content-editor-script', 1)
+        self.assertContains(response, 'id="content-editor-context"', 1)
         self.assertContains(response, 'class="richtext"', 1)
         self.assertContains(
             response,

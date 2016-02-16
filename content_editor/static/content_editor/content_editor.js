@@ -27,7 +27,7 @@ django.jQuery(function($){
 
     // .dataset.context instead of getAttribute would be nicer
     $.extend(window.ContentEditor, JSON.parse(
-        document.getElementById('content-editor-script').getAttribute('data-context')));
+        document.getElementById('content-editor-context').getAttribute('data-context')));
     var orderMachine = $('.order-machine');
 
     function moveEmptyFormsToEnd() {
