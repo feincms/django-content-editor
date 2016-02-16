@@ -233,6 +233,44 @@ Example: articles with rich text plugins
 Finally, ensure that ``content_editor`` and ``app`` are added to your
 ``INSTALLED_APPS`` setting, and you're good to go.
 
+IF you also want nice icons to add new items, you might want to use
+`font awesome`_ and the following snippets:
+
+``app/admin.py``::
+
+    class ArticleAdmin(ContentEditor):
+        inlines = [
+            RichTextInline,
+            ContentEditorInline.create(model=Download),
+        ]
+
+        class Media:
+            css = {'all': (
+                'https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css',  # noqa
+            )}
+            js = (
+                'app/plugin_buttons.js',
+            )
+
+
+``app/plugin_buttons.js``::
+
+    (function($) {
+        $(document).on('content-editor:ready', function() {
+            ContentEditor.addPluginButton(
+                'app_richtext',
+                '<i class="fa fa-pencil"></i>'
+            );
+            ContentEditor.addPluginButton(
+                'app_download',
+                '<i class="fa fa-download"></i>'
+            );
+        });
+    })(django.jQuery);
+
+
+.. _font awesome: https://fortawesome.github.io/Font-Awesome/
+
 
 Conventions
 ===========
