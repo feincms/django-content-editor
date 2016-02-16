@@ -90,6 +90,15 @@ Example: articles with rich text plugins
             return self.title
 
 
+    # create_plugin_base does nothing outlandish, it only defines an abstract
+    # base model with the following attributes:
+    # - a parent ForeignKey with a related_name the rest of the code expects
+    # - a region CharField containing the region key defined above
+    # - an ordering IntegerField for ordering plugin items
+    # - a get_queryset() classmethod returning a queryset for the
+    #   ContentProxy classes (a good place to add select_related and
+    #   prefetch_related calls or anything similar)
+    # That's all. Really!
     ArticlePlugin = create_plugin_base(Article)
 
 
