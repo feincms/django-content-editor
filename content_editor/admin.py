@@ -137,7 +137,7 @@ class ContentEditor(ModelAdmin):
                 'id': 'content-editor-context',
                 'data-context': self._content_editor_context(
                     request, response.context_data),
-            }
-        ),))
+            }),
+        ))
 
         return response

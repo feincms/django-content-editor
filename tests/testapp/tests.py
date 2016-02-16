@@ -190,7 +190,8 @@ class ContentEditorTest(TestCase):
         # alphabetically sorts its attributes.
         self.assertEqual(
             '%s' % media,
-            '<script type="text/javascript" src="/static/asset1.js"></script>\n'
+            '<script type="text/javascript" src="/static/asset1.js">'
+            '</script>\n'
             '<script type="text/javascript" src="/static/asset2.js"'
             ' answer="&quot;42&quot;" id="something"></script>'
         )
