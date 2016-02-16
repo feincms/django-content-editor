@@ -11,6 +11,9 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
 
+__all__ = ('ContentEditorForm', 'ContentEditorInline', 'ContentEditor')
+
+
 class ContentEditorForm(forms.ModelForm):
     """
     The item editor form contains hidden region and ordering fields and should

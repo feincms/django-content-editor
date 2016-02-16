@@ -7,6 +7,12 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 
+__all__ = (
+    'Region', 'Template', 'ContentProxy', 'MPTTContentProxy',
+    'create_plugin_base'
+)
+
+
 class _DataType(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
