@@ -66,8 +66,7 @@
     max-height: 0;
 }
 
-.order-machine .machine-message {
-    display: block;
+.machine-message {
     margin: 1.5em 1em 1em;
     text-align: center;
 }

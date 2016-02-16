@@ -57,7 +57,8 @@ django.jQuery(function($){
         '</div>'
     );
 
-    var orderMachine = $('.order-machine');
+    var orderMachine = $('.order-machine'),
+        machineEmptyMessage = $('<p class="hidden machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
 
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
@@ -140,11 +141,11 @@ django.jQuery(function($){
         var inlines = orderMachine.find('.inline-related:not(.empty-form)');
         inlines.hide();
         var shown = inlines.filter('[data-region="' + ContentEditor.currentRegion + '"]');
-        orderMachine.find('.machine-message').remove();
+        machineEmptyMessage.addClass('hidden');
         if (shown.length) {
             shown.show();
         } else {
-            $('<p class="machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
+            machineEmptyMessage.removeClass('hidden');
         }
     }
 
@@ -175,12 +176,15 @@ django.jQuery(function($){
         setBiggestOrdering(row);
         attachMoveToRegionDropdown(row);
 
-        orderMachine.find('.machine-message').remove();
+        machineEmptyMessage.addClass('hidden');
 
         $(document).trigger('content-editor:activate', [row]);
     });
 
     $(document).on('formset:removed', function resetInlines() {
+        if (!orderMachine.find('.inline-related[data-region="' + ContentEditor.currentRegion + '"]').length) {
+            machineEmptyMessage.removeClass('hidden');
+        }
         orderMachine.find('.inline-related.last-related:not(.empty-form)').each(function() {
             $(document).trigger('content-editor:deactivate', [$(this)]);
         });
@@ -192,7 +196,6 @@ django.jQuery(function($){
             });
         }, 0);
 
-        // TODO if empty, show .machine-message
     });
 
     // Initialize tabs and currentRegion.
