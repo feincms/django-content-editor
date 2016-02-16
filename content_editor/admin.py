@@ -4,7 +4,10 @@ import json
 
 from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
-from django.utils.html import format_html
+from django.forms.utils import flatatt
+from django.templatetags.static import static
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.html import format_html, mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
@@ -39,6 +42,29 @@ class ContentEditorInline(StackedInline):
         )
 
 
+@python_2_unicode_compatible
+class JS(object):
+    """
+    Use this to insert a script tag via ``forms.Media`` containing additional
+    attributes (such as ``id`` and ``data-*`` for CSP-compatible data
+    injection.)
+    """
+    def __init__(self, js, attrs):
+        self.js = js
+        self.attrs = attrs
+
+    def startswith(self, _):
+        # Masquerade as absolute path so that we are returned as-is.
+        return True
+
+    def __html__(self):
+        return format_html(
+            '{}" {}',
+            static(self.js),
+            mark_safe(flatatt(self.attrs).rstrip('"')),
+        )
+
+
 class ContentEditor(ModelAdmin):
     """
     The ``ContentEditor`` is a drop-in replacement for ``ModelAdmin`` with the
@@ -55,8 +81,8 @@ class ContentEditor(ModelAdmin):
         )}
         js = (
             'content_editor/jquery-ui-1.11.4.custom.min.js',
-            'content_editor/content_editor.js',
             'content_editor/tabbed_fieldsets.js',
+            # 'content_editor/content_editor.js',  Look below
         )
 
     def _content_editor_context(self, request, context):
@@ -92,19 +118,12 @@ class ContentEditor(ModelAdmin):
         response = super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
 
-        # Some sort of CSP-compatible inline JSON support in forms.Media would
-        # be nice, but as long as we dont have that, inject the required data
-        # into the response using a post render callback.
-        script = format_html(
-            '<script id="content-editor-context"'
-            ' type="application/json" data-context="{}"></script>\n'
-            '</head>',
-            self._content_editor_context(request, response.context_data),
-        ).encode('utf-8')
+        response.context_data['media'].add_js((
+            JS('content_editor/content_editor.js', {
+                'id': 'content-editor-context',
+                'data-context': self._content_editor_context(
+                    request, response.context_data),
+            }
+        ),))
 
-        def _callback(response):
-            response.content = response.content.replace(
-                b'</head>', script, 1)
-
-        response.add_post_render_callback(_callback)
         return response
