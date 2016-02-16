@@ -85,15 +85,6 @@ class ContentEditor(ModelAdmin):
             'messages': {
                 'createNew': ugettext('Add new item'),
                 'empty': ugettext('No items'),
-
-                # 'changeTemplate': ugettext(
-                #     'Really change template? All changes are saved.'
-                # ),
-                # 'changeTemplateWithMove': ugettext(
-                #     'Really change template? All changes are saved and'
-                #     ' content from %(source_regions)s is moved to'
-                #     ' %(target_region)s.'
-                # ),
             },
         })
 
