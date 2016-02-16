@@ -18,30 +18,31 @@ django.jQuery(function($){
             $('#' + plugin + '_set-group .add-row a').click();
         },
         addPluginButton: function addPluginButton(plugin, html) {
-            var title = '';
+            var doAdd = function(plugin, html, title) {
+                var unit = document.querySelector('.control-unit.plugin-buttons');
+                if (!unit) {
+                    unit = document.createElement('div');
+                    unit.className = 'control-unit plugin-buttons';
+                    document.querySelector('.machine-control').appendChild(unit);
+                }
+
+                var button = document.createElement('a');
+                button.className = 'plugin-button';
+                button.title = title;
+                button.addEventListener('click', function() {
+                    ContentEditor.addContent(plugin);
+                });
+                button.innerHTML = html;
+
+                unit.appendChild(button);
+            };
+
             for (var i=0; i<ContentEditor.plugins.length; i++) {
                 if (ContentEditor.plugins[i][0] == plugin) {
-                    title = ContentEditor.plugins[i][1];
+                    doAdd(plugin, html, ContentEditor.plugins[i][1]);
                     break;
                 }
             }
-
-            var unit = document.querySelector('.control-unit.plugin-buttons');
-            if (!unit) {
-                unit = document.createElement('div');
-                unit.className = 'control-unit plugin-buttons';
-                document.querySelector('.machine-control').appendChild(unit);
-            }
-
-            var button = document.createElement('a');
-            button.className = 'plugin-button';
-            button.title = title;
-            button.addEventListener('click', function() {
-                ContentEditor.addContent(plugin);
-            });
-            button.innerHTML = html;
-
-            unit.appendChild(button);
         }
     };
 
