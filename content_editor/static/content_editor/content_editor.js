@@ -10,11 +10,17 @@ django.jQuery(function($){
         Downcoder.map['ü'] = Downcoder.map['Ü'] = 'ue';
     }
 
+    var context = document.getElementById('content-editor-context');
+    if (!context) return;
+
     window.ContentEditor = {
         addContent: function addContent(plugin) {
             $('#' + plugin + '_set-group .add-row a').click();
         }
     };
+
+    // .dataset.context instead of getAttribute would be nicer
+    $.extend(window.ContentEditor, JSON.parse(context.getAttribute('data-context')));
 
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
@@ -25,9 +31,6 @@ django.jQuery(function($){
         '</div>'
     );
 
-    // .dataset.context instead of getAttribute would be nicer
-    $.extend(window.ContentEditor, JSON.parse(
-        document.getElementById('content-editor-context').getAttribute('data-context')));
     var orderMachine = $('.order-machine');
 
     function moveEmptyFormsToEnd() {
