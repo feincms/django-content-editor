@@ -183,6 +183,8 @@ django.jQuery(function($){
                 $(document).trigger('content-editor:activate', [$(this)]);
             });
         }, 0);
+
+        // TODO if empty, show .machine-message
     });
 
     // Initialize tabs and currentRegion.
