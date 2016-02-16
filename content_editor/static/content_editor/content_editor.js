@@ -16,6 +16,24 @@ django.jQuery(function($){
     window.ContentEditor = {
         addContent: function addContent(plugin) {
             $('#' + plugin + '_set-group .add-row a').click();
+        },
+        addPluginButton: function addPluginButton(plugin, title, html) {
+            var unit = document.querySelector('.control-unit.plugin-buttons');
+            if (!unit) {
+                unit = document.createElement('div');
+                unit.className = 'control-unit plugin-buttons';
+                document.querySelector('.machine-control').appendChild(unit);
+            }
+
+            var button = document.createElement('a');
+            button.className = 'plugin-button';
+            button.title = title;
+            button.addEventListener('click', function() {
+                ContentEditor.addContent(plugin);
+            });
+            button.innerHTML = html;
+
+            unit.appendChild(button);
         }
     };
 
