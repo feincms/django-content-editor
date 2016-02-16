@@ -82,8 +82,8 @@ Example: articles with rich text plugins
         pub_date = models.DateField(blank=True, null=True)
 
         regions = [
-            Region(name='main', title='main region'),
-            # Region(name='sidebar', title='sidebar region', inherited=False),
+            Region(key='main', title='main region'),
+            # Region(key='sidebar', title='sidebar region', inherited=False),
         ]
 
         def __str__(self):
@@ -247,8 +247,8 @@ expect a ``regions`` attribute or property (**not** a method) on their model
 Regions have the following attributes:
 
 * ``title``: Something nice, will be visible in the content editor.
-* ``name``: The region name, used in the content proxy as attribute name for
-  the list of plugins.
+* ``key``: The region key, used in the content proxy as attribute name for
+  the list of plugins. Must contain a valid Python identifier.
 * ``inherited``: Only has an effect if you are using the bundled
   ``MPTTContentProxy``: Models inherit content from their ancestor chain if a
   region with ``inherited = True`` is emtpy.
@@ -267,7 +267,7 @@ implemented yet.
 Templates have the following attributes:
 
 * ``title``: Something nice.
-* ``name``: Something machine-readable.
+* ``key``: The template key. Must contain a valid Python identifier.
 * ``template_name``: A template path.
 * ``regions``: A list of region instances.
 

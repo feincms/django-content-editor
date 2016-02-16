@@ -14,8 +14,8 @@ class Article(models.Model):
     title = models.CharField(max_length=200)
 
     regions = [
-        Region(name='main', title='main region'),
-        Region(name='sidebar', title='sidebar region'),
+        Region(key='main', title='main region'),
+        Region(key='sidebar', title='sidebar region'),
     ]
 
     def __str__(self):
@@ -51,10 +51,10 @@ class Page(MPTTModel):
         on_delete=models.CASCADE)
 
     template = Template(
-        name='test',
+        key='test',
         regions=[
-            Region(name='main', title='main region'),
-            Region(name='sidebar', title='sidebar region', inherited=True),
+            Region(key='main', title='main region'),
+            Region(key='sidebar', title='sidebar region', inherited=True),
         ],
     )
 

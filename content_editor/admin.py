@@ -78,7 +78,7 @@ class ContentEditor(ModelAdmin):
                 capfirst(plugin._meta.verbose_name)
             ) for plugin in plugins],
             'regions': [(
-                region.name,
+                region.key,
                 region.title,
                 # TODO correct template when POSTing
             ) for region in instance.regions],

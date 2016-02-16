@@ -13,13 +13,13 @@ class _DataType(object):
 
 
 class Region(_DataType):
-    name = ''
+    key = ''
     title = 'unnamed'
     inherited = False
 
 
 class Template(_DataType):
-    name = ''
+    key = ''
     template_name = None
     title = ''
     regions = []
@@ -40,8 +40,8 @@ class ContentProxy(object):
                 contents[obj.region].append(obj)
 
         for region in item.regions:
-            setattr(self, region.name, sorted(
-                contents.get(region.name, []),
+            setattr(self, region.key, sorted(
+                contents.get(region.key, []),
                 key=attrgetter('ordering'),
             ))
 
@@ -65,22 +65,22 @@ class MPTTContentProxy(object):
                 contents[obj.parent][obj.region].append(obj)
 
         for region in item.regions:
-            setattr(self, region.name, [])
+            setattr(self, region.key, [])
 
             if region.inherited:
                 for ancestor in ancestors:
-                    content = contents[ancestor][region.name]
+                    content = contents[ancestor][region.key]
 
                     if content:
-                        setattr(self, region.name, sorted(
+                        setattr(self, region.key, sorted(
                             content,
                             key=attrgetter('ordering'),
                         ))
                         break
 
             else:
-                setattr(self, region.name, sorted(
-                    contents[ancestors[0]][region.name],
+                setattr(self, region.key, sorted(
+                    contents[ancestors[0]][region.key],
                     key=attrgetter('ordering'),
                 ))
 
