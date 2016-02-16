@@ -221,8 +221,6 @@ django.jQuery(function($){
             tabs.eq(0).click();
         }
 
-        // Hide tabs if only one.  XXX Maybe not? No clear separation without at least a tab.
-//        if (tabs.length <= 1) tabs.hide();
     })();
 
     $(document).on(
