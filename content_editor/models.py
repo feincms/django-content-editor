@@ -129,9 +129,6 @@ def create_plugin_base(content_base):
                 self.ordering,
             )
 
-        def render(self, **kwargs):  # pragma: no cover
-            raise NotImplementedError
-
         @classmethod
         def get_queryset(cls):
             return cls.objects.all()
