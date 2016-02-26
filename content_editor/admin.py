@@ -6,6 +6,7 @@ from django import forms
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.forms.utils import flatatt
 from django.templatetags.static import static
+from django.utils.encoding import force_text
 from django.utils.html import format_html, mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
@@ -110,11 +111,11 @@ class ContentEditor(ModelAdmin):
                     plugin._meta.app_label,
                     plugin._meta.model_name,
                 ),
-                capfirst(plugin._meta.verbose_name)
+                capfirst(force_text(plugin._meta.verbose_name))
             ) for plugin in plugins],
             'regions': [(
                 region.key,
-                region.title,
+                force_text(region.title),
                 # TODO correct template when POSTing
             ) for region in instance.regions],
             'messages': {
