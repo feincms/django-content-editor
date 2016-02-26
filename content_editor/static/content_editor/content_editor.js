@@ -124,7 +124,7 @@ django.jQuery(function($){
 
     function setBiggestOrdering(row) {
         var orderings = [];
-        $('.field-ordering input').each(function() {
+        orderMachine.find('.field-ordering input').each(function() {
             if (!isNaN(+this.value)) orderings.push(+this.value);
         });
         row.find('.field-ordering input').val(10 + Math.max.apply(null, orderings));
@@ -247,7 +247,7 @@ django.jQuery(function($){
 
     // Fill in ordering field and try to keep the current region tab (location hash).
     $('form').submit(function(){
-        $('.field-ordering input').each(function assignOrdering(index) {
+        orderMachine.find('.field-ordering input').each(function assignOrdering(index) {
             this.value = 10 * (index + 1); // Avoid default=0 just because.
         });
 
