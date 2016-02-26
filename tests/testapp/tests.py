@@ -38,6 +38,14 @@ class ContentEditorTest(TestCase):
             ordering=10,
         )
 
+        with self.assertNumQueries(0):
+            self.assertEqual(
+                '%s' % richtext,
+                'testapp.RichText<region=main ordering=10 pk=%s>' % (
+                    richtext.pk,
+                ),
+            )
+
         with self.assertNumQueries(2):  # Two content types.
             content = ContentProxy(article, plugins=[RichText, Download])
 

@@ -116,17 +116,12 @@ def create_plugin_base(content_base):
             app_label = content_base._meta.app_label
             ordering = ['ordering']
 
-        def __str__(self):  # pragma: no cover
-            return (
-                '%s<pk=%s, parent=%s<pk=%s, %s>, region=%s,'
-                ' ordering=%d>') % (
-                self.__class__.__name__,
-                self.pk,
-                self.parent.__class__.__name__,
-                self.parent.pk,
-                self.parent,
+        def __str__(self):
+            return '%s<region=%s ordering=%s pk=%s>' % (
+                self._meta.label,
                 self.region,
                 self.ordering,
+                self.pk,
             )
 
         @classmethod
