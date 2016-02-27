@@ -12,25 +12,22 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
 
-__all__ = ('ContentEditorForm', 'ContentEditorInline', 'ContentEditor')
-
-
-class ContentEditorForm(forms.ModelForm):
-    """
-    The item editor form contains hidden region and ordering fields and should
-    be used for all content type inlines.
-    """
-    region = forms.CharField(widget=forms.HiddenInput())
-    ordering = forms.IntegerField(widget=forms.HiddenInput())
+__all__ = ('ContentEditorInline', 'ContentEditor')
 
 
 class ContentEditorInline(StackedInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
-    form = ContentEditorForm
     extra = 0
     fk_name = 'parent'
+
+    def formfield_for_dbfield(self, db_field, *args, **kwargs):
+        # `request` was made a positional argument in dbb0df2a0 (2015-12-24)
+        if db_field.name in ('region', 'ordering'):
+            kwargs['widget'] = forms.HiddenInput
+        return super(ContentEditorInline, self).formfield_for_dbfield(
+            db_field, *args, **kwargs)
 
     @classmethod
     def create(cls, model, **kwargs):
