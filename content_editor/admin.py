@@ -17,12 +17,16 @@ __all__ = ('ContentEditorInline', 'ContentEditor')
 
 class ContentEditorInline(StackedInline):
     """
-    Custom ``InlineModelAdmin`` subclass used for content types.
+    Custom ``admin.StackedInline`` subclass used for content types.
+
+    This inline has to be used for content editor inlines, because the content
+    editor uses the type to differentiate between plugins and other inlines.
     """
     extra = 0
     fk_name = 'parent'
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
+        """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
         # `request` was made a positional argument in dbb0df2a0 (2015-12-24)
         if db_field.name in ('region', 'ordering'):
             kwargs['widget'] = forms.HiddenInput
@@ -31,6 +35,12 @@ class ContentEditorInline(StackedInline):
 
     @classmethod
     def create(cls, model, **kwargs):
+        """Create a inline for the given model
+
+        Usage::
+
+            ContentEditorInline.create(MyPlugin, form=MyPluginForm, ...)
+        """
         kwargs['model'] = model
         return type(
             str('ContentEditorInline_%s_%s' % (
