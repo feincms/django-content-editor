@@ -4,7 +4,12 @@ from itertools import chain
 from operator import attrgetter
 
 
-__all__ = ('Contents', 'collect_contents', 'collect_mptt_contents')
+__all__ = (
+    'Contents',
+    'collect_contents_for_items',
+    'collect_contents_for_item',
+    'collect_contents_for_mptt_item',
+)
 
 
 class Contents(object):
@@ -46,44 +51,28 @@ class Contents(object):
             self._contents[region.key] = contents[region.key]  # Still sorted
 
 
-def collect_contents(item, plugins):
-    contents = Contents(item.regions)
+def collect_contents_for_items(items, plugins):
+    contents = {item: Contents(item.regions) for item in items}
+    items_dict = {item.pk: item for item in items}
     for plugin in plugins:
-        queryset = plugin.get_queryset().filter(parent=item)
+        queryset = plugin.get_queryset().filter(parent__in=contents.keys())
         queryset._known_related_objects.setdefault(
             plugin._meta.get_field('parent'),
             {},
-        ).update({item.pk: item})
+        ).update(items_dict)
         for obj in queryset:
-            contents.add(obj)
+            contents[obj.parent].add(obj)
     return contents
 
 
-def collect_mptt_contents(item, plugins):
-    contents = Contents(item.regions)
+def collect_contents_for_item(item, plugins):
+    return collect_contents_for_items([item], plugins)[item]
 
-    ancestors = item.get_ancestors(ascending=True)
-    contents_dict = {item: contents}
-    contents_dict.update({
-        ancestor: Contents(ancestor.regions)
-        for ancestor in ancestors
-    })
 
-    ancestor_dict = {item.pk: item}
-    ancestor_dict.update({ancestor.pk: ancestor for ancestor in ancestors})
-
-    for plugin in plugins:
-        queryset = plugin.get_queryset().filter(
-            parent__in=contents_dict.keys(),
-        )
-        queryset._known_related_objects.setdefault(
-            plugin._meta.get_field('parent'),
-            {},
-        ).update(ancestor_dict)
-
-        for obj in queryset:
-            contents_dict[obj.parent].add(obj)
-
+def collect_contents_for_mptt_item(item, plugins):
+    ancestors = list(item.get_ancestors(ascending=True))
+    all_contents = collect_contents_for_items([item] + ancestors, plugins)
+    contents = all_contents[item]
     for ancestor in ancestors:
-        contents.inherit_regions(contents_dict[ancestor])
+        contents.inherit_regions(all_contents[ancestor])
     return contents

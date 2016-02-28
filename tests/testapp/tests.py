@@ -11,7 +11,9 @@ except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
 from content_editor.admin import JS
-from content_editor.utils import collect_contents, collect_mptt_contents
+from content_editor.utils import (
+    collect_contents_for_item, collect_contents_for_mptt_item
+)
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
@@ -47,7 +49,9 @@ class ContentEditorTest(TestCase):
             )
 
         with self.assertNumQueries(2):  # Two content types.
-            contents = collect_contents(article, plugins=[RichText, Download])
+            contents = collect_contents_for_item(
+                article,
+                plugins=[RichText, Download])
 
             self.assertEqual(contents.main[0], richtext)
             self.assertEqual(contents.main[0].parent, article)
@@ -102,12 +106,14 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = collect_contents(article, plugins=[RichText, Download])
+            contents = collect_contents_for_item(
+                article,
+                plugins=[RichText, Download])
 
         self.assertEqual(contents.main, [])
 
         with self.assertNumQueries(0):
-            contents = collect_contents(article, plugins=[])
+            contents = collect_contents_for_item(article, plugins=[])
 
         self.assertEqual(contents.main, [])
 
@@ -123,7 +129,9 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = collect_mptt_contents(child, plugins=[PageText])
+            contents = collect_contents_for_mptt_item(
+                child,
+                plugins=[PageText])
             self.assertEqual(
                 contents.main,
                 [],
@@ -145,7 +153,9 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = collect_mptt_contents(child, plugins=[PageText])
+            contents = collect_contents_for_mptt_item(
+                child,
+                plugins=[PageText])
             self.assertEqual(
                 contents.main,
                 [],
@@ -170,7 +180,9 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = collect_mptt_contents(child, plugins=[PageText])
+            contents = collect_contents_for_mptt_item(
+                child,
+                plugins=[PageText])
             self.assertEqual(
                 [c.text for c in contents.main],
                 ['child main text'],
