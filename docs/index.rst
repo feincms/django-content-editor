@@ -234,10 +234,6 @@ Example: articles with rich text plugins
         model = Article
 
         def get_context_data(self, **kwargs):
-            contents = collect_contents_for_mptt_item(
-                self.object,
-                [RichText, Download])
-
             return super(ArticleView, self).get_context_data(
                 content=collect_contents_for_mptt_item(
                     self.object,
