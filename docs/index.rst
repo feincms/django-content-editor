@@ -206,9 +206,11 @@ Example: articles with rich text plugins
 
 ``app/views.py``::
 
+    from django.utils.html import format_html, mark_safe
     from django.views import generic
 
-    from content_editor.models import ContentProxy
+    from content_editor.renderer import PluginRenderer
+    from content_editor.utils import collect_contents_for_mptt_item
 
     from .models import Article, RichText, Download
 
@@ -217,11 +219,28 @@ Example: articles with rich text plugins
         model = Article
 
         def get_context_data(self, **kwargs):
-            return super(ArticleView, self).get_context_data(
-                content=ContentProxy(
-                    self.object,
-                    plugins=[RichText, Download],
+            renderer = PluginRenderer()
+            renderer.register(
+                RichText,
+                lambda plugin: mark_safe(plugin.text),
+            )
+            renderer.register(
+                Download,
+                lambda plugin: format_html(
+                    '<a href="{}">{}</a>',
+                    plugin.file.url,
+                    plugin.file.name,
                 ),
+            )
+            contents = collect_contents_for_mptt_item(
+                self.object,
+                [RichText, Download])
+
+            return super(ArticleView, self).get_context_data(
+                content={
+                    region.key: renderer.render(contents[region.key])
+                    for region in self.objects.regions
+                },
                 **kwargs)
 
 
@@ -232,11 +251,15 @@ Example: articles with rich text plugins
     {% block title %}{{ article }} - {{ block.super }}{% endblock %}
 
     {% block content %}
-    <h1>{{ article }}</h1>
-    {{ article.pub_date }}
+    <article>
+        <h1>{{ article }}</h1>
+        {{ article.pub_date }}
 
-    {# Yes, not generic at all. And also does not render downloads. #}
-    {% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
+        {{ content.main }}
+    </article>
+    {% comment %}
+        <aside>{{ content.sidebar }}</aside>
+    {% endcomment %}
     {% endblock %}
 
 Finally, ensure that ``content_editor`` and ``app`` are added to your
@@ -281,15 +304,16 @@ IF you also want nice icons to add new items, you might want to use
 .. _font awesome: https://fortawesome.github.io/Font-Awesome/
 
 
-Conventions
-===========
+Parts
+=====
 
 Regions
 ~~~~~~~
 
-The included ``ContentProxy`` classes and the ``ContentEditor`` admin class
-expect a ``regions`` attribute or property (**not** a method) on their model
-(the ``Article`` model above) which returns a list of ``Region`` instances.
+The included ``Contents`` class and its helpers (``collect_contents_*``) and
+the ``ContentEditor`` admin class expect a ``regions`` attribute or property
+(**not** a method) on their model (the ``Article`` model above) which returns
+a list of ``Region`` instances.
 
 Regions have the following attributes:
 
@@ -297,8 +321,9 @@ Regions have the following attributes:
 * ``key``: The region key, used in the content proxy as attribute name for
   the list of plugins. Must contain a valid Python identifier.
 * ``inherited``: Only has an effect if you are using the bundled
-  ``MPTTContentProxy``: Models inherit content from their ancestor chain if a
-  region with ``inherited = True`` is emtpy.
+  ``collect_contents_for_mptt_item`` or anything comparable: Models inherit
+  content from their ancestor chain if a region with ``inherited = True`` is
+  emtpy.
 
 You are free to define additional attributes -- simply pass them when
 instantiating a new region.
@@ -319,6 +344,27 @@ Templates have the following attributes:
 * ``regions``: A list of region instances.
 
 As with the regions above, you are free to define additional attributes.
+
+
+``Contents`` class and helpers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
+
+``collect_contents_for_items``
+------------------------------
+
+``collect_contents_for_item``
+-----------------------------
+
+``collect_contents_for_mptt_item``
+----------------------------------
+
+
+``PluginRenderer`` class
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
 
 
 Design decisions
