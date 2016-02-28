@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
 from content_editor.admin import JS
-from content_editor.utils import ContentProxy, MPTTContentProxy
+from content_editor.utils import collect_contents, MPTTContentProxy
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
@@ -47,14 +47,14 @@ class ContentEditorTest(TestCase):
             )
 
         with self.assertNumQueries(2):  # Two content types.
-            content = ContentProxy(article, plugins=[RichText, Download])
+            contents = collect_contents(article, plugins=[RichText, Download])
 
-            self.assertEqual(content.main[0], richtext)
-            self.assertEqual(content.main[0].parent, article)
+            self.assertEqual(contents.main[0], richtext)
+            self.assertEqual(contents.main[0].parent, article)
 
-        self.assertEqual(len(content.main), 1)
-        self.assertEqual(len(content.sidebar), 0)
-        self.assertEqual(len(content.bla), 0)  # No AttributeError
+        self.assertEqual(len(contents.main), 1)
+        self.assertEqual(len(contents.sidebar), 0)
+        self.assertEqual(len(contents.bla), 0)  # No AttributeError
 
         response = self.client.get(article.get_absolute_url())
         self.assertContains(response, '<h1>Test</h1>')
@@ -102,14 +102,14 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            content = ContentProxy(article, plugins=[RichText, Download])
+            contents = collect_contents(article, plugins=[RichText, Download])
 
-        self.assertEqual(content.main, [])
+        self.assertEqual(contents.main, [])
 
         with self.assertNumQueries(0):
-            content = ContentProxy(article, plugins=[])
+            contents = collect_contents(article, plugins=[])
 
-        self.assertEqual(content.main, [])
+        self.assertEqual(contents.main, [])
 
     def test_hierarchy(self):
         page = Page.objects.create(title='root')
@@ -123,13 +123,13 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            content = MPTTContentProxy(child, plugins=[PageText])
+            contents = MPTTContentProxy(child, plugins=[PageText])
             self.assertEqual(
-                content.main,
+                contents.main,
                 [],
             )
             self.assertEqual(
-                content.sidebar,
+                contents.sidebar,
                 [],
             )
 
@@ -145,17 +145,17 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            content = MPTTContentProxy(child, plugins=[PageText])
+            contents = MPTTContentProxy(child, plugins=[PageText])
             self.assertEqual(
-                content.main,
+                contents.main,
                 [],
             )
             self.assertEqual(
-                [c.text for c in content.sidebar],
+                [c.text for c in contents.sidebar],
                 ['page sidebar text'],
             )
 
-            self.assertEqual(content.sidebar[0].parent, page)
+            self.assertEqual(contents.sidebar[0].parent, page)
 
         child.testapp_pagetext_set.create(
             region='sidebar',
@@ -170,17 +170,17 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            content = MPTTContentProxy(child, plugins=[PageText])
+            contents = MPTTContentProxy(child, plugins=[PageText])
             self.assertEqual(
-                [c.text for c in content.main],
+                [c.text for c in contents.main],
                 ['child main text'],
             )
             self.assertEqual(
-                [c.text for c in content.sidebar],
+                [c.text for c in contents.sidebar],
                 ['child sidebar text'],
             )
 
-            self.assertEqual(content.sidebar[0].parent, child)
+            self.assertEqual(contents.sidebar[0].parent, child)
 
         response = self.client.get(child.get_absolute_url())
         self.assertContains(response, 'child main text')

@@ -4,7 +4,7 @@ from itertools import chain
 from operator import attrgetter
 
 
-__all__ = ('Contents', 'ContentProxy', 'MPTTContentProxy')
+__all__ = ('Contents', 'MPTTContentProxy')
 
 
 class Contents(object):
@@ -46,19 +46,17 @@ class Contents(object):
             self._contents[region.key] = contents[region.key]  # Still sorted
 
 
-class ContentProxy(Contents):
-    # Ugly!
-    def __init__(self, item, plugins):
-        super(ContentProxy, self).__init__(item.regions)
-
-        for plugin in plugins:
-            queryset = plugin.get_queryset().filter(parent=item)
-            queryset._known_related_objects.setdefault(
-                plugin._meta.get_field('parent'),
-                {},
-            ).update({item.pk: item})
-            for obj in queryset:
-                self.add(obj)
+def collect_contents(item, plugins):
+    contents = Contents(item.regions)
+    for plugin in plugins:
+        queryset = plugin.get_queryset().filter(parent=item)
+        queryset._known_related_objects.setdefault(
+            plugin._meta.get_field('parent'),
+            {},
+        ).update({item.pk: item})
+        for obj in queryset:
+            contents.add(obj)
+    return contents
 
 
 class MPTTContentProxy(Contents):
