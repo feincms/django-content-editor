@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-from collections import defaultdict
 from itertools import chain
 from operator import attrgetter
 
@@ -31,12 +30,20 @@ class Contents(object):
             self._sort()
         return self._contents.get(key, [])
 
+    __getitem__ = __getattr__
+
     def __iter__(self):
         if not self._sorted:
             self._sort()
         return chain.from_iterable(
             self._contents[region.key] for region in self._regions
         )
+
+    def inherit_regions(self, contents):
+        for region in self._regions:
+            if not region.inherited or self[region.key]:
+                continue
+            self._contents[region.key] = contents[region.key]  # Still sorted
 
 
 class ContentProxy(Contents):
@@ -54,15 +61,23 @@ class ContentProxy(Contents):
                 self.add(obj)
 
 
-class MPTTContentProxy(object):
+class MPTTContentProxy(Contents):
     def __init__(self, item, plugins):
-        contents = defaultdict(lambda: defaultdict(list))
-        ancestors = [item] + list(item.get_ancestors(ascending=True))
-        ancestor_dict = {ancestor.pk: ancestor for ancestor in ancestors}
+        super(MPTTContentProxy, self).__init__(item.regions)
+
+        ancestors = item.get_ancestors(ascending=True)
+        contents = {item: self}
+        contents.update({
+            ancestor: Contents(ancestor.regions)
+            for ancestor in ancestors
+        })
+
+        ancestor_dict = {item.pk: item}
+        ancestor_dict.update({ancestor.pk: ancestor for ancestor in ancestors})
 
         for plugin in plugins:
             queryset = plugin.get_queryset().filter(
-                parent__in=ancestor_dict.keys(),
+                parent__in=contents.keys(),
             )
             queryset._known_related_objects.setdefault(
                 plugin._meta.get_field('parent'),
@@ -70,24 +85,7 @@ class MPTTContentProxy(object):
             ).update(ancestor_dict)
 
             for obj in queryset:
-                contents[obj.parent][obj.region].append(obj)
+                contents[obj.parent].add(obj)
 
-        for region in item.regions:
-            setattr(self, region.key, [])
-
-            if region.inherited:
-                for ancestor in ancestors:
-                    content = contents[ancestor][region.key]
-
-                    if content:
-                        setattr(self, region.key, sorted(
-                            content,
-                            key=attrgetter('ordering'),
-                        ))
-                        break
-
-            else:
-                setattr(self, region.key, sorted(
-                    contents[ancestors[0]][region.key],
-                    key=attrgetter('ordering'),
-                ))
+        for ancestor in ancestors:
+            self.inherit_regions(contents[ancestor])
