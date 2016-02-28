@@ -239,10 +239,10 @@ Example: articles with rich text plugins
                 [RichText, Download])
 
             return super(ArticleView, self).get_context_data(
-                content={
-                    region.key: renderer.render(contents[region.key])
-                    for region in self.objects.regions
-                },
+                content=collect_contents_for_mptt_item(
+                    self.object,
+                    [RichText, Download],
+                ).render_regions(renderer),
                 **kwargs)
 
 

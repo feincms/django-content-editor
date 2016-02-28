@@ -32,13 +32,11 @@ class ArticleView(generic.DetailView):
     model = Article
 
     def get_context_data(self, **kwargs):
-        contents = collect_contents_for_item(
-            self.object, [RichText, Download, Bla])
         return super(ArticleView, self).get_context_data(
-            content={
-                region.key: renderer.render(contents[region.key])
-                for region in self.object.regions
-            },
+            content=collect_contents_for_item(
+                self.object,
+                [RichText, Download, Bla],
+            ).render_regions(renderer),
             **kwargs)
 
 
@@ -46,11 +44,9 @@ class PageView(generic.DetailView):
     model = Page
 
     def get_context_data(self, **kwargs):
-        contents = collect_contents_for_mptt_item(
-            self.object, [PageText])
         return super(PageView, self).get_context_data(
-            content={
-                region.key: renderer.render(contents[region.key])
-                for region in self.object.regions
-            },
+            content=collect_contents_for_mptt_item(
+                self.object,
+                [PageText],
+            ).render_regions(renderer),
             **kwargs)
