@@ -44,6 +44,9 @@ class Contents(object):
             self._contents[region.key] for region in self._regions
         )
 
+    def __len__(self):
+        return sum((len(contents) for contents in self._contents.values()), 0)
+
     def inherit_regions(self, contents):
         for region in self._regions:
             if not region.inherited or self[region.key]:

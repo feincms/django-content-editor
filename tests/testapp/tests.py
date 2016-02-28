@@ -64,6 +64,20 @@ class ContentEditorTest(TestCase):
         self.assertContains(response, '<h1>Test</h1>')
         self.assertContains(response, '<p>bla</p>')
 
+        # Test for Contents.__iter__
+        contents = collect_contents_for_item(
+            article,
+            plugins=[RichText, Download])
+        self.assertFalse(contents._sorted)
+        self.assertEqual(len(list(contents)), 1)
+        self.assertTrue(contents._sorted)
+        self.assertEqual(len(list(contents)), 1)
+
+        # Contents.__len__ also means that a Contents instance may be falsy
+        self.assertEqual(len(contents), 1)
+        self.assertTrue(contents)
+        self.assertFalse(collect_contents_for_item(article, [Download]))
+
     def test_admin(self):
         self.login()
         response = self.client.get(reverse('admin:testapp_article_add'))
