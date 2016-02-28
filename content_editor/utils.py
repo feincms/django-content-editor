@@ -4,7 +4,7 @@ from itertools import chain
 from operator import attrgetter
 
 
-__all__ = ('Contents', 'MPTTContentProxy')
+__all__ = ('Contents', 'collect_contents', 'collect_mptt_contents')
 
 
 class Contents(object):
@@ -59,31 +59,31 @@ def collect_contents(item, plugins):
     return contents
 
 
-class MPTTContentProxy(Contents):
-    def __init__(self, item, plugins):
-        super(MPTTContentProxy, self).__init__(item.regions)
+def collect_mptt_contents(item, plugins):
+    contents = Contents(item.regions)
 
-        ancestors = item.get_ancestors(ascending=True)
-        contents = {item: self}
-        contents.update({
-            ancestor: Contents(ancestor.regions)
-            for ancestor in ancestors
-        })
+    ancestors = item.get_ancestors(ascending=True)
+    contents_dict = {item: contents}
+    contents_dict.update({
+        ancestor: Contents(ancestor.regions)
+        for ancestor in ancestors
+    })
 
-        ancestor_dict = {item.pk: item}
-        ancestor_dict.update({ancestor.pk: ancestor for ancestor in ancestors})
+    ancestor_dict = {item.pk: item}
+    ancestor_dict.update({ancestor.pk: ancestor for ancestor in ancestors})
 
-        for plugin in plugins:
-            queryset = plugin.get_queryset().filter(
-                parent__in=contents.keys(),
-            )
-            queryset._known_related_objects.setdefault(
-                plugin._meta.get_field('parent'),
-                {},
-            ).update(ancestor_dict)
+    for plugin in plugins:
+        queryset = plugin.get_queryset().filter(
+            parent__in=contents_dict.keys(),
+        )
+        queryset._known_related_objects.setdefault(
+            plugin._meta.get_field('parent'),
+            {},
+        ).update(ancestor_dict)
 
-            for obj in queryset:
-                contents[obj.parent].add(obj)
+        for obj in queryset:
+            contents_dict[obj.parent].add(obj)
 
-        for ancestor in ancestors:
-            self.inherit_regions(contents[ancestor])
+    for ancestor in ancestors:
+        contents.inherit_regions(contents_dict[ancestor])
+    return contents

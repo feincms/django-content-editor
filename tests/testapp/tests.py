@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
 from content_editor.admin import JS
-from content_editor.utils import collect_contents, MPTTContentProxy
+from content_editor.utils import collect_contents, collect_mptt_contents
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
@@ -123,7 +123,7 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = MPTTContentProxy(child, plugins=[PageText])
+            contents = collect_mptt_contents(child, plugins=[PageText])
             self.assertEqual(
                 contents.main,
                 [],
@@ -145,7 +145,7 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = MPTTContentProxy(child, plugins=[PageText])
+            contents = collect_mptt_contents(child, plugins=[PageText])
             self.assertEqual(
                 contents.main,
                 [],
@@ -170,7 +170,7 @@ class ContentEditorTest(TestCase):
         )
 
         with self.assertNumQueries(2):
-            contents = MPTTContentProxy(child, plugins=[PageText])
+            contents = collect_mptt_contents(child, plugins=[PageText])
             self.assertEqual(
                 [c.text for c in contents.main],
                 ['child main text'],
