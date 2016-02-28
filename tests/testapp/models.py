@@ -37,11 +37,16 @@ class RichText(ArticlePlugin):
 
 
 class Download(ArticlePlugin):
-    file = models.FileField(upload_to='downloads/%Y/%m/')
+    file = models.TextField()  # FileField, but charfield is easier to test.
 
     class Meta:
         verbose_name = 'download'
         verbose_name_plural = 'downloads'
+
+
+class Bla(ArticlePlugin):
+    class Meta:
+        verbose_name = 'bla'
 
 
 class Page(MPTTModel):

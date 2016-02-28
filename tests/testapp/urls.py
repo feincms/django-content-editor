@@ -7,8 +7,7 @@ try:
 except ImportError:  # pragma: no cover
     from django.conf.urls import url
 
-from .models import Article, RichText, Download, Page, PageText
-from .views import ContentView
+from .views import ArticleView, PageView
 
 
 admin.autodiscover()
@@ -18,18 +17,12 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(
         r'^articles/(?P<pk>\d+)/$',
-        ContentView.as_view(
-            model=Article,
-            plugins=[RichText, Download],
-        ),
+        ArticleView.as_view(),
         name='article_detail',
     ),
     url(
         r'^pages/(?P<pk>\d+)/$',
-        ContentView.as_view(
-            model=Page,
-            plugins=[PageText],
-        ),
+        PageView.as_view(),
         name='page_detail',
     ),
 ]

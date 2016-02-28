@@ -215,23 +215,25 @@ Example: articles with rich text plugins
     from .models import Article, RichText, Download
 
 
+    renderer = PluginRenderer()
+    renderer.register(
+        RichText,
+        lambda plugin: mark_safe(plugin.text),
+    )
+    renderer.register(
+        Download,
+        lambda plugin: format_html(
+            '<a href="{}">{}</a>',
+            plugin.file.url,
+            plugin.file.name,
+        ),
+    )
+
+
     class ArticleView(generic.DetailView):
         model = Article
 
         def get_context_data(self, **kwargs):
-            renderer = PluginRenderer()
-            renderer.register(
-                RichText,
-                lambda plugin: mark_safe(plugin.text),
-            )
-            renderer.register(
-                Download,
-                lambda plugin: format_html(
-                    '<a href="{}">{}</a>',
-                    plugin.file.url,
-                    plugin.file.name,
-                ),
-            )
             contents = collect_contents_for_mptt_item(
                 self.object,
                 [RichText, Download])

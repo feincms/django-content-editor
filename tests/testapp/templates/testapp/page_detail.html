@@ -5,7 +5,7 @@
 {% block content %}
 <h1>{{ page }}</h1>
 
-{# Yes, not generic at all. And also does not render downloads. #}
-{% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
-{% for plugin in content.sidebar %}{{ plugin.text|safe }}{% endfor %}
+<article>{{ content.main }}</article>
+<aside>{{ content.sidebar }}</aside>
+
 {% endblock %}

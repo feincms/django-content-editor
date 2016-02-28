@@ -15,7 +15,8 @@ from content_editor.utils import (
     collect_contents_for_item, collect_contents_for_mptt_item
 )
 
-from testapp.models import Article, RichText, Download, Page, PageText
+from testapp.models import Article, RichText, Download, Bla, Page, PageText
+from testapp.views import renderer
 
 
 class ContentEditorTest(TestCase):
@@ -39,6 +40,11 @@ class ContentEditorTest(TestCase):
             region='main',
             ordering=10,
         )
+        article.testapp_download_set.create(
+            file='bla.pdf',
+            region='main',
+            ordering=20,
+        )
 
         with self.assertNumQueries(0):
             self.assertEqual(
@@ -56,7 +62,7 @@ class ContentEditorTest(TestCase):
             self.assertEqual(contents.main[0], richtext)
             self.assertEqual(contents.main[0].parent, article)
 
-        self.assertEqual(len(contents.main), 1)
+        self.assertEqual(len(contents.main), 2)
         self.assertEqual(len(contents.sidebar), 0)
         self.assertEqual(len(contents.bla), 0)  # No AttributeError
 
@@ -69,14 +75,33 @@ class ContentEditorTest(TestCase):
             article,
             plugins=[RichText, Download])
         self.assertFalse(contents._sorted)
-        self.assertEqual(len(list(contents)), 1)
+        self.assertEqual(len(list(contents)), 2)
         self.assertTrue(contents._sorted)
-        self.assertEqual(len(list(contents)), 1)
+        self.assertEqual(len(list(contents)), 2)
 
         # Contents.__len__ also means that a Contents instance may be falsy
-        self.assertEqual(len(contents), 1)
+        self.assertEqual(len(contents), 2)
         self.assertTrue(contents)
-        self.assertFalse(collect_contents_for_item(article, [Download]))
+        self.assertFalse(collect_contents_for_item(article, [Bla]))
+
+        self.assertEqual(
+            set(renderer.plugins()),
+            {RichText, PageText, Download},
+        )
+        article.testapp_bla_set.create(
+            region='main',
+            ordering=30,
+        )
+
+        response = self.client.get(article.get_absolute_url())
+        self.assertContains(
+            response,
+            '<!-- testapp.Bla: testapp.Bla<region=main ordering=30 pk=1> -->',
+        )
+        self.assertEqual(
+            set(renderer.plugins()),
+            {RichText, PageText, Download},
+        )
 
     def test_admin(self):
         self.login()

@@ -6,6 +6,6 @@
 <h1>{{ article }}</h1>
 {{ article.pub_date }}
 
-{# Yes, not generic at all. And also does not render downloads. #}
-{% for plugin in content.main %}{{ plugin.text|safe }}{% endfor %}
+{{ content.main }}
+
 {% endblock %}
