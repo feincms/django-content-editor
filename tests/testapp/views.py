@@ -1,6 +1,6 @@
 from django.views import generic
 
-from content_editor.models import ContentProxy
+from content_editor.utils import ContentProxy
 
 
 class ContentView(generic.DetailView):

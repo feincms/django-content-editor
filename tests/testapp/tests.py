@@ -11,7 +11,7 @@ except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
 from content_editor.admin import JS
-from content_editor.models import ContentProxy, MPTTContentProxy
+from content_editor.utils import ContentProxy, MPTTContentProxy
 
 from testapp.models import Article, RichText, Download, Page, PageText
 
@@ -54,7 +54,7 @@ class ContentEditorTest(TestCase):
 
         self.assertEqual(len(content.main), 1)
         self.assertEqual(len(content.sidebar), 0)
-        self.assertRaises(AttributeError, lambda: content.bla)
+        self.assertEqual(len(content.bla), 0)  # No AttributeError
 
         response = self.client.get(article.get_absolute_url())
         self.assertContains(response, '<h1>Test</h1>')
