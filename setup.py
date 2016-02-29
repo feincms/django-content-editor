@@ -58,4 +58,11 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     zip_safe=False,
+    tests_require=[
+        'Django',
+        'coverage',
+        'django-mptt',
+        'pytz',
+    ],
+    test_suite='testapp.runtests.runtests',
 )

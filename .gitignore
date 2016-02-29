@@ -12,6 +12,7 @@
 /dist
 tests/test.zip
 /docs/_build
+/.eggs
 .coverage
 htmlcov
 venv
