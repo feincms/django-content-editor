@@ -27,7 +27,7 @@ class PluginRenderer(object):
     def render_content(self, content):
         if content.__class__ not in self._renderers:
             for plugin, renderer in reversed(  # pragma: no branch
-                    self._renderers.items()):
+                    list(self._renderers.items())):
                 if isinstance(content, plugin):
                     self.register(content.__class__, renderer)
                     break
