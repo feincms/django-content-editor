@@ -10,6 +10,14 @@ from mptt.models import MPTTModel
 from content_editor.models import Template, Region, create_plugin_base
 
 
+class AbstractRichText(models.Model):
+    text = models.TextField(blank=True)
+
+    class Meta:
+        abstract = True
+        verbose_name = 'rich text'
+
+
 class Article(models.Model):
     title = models.CharField(max_length=200)
 
@@ -28,12 +36,8 @@ class Article(models.Model):
 ArticlePlugin = create_plugin_base(Article)
 
 
-class RichText(ArticlePlugin):
-    text = models.TextField(blank=True)
-
-    class Meta:
-        verbose_name = 'rich text'
-        verbose_name_plural = 'rich texts'
+class RichText(AbstractRichText, ArticlePlugin):
+    pass
 
 
 class Download(ArticlePlugin):
@@ -78,9 +82,5 @@ class Page(MPTTModel):
 PagePlugin = create_plugin_base(Page)
 
 
-class PageText(PagePlugin):
-    text = models.TextField(blank=True)
-
-    class Meta:
-        verbose_name = 'text'
-        verbose_name_plural = 'texts'
+class PageText(AbstractRichText, PagePlugin):
+    pass

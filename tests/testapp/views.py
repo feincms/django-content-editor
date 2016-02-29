@@ -6,16 +6,14 @@ from content_editor.utils import (
     collect_contents_for_item, collect_contents_for_mptt_item
 )
 
-from .models import Article, RichText, Download, Bla, Page, PageText
+from .models import (
+    AbstractRichText, Article, RichText, Download, Bla, Page, PageText
+)
 
 
 renderer = PluginRenderer()
 renderer.register(
-    RichText,
-    lambda plugin: mark_safe(plugin.text),
-)
-renderer.register(
-    PageText,
+    AbstractRichText,
     lambda plugin: mark_safe(plugin.text),
 )
 renderer.register(
