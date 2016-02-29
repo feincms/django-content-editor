@@ -2,7 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.contrib.auth.models import User
-from django.db.models import Model
 from django.test import TestCase
 # from django.utils import timezone
 
@@ -16,9 +15,7 @@ from content_editor.utils import (
     collect_contents_for_item, collect_contents_for_mptt_item
 )
 
-from testapp.models import (
-    AbstractRichText, Article, RichText, Download, Bla, Page, PageText
-)
+from testapp.models import Article, RichText, Download, Bla, Page, PageText
 from testapp.views import renderer
 
 
