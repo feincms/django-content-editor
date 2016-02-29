@@ -4,6 +4,7 @@ dist: trusty
 python:
   - "2.7"
   - "3.4"
+  - "3.5"
 env:
   - REQ="Django>=1.9,<1.10 django-mptt"
   - REQ="https://github.com/django/django/archive/master.zip django-mptt"
