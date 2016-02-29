@@ -9,7 +9,8 @@ env:
   - REQ="https://github.com/django/django/archive/master.zip django-mptt"
 matrix:
   exclude:
-# Avoid "UnicodeEncodeError: 'ascii' codec can't encode character u'\u2297' in position 60: ordinal not in range(128)" ???
+# Avoid "UnicodeEncodeError: 'ascii' codec can't encode character u'\u2297' in
+# position 60: ordinal not in range(128)" ???
     - python: "2.7"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
