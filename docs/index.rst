@@ -7,10 +7,9 @@ django-content-editor -- Editing structured content
 
 .. warning::
 
-   Everything is really bare bones here, but works alright. The abstract
-   plugin base model and the administration interface are practically
-   finished, but the parts pertaining to views and templates need some
-   additional thinking. Also, docs and more tests.
+   Everything here works alright, but is still subject to change. Some
+   additional real-world testing has to happen before the code can be
+   declared 1.0-ready. Also, additional docs and more tests.
 
 **Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
