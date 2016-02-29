@@ -13,6 +13,5 @@ matrix:
     - python: "2.7"
       env: REQ="https://github.com/django/django/archive/master.zip django-mptt"
 install:
-  - pip install $REQ flake8
-  - python setup.py -q install
-script: "cd tests && ./manage.py test testapp && flake8 ."
+  - pip install $REQ coverage flake8 pytz
+script: "python testapp/runtests.py && flake8 ."
