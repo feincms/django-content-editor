@@ -32,6 +32,3 @@ class PluginRenderer(object):
                     self.register(content.__class__, renderer)
                     break
         return self._renderers[content.__class__](content)
-
-    def plugins(self):
-        return self._renderers.keys()

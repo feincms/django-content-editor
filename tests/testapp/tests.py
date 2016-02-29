@@ -16,7 +16,6 @@ from content_editor.utils import (
 )
 
 from testapp.models import Article, RichText, Download, Bla, Page, PageText
-from testapp.views import renderer
 
 
 class ContentEditorTest(TestCase):
@@ -84,7 +83,6 @@ class ContentEditorTest(TestCase):
         self.assertTrue(contents)
         self.assertFalse(collect_contents_for_item(article, [Bla]))
 
-        self.assertTrue(Bla not in set(renderer.plugins()))
         article.testapp_bla_set.create(
             region='main',
             ordering=30,
@@ -95,7 +93,6 @@ class ContentEditorTest(TestCase):
             response,
             '<!-- testapp.Bla: testapp.Bla<region=main ordering=30 pk=1> -->',
         )
-        self.assertTrue(Bla in set(renderer.plugins()))
 
     def test_admin(self):
         self.login()
