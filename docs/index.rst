@@ -210,7 +210,7 @@ Example: articles with rich text plugins
     from django.views import generic
 
     from content_editor.renderer import PluginRenderer
-    from content_editor.utils import collect_contents_for_mptt_item
+    from content_editor.contents import contents_for_mptt_item
 
     from .models import Article, RichText, Download
 
@@ -235,7 +235,7 @@ Example: articles with rich text plugins
 
         def get_context_data(self, **kwargs):
             return super(ArticleView, self).get_context_data(
-                content=collect_contents_for_mptt_item(
+                content=contents_for_mptt_item(
                     self.object,
                     [RichText, Download],
                 ).render_regions(renderer),
@@ -308,7 +308,7 @@ Parts
 Regions
 ~~~~~~~
 
-The included ``Contents`` class and its helpers (``collect_contents_*``) and
+The included ``Contents`` class and its helpers (``contents_*``) and
 the ``ContentEditor`` admin class expect a ``regions`` attribute or property
 (**not** a method) on their model (the ``Article`` model above) which returns
 a list of ``Region`` instances.
@@ -319,7 +319,7 @@ Regions have the following attributes:
 * ``key``: The region key, used in the content proxy as attribute name for
   the list of plugins. Must contain a valid Python identifier.
 * ``inherited``: Only has an effect if you are using the bundled
-  ``collect_contents_for_mptt_item`` or anything comparable: Models inherit
+  ``contents_for_mptt_item`` or anything comparable: Models inherit
   content from their ancestor chain if a region with ``inherited = True`` is
   emtpy.
 
@@ -349,13 +349,13 @@ As with the regions above, you are free to define additional attributes.
 
 TODO
 
-``collect_contents_for_items``
+``contents_for_items``
 ------------------------------
 
-``collect_contents_for_item``
+``contents_for_item``
 -----------------------------
 
-``collect_contents_for_mptt_item``
+``contents_for_mptt_item``
 ----------------------------------
 
 

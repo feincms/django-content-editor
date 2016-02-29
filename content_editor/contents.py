@@ -6,9 +6,9 @@ from operator import attrgetter
 
 __all__ = (
     'Contents',
-    'collect_contents_for_items',
-    'collect_contents_for_item',
-    'collect_contents_for_mptt_item',
+    'contents_for_items',
+    'contents_for_item',
+    'contents_for_mptt_item',
 )
 
 
@@ -60,7 +60,7 @@ class Contents(object):
         }
 
 
-def collect_contents_for_items(items, plugins):
+def contents_for_items(items, plugins):
     contents = {item: Contents(item.regions) for item in items}
     items_dict = {item.pk: item for item in items}
     for plugin in plugins:
@@ -74,13 +74,13 @@ def collect_contents_for_items(items, plugins):
     return contents
 
 
-def collect_contents_for_item(item, plugins):
-    return collect_contents_for_items([item], plugins)[item]
+def contents_for_item(item, plugins):
+    return contents_for_items([item], plugins)[item]
 
 
-def collect_contents_for_mptt_item(item, plugins):
+def contents_for_mptt_item(item, plugins):
     ancestors = list(item.get_ancestors(ascending=True))
-    all_contents = collect_contents_for_items([item] + ancestors, plugins)
+    all_contents = contents_for_items([item] + ancestors, plugins)
     contents = all_contents[item]
     for ancestor in ancestors:
         contents.inherit_regions(all_contents[ancestor])
