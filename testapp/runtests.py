@@ -6,14 +6,14 @@ cov = Coverage()  # noqa
 cov.start()  # noqa
 
 
-from os.path import dirname
+import os
 import sys
 import django
 from django.conf import settings
 
 
 # Make testapp/content_editor importable
-sys.path.insert(0, dirname(dirname(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 
 settings.configure(
@@ -79,6 +79,8 @@ def runtests():
         include=['*/content_editor/*'],
         # omit=['*migrations*'],
     )
+    if 'TRAVIS' not in os.environ:
+        cov.html_report(include=['*/content_editor/*'])
     sys.exit(failures)
 
 
