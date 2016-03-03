@@ -61,7 +61,7 @@ setup(
     tests_require=[
         'Django',
         'coverage',
-        'django-mptt',
+        'django-mptt==0.8.0',  # Avoid bad marshal data (unknown type code)
         'pytz',
     ],
     test_suite='testapp.runtests.runtests',
