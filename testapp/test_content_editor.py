@@ -147,6 +147,19 @@ class ContentEditorTest(TestCase):
 
         self.assertEqual(contents.main, [])
 
+    def test_unknown_regions(self):
+        article = Article.objects.create(title='Test')
+        for idx, region in enumerate(('', 'notexists', 'main')):
+            RichText.objects.create(
+                parent=article,
+                ordering=idx,
+                region=region,
+                text='Test',
+            )
+
+        contents = contents_for_item(article, plugins=[RichText])
+        self.assertEqual(len(contents._unknown_region_contents), 2)
+
     def test_hierarchy(self):
         page = Page.objects.create(title='root')
         child = page.children.create(title='child 1')
