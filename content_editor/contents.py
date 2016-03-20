@@ -17,10 +17,15 @@ class Contents(object):
         self._regions = regions
         self._sorted = False
         self._contents = {region.key: [] for region in self._regions}
+        self._unknown_region_contents = []
 
     def add(self, content):
         self._sorted = False
-        self._contents[content.region].append(content)
+        try:
+            self._contents[content.region].append(content)
+        except KeyError:
+            # TODO Document or delete this.
+            self._unknown_region_contents.append(content)
 
     def _sort(self):
         for region_key in list(self._contents):
