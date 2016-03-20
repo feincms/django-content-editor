@@ -20,6 +20,7 @@ class RichTextInline(ContentEditorInline):
     formfield_overrides = {
         models.TextField: {'widget': RichTextarea},
     }
+    fieldsets = [(None, {'fields': ('text', 'region', 'ordering')})]
 
     class Media:
         js = (

@@ -1,7 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.models import User
+from django.core import checks
 from django.test import TestCase
 # from django.utils import timezone
 
@@ -10,7 +12,8 @@ try:
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
-from content_editor.admin import JS
+from content_editor.admin import ContentEditor, ContentEditorInline, JS
+
 from content_editor.contents import (
     contents_for_item, contents_for_mptt_item
 )
@@ -257,4 +260,35 @@ class ContentEditorTest(TestCase):
             '</script>\n'
             '<script type="text/javascript" src="/static/asset2.js"'
             ' answer="&quot;42&quot;" id="something"></script>'
+        )
+
+    def test_checks(self):
+        self.assertEqual(
+            admin.site._registry[Article].check(),
+            [],
+        )
+
+        class CustomAdminSite(admin.AdminSite):
+            pass
+
+        class RichTextInline(ContentEditorInline):
+            model = RichText
+            # Purposefully construct an inline with missing region
+            # and ordering fields
+            fieldsets = [(None, {'fields': ('text',)})]
+
+        class ArticleAdmin(ContentEditor):
+            model = Article
+            inlines = [RichTextInline]
+
+        site = CustomAdminSite()
+        site.register(Article, ArticleAdmin)
+
+        self.assertEqual(
+            site._registry[Article].check(),
+            [checks.Error(
+                "fieldsets must contain both 'region' and 'ordering'.",
+                obj=RichTextInline,
+                id='content_editor.E001',
+            )],
         )
