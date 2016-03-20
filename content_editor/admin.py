@@ -3,7 +3,10 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django import forms
+from django.contrib.admin.checks import InlineModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
+from django.contrib.admin.utils import flatten_fieldsets
+from django.core import checks
 from django.forms.utils import flatatt
 from django.templatetags.static import static
 from django.utils.encoding import force_text
@@ -15,6 +18,27 @@ from django.utils.translation import ugettext
 __all__ = ('ContentEditorInline', 'ContentEditor')
 
 
+class ContentEditorChecks(InlineModelAdminChecks):
+    def check(self, inline_obj, **kwargs):
+        errors = super(ContentEditorChecks, self).check(inline_obj, **kwargs)
+        errors.extend(self.check_content_editor_fields_in_fieldset(inline_obj))
+        return errors
+
+    def check_content_editor_fields_in_fieldset(self, obj):
+        if obj.fieldsets is None:
+            return []
+
+        fields = flatten_fieldsets(obj.fieldsets)
+        if all(field in fields for field in ('region', 'ordering')):
+            return []
+
+        return [checks.Error(
+            "fieldsets must contain both 'region' and 'ordering'.",
+            obj=obj.__class__,
+            id='content_editor.E001',
+        )]
+
+
 class ContentEditorInline(StackedInline):
     """
     Custom ``admin.StackedInline`` subclass used for content types.
@@ -24,6 +48,7 @@ class ContentEditorInline(StackedInline):
     """
     extra = 0
     fk_name = 'parent'
+    checks_class = ContentEditorChecks
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
