@@ -416,12 +416,38 @@ from ancestors if a given region is inheritable and empty in the passed item::
 ``PluginRenderer`` class
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO
+.. warning::
 
-(Too experimental to document right now -- consult the code. The main problem
-with the current code is that it assumes too much, and makes it hard i.e. to
-add a template plugin which simply causes the main template to include the
-plugin template with context and everything.)
+   I consider the ``PluginRenderer`` extremely experimental.  The main problem
+   with the current code is that it assumes too much, and makes it hard i.e. to
+   add a template plugin which simply causes the main template to include the
+   plugin template with context and everything.
+
+   Also, its name does not tell that it's only usable for HTML right now.
+
+Example::
+
+    renderer = PluginRenderer()
+    # Register renderers -- also recognizes subclasses of the plugins.
+    # Fallback for unknown plugins is a HTML comment containing the model
+    # label (app.model) and plugin.__str__
+    # The return value of renderers is autoescaped.
+    renderer.register(RichText, lambda plugin: mark_safe(plugin.text))
+    renderer.register(Image, lambda plugin: format_html(
+        '<img src={}" alt="">',
+        plugin.image.url,
+    ))
+
+    article = ...
+    contents = contents_for_item(article, plugins=[RichText, Image])
+
+    return render(request, 'cms/article_detail.html', {
+        'object': article,
+        'content': {
+            region.key: renderer.render(contents[region.key])
+            for region in article.regions
+        },
+    })
 
 
 Design decisions
