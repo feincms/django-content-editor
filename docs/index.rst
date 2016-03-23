@@ -336,16 +336,81 @@ As with the regions above, you are free to define additional attributes.
 ``Contents`` class and helpers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO
+The ``content_editor.contents`` module offers a few helpers for fetching
+content blocks from the database. The ``Contents`` class knows how to
+group content blocks by region and how to merge contents from several main
+models. This is especially useful in inheritance scenarious, for example
+when a page in a hierarchical page tree inherits some aside-content from its
+ancestors.
+
+.. note::
+
+   **Historical note**
+
+   The ``Contents`` class and the helpers replace the monolithic
+   ``ContentProxy`` concept in FeinCMS_.
+
+Simple usage is as follows::
+
+    from content_editor.contents import Contents
+
+    article = Article.objects.get(...)
+    c = Contents(article.regions)
+    for item in article.cms_richtext_set.all():
+        c.add(item)
+    for item in article.cms_download_set.all():
+        c.add(item)
+
+    # Returns a list of all items, sorted by the order of article.regions
+    # and by item ordering
+    list(c)
+
+    # Returns a list of all items from the given region
+    c['main']
+    # or
+    c.main
+
+    # How many items do I have?
+    len(c)
+
+    # Inherit content from the given contents instance if one of my own
+    # regions is a. inherited and b. empty
+    c.inherit_regions(some_other_contents_instance)
+
+For simple use cases, you'll probably want to take a closer look at the
+following helper methods instead of instantiating a ``Contents`` class
+directly:
+
 
 ``contents_for_items``
-------------------------------
+----------------------
+
+Returns a contents instance for a list of main models::
+
+    articles = Article.objects.all()[:10]
+    contents = contents_for_items(articles, plugins=[RichText, Download])
+
+    something = [(article, contents[article]) for article in articles]
+
 
 ``contents_for_item``
------------------------------
+---------------------
+
+Returns the contents instance for a given main model (note that this
+helper calls ``contents_for_items`` to do the real work)::
+
+    # ...
+    contents = contents_for_item(article, plugins=[RichText, Download])
+
 
 ``contents_for_mptt_item``
-----------------------------------
+--------------------------
+
+Returns the contents instance for a given main model, inheriting content
+from ancestors if a given region is inheritable and empty in the passed item::
+
+    page = Page.objects.get(path=...)
+    contents = contents_for_mptt_item(page, plugins=[RichText, Download])
 
 
 ``PluginRenderer`` class
@@ -378,15 +443,15 @@ messes up and you cannot fix it other than going directly into the HTML code.
 Plus, if someone really knows what they are doing, I'd still like to give them
 the power to shot their own foot).
 
-If this does not seem convincing you can always add your own rich text content
-type with a different configuration (or just override the rich text editor
+If this does not seem convincing you can always add your own rich text plugin
+with a different configuration (or just override the rich text editor
 initialization template in your own project). We do not want to force our world
 view on you, it's just that we think that in this case, more choice has the
 bigger potential to hurt than to help.
 
 
-Content blocks
-~~~~~~~~~~~~~~
+Plugins
+~~~~~~~
 
 Images and other media files are inserted via objects; the user can only select
 a file and a display mode (f.e. float/block for images or something...). An
