@@ -418,6 +418,11 @@ from ancestors if a given region is inheritable and empty in the passed item::
 
 TODO
 
+(Too experimental to document right now -- consult the code. The main problem
+with the current code is that it assumes too much, and makes it hard i.e. to
+add a template plugin which simply causes the main template to include the
+plugin template with context and everything.)
+
 
 Design decisions
 ==============================
