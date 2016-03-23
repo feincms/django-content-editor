@@ -13,34 +13,24 @@ django-content-editor -- Editing structured content
 
 **Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
-The item editor was primarily a system to work with lists of content blocks
-which can be assigned to arbitrary other objects. Whether those are elements of
-a hierarchical page structure, weblog articles or anything else is irrelevant.
-The idea of putting content together in small manageable pieces is interesting
-for various use cases.
+Django's builtin admin application provides a really good and usable
+administration interface for creating and updating content.
+``django-content-editor`` extends Django's inlines mechanism with an interface
+and tools for managing and rendering heterogenous collections of content as
+are often necessary for content management systems. For example, articles
+may be composed of text blocks with images and videos interspersed throughout.
 
+That, in fact, was one of the core ideas of FeinCMS_. Unfortunately, FeinCMS_'
+components were too strongly coupled, and the code in general used too much
+magic which made the code hard to understand and difficult to fix when it
+broke (this didn't happen too often in the last years, but still.)
 
-Why ``django-content-editor``?
-==============================
+So, ``django-content-editor``.
 
-``django-content-editor`` does what FeinCMS_ should have been all along. A
-really thin layer around ``django.contrib.admin``'s inlines without any magical
-behavior, with proper separation between models, rendering and administration
-as Django did with the `newforms admin`_ a long long time ago.
-
-Also, there is **absolutely no magic** going on behind the scenes, no
-dynamic model generation or anything similar. The FeinCMS code's dynamic
-behavior required workarounds such as ``feincms_item_editor_inline`` for
-simple use cases such as specifying ``InlineModelAdmin`` options.
-Furthermore, my long gone fondness for monkey patching made the code even
-more prone to breakage.
-
-With the next version of django-mptt_ supporting a draggable tree admin
-(formerly FeinCMS' TreeEditor) it made lots of sense extracting the content
-editor of FeinCMS into its own package, and thereby paving the way for a more
-modular Django-based CMF.
-
-Content first! The interface matters, but data matters more.
+At the time of writing the newest release of django-mptt_ comes with a
+draggable tree admin, formerly FeinCMS_' TreeEditor. It has become really
+simple to build a basic pages CMS building *on top* of django-mptt_ and
+``django-content-editor``.
 
 ---
 
