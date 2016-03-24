@@ -30,7 +30,7 @@ the last years, but still.)
 So, ``django-content-editor``.
 
 At the time of writing the newest release of django-mptt_ comes with
-a draggable tree admin, formerly FeinCMS_' TreeEditor. It has become
+a `draggable tree admin`_, formerly FeinCMS_' TreeEditor. It has become
 really simple to build a basic pages CMS building *on top* of
 django-mptt_ and ``django-content-editor``.
 
@@ -57,6 +57,7 @@ latest release at the time of writing.
 .. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
 .. _django-mptt: https://github.com/django-mptt/django-mptt/
 .. _comparable CMS systems: https://www.djangopackages.com/grids/g/cms/
+.. _draggable tree admin: http://django-mptt.github.io/django-mptt/admin.html#mptt-admin-draggablempttadmin
 
 
 Example: articles with rich text plugins
