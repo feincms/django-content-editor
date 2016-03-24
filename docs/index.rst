@@ -344,7 +344,8 @@ As with the regions above, you are free to define additional
 attributes.
 
 
-``Contents`` class and helpers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``Contents`` class and helpers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``content_editor.contents`` module offers a few helpers for
 fetching content blocks from the database. The ``Contents`` class
