@@ -481,7 +481,7 @@ Example::
 
 
 Design decisions
-==============================
+================
 
 About rich text editors
 ~~~~~~~~~~~~~~~~~~~~~~~
