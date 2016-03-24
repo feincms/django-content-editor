@@ -538,3 +538,18 @@ have their own displaying and updating logic; implementing dynamic
 content inside the CMS is not hard anymore, on the contrary. Since
 content blocks are Django models, you can do anything you want
 inside them.
+
+
+Glossary
+========
+
+- **Main model**: (Bad wording -- not happy with that). The model to
+  which plugins may be added. This model uses the content editor
+  admin class.
+
+- **Plugin**: A content element type such as rich text, download,
+  and image or whatever.
+
+- **Content block**: A content element instance belonging to a main
+  model instance. Also called **item** sometimes in the documentation
+  above.
