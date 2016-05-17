@@ -7,7 +7,7 @@ python:
   - "3.5"
 env:
   - REQ="Django>=1.9,<1.10 django-mptt"
-  - REQ="https://github.com/django/django/archive/master.zip django-mptt"
+    # - REQ="https://github.com/django/django/archive/master.zip django-mptt"
 matrix:
   exclude:
 # Avoid "UnicodeEncodeError: 'ascii' codec can't encode character u'\u2297' in
