@@ -24,19 +24,7 @@ setup(
     packages=find_packages(
         exclude=['tests']
     ),
-    package_data={
-        '': ['*.html', '*.txt'],
-        'content_editor': [
-            'locale/*/*/*.*',
-            'static/content_editor/*.*',
-            'static/content_editor/*/*.*',
-            'templates/*.*',
-            'templates/*/*.*',
-            'templates/*/*/*.*',
-            'templates/*/*/*/*.*',
-            'templates/*/*/*/*/*.*',
-        ],
-    },
+    include_package_data=True,
     install_requires=[
         'Django>=1.9',
     ],
