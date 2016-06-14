@@ -7,15 +7,15 @@ python:
   - "3.5"
 env:
   - REQ="Django>=1.9,<1.10 django-mptt"
-  - REQ="https://github.com/django/django/archive/master.zip https://github.com/django-mptt/django-mptt/archive/master.zip"
+  - REQ="https://github.com/django/django/archive/master.zip https://github.com/matthiask/django-mptt/archive/master.zip"
 matrix:
   exclude:
 # Avoid "UnicodeEncodeError: 'ascii' codec can't encode character u'\u2297' in
 # position 60: ordinal not in range(128)" ???
     - python: "2.7"
-      env: REQ="https://github.com/django/django/archive/master.zip https://github.com/django-mptt/django-mptt/archive/master.zip"
+      env: REQ="https://github.com/django/django/archive/master.zip https://github.com/matthiask/django-mptt/archive/master.zip"
   allow_failures:
-    - env: REQ="https://github.com/django/django/archive/master.zip https://github.com/django-mptt/django-mptt/archive/master.zip"
+    - env: REQ="https://github.com/django/django/archive/master.zip https://github.com/matthiask/django-mptt/archive/master.zip"
 install:
   - pip install $REQ coverage flake8 pytz
 script: "python testapp/runtests.py && flake8 ."
