@@ -6,6 +6,20 @@ from django.db.models import Model
 from django.utils.html import conditional_escape, mark_safe
 
 
+__all__ = ('PluginRenderer',)
+
+
+class RenderedContents(object):
+    def __init__(self, contents):
+        self.contents = contents
+
+    def __unicode__(self):
+        return mark_safe(''.join(self.contents))
+
+    def __iter__(self):
+        return iter(self.contents)
+
+
 class PluginRenderer(object):
     def __init__(self):
         self._renderers = OrderedDict(((
@@ -20,9 +34,9 @@ class PluginRenderer(object):
         self._renderers[plugin] = renderer
 
     def render(self, contents):
-        return mark_safe(''.join(
+        return RenderedContents(
             conditional_escape(self.render_content(c)) for c in contents
-        ))
+        )
 
     def render_content(self, content):
         if content.__class__ not in self._renderers:
