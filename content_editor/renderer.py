@@ -3,17 +3,19 @@ from __future__ import absolute_import, unicode_literals
 from collections import OrderedDict
 
 from django.db.models import Model
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import conditional_escape, mark_safe
 
 
 __all__ = ('PluginRenderer',)
 
 
+@python_2_unicode_compatible
 class RenderedContents(object):
     def __init__(self, contents):
         self.contents = contents
 
-    def __unicode__(self):
+    def __str__(self):
         return mark_safe(''.join(self.contents))
 
     def __iter__(self):
