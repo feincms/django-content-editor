@@ -61,7 +61,8 @@ Initial public release of django-content-editor.
 .. _feincms-cleanse: https://pypi.python.org/pypi/feincms-cleanse
 
 .. _0.1: https://github.com/matthiask/django-content-editor/commit/2bea5456
-.. _0.2: https://github.com/matthiask/django-content-editor/compare/2bea5456...9e24025d
-.. _0.3: https://github.com/matthiask/django-content-editor/compare/9e24025d...e4f3c301
-.. _0.4: https://github.com/matthiask/django-content-editor/compare/e4f3c301...f4988fc9
-.. _0.5: https://github.com/matthiask/django-content-editor/compare/f4988fc9...f6773d9c
+.. _0.2: https://github.com/matthiask/django-content-editor/compare/0.1.0...0.2.0
+.. _0.3: https://github.com/matthiask/django-content-editor/compare/0.2.0...0.3.0
+.. _0.4: https://github.com/matthiask/django-content-editor/compare/0.3.0...0.4.0
+.. _0.5: https://github.com/matthiask/django-content-editor/compare/0.4.0...0.5.0
+.. _0.6: https://github.com/matthiask/django-content-editor/compare/0.5.0...master
