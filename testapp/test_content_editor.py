@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core import checks
 from django.test import TestCase
+from django.utils.safestring import mark_safe
 # from django.utils import timezone
 
 try:
@@ -13,10 +14,10 @@ except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
 
 from content_editor.admin import ContentEditor, ContentEditorInline, JS
-
 from content_editor.contents import (
     contents_for_item, contents_for_mptt_item
 )
+from content_editor.renderer import PluginRenderer
 
 from testapp.models import Article, RichText, Download, Bla, Page, PageText
 
@@ -291,4 +292,33 @@ class ContentEditorTest(TestCase):
                 obj=RichTextInline,
                 id='content_editor.E001',
             )],
+        )
+
+    def test_rendered_contents(self):
+        article = Article.objects.create(
+            title='Test',
+        )
+        article.testapp_richtext_set.create(
+            text='<p>bla</p>',
+            region='main',
+            ordering=10,
+        )
+        article.testapp_richtext_set.create(
+            text='<p>blah</p>',
+            region='main',
+            ordering=20,
+        )
+
+        renderer = PluginRenderer()
+        renderer.register(RichText, lambda plugin: mark_safe(plugin.text))
+
+        contents = contents_for_item(article, [RichText])
+
+        self.assertEqual(
+            '%s' % renderer.render(contents.main),
+            '<p>bla</p><p>blah</p>',
+        )
+        self.assertEqual(
+            list(renderer.render(contents.main)),
+            ['<p>bla</p>', '<p>blah</p>'],
         )

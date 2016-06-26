@@ -5,7 +5,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- Nothing yet.
+- Raise tests coverage back to 100% after the ``PluginRenderer.render``
+  change in 0.6.
 
 
 `0.6`_ (2016-06-25)
