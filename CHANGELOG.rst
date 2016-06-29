@@ -5,6 +5,12 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Nothing yet.
+
+
+`0.7`_ (2016-06-29)
+~~~~~~~~~~~~~~~~~~~
+
 - Raise tests coverage back to 100% after the ``PluginRenderer.render``
   change in 0.6.
 - Simplify the implementation of the return value of
@@ -75,4 +81,5 @@ Initial public release of django-content-editor.
 .. _0.4: https://github.com/matthiask/django-content-editor/compare/0.3.0...0.4.0
 .. _0.5: https://github.com/matthiask/django-content-editor/compare/0.4.0...0.5.0
 .. _0.6: https://github.com/matthiask/django-content-editor/compare/0.5.0...0.6.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.6.0...master
+.. _0.7: https://github.com/matthiask/django-content-editor/compare/0.6.0...0.7.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.7.0...master
