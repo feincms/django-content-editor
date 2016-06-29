@@ -7,6 +7,8 @@ Change log
 
 - Raise tests coverage back to 100% after the ``PluginRenderer.render``
   change in 0.6.
+- Simplify the implementation of the return value of
+  ``PluginRenderer.render``. Empty regions are now falsy again.
 
 
 `0.6`_ (2016-06-25)

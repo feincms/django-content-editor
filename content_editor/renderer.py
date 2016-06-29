@@ -11,15 +11,9 @@ __all__ = ('PluginRenderer',)
 
 
 @python_2_unicode_compatible
-class RenderedContents(object):
-    def __init__(self, contents):
-        self.contents = contents
-
+class RenderedContents(list):
     def __str__(self):
-        return mark_safe(''.join(self.contents))
-
-    def __iter__(self):
-        return iter(self.contents)
+        return mark_safe(''.join(self))
 
 
 class PluginRenderer(object):
