@@ -5,7 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
-- Nothing yet.
+- Modified ``PluginRenderer.render`` and
+  ``PluginRenderer.render_content`` to pass on keyword arguments (if
+  any) to the registered render functions.
 
 
 `0.7`_ (2016-06-29)
