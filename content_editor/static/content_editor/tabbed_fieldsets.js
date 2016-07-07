@@ -18,6 +18,10 @@ django.jQuery(function($) {
             var $old = $(this),
                 $title = $old.children('h2');
 
+            if ($old.find('.errorlist').length) {
+              $title.addClass('has-error');
+            }
+
             $title.attr('data-index', index);
             $tabs.append($title);
 

@@ -8,6 +8,7 @@ Change log
 - Modified ``PluginRenderer.render`` and
   ``PluginRenderer.render_content`` to pass on keyword arguments (if
   any) to the registered render functions.
+- Made tabbed fieldsets' titles stand out if the tab contains invalid fields.
 
 
 `0.7`_ (2016-06-29)
