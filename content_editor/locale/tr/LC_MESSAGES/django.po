@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-20 14:59+0200\n"
+"POT-Creation-Date: 2016-07-07 11:44+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,1002 +20,712 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin/filterspecs.py:47 admin/filterspecs.py:86
-msgid "All"
-msgstr "Tümü"
-
-#: admin/filterspecs.py:58 module/page/models.py:178
-msgid "Parent"
-msgstr "Üst Öğe"
-
-#: admin/filterspecs.py:97
-#: templates/admin/medialibrary/mediafile/change_list.html:14
-msgid "Category"
-msgstr "Kategori"
-
-#: admin/item_editor.py:190
-#, python-format
-msgid "Change %s"
-msgstr "Değişiklik %s"
-
-#: admin/tree_editor.py:294 content/rss/models.py:23
-#: content/section/models.py:35 module/blog/models.py:35
-#: module/medialibrary/models.py:45 module/page/models.py:172
-#: module/page/models.py:240
-msgid "title"
-msgstr "başlık"
-
-#: admin/tree_editor.py:353 admin/tree_editor.py:370
-#, fuzzy
-#| msgid "You don't have the necessary permissions to edit this object"
-msgid "You do not have permission to modify this object"
-msgstr "Bu nesneye düzenlemek için gerekli izinleriniz yok"
-
-#: admin/tree_editor.py:491
-msgid "No permission"
-msgstr ""
-
-#: admin/tree_editor.py:509
-#, python-format
-msgid "%s has been moved to a new position."
-msgstr "%s yeni bir pozisyona taşındı."
-
-#: admin/tree_editor.py:512
-msgid "Did not understand moving instruction."
-msgstr "Taşıma yönergeleri anlaşılamadı."
-
-#: admin/tree_editor.py:523
-msgid "actions"
-msgstr "olaylar"
-
-#: admin/tree_editor.py:552
-#, fuzzy, python-format
-#| msgid "Successfully deleted %s items."
-msgid "Successfully deleted %(count)d items."
-msgstr "%s öğeleri başarıyla silindi."
-
-#: admin/tree_editor.py:565
-#, python-format
-msgid "Delete selected %(verbose_name_plural)s"
-msgstr "%(verbose_name_plural)s seçilenleri sil"
-
-#: content/application/models.py:147
-msgid "application content"
-msgstr "uygulama içeriği"
-
-#: content/application/models.py:148
-msgid "application contents"
-msgstr "uygulama içerikleri"
-
-#: content/application/models.py:179
-msgid "application"
-msgstr "uygulama"
-
-#: content/comments/models.py:32
-msgid "enabled"
-msgstr "etkin"
-
-#: content/comments/models.py:33
-msgid "New comments may be added"
-msgstr "Yeni yorumlar eklenebilir"
-
-#: content/comments/models.py:37 content/comments/models.py:38
-msgid "comments"
-msgstr "yorumlar"
-
-#: content/comments/models.py:60
-msgid "public"
-msgstr "genel"
-
-#: content/comments/models.py:61
-msgid "not public"
-msgstr "genel değil"
-
-#: content/contactform/models.py:20
-msgid "name"
-msgstr "ad"
-
-#: content/contactform/models.py:21
-msgid "email"
-msgstr "email"
-
-#: content/contactform/models.py:22
-msgid "subject"
-msgstr "konu"
-
-#: content/contactform/models.py:26 content/raw/models.py:16
-msgid "content"
-msgstr "içerik"
-
-#: content/contactform/models.py:37
-msgid "contact form"
-msgstr "iletişim formu"
-
-#: content/contactform/models.py:38
-msgid "contact forms"
-msgstr "iletişim formları"
-
-#: content/file/models.py:23 content/file/models.py:28
-#: module/medialibrary/models.py:94
-msgid "file"
-msgstr "dosya"
-
-#: content/file/models.py:29
-msgid "files"
-msgstr "dosyalar"
-
-#: content/image/models.py:46 content/image/models.py:55
-msgid "image"
-msgstr "resim"
-
-#: content/image/models.py:49
-msgid "alternate text"
-msgstr "alternatif yazı"
-
-#: content/image/models.py:50
-msgid "Description of image"
-msgstr "Resim açıklaması"
-
-#: content/image/models.py:51 module/medialibrary/models.py:260
-msgid "caption"
-msgstr "altyazı"
-
-#: content/image/models.py:56
-msgid "images"
-msgstr "resimler"
-
-#: content/image/models.py:82
-msgid "position"
-msgstr "pozisyon"
-
-#: content/image/models.py:90
-msgid "format"
-msgstr "format"
-
-#: content/medialibrary/models.py:51 content/section/models.py:38
-#: module/medialibrary/fields.py:66 module/medialibrary/models.py:112
-msgid "media file"
-msgstr "medya dosyası"
-
-#: content/medialibrary/models.py:52 module/medialibrary/models.py:113
-msgid "media files"
-msgstr "medya dosyaları"
-
-#: content/medialibrary/models.py:64 content/section/models.py:59
-msgid "type"
-msgstr "tür"
-
-#: content/raw/models.py:20
-msgid "raw content"
-msgstr "ham içerik"
-
-#: content/raw/models.py:21
-msgid "raw contents"
-msgstr "ham içerikler"
-
-#: content/richtext/models.py:24
-msgid "HTML Tidy"
-msgstr "HTML Toparla"
-
-#: content/richtext/models.py:25
-msgid "Ignore the HTML validation warnings"
-msgstr "HTML doğrulama uyarılarını yoksay"
-
-#: content/richtext/models.py:55
-#, python-format
-msgid ""
-"HTML validation produced %(count)d warnings. Please review the updated "
-"content below before continuing: %(messages)s"
-msgstr ""
-"HTML doğrulama işlemi %(count)d uyarı. Devam etmeden önce aşağıdaki "
-"güncellenen içeriği gözden geçirin: %(messages)s"
-
-#: content/richtext/models.py:99 content/section/models.py:36
-msgid "text"
-msgstr "yazı"
-
-#: content/richtext/models.py:103
-msgid "rich text"
-msgstr "zengin yazı"
-
-#: content/richtext/models.py:104
-msgid "rich texts"
-msgstr "zengin yazı"
-
-#: content/rss/models.py:25
-msgid ""
-"The rss field is updated several times a day. A change in the title will "
-"only be visible on the home page after the next feed update."
-msgstr ""
-"Rss alanı günde birkaç kez güncellenir. Başlıktaki bir değişiklik sadece bir "
-"sonraki besleme güncellemesinden sonra ana sayfasında görülebilir."
-
-#: content/rss/models.py:28
-msgid "link"
-msgstr "link"
-
-#: content/rss/models.py:30
-msgid "pre-rendered content"
-msgstr "önden görüntülenen içerik"
-
-#: content/rss/models.py:32
-msgid "last updated"
-msgstr "son güncelleme"
-
-#: content/rss/models.py:33
-msgid "max. items"
-msgstr "max. öğe"
-
-#: content/rss/models.py:37
-msgid "RSS feed"
-msgstr "RSS besleme"
-
-#: content/rss/models.py:38
-msgid "RSS feeds"
-msgstr "RSS beslemeler"
-
-#: content/section/models.py:43
-msgid "section"
-msgstr "bölüm"
-
-#: content/section/models.py:44
-msgid "sections"
-msgstr "bölümler"
-
-#: content/template/models.py:53
-msgid "template content"
-msgstr "tema içeriği"
-
-#: content/template/models.py:54
-msgid "template contents"
-msgstr "tema içerikleri"
-
-#: content/template/models.py:63 models.py:400
-msgid "template"
-msgstr "tema"
-
-#: content/video/models.py:34
-msgid "video link"
-msgstr "video linki"
-
-#: content/video/models.py:36
-msgid ""
-"This should be a link to a youtube or vimeo video, i.e.: http://www.youtube."
-"com/watch?v=zmj1rpzDRZ0"
-msgstr ""
-"Bu, bir youtube veya vimeo video bir bağlantı olmalıdır, ör: http://www."
-"youtube.com/watch?v=zmj1rpzDRZ0"
-
-#: content/video/models.py:41
-msgid "video"
-msgstr "video"
-
-#: content/video/models.py:42
-msgid "videos"
-msgstr "vidyolar"
-
-#: contrib/tagging.py:132
-msgid "Tagging"
-msgstr "Etiketleme"
-
-#: models.py:550
-msgid "ordering"
-msgstr "sıralama"
-
-#: module/blog/extensions/tags.py:17
-msgid "tags"
-msgstr "etiketler"
-
-#: module/blog/extensions/translations.py:25
-#: module/extensions/translations.py:140 translations.py:282
-msgid "language"
-msgstr "dil"
-
-#: module/blog/extensions/translations.py:35
-#: module/extensions/translations.py:148
-msgid "translation of"
-msgstr "tercümesi"
-
-#: module/blog/extensions/translations.py:39
-#: module/extensions/translations.py:152
-msgid "Leave this empty for entries in the primary language."
-msgstr "Ana dilde girişler için boş bırakın."
-
-#: module/blog/extensions/translations.py:67
-#: templates/admin/feincms/item_editor.html:33
-msgid "available translations"
-msgstr "kullanılabilir çeviriler"
-
-#: module/blog/models.py:33
-msgid "published"
-msgstr "yayınlandı"
-
-#: module/blog/models.py:36
-msgid "This is used for the generated navigation too."
-msgstr "Bu da oluşturulan navigasyon için kullanılır."
-
-#: module/blog/models.py:40
-msgid "published on"
-msgstr "yayınlanan tarih"
-
-#: module/blog/models.py:42
-msgid "Will be set automatically once you tick the `published` checkbox above."
-msgstr ""
-"Yukarıdaki `yayınlanan` onay kutusunu bir kez işaretleyin otomatik olarak "
-"ayarlanır."
-
-#: module/blog/models.py:48
-msgid "entry"
-msgstr "giriş"
-
-#: module/blog/models.py:49
-msgid "entries"
-msgstr "girişler"
-
-#: module/extensions/changedate.py:41
-msgid "creation date"
-msgstr "oluşturulma tarihi"
-
-#: module/extensions/changedate.py:43
-msgid "modification date"
-msgstr "düzenlenme tarihi"
-
-#: module/extensions/ct_tracker.py:156
-msgid "content types"
-msgstr "içerik tipleri"
-
-#: module/extensions/datepublisher.py:86
-msgid "publication date"
-msgstr "yayın tarihi"
-
-#: module/extensions/datepublisher.py:90
-msgid "publication end date"
-msgstr "yayın bitiş tarihi"
-
-#: module/extensions/datepublisher.py:93
-msgid "Leave empty if the entry should stay active forever."
-msgstr "Giriş sonsuza kadar aktif kalmalı ise boş bırakın."
-
-#: module/extensions/datepublisher.py:128
-msgid "visible from - to"
-msgstr "için - görünür "
-
-#: module/extensions/datepublisher.py:139
-msgid "Date-based publishing"
-msgstr "Tarih-bazlı yayınlama"
-
-#: module/extensions/featured.py:15
-msgid "featured"
-msgstr "öne çıkan"
-
-#: module/extensions/featured.py:21
-msgid "Featured"
-msgstr "Öne çıkan"
-
-#: module/extensions/seo.py:16
-msgid "meta keywords"
-msgstr "meta anahtar kelimeler"
-
-#: module/extensions/seo.py:18
-msgid "Keywords are ignored by most search engines."
-msgstr ""
-
-#: module/extensions/seo.py:20
-msgid "meta description"
-msgstr "meta açıklaması"
-
-#: module/extensions/seo.py:22
-msgid ""
-"This text is displayed on the search results page. It is however not used "
-"for the SEO ranking. Text longer than 140 characters is truncated."
-msgstr ""
-
-#: module/extensions/seo.py:32
-msgid "Search engine optimization"
-msgstr "Arama motoru optimizasyonu"
-
-#: module/extensions/translations.py:249
-msgid "Edit translation"
-msgstr "Çeviriyi düzemle"
-
-#: module/extensions/translations.py:256
-msgid "Create translation"
-msgstr "Çeviri oluştur"
-
-#: module/extensions/translations.py:264
-msgid "translations"
-msgstr "çeviriler"
-
-#: module/medialibrary/forms.py:31
-msgid "This would create a loop in the hierarchy"
-msgstr "Bu hiyerarşi içinde bir döngü yaratacak"
-
-#: module/medialibrary/forms.py:77
-#, python-format
-msgid ""
-"Cannot overwrite with different file type (attempt to overwrite a "
-"%(old_ext)s with a %(new_ext)s)"
-msgstr ""
-"Farklı dosya türü (%(old_ext)s ile bir  %(new_ext)s üzerine yazma girişimi) "
-"ile üzerine yazamazsınız"
-
-#: module/medialibrary/modeladmins.py:63
-#, python-format
-msgid "Successfully added %(count)d media file to %(category)s."
-msgid_plural "Successfully added %(count)d media files to %(category)s."
-msgstr[0] "%(count)d medya dosyaları %(category)s e başarıyla eklendi."
-msgstr[1] "%(count)d medya dosyaları %(category)s e başarıyla eklendi."
-
-#: module/medialibrary/modeladmins.py:84
-msgid "Add selected media files to category"
-msgstr "Seçilen medya dosyalarını kategoriye ekle"
-
-#: module/medialibrary/modeladmins.py:94
-#, python-format
-msgid "ZIP file exported as %s"
-msgstr "ZIP dosyası %s olarak dışa aktarıldı"
-
-#: module/medialibrary/modeladmins.py:96
-#, python-format
-msgid "ZIP file export failed: %s"
-msgstr "ZIP dosyasını %s olarak dışa aktarmada hata"
-
-#: module/medialibrary/modeladmins.py:104
-msgid "Export selected media files as zip file"
-msgstr "Seçilen medya dosyalarını ZIP dosyası olarak dışa aktar"
-
-#: module/medialibrary/modeladmins.py:157
-#: templates/admin/feincms/page/page/item_editor.html:15
-msgid "Preview"
-msgstr "Önizleme"
-
-#: module/medialibrary/modeladmins.py:162 module/medialibrary/models.py:103
-msgid "file size"
-msgstr "dosya boyutu"
-
-#: module/medialibrary/modeladmins.py:167 module/medialibrary/models.py:100
-msgid "created"
-msgstr "oluşturuldu"
-
-#: module/medialibrary/modeladmins.py:187 module/medialibrary/models.py:97
-msgid "file type"
-msgstr "dosya tipi"
-
-#: module/medialibrary/modeladmins.py:211
-msgid "file info"
-msgstr "dosya bilgisi"
-
-#: module/medialibrary/modeladmins.py:224
-#, python-format
-msgid "%d files imported"
-msgstr "%d dosya içe aktarıldı"
-
-#: module/medialibrary/modeladmins.py:226
-#, python-format
-msgid "ZIP import failed: %s"
-msgstr "ZIP dosyasını %s olarak içe aktarmada hata"
-
-#: module/medialibrary/modeladmins.py:228
-msgid "No input file given"
-msgstr "Dosya girdisi yok"
-
-#: module/medialibrary/models.py:49
-msgid "parent"
-msgstr "üst öğe"
-
-#: module/medialibrary/models.py:51 module/page/models.py:175
-msgid "slug"
-msgstr "kurşun"
-
-#: module/medialibrary/models.py:55
-msgid "category"
-msgstr "kategori"
-
-#: module/medialibrary/models.py:56 module/medialibrary/models.py:106
-msgid "categories"
-msgstr "kategoriler"
-
-#: module/medialibrary/models.py:101
-msgid "copyright"
-msgstr "telif hakkı"
-
-#: module/medialibrary/models.py:219
-msgid "Image"
-msgstr "resim"
-
-#: module/medialibrary/models.py:221
-msgid "Video"
-msgstr "Video"
-
-#: module/medialibrary/models.py:224
-msgid "Audio"
-msgstr "Ses"
-
-#: module/medialibrary/models.py:226
-msgid "PDF document"
-msgstr "PDF dökümanı"
-
-#: module/medialibrary/models.py:227
-msgid "Flash"
-msgstr "Flash"
-
-#: module/medialibrary/models.py:228
-msgid "Text"
-msgstr "Yazı"
-
-#: module/medialibrary/models.py:229
-msgid "Rich Text"
-msgstr "Zengin Yazı"
-
-#: module/medialibrary/models.py:230
-msgid "Zip archive"
-msgstr "Zip arşivi"
-
-#: module/medialibrary/models.py:231
-msgid "Microsoft Word"
-msgstr "Microsoft Word"
-
-#: module/medialibrary/models.py:233
-msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
-
-#: module/medialibrary/models.py:235
-msgid "Microsoft PowerPoint"
-msgstr "Microsoft PowerPoint"
-
-#: module/medialibrary/models.py:237
-msgid "Binary"
-msgstr "Binary"
-
-#: module/medialibrary/models.py:261
-msgid "description"
-msgstr "açıklama"
-
-#: module/medialibrary/models.py:264
-msgid "media file translation"
-msgstr "medya dosyası çevirisi"
-
-#: module/medialibrary/models.py:265
-msgid "media file translations"
-msgstr "medya dosyası çevirileri"
-
-#: module/page/extensions/excerpt.py:18
-msgid "excerpt"
-msgstr "alıntı"
-
-#: module/page/extensions/excerpt.py:21
-msgid "Add a brief excerpt summarizing the content of this page."
-msgstr "Bu sayfanın içeriğini özetleyen kısa bir alıntı ekleyin."
-
-#: module/page/extensions/excerpt.py:25
-msgid "Excerpt"
-msgstr "Alıntı"
-
-#: module/page/extensions/navigation.py:86
-#: module/page/extensions/navigation.py:115
-msgid "navigation extension"
-msgstr "navigasyon bileşeni"
-
-#: module/page/extensions/navigation.py:119
-msgid ""
-"Select the module providing subpages for this page if you need to customize "
-"the navigation."
-msgstr ""
-"Navigasyonu özelleştirmeniz gerekiyorsa, bu altsayfaları sağlayan modülü "
-"seçiniz."
-
-#: module/page/extensions/navigation.py:134
-msgid "Navigation extension"
-msgstr "Navigasyon bileşeni"
-
-#: module/page/extensions/navigationgroups.py:20
-msgid "Default"
-msgstr ""
-
-#: module/page/extensions/navigationgroups.py:21
-msgid "Footer"
-msgstr ""
-
-#: module/page/extensions/navigationgroups.py:28
-#, fuzzy
-#| msgid "in navigation"
-msgid "navigation group"
-msgstr "navigasyonda"
-
-#: module/page/extensions/relatedpages.py:21
-msgid "Select pages that should be listed as related content."
-msgstr "İlişkili içerik olarak listelenecek sayfaları seçiniz"
-
-#: module/page/extensions/relatedpages.py:26
-msgid "Related pages"
-msgstr "İlgili sayfalar"
-
-#: module/page/extensions/sites.py:21
-msgid "Site"
-msgstr "Site"
-
-#: module/page/extensions/symlinks.py:22
-msgid "symlinked page"
-msgstr "Sembolik olarak bağlanmış sayfa"
-
-#: module/page/extensions/symlinks.py:23
-msgid "All content is inherited from this page if given."
-msgstr "Verilirse tüm içerik bu sayfadan devralınır."
-
-#: module/page/extensions/titles.py:19
-msgid "content title"
-msgstr "içerik başlığı"
-
-#: module/page/extensions/titles.py:22
-msgid "The first line is the main title, the following lines are subtitles."
-msgstr "İlk satır ana başlık, aşağıdaki satırlar ise alt başlıktır."
-
-#: module/page/extensions/titles.py:26
-msgid "page title"
-msgstr "sayfa başlığı"
-
-#: module/page/extensions/titles.py:30
-#, fuzzy
-#| msgid "Page title for browser window. Same as title by default."
-msgid ""
-"Page title for browser window. Same as title bydefault. Must not be longer "
-"than 70 characters."
-msgstr ""
-"Tarayıcı penceresi için sayfa başlığı. Varsayılan olarak başlık ile aynı."
-
-#: module/page/extensions/titles.py:60
-msgid "Titles"
-msgstr "Başlıklar"
-
-#: module/page/forms.py:187
-msgid "This URL is already taken by an active page."
-msgstr "Bu URL aktif bir sayfa tarafından alınmış."
-
-#: module/page/forms.py:206
-msgid "This URL is already taken by another active page."
-msgstr "Bu URL zaten başka aktif bir sayfa tarafından alınmış."
-
-#: module/page/forms.py:211
-msgid "This page does not allow attachment of child pages"
-msgstr ""
-
-#: module/page/modeladmins.py:42
-msgid "Other options"
-msgstr "Diğer seçenekler"
-
-#: module/page/modeladmins.py:80 module/page/models.py:182
-msgid "in navigation"
-msgstr "navigasyonda"
-
-#: module/page/modeladmins.py:109 module/page/modeladmins.py:111
-msgid "Add child page"
-msgstr "Alt sayfa ekle"
-
-#: module/page/modeladmins.py:120 module/page/modeladmins.py:122
-#: templates/admin/feincms/content_inline.html:9
-msgid "View on site"
-msgstr "Sitede göster"
-
-#: module/page/modeladmins.py:142
-#, python-format
-msgid "Add %(language)s translation of \"%(page)s\""
-msgstr ""
-
-#: module/page/modeladmins.py:177
-msgid ""
-"The content from the original translation has been copied to the newly "
-"created page."
-msgstr "Orijinal çeviri içeriği yeni oluşturulan sayfaya kopyalandı."
-
-#: module/page/modeladmins.py:197
-msgid "You don't have the necessary permissions to edit this object"
-msgstr "Bu nesneye düzenlemek için gerekli izinleriniz yok"
-
-#: module/page/modeladmins.py:223
-msgid "inherited"
-msgstr "devralındı"
-
-#: module/page/modeladmins.py:229
-msgid "extensions"
-msgstr "bileşenler"
-
-#: module/page/modeladmins.py:233 module/page/models.py:221
-msgid "is active"
-msgstr "aktif"
-
-#: module/page/models.py:169
-msgid "active"
-msgstr "aktif"
-
-#: module/page/models.py:173
-#, fuzzy
-#| msgid "This is used for the generated navigation too."
-msgid "This title is also used for navigation menu items."
-msgstr "Bu da oluşturulan navigasyon için kullanılır."
-
-#: module/page/models.py:176
-msgid "This is used to build the URL for this page"
-msgstr ""
-
-#: module/page/models.py:184
-msgid "override URL"
-msgstr "URL geçersiz"
-
-#: module/page/models.py:186
-msgid ""
-"Override the target URL. Be sure to include slashes at the beginning and at "
-"the end if it is a local URL. This affects both the navigation and subpages' "
-"URLs."
-msgstr ""
-"Hedef URL geçersiz Yerel bir URL ise başında ve sonunda bölü eklemeyi "
-"unutmayın. Bu navigasyon ve alt sayfaları etkiler."
-
-#: module/page/models.py:190
-msgid "redirect to"
-msgstr "buraya yönlendiriliyor"
-
-#: module/page/models.py:193
-msgid "Target URL for automatic redirects or the primary key of a page."
-msgstr ""
-
-#: module/page/models.py:196
-msgid "Cached URL"
-msgstr "Önbelleklenmiş URL"
-
-#: module/page/models.py:298
-#, python-format
-msgid ""
-"This %(page_class)s uses a singleton template, and "
-"FEINCMS_SINGLETON_TEMPLATE_DELETION_ALLOWED=False"
-msgstr ""
-
-#: module/page/models.py:426
-msgid "page"
-msgstr "sayfa"
-
-#: module/page/models.py:427
-msgid "pages"
-msgstr "sayfalar"
-
-#: templates/admin/feincms/_messages_js.html:4
-msgid "Really delete item?"
-msgstr "Gerçekten öğe silisin mi?"
-
-#: templates/admin/feincms/_messages_js.html:4
-msgid "Confirm to delete item"
-msgstr "Öğeyi silmeyi onaylayın"
-
-#: templates/admin/feincms/_messages_js.html:5
-msgid "Item deleted successfully."
-msgstr "öğe başarılı bir şekilde silindi."
-
-#: templates/admin/feincms/_messages_js.html:5
-msgid "Cannot delete item"
-msgstr "Öğe silinemiyor"
-
-#: templates/admin/feincms/_messages_js.html:6
-msgid "Cannot delete item, because it is parent of at least one other item."
-msgstr "öğe silinemiyor, çünkü en az bir alt öğeye sahip."
-
-#: templates/admin/feincms/_messages_js.html:7
-msgid "Change template"
-msgstr "Temayı değiştir"
-
-#: templates/admin/feincms/_messages_js.html:8
-msgid "Really change template? <br />All changes are saved."
-msgstr "Tema değiştirilsin mi? <br /> Tüm değişiklikler kaydedildi."
-
-#: templates/admin/feincms/_messages_js.html:9
-#, python-format
-msgid ""
-"Really change template? <br />All changes are saved and content from <strong>"
-"%%(source_regions)s</strong> is moved to <strong>%%(target_region)s</strong>."
-msgstr ""
-"Gerçekten tema değişsin mi? <br />Tüm değişiklikler kaydedildi ve <strong>"
-"%%(source_regions)s</strong> teki içerikler <strong>%%(target_region)s</"
-"strong> e taşındı."
-
-#: templates/admin/feincms/_messages_js.html:12
-msgid "Hide"
-msgstr "Gizle"
-
-#: templates/admin/feincms/_messages_js.html:13
-msgid "Show"
-msgstr "Göster"
-
-#: templates/admin/feincms/_messages_js.html:14
-msgid "After"
-msgstr "Sonra"
-
-#: templates/admin/feincms/_messages_js.html:15
-msgid "Before"
-msgstr "Önce"
-
-#: templates/admin/feincms/_messages_js.html:16
-msgid "Insert new:"
-msgstr "Yeni ekle:"
-
-#: templates/admin/feincms/content_editor.html:15
-msgid "Copy content from the original"
-msgstr ""
-
-#: templates/admin/feincms/content_editor.html:19
-msgid "Region empty"
-msgstr "Bölge boş"
-
-#: templates/admin/feincms/content_editor.html:25
-msgid ""
-"Content from the parent site is automatically inherited. To override this "
-"behaviour, add some content."
-msgstr ""
-"Üst siteden içerik otomatik devralınır. Bu davranışı geçersiz kılmak için, "
-"bazı içerikler ekleyin."
-
-#: templates/admin/feincms/content_editor.html:33
+#: admin.py:154
 msgid "Add new item"
 msgstr "Yeni öğe ekle"
 
-#: templates/admin/feincms/content_inline.html:93
-#, python-format
-msgid "Add another %(verbose_name)s"
-msgstr "Başka ekle %(verbose_name)s"
+#: admin.py:155
+#, fuzzy
+#| msgid "max. items"
+msgid "No items"
+msgstr "max. öğe"
 
-#: templates/admin/feincms/content_inline.html:96
-msgid "Remove"
-msgstr "Kaldır"
+#~ msgid "All"
+#~ msgstr "Tümü"
 
-#: templates/admin/feincms/fe_editor.html:30
-msgid "Save"
-msgstr "Kaydet"
+#~ msgid "Parent"
+#~ msgstr "Üst Öğe"
 
-#: templates/admin/feincms/fe_tools.html:28
-msgid "Stop Editing"
-msgstr "Düzenlemeyi Durdur"
+#~ msgid "Category"
+#~ msgstr "Kategori"
 
-#: templates/admin/feincms/fe_tools.html:33
-msgid "edit"
-msgstr "düzenle"
+#~ msgid "Change %s"
+#~ msgstr "Değişiklik %s"
 
-#: templates/admin/feincms/fe_tools.html:35
-msgid "new"
-msgstr "yeni"
+#~ msgid "title"
+#~ msgstr "başlık"
 
-#: templates/admin/feincms/fe_tools.html:36
-msgid "up"
-msgstr "yukarı"
+#, fuzzy
+#~| msgid "You don't have the necessary permissions to edit this object"
+#~ msgid "You do not have permission to modify this object"
+#~ msgstr "Bu nesneye düzenlemek için gerekli izinleriniz yok"
 
-#: templates/admin/feincms/fe_tools.html:37
-msgid "down"
-msgstr "aşağı"
+#~ msgid "%s has been moved to a new position."
+#~ msgstr "%s yeni bir pozisyona taşındı."
 
-#: templates/admin/feincms/fe_tools.html:38
-msgid "remove"
-msgstr "kaldır"
+#~ msgid "Did not understand moving instruction."
+#~ msgstr "Taşıma yönergeleri anlaşılamadı."
 
-#: templates/admin/feincms/page/page/item_editor.html:10
-msgid "Edit on site"
-msgstr "Sitede düzenle"
+#~ msgid "actions"
+#~ msgstr "olaylar"
 
-#: templates/admin/feincms/page/page/item_editor.html:23
-#: templates/admin/feincms/page/page/tree_editor.html:7
-#: templates/admin/feincms/recover_form.html:8
-#: templates/admin/feincms/revision_form.html:8
-msgid "Home"
-msgstr "Anasayfa"
+#, fuzzy
+#~| msgid "Successfully deleted %s items."
+#~ msgid "Successfully deleted %(count)d items."
+#~ msgstr "%s öğeleri başarıyla silindi."
 
-#: templates/admin/feincms/page/page/item_editor.html:27
-msgid "Add"
-msgstr "Ekle"
+#~ msgid "Delete selected %(verbose_name_plural)s"
+#~ msgstr "%(verbose_name_plural)s seçilenleri sil"
 
-#: templates/admin/feincms/recover_form.html:11
-#, python-format
-msgid "Recover deleted %(verbose_name)s"
-msgstr "Sşilineni kurtar %(verbose_name)s"
+#~ msgid "application content"
+#~ msgstr "uygulama içeriği"
 
-#: templates/admin/feincms/recover_form.html:17
-msgid "Press the save button below to recover this version of the object."
-msgstr "Nesnenin bu sürümünü kurtarmak için aşağıdaki kaydet düğmesine basın."
+#~ msgid "application contents"
+#~ msgstr "uygulama içerikleri"
 
-#: templates/admin/feincms/revision_form.html:12
-msgid "History"
-msgstr "Geçmiş"
+#~ msgid "application"
+#~ msgstr "uygulama"
 
-#: templates/admin/feincms/revision_form.html:13
-#, python-format
-msgid "Revert %(verbose_name)s"
-msgstr "Dön %(verbose_name)s"
+#~ msgid "enabled"
+#~ msgstr "etkin"
 
-#: templates/admin/feincms/revision_form.html:24
-msgid "Press the save button below to revert to this version of the object."
-msgstr "Nesnenin bu sürümüne dönmek için aşağıdaki kaydet düğmesine basın."
+#~ msgid "New comments may be added"
+#~ msgstr "Yeni yorumlar eklenebilir"
 
-#: templates/admin/feincms/tree_editor.html:22
-msgid "Shortcuts"
-msgstr "Kısayollar"
+#~ msgid "comments"
+#~ msgstr "yorumlar"
 
-#: templates/admin/feincms/tree_editor.html:24
-msgid "Collapse tree"
-msgstr "Ağacı daralt"
+#~ msgid "public"
+#~ msgstr "genel"
 
-#: templates/admin/feincms/tree_editor.html:25
-msgid "Expand tree"
-msgstr "Ağacı genişlet"
+#~ msgid "not public"
+#~ msgstr "genel değil"
 
-#: templates/admin/feincms/tree_editor.html:29
-msgid "Filter"
-msgstr "Filtre"
+#~ msgid "name"
+#~ msgstr "ad"
 
-#: templates/admin/filter.html:3
-#, python-format
-msgid " By %(filter_title)s "
-msgstr "%(filter_title)s ile"
+#~ msgid "email"
+#~ msgstr "email"
 
-#: templates/admin/medialibrary/add_to_category.html:5
-#: templates/admin/medialibrary/add_to_category.html:9
-msgid "Add media files to category"
-msgstr "Kategoriye medya dosyaları ekle"
+#~ msgid "subject"
+#~ msgstr "konu"
 
-#: templates/admin/medialibrary/add_to_category.html:11
-msgid "Select category to apply:"
-msgstr "Uygulamak için kategori seçin:"
+#~ msgid "content"
+#~ msgstr "içerik"
 
-#: templates/admin/medialibrary/add_to_category.html:17
-msgid "The following media files will be added to the selected category:"
-msgstr "Aşağıdaki ortam dosyaları seçilen kategoriye eklenecektir:"
+#~ msgid "contact form"
+#~ msgstr "iletişim formu"
 
-#: templates/admin/medialibrary/add_to_category.html:22
-msgid "Add to category"
-msgstr "Kategoriye ekle"
+#~ msgid "contact forms"
+#~ msgstr "iletişim formları"
 
-#: templates/admin/medialibrary/add_to_category.html:23
-msgid "Cancel"
-msgstr "İptal"
+#~ msgid "file"
+#~ msgstr "dosya"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:11
-msgid "Bulk upload a ZIP file:"
-msgstr "Toplu upload ZIP dosyası:"
+#~ msgid "files"
+#~ msgstr "dosyalar"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:21
-msgid "Overwrite"
-msgstr "Üzerine yaz"
+#~ msgid "image"
+#~ msgstr "resim"
 
-#: templates/admin/medialibrary/mediafile/change_list.html:24
-msgid "Send"
-msgstr "Gönder"
+#~ msgid "alternate text"
+#~ msgstr "alternatif yazı"
 
-#: templates/content/comments/default.html:10
-#, python-format
-msgid "%(comment_count)s comments."
-msgstr "%(comment_count)s yorum"
+#~ msgid "Description of image"
+#~ msgstr "Resim açıklaması"
 
-#: templates/content/comments/default.html:18
-#, python-format
-msgid ""
-"\n"
-"                    %(comment_username)s said on %(comment_submit_date)s<br /"
-">\n"
-"                "
-msgstr ""
-"\n"
-"                    %(comment_username)s dedi buna "
-"%(comment_submit_date)s<br />\n"
-"                "
+#~ msgid "caption"
+#~ msgstr "altyazı"
 
-#: templates/content/comments/default.html:28
-msgid "No comments."
-msgstr "Yorum yok."
+#~ msgid "images"
+#~ msgstr "resimler"
 
-#: templates/content/comments/default.html:36
-msgid "Post Comment"
-msgstr "Yorum gönder"
+#~ msgid "position"
+#~ msgstr "pozisyon"
 
-#: templates/content/contactform/form.html:9
-msgid "Submit"
-msgstr "Gönder"
+#~ msgid "format"
+#~ msgstr "format"
 
-#: templates/content/contactform/thanks.html:3
-msgid "Thanks!"
-msgstr "Teşekkürler!"
+#~ msgid "media file"
+#~ msgstr "medya dosyası"
+
+#~ msgid "media files"
+#~ msgstr "medya dosyaları"
+
+#~ msgid "type"
+#~ msgstr "tür"
+
+#~ msgid "raw content"
+#~ msgstr "ham içerik"
+
+#~ msgid "raw contents"
+#~ msgstr "ham içerikler"
+
+#~ msgid "HTML Tidy"
+#~ msgstr "HTML Toparla"
+
+#~ msgid "Ignore the HTML validation warnings"
+#~ msgstr "HTML doğrulama uyarılarını yoksay"
+
+#~ msgid ""
+#~ "HTML validation produced %(count)d warnings. Please review the updated "
+#~ "content below before continuing: %(messages)s"
+#~ msgstr ""
+#~ "HTML doğrulama işlemi %(count)d uyarı. Devam etmeden önce aşağıdaki "
+#~ "güncellenen içeriği gözden geçirin: %(messages)s"
+
+#~ msgid "text"
+#~ msgstr "yazı"
+
+#~ msgid "rich text"
+#~ msgstr "zengin yazı"
+
+#~ msgid "rich texts"
+#~ msgstr "zengin yazı"
+
+#~ msgid ""
+#~ "The rss field is updated several times a day. A change in the title will "
+#~ "only be visible on the home page after the next feed update."
+#~ msgstr ""
+#~ "Rss alanı günde birkaç kez güncellenir. Başlıktaki bir değişiklik sadece "
+#~ "bir sonraki besleme güncellemesinden sonra ana sayfasında görülebilir."
+
+#~ msgid "link"
+#~ msgstr "link"
+
+#~ msgid "pre-rendered content"
+#~ msgstr "önden görüntülenen içerik"
+
+#~ msgid "last updated"
+#~ msgstr "son güncelleme"
+
+#~ msgid "RSS feed"
+#~ msgstr "RSS besleme"
+
+#~ msgid "RSS feeds"
+#~ msgstr "RSS beslemeler"
+
+#~ msgid "section"
+#~ msgstr "bölüm"
+
+#~ msgid "sections"
+#~ msgstr "bölümler"
+
+#~ msgid "template content"
+#~ msgstr "tema içeriği"
+
+#~ msgid "template contents"
+#~ msgstr "tema içerikleri"
+
+#~ msgid "template"
+#~ msgstr "tema"
+
+#~ msgid "video link"
+#~ msgstr "video linki"
+
+#~ msgid ""
+#~ "This should be a link to a youtube or vimeo video, i.e.: http://www."
+#~ "youtube.com/watch?v=zmj1rpzDRZ0"
+#~ msgstr ""
+#~ "Bu, bir youtube veya vimeo video bir bağlantı olmalıdır, ör: http://www."
+#~ "youtube.com/watch?v=zmj1rpzDRZ0"
+
+#~ msgid "video"
+#~ msgstr "video"
+
+#~ msgid "videos"
+#~ msgstr "vidyolar"
+
+#~ msgid "Tagging"
+#~ msgstr "Etiketleme"
+
+#~ msgid "ordering"
+#~ msgstr "sıralama"
+
+#~ msgid "tags"
+#~ msgstr "etiketler"
+
+#~ msgid "language"
+#~ msgstr "dil"
+
+#~ msgid "translation of"
+#~ msgstr "tercümesi"
+
+#~ msgid "Leave this empty for entries in the primary language."
+#~ msgstr "Ana dilde girişler için boş bırakın."
+
+#~ msgid "available translations"
+#~ msgstr "kullanılabilir çeviriler"
+
+#~ msgid "published"
+#~ msgstr "yayınlandı"
+
+#~ msgid "This is used for the generated navigation too."
+#~ msgstr "Bu da oluşturulan navigasyon için kullanılır."
+
+#~ msgid "published on"
+#~ msgstr "yayınlanan tarih"
+
+#~ msgid ""
+#~ "Will be set automatically once you tick the `published` checkbox above."
+#~ msgstr ""
+#~ "Yukarıdaki `yayınlanan` onay kutusunu bir kez işaretleyin otomatik olarak "
+#~ "ayarlanır."
+
+#~ msgid "entry"
+#~ msgstr "giriş"
+
+#~ msgid "entries"
+#~ msgstr "girişler"
+
+#~ msgid "creation date"
+#~ msgstr "oluşturulma tarihi"
+
+#~ msgid "modification date"
+#~ msgstr "düzenlenme tarihi"
+
+#~ msgid "content types"
+#~ msgstr "içerik tipleri"
+
+#~ msgid "publication date"
+#~ msgstr "yayın tarihi"
+
+#~ msgid "publication end date"
+#~ msgstr "yayın bitiş tarihi"
+
+#~ msgid "Leave empty if the entry should stay active forever."
+#~ msgstr "Giriş sonsuza kadar aktif kalmalı ise boş bırakın."
+
+#~ msgid "visible from - to"
+#~ msgstr "için - görünür "
+
+#~ msgid "Date-based publishing"
+#~ msgstr "Tarih-bazlı yayınlama"
+
+#~ msgid "featured"
+#~ msgstr "öne çıkan"
+
+#~ msgid "Featured"
+#~ msgstr "Öne çıkan"
+
+#~ msgid "meta keywords"
+#~ msgstr "meta anahtar kelimeler"
+
+#~ msgid "meta description"
+#~ msgstr "meta açıklaması"
+
+#~ msgid "Search engine optimization"
+#~ msgstr "Arama motoru optimizasyonu"
+
+#~ msgid "Edit translation"
+#~ msgstr "Çeviriyi düzemle"
+
+#~ msgid "Create translation"
+#~ msgstr "Çeviri oluştur"
+
+#~ msgid "translations"
+#~ msgstr "çeviriler"
+
+#~ msgid "This would create a loop in the hierarchy"
+#~ msgstr "Bu hiyerarşi içinde bir döngü yaratacak"
+
+#~ msgid ""
+#~ "Cannot overwrite with different file type (attempt to overwrite a "
+#~ "%(old_ext)s with a %(new_ext)s)"
+#~ msgstr ""
+#~ "Farklı dosya türü (%(old_ext)s ile bir  %(new_ext)s üzerine yazma "
+#~ "girişimi) ile üzerine yazamazsınız"
+
+#~ msgid "Successfully added %(count)d media file to %(category)s."
+#~ msgid_plural "Successfully added %(count)d media files to %(category)s."
+#~ msgstr[0] "%(count)d medya dosyaları %(category)s e başarıyla eklendi."
+#~ msgstr[1] "%(count)d medya dosyaları %(category)s e başarıyla eklendi."
+
+#~ msgid "Add selected media files to category"
+#~ msgstr "Seçilen medya dosyalarını kategoriye ekle"
+
+#~ msgid "ZIP file exported as %s"
+#~ msgstr "ZIP dosyası %s olarak dışa aktarıldı"
+
+#~ msgid "ZIP file export failed: %s"
+#~ msgstr "ZIP dosyasını %s olarak dışa aktarmada hata"
+
+#~ msgid "Export selected media files as zip file"
+#~ msgstr "Seçilen medya dosyalarını ZIP dosyası olarak dışa aktar"
+
+#~ msgid "Preview"
+#~ msgstr "Önizleme"
+
+#~ msgid "file size"
+#~ msgstr "dosya boyutu"
+
+#~ msgid "created"
+#~ msgstr "oluşturuldu"
+
+#~ msgid "file type"
+#~ msgstr "dosya tipi"
+
+#~ msgid "file info"
+#~ msgstr "dosya bilgisi"
+
+#~ msgid "%d files imported"
+#~ msgstr "%d dosya içe aktarıldı"
+
+#~ msgid "ZIP import failed: %s"
+#~ msgstr "ZIP dosyasını %s olarak içe aktarmada hata"
+
+#~ msgid "No input file given"
+#~ msgstr "Dosya girdisi yok"
+
+#~ msgid "parent"
+#~ msgstr "üst öğe"
+
+#~ msgid "slug"
+#~ msgstr "kurşun"
+
+#~ msgid "category"
+#~ msgstr "kategori"
+
+#~ msgid "categories"
+#~ msgstr "kategoriler"
+
+#~ msgid "copyright"
+#~ msgstr "telif hakkı"
+
+#~ msgid "Image"
+#~ msgstr "resim"
+
+#~ msgid "Video"
+#~ msgstr "Video"
+
+#~ msgid "Audio"
+#~ msgstr "Ses"
+
+#~ msgid "PDF document"
+#~ msgstr "PDF dökümanı"
+
+#~ msgid "Flash"
+#~ msgstr "Flash"
+
+#~ msgid "Text"
+#~ msgstr "Yazı"
+
+#~ msgid "Rich Text"
+#~ msgstr "Zengin Yazı"
+
+#~ msgid "Zip archive"
+#~ msgstr "Zip arşivi"
+
+#~ msgid "Microsoft Word"
+#~ msgstr "Microsoft Word"
+
+#~ msgid "Microsoft Excel"
+#~ msgstr "Microsoft Excel"
+
+#~ msgid "Microsoft PowerPoint"
+#~ msgstr "Microsoft PowerPoint"
+
+#~ msgid "Binary"
+#~ msgstr "Binary"
+
+#~ msgid "description"
+#~ msgstr "açıklama"
+
+#~ msgid "media file translation"
+#~ msgstr "medya dosyası çevirisi"
+
+#~ msgid "media file translations"
+#~ msgstr "medya dosyası çevirileri"
+
+#~ msgid "excerpt"
+#~ msgstr "alıntı"
+
+#~ msgid "Add a brief excerpt summarizing the content of this page."
+#~ msgstr "Bu sayfanın içeriğini özetleyen kısa bir alıntı ekleyin."
+
+#~ msgid "Excerpt"
+#~ msgstr "Alıntı"
+
+#~ msgid "navigation extension"
+#~ msgstr "navigasyon bileşeni"
+
+#~ msgid ""
+#~ "Select the module providing subpages for this page if you need to "
+#~ "customize the navigation."
+#~ msgstr ""
+#~ "Navigasyonu özelleştirmeniz gerekiyorsa, bu altsayfaları sağlayan modülü "
+#~ "seçiniz."
+
+#~ msgid "Navigation extension"
+#~ msgstr "Navigasyon bileşeni"
+
+#, fuzzy
+#~| msgid "in navigation"
+#~ msgid "navigation group"
+#~ msgstr "navigasyonda"
+
+#~ msgid "Select pages that should be listed as related content."
+#~ msgstr "İlişkili içerik olarak listelenecek sayfaları seçiniz"
+
+#~ msgid "Related pages"
+#~ msgstr "İlgili sayfalar"
+
+#~ msgid "Site"
+#~ msgstr "Site"
+
+#~ msgid "symlinked page"
+#~ msgstr "Sembolik olarak bağlanmış sayfa"
+
+#~ msgid "All content is inherited from this page if given."
+#~ msgstr "Verilirse tüm içerik bu sayfadan devralınır."
+
+#~ msgid "content title"
+#~ msgstr "içerik başlığı"
+
+#~ msgid "The first line is the main title, the following lines are subtitles."
+#~ msgstr "İlk satır ana başlık, aşağıdaki satırlar ise alt başlıktır."
+
+#~ msgid "page title"
+#~ msgstr "sayfa başlığı"
+
+#, fuzzy
+#~| msgid "Page title for browser window. Same as title by default."
+#~ msgid ""
+#~ "Page title for browser window. Same as title bydefault. Must not be "
+#~ "longer than 70 characters."
+#~ msgstr ""
+#~ "Tarayıcı penceresi için sayfa başlığı. Varsayılan olarak başlık ile aynı."
+
+#~ msgid "Titles"
+#~ msgstr "Başlıklar"
+
+#~ msgid "This URL is already taken by an active page."
+#~ msgstr "Bu URL aktif bir sayfa tarafından alınmış."
+
+#~ msgid "This URL is already taken by another active page."
+#~ msgstr "Bu URL zaten başka aktif bir sayfa tarafından alınmış."
+
+#~ msgid "Other options"
+#~ msgstr "Diğer seçenekler"
+
+#~ msgid "in navigation"
+#~ msgstr "navigasyonda"
+
+#~ msgid "Add child page"
+#~ msgstr "Alt sayfa ekle"
+
+#~ msgid "View on site"
+#~ msgstr "Sitede göster"
+
+#~ msgid ""
+#~ "The content from the original translation has been copied to the newly "
+#~ "created page."
+#~ msgstr "Orijinal çeviri içeriği yeni oluşturulan sayfaya kopyalandı."
+
+#~ msgid "You don't have the necessary permissions to edit this object"
+#~ msgstr "Bu nesneye düzenlemek için gerekli izinleriniz yok"
+
+#~ msgid "inherited"
+#~ msgstr "devralındı"
+
+#~ msgid "extensions"
+#~ msgstr "bileşenler"
+
+#~ msgid "is active"
+#~ msgstr "aktif"
+
+#~ msgid "active"
+#~ msgstr "aktif"
+
+#, fuzzy
+#~| msgid "This is used for the generated navigation too."
+#~ msgid "This title is also used for navigation menu items."
+#~ msgstr "Bu da oluşturulan navigasyon için kullanılır."
+
+#~ msgid "override URL"
+#~ msgstr "URL geçersiz"
+
+#~ msgid ""
+#~ "Override the target URL. Be sure to include slashes at the beginning and "
+#~ "at the end if it is a local URL. This affects both the navigation and "
+#~ "subpages' URLs."
+#~ msgstr ""
+#~ "Hedef URL geçersiz Yerel bir URL ise başında ve sonunda bölü eklemeyi "
+#~ "unutmayın. Bu navigasyon ve alt sayfaları etkiler."
+
+#~ msgid "redirect to"
+#~ msgstr "buraya yönlendiriliyor"
+
+#~ msgid "Cached URL"
+#~ msgstr "Önbelleklenmiş URL"
+
+#~ msgid "page"
+#~ msgstr "sayfa"
+
+#~ msgid "pages"
+#~ msgstr "sayfalar"
+
+#~ msgid "Really delete item?"
+#~ msgstr "Gerçekten öğe silisin mi?"
+
+#~ msgid "Confirm to delete item"
+#~ msgstr "Öğeyi silmeyi onaylayın"
+
+#~ msgid "Item deleted successfully."
+#~ msgstr "öğe başarılı bir şekilde silindi."
+
+#~ msgid "Cannot delete item"
+#~ msgstr "Öğe silinemiyor"
+
+#~ msgid "Cannot delete item, because it is parent of at least one other item."
+#~ msgstr "öğe silinemiyor, çünkü en az bir alt öğeye sahip."
+
+#~ msgid "Change template"
+#~ msgstr "Temayı değiştir"
+
+#~ msgid "Really change template? <br />All changes are saved."
+#~ msgstr "Tema değiştirilsin mi? <br /> Tüm değişiklikler kaydedildi."
+
+#~ msgid ""
+#~ "Really change template? <br />All changes are saved and content from "
+#~ "<strong>%%(source_regions)s</strong> is moved to <strong>%"
+#~ "%(target_region)s</strong>."
+#~ msgstr ""
+#~ "Gerçekten tema değişsin mi? <br />Tüm değişiklikler kaydedildi ve <strong>"
+#~ "%%(source_regions)s</strong> teki içerikler <strong>%%(target_region)s</"
+#~ "strong> e taşındı."
+
+#~ msgid "Hide"
+#~ msgstr "Gizle"
+
+#~ msgid "Show"
+#~ msgstr "Göster"
+
+#~ msgid "After"
+#~ msgstr "Sonra"
+
+#~ msgid "Before"
+#~ msgstr "Önce"
+
+#~ msgid "Insert new:"
+#~ msgstr "Yeni ekle:"
+
+#~ msgid "Region empty"
+#~ msgstr "Bölge boş"
+
+#~ msgid ""
+#~ "Content from the parent site is automatically inherited. To override this "
+#~ "behaviour, add some content."
+#~ msgstr ""
+#~ "Üst siteden içerik otomatik devralınır. Bu davranışı geçersiz kılmak "
+#~ "için, bazı içerikler ekleyin."
+
+#~ msgid "Add another %(verbose_name)s"
+#~ msgstr "Başka ekle %(verbose_name)s"
+
+#~ msgid "Remove"
+#~ msgstr "Kaldır"
+
+#~ msgid "Save"
+#~ msgstr "Kaydet"
+
+#~ msgid "Stop Editing"
+#~ msgstr "Düzenlemeyi Durdur"
+
+#~ msgid "edit"
+#~ msgstr "düzenle"
+
+#~ msgid "new"
+#~ msgstr "yeni"
+
+#~ msgid "up"
+#~ msgstr "yukarı"
+
+#~ msgid "down"
+#~ msgstr "aşağı"
+
+#~ msgid "remove"
+#~ msgstr "kaldır"
+
+#~ msgid "Edit on site"
+#~ msgstr "Sitede düzenle"
+
+#~ msgid "Home"
+#~ msgstr "Anasayfa"
+
+#~ msgid "Add"
+#~ msgstr "Ekle"
+
+#~ msgid "Recover deleted %(verbose_name)s"
+#~ msgstr "Sşilineni kurtar %(verbose_name)s"
+
+#~ msgid "Press the save button below to recover this version of the object."
+#~ msgstr ""
+#~ "Nesnenin bu sürümünü kurtarmak için aşağıdaki kaydet düğmesine basın."
+
+#~ msgid "History"
+#~ msgstr "Geçmiş"
+
+#~ msgid "Revert %(verbose_name)s"
+#~ msgstr "Dön %(verbose_name)s"
+
+#~ msgid "Press the save button below to revert to this version of the object."
+#~ msgstr "Nesnenin bu sürümüne dönmek için aşağıdaki kaydet düğmesine basın."
+
+#~ msgid "Shortcuts"
+#~ msgstr "Kısayollar"
+
+#~ msgid "Collapse tree"
+#~ msgstr "Ağacı daralt"
+
+#~ msgid "Expand tree"
+#~ msgstr "Ağacı genişlet"
+
+#~ msgid "Filter"
+#~ msgstr "Filtre"
+
+#~ msgid " By %(filter_title)s "
+#~ msgstr "%(filter_title)s ile"
+
+#~ msgid "Add media files to category"
+#~ msgstr "Kategoriye medya dosyaları ekle"
+
+#~ msgid "Select category to apply:"
+#~ msgstr "Uygulamak için kategori seçin:"
+
+#~ msgid "The following media files will be added to the selected category:"
+#~ msgstr "Aşağıdaki ortam dosyaları seçilen kategoriye eklenecektir:"
+
+#~ msgid "Add to category"
+#~ msgstr "Kategoriye ekle"
+
+#~ msgid "Cancel"
+#~ msgstr "İptal"
+
+#~ msgid "Bulk upload a ZIP file:"
+#~ msgstr "Toplu upload ZIP dosyası:"
+
+#~ msgid "Overwrite"
+#~ msgstr "Üzerine yaz"
+
+#~ msgid "Send"
+#~ msgstr "Gönder"
+
+#~ msgid "%(comment_count)s comments."
+#~ msgstr "%(comment_count)s yorum"
+
+#~ msgid ""
+#~ "\n"
+#~ "                    %(comment_username)s said on "
+#~ "%(comment_submit_date)s<br />\n"
+#~ "                "
+#~ msgstr ""
+#~ "\n"
+#~ "                    %(comment_username)s dedi buna "
+#~ "%(comment_submit_date)s<br />\n"
+#~ "                "
+
+#~ msgid "No comments."
+#~ msgstr "Yorum yok."
+
+#~ msgid "Post Comment"
+#~ msgstr "Yorum gönder"
+
+#~ msgid "Submit"
+#~ msgstr "Gönder"
+
+#~ msgid "Thanks!"
+#~ msgstr "Teşekkürler!"
 
 #~ msgid "plain"
 #~ msgstr "düz"
