@@ -67,7 +67,7 @@ django.jQuery(function($){
         inlines.sort(function inlinesCompareFunction(a, b) {
             var aOrdering = $(a).find('.field-ordering input').val() || 1e9;
             var bOrdering = $(b).find('.field-ordering input').val() || 1e9;
-            return Math.sign(aOrdering - bOrdering);
+            return aOrdering - bOrdering;
         });
         orderMachine.append(inlines);
         moveEmptyFormsToEnd();

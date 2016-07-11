@@ -5,6 +5,8 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Some browsers do not support ``Math.sign``...
+
 
 `0.8`_ (2016-07-07)
 ~~~~~~~~~~~~~~~~~~~
