@@ -6,6 +6,8 @@ Change log
 ~~~~~~~~~~~~~~~
 
 - Some browsers do not support ``Math.sign``...
+- Automatically open the first tab with errors when using tabbed
+  fieldsets.
 
 
 `0.8`_ (2016-07-07)

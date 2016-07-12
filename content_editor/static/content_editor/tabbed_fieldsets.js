@@ -42,6 +42,6 @@ django.jQuery(function($) {
                     $tab.data('index')
                 ).removeClass('hidden');
             }
-        });
+        }).find('.has-error').first().click();
     }
 });
