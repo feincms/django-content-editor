@@ -1,19 +1,15 @@
 language: python
 sudo: false
 dist: trusty
+cache: pip
 python:
   - "2.7"
   - "3.4"
   - "3.5"
 env:
   - REQ="Django>=1.9,<1.10 django-mptt"
-  - REQ="Django==1.10rc1 https://github.com/matthiask/django-mptt/archive/mk/nomagic.zip"
-matrix:
-  exclude:
-# Avoid "UnicodeEncodeError: 'ascii' codec can't encode character u'\u2297' in
-# position 60: ordinal not in range(128)" ???
-    - python: "2.7"
-      env: REQ="https://github.com/django/django/archive/master.zip https://github.com/matthiask/django-mptt/archive/mk/nomagic.zip"
+  - REQ="Django>=1.10,<1.11 django-mptt-nomagic"
 install:
+  - pip install -U pip wheel setuptools
   - pip install $REQ coverage flake8 pytz
 script: "python testapp/runtests.py && flake8 ."
