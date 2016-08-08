@@ -389,6 +389,9 @@ Simple usage is as follows::
     # regions is a. inherited and b. empty
     c.inherit_regions(some_other_contents_instance)
 
+    # Plugins from unknown regions end up in _unknown_region_contents:
+    c._unknown_region_contents
+
 For simple use cases, you'll probably want to take a closer look at
 the following helper methods instead of instantiating a ``Contents``
 class directly:

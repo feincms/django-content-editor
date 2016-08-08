@@ -24,7 +24,6 @@ class Contents(object):
         try:
             self._contents[content.region].append(content)
         except KeyError:
-            # TODO Document or delete this.
             self._unknown_region_contents.append(content)
 
     def _sort(self):

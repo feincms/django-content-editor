@@ -120,10 +120,10 @@ class JS(object):
 class ContentEditor(ModelAdmin):
     """
     The ``ContentEditor`` is a drop-in replacement for ``ModelAdmin`` with the
-    speciality of knowing how to work with :class:`feincms.models.Base`
-    subclasses and associated plugins.
+    speciality of knowing how to work with content editor plugins (that is,
+    :class:`content_editor.admin.ContentEditorInline` inlines).
 
-    It does not have any public API except from everything inherited from'
+    It does not have any public API except from everything inherited from
     the standard ``ModelAdmin`` class.
     """
 
