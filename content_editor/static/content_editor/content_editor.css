@@ -131,16 +131,24 @@
 
 /* tabbed_fieldsets.js support */
 #tabbed .modules {
-    border-bottom: 1px solid #eee;
     margin-bottom: 30px;
 }
 
 #tabbed .module {
     border: 1px solid #eee;
-    border-bottom: none;
     margin-bottom: 0;
 }
 
 #tabbed .form-row:last-child {
+    border: none;
+}
+
+#tabbed .hidden.module {
+    /* forms.css sets .hidden to display: none. Some admin widgets need to
+       know their dimensions, so we can't have that -- use an alternative way
+       to hide the modules. */
+    display: block;
+    visibility: hidden;
+    height: 0;
     border: none;
 }

@@ -9,6 +9,8 @@ Change log
 - Automatically open the first tab with errors when using tabbed
   fieldsets.
 - Improve visibility of plugin fieldsets.
+- Fixed widgets using their own size in tabbed fieldsets (for example
+  django-versatileimagefield_'s primary point of interest field).
 
 
 `0.8`_ (2016-07-07)
@@ -86,6 +88,7 @@ Initial public release of django-content-editor.
 .. _django-content-editor: http://django-content-editor.readthedocs.org/en/latest/
 .. _django-mptt: http://django-mptt.github.io/django-mptt/
 .. _feincms-cleanse: https://pypi.python.org/pypi/feincms-cleanse
+.. _django-versatileimagefield: http://django-versatileimagefield.readthedocs.io/en/latest/
 
 .. _0.1: https://github.com/matthiask/django-content-editor/commit/2bea5456
 .. _0.2: https://github.com/matthiask/django-content-editor/compare/0.1.0...0.2.0
