@@ -25,7 +25,7 @@ django.jQuery(function($) {
             $title.attr('data-index', index);
             $tabs.append($title);
 
-            $old.addClass('hidden');
+            $old.addClass('content-editor-hidden');
 
             $modules.append($old);
         });
@@ -34,13 +34,13 @@ django.jQuery(function($) {
             var $tab = $(this);
             if ($tab.hasClass('active')) {
                 $tab.removeClass('active');
-                $modules.children().addClass('hidden');
+                $modules.children().addClass('content-editor-hidden');
             } else {
                 $tabs.find('.active').removeClass('active');
                 $tab.addClass('active');
-                $modules.children().addClass('hidden').eq(
+                $modules.children().addClass('content-editor-hidden').eq(
                     $tab.data('index')
-                ).removeClass('hidden');
+                ).removeClass('content-editor-hidden');
             }
         }).find('.has-error').first().click();
     }

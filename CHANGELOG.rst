@@ -9,8 +9,9 @@ Change log
 - Automatically open the first tab with errors when using tabbed
   fieldsets.
 - Improve visibility of plugin fieldsets.
-- Fixed widgets using their own size in tabbed fieldsets (for example
-  django-versatileimagefield_'s primary point of interest field).
+- Fixed widgets using their own size in tabbed fieldsets and the
+  content editor (for example django-versatileimagefield_'s primary
+  point of interest field).
 
 
 `0.8`_ (2016-07-07)

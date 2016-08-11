@@ -132,11 +132,11 @@ django.jQuery(function($){
 
     function hideInlinesFromOtherRegions() {
         var inlines = orderMachine.find('.inline-related:not(.empty-form)');
-        inlines.hide();
+        inlines.addClass('content-editor-hidden');
         var shown = inlines.filter('[data-region="' + ContentEditor.currentRegion + '"]');
         machineEmptyMessage.addClass('hidden');
         if (shown.length) {
-            shown.show();
+            shown.removeClass('content-editor-hidden');
         } else {
             machineEmptyMessage.removeClass('hidden');
         }
@@ -222,12 +222,12 @@ django.jQuery(function($){
     $(document).on(
         'content-editor:deactivate',
         function(event, row) {
-            row.find('fieldset').hide();
+            row.find('fieldset').addClass('content-editor-hidden');
         }
     ).on(
         'content-editor:activate',
         function(event, row) {
-            row.find('fieldset').show();
+            row.find('fieldset').removeClass('content-editor-hidden');
         }
     );
 
