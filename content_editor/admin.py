@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django import forms
+from django.apps import apps
 from django.contrib.admin.checks import InlineModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
@@ -77,6 +78,17 @@ class ContentEditorInline(StackedInline):
         )
 
 
+def _static_url(path):
+    # Django >= 1.10 does this automatically. We can revert to simply using
+    # static(path) then.
+    if apps.is_installed('django.contrib.staticfiles'):
+        from django.contrib.staticfiles.storage import staticfiles_storage
+
+        return staticfiles_storage.url(path)
+    else:
+        return static(path)
+
+
 class JS(object):
     """
     Use this to insert a script tag via ``forms.Media`` containing additional
@@ -112,7 +124,7 @@ class JS(object):
     def __html__(self):
         return format_html(
             '{}"{}',
-            static(self.js),
+            _static_url(self.js),
             mark_safe(flatatt(self.attrs)),
         ).rstrip('"')
 

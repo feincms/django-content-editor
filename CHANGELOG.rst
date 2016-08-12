@@ -12,6 +12,8 @@ Change log
 - Fixed widgets using their own size in tabbed fieldsets and the
   content editor (for example django-versatileimagefield_'s primary
   point of interest field).
+- Use django.contrib.staticfiles' static URL generation if it is
+  installed.
 
 
 `0.8`_ (2016-07-07)
