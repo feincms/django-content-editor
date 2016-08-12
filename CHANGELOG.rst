@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.9`_ (2016-08-12)
+~~~~~~~~~~~~~~~~~~~
+
 - Some browsers do not support ``Math.sign``...
 - Automatically open the first tab with errors when using tabbed
   fieldsets.
@@ -101,4 +105,5 @@ Initial public release of django-content-editor.
 .. _0.6: https://github.com/matthiask/django-content-editor/compare/0.5.0...0.6.0
 .. _0.7: https://github.com/matthiask/django-content-editor/compare/0.6.0...0.7.0
 .. _0.8: https://github.com/matthiask/django-content-editor/compare/0.7.0...0.8.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.8.0...master
+.. _0.8: https://github.com/matthiask/django-content-editor/compare/0.8.0...0.9.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.9.0...master
