@@ -98,7 +98,7 @@ class JS(object):
         media.add_js([
             JS('asset.js', {
                 'id': 'asset-script',
-                'data-the-answer': '"42"',
+                'data-answer': '"42"',
             }),
         ])
 
