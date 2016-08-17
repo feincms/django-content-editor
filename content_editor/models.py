@@ -3,22 +3,25 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
+try:
+    from types import SimpleNamespace
+except ImportError:  # pragma: no cover
+    # Python < 3.3
+    class SimpleNamespace(object):
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+
 
 __all__ = ('Region', 'Template', 'create_plugin_base')
 
 
-class _DataType(object):
-    def __init__(self, **kwargs):
-        self.__dict__.update(kwargs)
-
-
-class Region(_DataType):
+class Region(SimpleNamespace):
     key = ''
     title = 'unnamed'
     inherited = False
 
 
-class Template(_DataType):
+class Template(SimpleNamespace):
     key = ''
     template_name = None
     title = ''

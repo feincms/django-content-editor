@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Changed ``Region`` and ``Template`` to extend
+  ``types.SimpleNamespace`` on Python versions that support this
+  (>3.3)
+
 
 `0.9`_ (2016-08-12)
 ~~~~~~~~~~~~~~~~~~~
