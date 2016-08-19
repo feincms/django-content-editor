@@ -3,13 +3,24 @@ sudo: false
 dist: trusty
 cache: pip
 python:
-  - "2.7"
-  - "3.4"
-  - "3.5"
+- '2.7'
+- '3.4'
+- '3.5'
 env:
-  - REQ="Django>=1.9,<1.10 django-mptt"
-  - REQ="Django>=1.10,<1.11 django-mptt-nomagic"
+- REQ="Django>=1.9,<1.10 django-mptt"
+- REQ="Django>=1.10,<1.11 django-mptt-nomagic"
 install:
-  - pip install -U pip wheel setuptools
-  - pip install $REQ coverage flake8 pytz
-script: "python testapp/runtests.py && flake8 ."
+- pip install -U pip wheel setuptools
+- pip install $REQ coverage flake8 pytz
+script: python testapp/runtests.py && flake8 .
+deploy:
+  provider: pypi
+  user: matthiask
+  password:
+    secure: RH180eHUnIjcSC1bdWX/IcbHTp4Bj6rQMZcZ6qSGfu8OYtdP0+zDBAUgYIBO3a1lT+3JGxc7XWZK7NP/A4UEgl6JCB/mPRNnT4vMEAujYICBtnuqjLNHqXsZhJvkSQzJTtQ8pXUZ46yVY1Z1MQf4dQQBuLKfgdsc/Ufc+jmQubDzpgbGv3o0Af5QggpuXDWxeVyTioIKPqP4MYbvWbctIUcjpWYG1YpWq10l8Ig0F7TfE1K+E49kARoiSJAdTAuUr9Fpos01AfhzLtvsaqOVtK6IMWDQrInHCo4sL/kEB5V1M/uTaVm217GtZw+lrb0cQiXmscEqrc7L0EQoflBokQq7jtf6xTBRGEW/LVZ8dKrToCLcD7jrWcVONjWj/pj+ZR9HsITtN9aSsJnsy0vRx1cs4OfMlTl/CqF0Tw6N29C26mCa7ZpfpxlYBZtfbemDYm/JqJWApYdVU3cu6knYu0RjbM/vaeoEfTeqkJ7FJpaSyuAkJgtiPVRiF5ACHFAy5DZQbud3Rmkp9i2FFUo+C5T/za8r1Pl/YVp/DTJzfBDS1UthgNX4SNIi9gJTHhFHMoqMIPuMYh3Czryl9hXFFPR8MaMS5cchj1+ZKG0NVG61sIoXLR2PaLzevhmlRwuGawq04oZDPSw0FAG0llgcDIBFGR86dxgb7fco4OkB56g=
+  distributions: sdist bdist_wheel
+  on:
+    tags: true
+    branch: master
+    condition: "$REQ = 'Django>=1.10,<1.11 django-mptt-nomagic'"
+    repo: matthiask/django-content-editor
