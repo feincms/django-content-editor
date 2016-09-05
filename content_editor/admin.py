@@ -151,11 +151,9 @@ class ContentEditor(ModelAdmin):
 
         return json.dumps({
             'plugins': [(
-                '%s_%s' % (
-                    plugin._meta.app_label,
-                    plugin._meta.model_name,
-                ),
-                capfirst(force_text(plugin._meta.verbose_name))
+                '%s_%s' % (plugin._meta.app_label, plugin._meta.model_name),
+                capfirst(force_text(plugin._meta.verbose_name)),
+                plugin._meta.regions,
             ) for plugin in plugins],
             'regions': [(
                 region.key,

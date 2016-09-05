@@ -52,7 +52,19 @@ django.jQuery(function($){
 
     var orderMachine = $('.order-machine'),
         machineEmptyMessage = $('<p class="hidden machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
+    
+    
+    // Pre map plugin regions
+    var pluginRegions = (function() {
+        var result = {};
+        var plugins = ContentEditor.plugins;
+        for (var i = 0; i < plugins.length; i++) {
+            result[plugins[i][0]] = plugins[i][2];
+        }
+        return result;
+    })();
 
+    
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
     }
@@ -89,11 +101,45 @@ django.jQuery(function($){
         return select;
     }
 
-    function attachMoveToRegionDropdown(inline) {
-        if (ContentEditor.regions.length < 2) return;
+    // Hides plugins that are not allowed in this region
+    function hideNotAllowedDropdown() {
+        $(ContentEditor.machineControlSelect).find("option").each(function() {
+            var $option = $(this);
+            var allowed = pluginRegions[$option.val()];
+            if (!allowed || $.inArray(ContentEditor.currentRegion, allowed) >= 0) {
+                $option.show();
+            } else {
+                $option.hide();
+            }
+        });
+    }
 
+
+    // Fetch the inline type from id
+    function getInlineType(inline) {
+        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr("id"));
+        if (match) {
+            return match[1];
+        }
+        return null;
+    }
+
+
+    function attachMoveToRegionDropdown(inline) {
+
+        // Filter allowed regions
+        var inlineType = getInlineType(inline);
+        var regions = [];
+        for (var i = 0; i < ContentEditor.regions.length; i++) {
+            if (!inlineType || !pluginRegions[inlineType] || $.inArray(ContentEditor.regions[i][0], pluginRegions[inlineType]) >= 0) {
+                regions.push(ContentEditor.regions[i]);
+            }
+        };
+
+        if (regions.length < 2) return;
+        
         var controls = document.createElement('div'),
-            select = buildDropdown(ContentEditor.regions),
+            select = buildDropdown(regions),
             regionInput = inline.find('.field-region input');
 
         select.value = regionInput.val();
@@ -149,7 +195,8 @@ django.jQuery(function($){
             selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');
         }
         return $(selector.join(', '));
-    })();
+    })(); 
+
 
     reorderInlines(pluginInlineGroups);
     pluginInlineGroups.hide();
@@ -208,6 +255,9 @@ django.jQuery(function($){
             tabs.removeClass('active').filter('[data-region="' + ContentEditor.currentRegion + '"]').addClass('active');
             hideInlinesFromOtherRegions();
             window.location.hash = 'tab_' + ContentEditor.currentRegion;
+
+            // Make sure only allowed plugins are in select
+            hideNotAllowedDropdown();
         });
 
         // Restore tab if location hash matches.
@@ -272,6 +322,8 @@ django.jQuery(function($){
             ContentEditor.addContent(select.value);
             select.value = '';
         });
+        ContentEditor.machineControlSelect = select;
+        hideNotAllowedDropdown();
         $(select).appendTo('.machine-control').wrap('<div class="control-unit"></div>');
     })();
 
