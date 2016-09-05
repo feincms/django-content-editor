@@ -153,7 +153,8 @@ class ContentEditor(ModelAdmin):
             'plugins': [(
                 '%s_%s' % (plugin._meta.app_label, plugin._meta.model_name),
                 capfirst(force_text(plugin._meta.verbose_name)),
-                plugin._meta.regions,
+                plugin._meta.regions
+                if hasattr(plugin._meta, "regions") else None,
             ) for plugin in plugins],
             'regions': [(
                 region.key,
