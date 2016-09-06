@@ -8,6 +8,9 @@ Change log
 - Changed ``Region`` and ``Template`` to extend
   ``types.SimpleNamespace`` on Python versions that support this
   (>3.3)
+- Allowed restricting individual plugin types to a subset of available
+  regions by setting ``ContentEditorInline.plugins`` to a list of region
+  keys. Thanks to Tom Van Damme for the contribution!
 
 
 `0.9`_ (2016-08-12)

@@ -78,8 +78,8 @@ Example: articles with rich text plugins
 
         regions = [
             Region(key='main', title='main region'),
-            # Region(key='sidebar', title='sidebar region',
-            #        inherited=False),
+            Region(key='sidebar', title='sidebar region',
+                   inherited=False),
         ]
 
         def __str__(self):
@@ -141,6 +141,7 @@ Example: articles with rich text plugins
         formfield_overrides = {
             models.TextField: {'widget': RichTextarea},
         }
+        regions = ['main']  # We only want rich texts in "main" region.
 
         class Media:
             js = (
@@ -255,9 +256,7 @@ Example: articles with rich text plugins
 
         {{ content.main }}
     </article>
-    {% comment %}
-        <aside>{{ content.sidebar }}</aside>
-    {% endcomment %}
+    <aside>{{ content.sidebar }}</aside>
     {% endblock %}
 
 Finally, ensure that ``content_editor`` and ``app`` are added to your
@@ -317,12 +316,12 @@ above) which returns a list of ``Region`` instances.
 Regions have the following attributes:
 
 * ``title``: Something nice, will be visible in the content editor.
-  * ``key``: The region key, used in the content proxy as attribute
-    name for the list of plugins. Must contain a valid Python
-    identifier.  * ``inherited``: Only has an effect if you are
-    using the bundled ``contents_for_mptt_item`` or anything
-    comparable: Models inherit content from their ancestor chain if
-    a region with ``inherited = True`` is emtpy.
+* ``key``: The region key, used in the content proxy as attribute name
+  for the list of plugins. Must contain a valid Python identifier.
+* ``inherited``: Only has an effect if you are using the bundled
+  ``contents_for_mptt_item`` or anything comparable: Models inherit
+  content from their ancestor chain if a region with ``inherited =
+  True`` is emtpy.
 
 You are free to define additional attributes -- simply pass them
 when instantiating a new region.
@@ -337,9 +336,10 @@ of the sort is implemented yet.
 
 Templates have the following attributes:
 
-* ``title``: Something nice.  * ``key``: The template key. Must
-  contain a valid Python identifier.  * ``template_name``: A
-  template path.  * ``regions``: A list of region instances.
+* ``title``: Something nice.
+* ``key``: The template key. Must contain a valid Python identifier.
+* ``template_name``: A template path.
+* ``regions``: A list of region instances.
 
 As with the regions above, you are free to define additional
 attributes.
