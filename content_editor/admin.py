@@ -50,6 +50,7 @@ class ContentEditorInline(StackedInline):
     extra = 0
     fk_name = 'parent'
     checks_class = ContentEditorChecks
+    regions = None
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
@@ -141,7 +142,7 @@ class ContentEditor(ModelAdmin):
 
     def _content_editor_context(self, request, context):
         plugins = [
-            iaf.opts.model
+            (iaf.opts.model, iaf.opts)
             for iaf in context.get('inline_admin_formsets', [])
             if isinstance(iaf.opts, ContentEditorInline)
         ]
@@ -151,10 +152,10 @@ class ContentEditor(ModelAdmin):
 
         return json.dumps({
             'plugins': [(
-                '%s_%s' % (plugin._meta.app_label, plugin._meta.model_name),
-                capfirst(force_text(plugin._meta.verbose_name)),
-                plugin._meta.regions
-                if hasattr(plugin._meta, "regions") else None,
+                '%s_%s' % (plugin[0]._meta.app_label,
+                           plugin[0]._meta.model_name),
+                capfirst(force_text(plugin[0]._meta.verbose_name)),
+                plugin[1].regions,
             ) for plugin in plugins],
             'regions': [(
                 region.key,

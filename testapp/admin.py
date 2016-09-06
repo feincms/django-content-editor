@@ -21,6 +21,7 @@ class RichTextInline(ContentEditorInline):
         models.TextField: {'widget': RichTextarea},
     }
     fieldsets = [(None, {'fields': ('text', 'region', 'ordering')})]
+    regions = ("main",)
 
     class Media:
         js = (

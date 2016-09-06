@@ -107,13 +107,13 @@ class ContentEditorTest(TestCase):
         self.assertContains(response, 'class="richtext"', 1)
         self.assertContains(
             response,
-            '[&quot;testapp_richtext&quot;, &quot;Rich text&quot;, null]',
+            '[&quot;testapp_richtext&quot;, &quot;Rich text&quot;, '
+            '[&quot;main&quot;]]',
             1,
         )
         self.assertContains(
             response,
-            '[&quot;testapp_download&quot;, &quot;Download&quot;, '
-            '[&quot;sidebar&quot;]]',
+            '[&quot;testapp_download&quot;, &quot;Download&quot;, null]',
             1,
         )
         self.assertContains(

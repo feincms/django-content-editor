@@ -43,14 +43,13 @@ class RichText(AbstractRichText, ArticlePlugin):
 class Download(ArticlePlugin):
     file = models.TextField()  # FileField, but charfield is easier to test.
 
-    class Meta(ArticlePlugin.Meta):
+    class Meta:
         verbose_name = 'download'
         verbose_name_plural = 'downloads'
-        regions = ("sidebar",)
 
 
 class Bla(ArticlePlugin):
-    class Meta(ArticlePlugin.Meta):
+    class Meta:
         verbose_name = 'bla'
 
 
@@ -68,7 +67,7 @@ class Page(MPTTModel):
         ],
     )
 
-    class Meta(ArticlePlugin.Meta):
+    class Meta:
         verbose_name = 'page'
         verbose_name_plural = 'pages'
 

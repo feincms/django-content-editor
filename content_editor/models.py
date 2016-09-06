@@ -4,8 +4,6 @@ from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 
 
-models.options.DEFAULT_NAMES += ('regions',)
-
 try:
     from types import SimpleNamespace
 except ImportError:  # pragma: no cover
@@ -55,7 +53,6 @@ def create_plugin_base(content_base):
             abstract = True
             app_label = content_base._meta.app_label
             ordering = ['ordering']
-            regions = None
 
         def __str__(self):
             return '%s<region=%s ordering=%s pk=%s>' % (
