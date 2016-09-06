@@ -25,9 +25,6 @@ setup(
         exclude=['tests', 'testapp'],
     ),
     include_package_data=True,
-    install_requires=[
-        'Django>=1.9',
-    ],
     classifiers=[
         # 'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',

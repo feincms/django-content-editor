@@ -11,6 +11,9 @@ Change log
 - Allowed restricting individual plugin types to a subset of available
   regions by setting ``ContentEditorInline.plugins`` to a list of region
   keys. Thanks to Tom Van Damme for the contribution!
+- Removed Django from ``install_requires`` -- updating
+  django-content-editor does not necessarily mean users want to update
+  Django as well.
 
 
 `0.9`_ (2016-08-12)
