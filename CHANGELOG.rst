@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+
+`0.10`_ (2016-09-06)
+~~~~~~~~~~~~~~~~~~~
+
 - Changed ``Region`` and ``Template`` to extend
   ``types.SimpleNamespace`` on Python versions that support this
   (>3.3)
@@ -115,5 +119,6 @@ Initial public release of django-content-editor.
 .. _0.6: https://github.com/matthiask/django-content-editor/compare/0.5.0...0.6.0
 .. _0.7: https://github.com/matthiask/django-content-editor/compare/0.6.0...0.7.0
 .. _0.8: https://github.com/matthiask/django-content-editor/compare/0.7.0...0.8.0
-.. _0.8: https://github.com/matthiask/django-content-editor/compare/0.8.0...0.9.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.9.0...master
+.. _0.9: https://github.com/matthiask/django-content-editor/compare/0.8.0...0.9.0
+.. _0.10: https://github.com/matthiask/django-content-editor/compare/0.9.0...0.10.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/0.10.0...master
