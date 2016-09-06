@@ -19,6 +19,8 @@ django.jQuery(function($){
                 }
 
                 var button = document.createElement('a');
+                var $button = $(button);
+                $button.data("plugin", plugin);
                 button.className = 'plugin-button';
                 button.title = title;
                 button.addEventListener('click', function() {
@@ -27,6 +29,8 @@ django.jQuery(function($){
                 button.innerHTML = html;
 
                 unit.appendChild(button);
+
+                hideNotAllowedPluginButtons($button);
             };
 
             for (var i=0; i<ContentEditor.plugins.length; i++) {
@@ -101,6 +105,7 @@ django.jQuery(function($){
         return select;
     }
 
+
     // Hides plugins that are not allowed in this region
     function hideNotAllowedDropdown() {
         $(ContentEditor.machineControlSelect).find("option").each(function() {
@@ -115,9 +120,33 @@ django.jQuery(function($){
     }
 
 
+    // Hide not allowed plugin buttons
+    // If $buttons only checks this buttons, else checks all
+    function hideNotAllowedPluginButtons($buttons) {
+        $buttons = $buttons ? $buttons :
+                            $('.control-unit.plugin-buttons .plugin-button');
+        
+        var region = ContentEditor.currentRegion;
+
+        $buttons.each(function() {
+            var $button = $(this);
+            var plugin = $button.data('plugin');
+            var allowed = pluginRegions[plugin];
+
+            if (!allowed || $.inArray(region, allowed) >= 0) {
+                // Allowed
+                $button.show();
+            } else {
+                // Not allowed
+                $button.hide();
+            }
+        });
+    }
+
+
     // Fetch the inline type from id
     function getInlineType(inline) {
-        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr("id"));
+        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr('id'));
         if (match) {
             return match[1];
         }
@@ -258,6 +287,7 @@ django.jQuery(function($){
 
             // Make sure only allowed plugins are in select
             hideNotAllowedDropdown();
+            hideNotAllowedPluginButtons();
         });
 
         // Restore tab if location hash matches.
