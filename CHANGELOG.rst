@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Moved the regions inheritance handling from ``contents_for_mptt_item``
+  to ``contents_for_item`` to make it reusable outside MPTT hierarchies.
+
 
 `0.10`_ (2016-09-06)
 ~~~~~~~~~~~~~~~~~~~

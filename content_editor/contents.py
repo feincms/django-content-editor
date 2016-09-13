@@ -78,14 +78,18 @@ def contents_for_items(items, plugins):
     return contents
 
 
-def contents_for_item(item, plugins):
-    return contents_for_items([item], plugins)[item]
+def contents_for_item(item, plugins, inherit_from=None):
+    inherit_from = list(inherit_from) if inherit_from else []
+    all_contents = contents_for_items([item] + inherit_from, plugins)
+    contents = all_contents[item]
+    for item in inherit_from:
+        contents.inherit_regions(all_contents[item])
+    return contents
 
 
 def contents_for_mptt_item(item, plugins):
-    ancestors = list(item.get_ancestors(ascending=True))
-    all_contents = contents_for_items([item] + ancestors, plugins)
-    contents = all_contents[item]
-    for ancestor in ancestors:
-        contents.inherit_regions(all_contents[ancestor])
-    return contents
+    return contents_for_item(
+        item,
+        plugins,
+        inherit_from=item.get_ancestors(ascending=True),
+    )
