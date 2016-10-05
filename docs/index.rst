@@ -52,14 +52,6 @@ latest release at the time of writing.
 ---
 
 
-.. _Django: https://www.djangoproject.com/
-.. _FeinCMS: https://github.com/feincms/feincms/
-.. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
-.. _django-mptt: https://github.com/django-mptt/django-mptt/
-.. _comparable CMS systems: https://www.djangopackages.com/grids/g/cms/
-.. _draggable tree admin: http://django-mptt.github.io/django-mptt/admin.html#mptt-admin-draggablempttadmin
-
-
 Example: articles with rich text plugins
 ========================================
 
@@ -299,8 +291,6 @@ IF you also want nice icons to add new items, you might want to use
     })(django.jQuery);
 
 
-.. _font awesome: https://fortawesome.github.io/Font-Awesome/
-
 
 Parts
 =====
@@ -423,6 +413,19 @@ helper calls ``contents_for_items`` to do the real work)::
     contents = contents_for_item(
         article,
         plugins=[RichText, Download])
+
+It is also possible to add additional items for inheriting regions.
+This is most useful with a page tree where i.e. sidebar contents are
+inherited from ancestors (this example uses methods added by
+django-cte-forest_ as used in feincms3_)::
+
+    page = ...
+    contents = contents_for_item(
+        page,
+        plugins=[,,,],
+        page.ancestors().reverse(),  # Prefer content closer to the
+                                     # current page
+    )
 
 
 ``contents_for_mptt_item``
@@ -556,3 +559,14 @@ Glossary
 - **Content block**: A content element instance belonging to a main
   model instance. Also called **item** sometimes in the documentation
   above.
+
+
+.. _Django: https://www.djangoproject.com/
+.. _FeinCMS: https://github.com/feincms/feincms/
+.. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
+.. _django-mptt: https://github.com/django-mptt/django-mptt/
+.. _comparable CMS systems: https://www.djangopackages.com/grids/g/cms/
+.. _draggable tree admin: http://django-mptt.github.io/django-mptt/admin.html#mptt-admin-draggablempttadmin
+.. _font awesome: https://fortawesome.github.io/Font-Awesome/
+.. _django-cte-forest: https://github.com/matthiask/django-cte-forest/
+.. _feincms3: https://feincms3.readthedocs.io/
