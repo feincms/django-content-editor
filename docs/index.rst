@@ -5,12 +5,6 @@ django-content-editor -- Editing structured content
 .. image:: https://travis-ci.org/matthiask/django-content-editor.svg?branch=master
     :target: https://travis-ci.org/matthiask/django-content-editor
 
-.. warning::
-
-   Everything here works alright, but is still subject to change.
-   Some additional real-world testing has to happen before the code
-   can be declared 1.0-ready. Also, additional docs and more tests.
-
 **Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
 Django's builtin admin application provides a really good and usable
@@ -22,34 +16,16 @@ systems. For example, articles may be composed of text blocks with
 images and videos interspersed throughout.
 
 That, in fact, was one of the core ideas of FeinCMS_. Unfortunately,
-FeinCMS_' components were too strongly coupled, and the code in
-general used too much magic which made the code hard to understand
-and difficult to fix when it broke (this didn't happen too often in
-the last years, but still.)
+FeinCMS_ has accumulated much more code than strictly necessary, and
+I should have done better in this regard. Of course FeinCMS_ still
+contains much less code than `comparable CMS systems`_, but we can do
+even better and make it more obvious what's going on.
 
 So, ``django-content-editor``.
 
-At the time of writing the newest release of django-mptt_ comes with
-a `draggable tree admin`_, formerly FeinCMS_' TreeEditor. It has become
-really simple to build a basic pages CMS building *on top* of
-django-mptt_ and ``django-content-editor``.
+.. note::
 
----
-
-FeinCMS_ actually was trying to **be** a really simple and stupid
-content management system. Simply looking at the amount of code in
-FeinCMS_ is enough to decide that we did worse than we should have
-done. While FeinCMS_ still contains less code than `comparable CMS
-systems`_ it still consists of hundreds of lines of comparatively
-complicated and needlessly dynamic code.  Reasons are mostly
-historical of course -- Django_'s administration interface did it
-fact not even have dynamic JavaScript-backed inlines when FeinCMS_
-was first released, and the necessary events which we require for
-adding custom JavaScript-backed widgets (such as rich text editors)
-to plugins are only available starting with Django_ 1.9 -- the
-latest release at the time of writing.
-
----
+   If you like these ideas you might want to take a look at feincms3_.
 
 
 Example: articles with rich text plugins
