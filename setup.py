@@ -25,6 +25,9 @@ setup(
         exclude=['tests', 'testapp'],
     ),
     include_package_data=True,
+    install_requires=[
+        'django-js-asset',
+    ],
     classifiers=[
         # 'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -44,7 +47,7 @@ setup(
     ],
     zip_safe=False,
     tests_require=[
-        'Django',
+        'django',
         'coverage',
         'django-mptt',
         'pytz',

@@ -3,18 +3,15 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django import forms
-from django.apps import apps
 from django.contrib.admin.checks import InlineModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
-from django.forms.utils import flatatt
-from django.templatetags.static import static
 from django.utils.encoding import force_text
-from django.utils.html import format_html, mark_safe
 from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
+from js_asset.js import JS
 
 __all__ = ('ContentEditorInline', 'ContentEditor')
 
@@ -77,57 +74,6 @@ class ContentEditorInline(StackedInline):
             (cls,),
             kwargs,
         )
-
-
-def _static_url(path):
-    # Django >= 1.10 does this automatically. We can revert to simply using
-    # static(path) then.
-    if apps.is_installed('django.contrib.staticfiles'):
-        from django.contrib.staticfiles.storage import staticfiles_storage
-
-        return staticfiles_storage.url(path)
-    else:
-        return static(path)
-
-
-class JS(object):
-    """
-    Use this to insert a script tag via ``forms.Media`` containing additional
-    attributes (such as ``id`` and ``data-*`` for CSP-compatible data
-    injection.)::
-
-        media.add_js([
-            JS('asset.js', {
-                'id': 'asset-script',
-                'data-answer': '"42"',
-            }),
-        ])
-
-    The rendered media tag (via ``{{ media.js }}`` or ``{{ media }}`` will
-    now contain a script tag as follows, without line breaks::
-
-        <script type="text/javascript" src="/static/asset.js"
-            data-answer="&quot;42&quot;" id="asset-script"></script>
-
-    The attributes are automatically escaped. The data attributes may now be
-    accessed inside ``asset.js``::
-
-        var answer = document.querySelector('#asset-script').dataset.answer;
-    """
-    def __init__(self, js, attrs):
-        self.js = js
-        self.attrs = attrs
-
-    def startswith(self, _):
-        # Masquerade as absolute path so that we are returned as-is.
-        return True
-
-    def __html__(self):
-        return format_html(
-            '{}"{}',
-            _static_url(self.js),
-            mark_safe(flatatt(self.attrs)),
-        ).rstrip('"')
 
 
 class ContentEditor(ModelAdmin):

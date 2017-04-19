@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ~~~~~~~~~~~~~~~
 
+- Moved the ``JS`` form assets helper to django-js-asset_, thereby raising
+  our own Python code coverage to 100%.
+
+
 `1.0`_ (2016-09-06)
 ~~~~~~~~~~~~~~~~~~~
 
@@ -114,6 +118,7 @@ Initial public release of django-content-editor.
 
 .. _django-ckeditor: https://pypi.python.org/pypi/django-ckeditor
 .. _django-content-editor: http://django-content-editor.readthedocs.org/en/latest/
+.. _django-js-asset: https://github.com/matthiask/django-js-asset
 .. _django-mptt: http://django-mptt.github.io/django-mptt/
 .. _feincms-cleanse: https://pypi.python.org/pypi/feincms-cleanse
 .. _django-versatileimagefield: http://django-versatileimagefield.readthedocs.io/en/latest/
