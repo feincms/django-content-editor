@@ -8,7 +8,8 @@ python:
 - '3.5'
 env:
 - REQ="Django>=1.9,<1.10 django-mptt"
-- REQ="Django>=1.10,<1.11 django-mptt-nomagic"
+- REQ="Django>=1.10,<1.11 django-mptt"
+- REQ="Django>=1.11,<2.0 django-mptt"
 install:
 - pip install -U pip wheel setuptools
 - pip install $REQ coverage flake8 pytz
@@ -22,5 +23,5 @@ deploy:
   on:
     tags: true
     branch: master
-    condition: "$REQ = 'Django>=1.10,<1.11 django-mptt-nomagic'"
+    condition: "$REQ = 'Django>=1.11,<2.0 django-mptt'"
     repo: matthiask/django-content-editor

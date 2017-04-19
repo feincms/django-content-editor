@@ -7,6 +7,7 @@ Change log
 
 - Moved the ``JS`` form assets helper to django-js-asset_, thereby raising
   our own Python code coverage to 100%.
+- Added Django 1.11 to the Travis build.
 
 
 `1.0`_ (2016-09-06)
