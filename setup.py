@@ -51,6 +51,7 @@ setup(
         'coverage',
         'django-mptt',
         'pytz',
+        'django-js-asset',
     ],
     test_suite='testapp.runtests.runtests',
 )
