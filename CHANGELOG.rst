@@ -10,7 +10,7 @@ Change log
 - Added Django 1.11 to the Travis build.
 
 
-`1.0`_ (2016-09-06)
+`1.0`_ (2017-01-23)
 ~~~~~~~~~~~~~~~~~~~
 
 - Moved the regions inheritance handling from ``contents_for_mptt_item``
