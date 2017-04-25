@@ -33,6 +33,9 @@ So, ``django-content-editor``.
 Example: articles with rich text plugins
 ========================================
 
+First comes a models file which defines a simple article model with
+support for adding rich text and download content blocks.
+
 ``app/models.py``::
 
     from django.db import models
@@ -63,8 +66,9 @@ Example: articles with rich text plugins
     # - a region CharField containing the region key defined above
     # - an ordering IntegerField for ordering plugin items
     # - a get_queryset() classmethod returning a queryset for the
-    #   ContentProxy classes (a good place to add select_related and
-    #   prefetch_related calls or anything similar)
+    #   Contents class and its helpers (a good place to add
+    #   select_related and #   prefetch_related calls or anything
+    #   similar)
     # That's all. Really!
     ArticlePlugin = create_plugin_base(Article)
 
@@ -85,6 +89,13 @@ Example: articles with rich text plugins
             verbose_name_plural = 'downloads'
 
 
+Next, the admin integration. Plugins are integrated as
+``ContentEditorInline`` inlines, a subclass of ``StackedInline`` that
+does not do all that much except serve as a marker that those inlines
+should be treated a bit differently, that is, the content blocks should
+be added to the content editor where inlines of different types can be
+edited and ordered.
+
 ``app/admin.py``::
 
     from django import forms
@@ -100,6 +111,9 @@ Example: articles with rich text plugins
 
     class RichTextarea(forms.Textarea):
         def __init__(self, attrs=None):
+            # Provide class so that the code in plugin_ckeditor.js knows
+            # which text areas should be enhanced with a rich text
+            # control:
             default_attrs = {'class': 'richtext'}
             if attrs:
                 default_attrs.update(attrs)
@@ -124,10 +138,24 @@ Example: articles with rich text plugins
         ContentEditor,
         inlines=[
             RichTextInline,
+            # The create method serves as a shortcut; for quickly
+            # creating inlines:
             ContentEditorInline.create(model=Download),
         ],
     )
 
+
+Here's an example CKEditor integration. Especially noteworthy are the
+two signals emitted by the content editor: ``content-editor:activate``
+and ``content-editor:deactivate``. Since content blocks can be
+dynamically added and ordered using drag-and-drop, most JavaScript
+widgets cannot be added only on page load. Also, many widgets do not
+like being dragged around and break respectively become unresponsive
+when dropped. Because of this you should listen for those signals.
+
+Note that it is *not guaranteed* that the former event is only emitted
+once per inline.  Have a look at feincms3_'s code for a more bulletproof
+(and longer) solution.
 
 ``app/static/app/plugin_ckeditor.js``::
 
@@ -175,6 +203,8 @@ Example: articles with rich text plugins
     })(django.jQuery);
 
 
+Here comes the renderer definition and a really short view.
+
 ``app/views.py``::
 
     from django.utils.html import format_html, mark_safe
@@ -213,6 +243,9 @@ Example: articles with rich text plugins
                 **kwargs)
 
 
+After the ``render_regions`` call all that's left to do is add the
+content to the template.
+
 ``app/templates/app/article_detail.html``::
 
     {% extends "base.html" %}
@@ -232,7 +265,7 @@ Example: articles with rich text plugins
 Finally, ensure that ``content_editor`` and ``app`` are added to your
 ``INSTALLED_APPS`` setting, and you're good to go.
 
-IF you also want nice icons to add new items, you might want to use
+If you also want nice icons to add new items, you might want to use
 `font awesome`_ and the following snippets:
 
 ``app/admin.py``::
@@ -432,6 +465,9 @@ the passed item::
 
    Also, its name does not tell that it's only usable for HTML right
    now.
+
+   You should also take a close look at feincms3_'s
+   ``TemplatePluginRenderer``.
 
 Example::
 
