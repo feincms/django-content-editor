@@ -3,7 +3,7 @@ Change log
 ==========
 
 `Next version`_
-~~~~~~~~~~~~~~~
+===============
 
 - Moved the ``JS`` form assets helper to django-js-asset_, thereby raising
   our own Python code coverage to 100%.
@@ -11,7 +11,7 @@ Change log
 
 
 `1.0`_ (2017-01-23)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Moved the regions inheritance handling from ``contents_for_mptt_item``
   to ``contents_for_item`` to make it reusable outside MPTT hierarchies.
@@ -19,7 +19,7 @@ Change log
 
 
 `0.10`_ (2016-09-06)
-~~~~~~~~~~~~~~~~~~~
+====================
 
 - Changed ``Region`` and ``Template`` to extend
   ``types.SimpleNamespace`` on Python versions that support this
@@ -33,7 +33,7 @@ Change log
 
 
 `0.9`_ (2016-08-12)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Some browsers do not support ``Math.sign``...
 - Automatically open the first tab with errors when using tabbed
@@ -47,7 +47,7 @@ Change log
 
 
 `0.8`_ (2016-07-07)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Modified ``PluginRenderer.render`` and
   ``PluginRenderer.render_content`` to pass on keyword arguments (if
@@ -56,7 +56,7 @@ Change log
 
 
 `0.7`_ (2016-06-29)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Raise tests coverage back to 100% after the ``PluginRenderer.render``
   change in 0.6.
@@ -65,7 +65,7 @@ Change log
 
 
 `0.6`_ (2016-06-25)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - The return value of ``PluginRenderer.render`` now allows outputting
   individual items as well as the concatenated output of all items as
@@ -74,7 +74,7 @@ Change log
 
 
 `0.5`_ (2016-06-21)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Made tests using Django@master pass again by switching to my fork of
   django-mptt.
@@ -82,7 +82,7 @@ Change log
 
 
 `0.4`_ (2016-04-14)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Added a check to Django's checks framework for custom content editor
   fieldsets.
@@ -93,7 +93,7 @@ Change log
 
 
 `0.3`_ (2016-02-28)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Replaced the ``ContentEditorForm`` with a ``formfield_for_dbfield``
   override for easier model form customization.
@@ -104,7 +104,7 @@ Change log
 
 
 `0.2`_ (2016-02-26)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 - Added comments, documentation.
 - Fixed the JavaScript tag generation by the ``JS`` class.
@@ -112,7 +112,7 @@ Change log
 
 
 `0.1`_ (2016-02-16)
-~~~~~~~~~~~~~~~~~~~
+===================
 
 Initial public release of django-content-editor.
 
@@ -120,7 +120,7 @@ Initial public release of django-content-editor.
 .. _django-ckeditor: https://pypi.python.org/pypi/django-ckeditor
 .. _django-content-editor: http://django-content-editor.readthedocs.org/en/latest/
 .. _django-js-asset: https://github.com/matthiask/django-js-asset
-.. _django-mptt: http://django-mptt.github.io/django-mptt/
+.. _django-mptt: https://github.com/django-mptt/django-mptt/
 .. _feincms-cleanse: https://pypi.python.org/pypi/feincms-cleanse
 .. _django-versatileimagefield: http://django-versatileimagefield.readthedocs.io/en/latest/
 

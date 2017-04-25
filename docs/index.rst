@@ -2,6 +2,8 @@
 django-content-editor -- Editing structured content
 ===================================================
 
+Version |release|
+
 .. image:: https://travis-ci.org/matthiask/django-content-editor.svg?branch=master
     :target: https://travis-ci.org/matthiask/django-content-editor
 
@@ -546,3 +548,5 @@ Glossary
 .. _font awesome: https://fortawesome.github.io/Font-Awesome/
 .. _django-cte-forest: https://github.com/matthiask/django-cte-forest/
 .. _feincms3: https://feincms3.readthedocs.io/
+
+.. include:: ../CHANGELOG.rst
