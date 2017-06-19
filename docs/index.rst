@@ -49,6 +49,10 @@ support for adding rich text and download content blocks.
         title = models.CharField(max_length=200)
         pub_date = models.DateField(blank=True, null=True)
 
+        # The ContentEditor requires a "regions" attribute or property
+        # on the model. Our example hardcodes regions; if you need
+        # different regions depending on other factors have a look at
+        # feincms3's TemplateMixin.
         regions = [
             Region(key='main', title='main region'),
             Region(key='sidebar', title='sidebar region',
