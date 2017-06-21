@@ -4,7 +4,9 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core import checks
+from django.db import models
 from django.test import TestCase
+from django.test.utils import isolate_apps
 from django.utils.safestring import mark_safe
 # from django.utils import timezone
 
@@ -264,7 +266,32 @@ class ContentEditorTest(TestCase):
             ' answer="&quot;42&quot;" id="something"></script>'
         )
 
-    def test_checks(self):
+    @isolate_apps()
+    def test_model_checks(self):
+        class Model(models.Model):
+            name = models.CharField()
+
+        class CustomAdminSite(admin.AdminSite):
+            pass
+
+        class ModelAdmin(ContentEditor):
+            model = Model
+            inlines = []
+
+        site = CustomAdminSite()
+        site.register(Model, ModelAdmin)
+
+        self.assertEqual(
+            site._registry[Model].check(),
+            [checks.Error(
+                "ContentEditor models require a non-empty 'regions'"
+                " attribute or property.",
+                obj=ModelAdmin,
+                id='content_editor.E002',
+            )],
+        )
+
+    def test_inline_checks(self):
         self.assertEqual(
             admin.site._registry[Article].check(),
             [],

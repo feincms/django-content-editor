@@ -3,7 +3,9 @@ from __future__ import absolute_import, unicode_literals
 import json
 
 from django import forms
-from django.contrib.admin.checks import InlineModelAdminChecks
+from django.contrib.admin.checks import (
+    ModelAdminChecks, InlineModelAdminChecks,
+)
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
@@ -16,9 +18,28 @@ from js_asset.js import JS
 __all__ = ('ContentEditorInline', 'ContentEditor')
 
 
-class ContentEditorChecks(InlineModelAdminChecks):
+class ContentEditorChecks(ModelAdminChecks):
+    def check(self, admin_obj, **kwargs):
+        errors = super(ContentEditorChecks, self).check(admin_obj, **kwargs)
+        errors.extend(self.check_content_editor_regions_attribute(admin_obj))
+        return errors
+
+    def check_content_editor_regions_attribute(self, admin_obj):
+        if not getattr(admin_obj.model, 'regions', False):
+            return [checks.Error(
+                "ContentEditor models require a non-empty 'regions'"
+                " attribute or property.",
+                obj=admin_obj.__class__,
+                id='content_editor.E002',
+            )]
+
+        return []
+
+
+class ContentEditorInlineChecks(InlineModelAdminChecks):
     def check(self, inline_obj, **kwargs):
-        errors = super(ContentEditorChecks, self).check(inline_obj, **kwargs)
+        errors = super(ContentEditorInlineChecks, self).check(
+            inline_obj, **kwargs)
         errors.extend(self.check_content_editor_fields_in_fieldset(inline_obj))
         return errors
 
@@ -46,7 +67,7 @@ class ContentEditorInline(StackedInline):
     """
     extra = 0
     fk_name = 'parent'
-    checks_class = ContentEditorChecks
+    checks_class = ContentEditorInlineChecks
     regions = None
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
@@ -85,6 +106,7 @@ class ContentEditor(ModelAdmin):
     It does not have any public API except from everything inherited from
     the standard ``ModelAdmin`` class.
     """
+    checks_class = ContentEditorChecks
 
     def _content_editor_context(self, request, context):
         plugins = [
