@@ -47,6 +47,15 @@ settings.configure(
         'django.middleware.locale.LocaleMiddleware',
         'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     ),
+    MIDDLEWARE=(
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.locale.LocaleMiddleware',
+    ),
+    SILENCED_SYSTEM_CHECKS=['1_10.W001'],
     USE_TZ=True,
     LANGUAGES=(('en', 'English'), ('de', 'German')),
     TEMPLATES=[{
