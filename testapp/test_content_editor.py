@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.core import checks
 from django.db import models
 from django.test import TestCase
-from django.test.utils import isolate_apps
 from django.utils.safestring import mark_safe
 # from django.utils import timezone
 
@@ -14,6 +13,14 @@ try:
     from django.urls import reverse
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
+try:
+    from django.test.utils import isolate_apps
+except ImportError:  # pragma: no cover
+    # Do nothing decorator for Django 1.9
+    def isolate_apps():
+        def dec(fn):
+            return fn
+        return dec
 
 from content_editor.admin import ContentEditor, ContentEditorInline, JS
 from content_editor.contents import (
