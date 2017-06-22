@@ -46,12 +46,4 @@ setup(
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     zip_safe=False,
-    tests_require=[
-        'django',
-        'coverage',
-        'django-mptt',
-        'pytz',
-        'django-js-asset',
-    ],
-    test_suite='testapp.runtests.runtests',
 )

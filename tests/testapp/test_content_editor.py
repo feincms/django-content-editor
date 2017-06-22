@@ -7,6 +7,13 @@ from django.core import checks
 from django.db import models
 from django.test import TestCase
 from django.utils.safestring import mark_safe
+
+from content_editor.admin import JS, ContentEditor, ContentEditorInline
+from content_editor.contents import contents_for_item, contents_for_mptt_item
+from content_editor.renderer import PluginRenderer
+from testapp.models import Article, Bla, Download, Page, PageText, RichText
+
+
 # from django.utils import timezone
 
 try:
@@ -21,14 +28,6 @@ except ImportError:  # pragma: no cover
         def dec(fn):
             return fn
         return dec
-
-from content_editor.admin import ContentEditor, ContentEditorInline, JS
-from content_editor.contents import (
-    contents_for_item, contents_for_mptt_item
-)
-from content_editor.renderer import PluginRenderer
-
-from testapp.models import Article, RichText, Download, Bla, Page, PageText
 
 
 class ContentEditorTest(TestCase):

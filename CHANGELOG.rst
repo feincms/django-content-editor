@@ -7,7 +7,9 @@ Change log
 
 - Moved the ``JS`` form assets helper to django-js-asset_, thereby raising
   our own Python code coverage to 100%.
-- Added Django 1.11 to the Travis build.
+- Added Django 1.11 and Django@master to the Travis build.
+- Added a tox_ configuration file for building docs and running style
+  checks and the test suite.
 
 
 `1.0`_ (2017-01-23)
@@ -123,6 +125,7 @@ Initial public release of django-content-editor.
 .. _django-mptt: https://github.com/django-mptt/django-mptt/
 .. _feincms-cleanse: https://pypi.python.org/pypi/feincms-cleanse
 .. _django-versatileimagefield: http://django-versatileimagefield.readthedocs.io/en/latest/
+.. _tox: https://tox.readthedocs.io/
 
 .. _0.1: https://github.com/matthiask/django-content-editor/commit/2bea5456
 .. _0.2: https://github.com/matthiask/django-content-editor/compare/0.1.0...0.2.0

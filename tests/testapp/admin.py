@@ -4,7 +4,7 @@ from django.db import models
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 
-from .models import Article, RichText, Download
+from .models import Article, Download, RichText
 
 
 class RichTextarea(forms.Textarea):

@@ -4,7 +4,7 @@ import json
 
 from django import forms
 from django.contrib.admin.checks import (
-    ModelAdminChecks, InlineModelAdminChecks,
+    InlineModelAdminChecks, ModelAdminChecks,
 )
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
@@ -14,6 +14,7 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext
 
 from js_asset.js import JS
+
 
 __all__ = ('ContentEditorInline', 'ContentEditor')
 

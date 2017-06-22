@@ -1,13 +1,13 @@
 from django.db import models
 
+from content_editor.models import Region, Template, create_plugin_base
+from mptt.models import MPTTModel
+
+
 try:
     from django.urls import reverse
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
-
-from mptt.models import MPTTModel
-
-from content_editor.models import Template, Region, create_plugin_base
 
 
 class AbstractRichText(models.Model):

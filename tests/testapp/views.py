@@ -1,11 +1,11 @@
 from django.utils.html import format_html, mark_safe
 from django.views import generic
 
-from content_editor.renderer import PluginRenderer
 from content_editor.contents import contents_for_item, contents_for_mptt_item
+from content_editor.renderer import PluginRenderer
 
 from .models import (
-    AbstractRichText, Article, RichText, Download, Bla, Page, PageText
+    AbstractRichText, Article, Bla, Download, Page, PageText, RichText,
 )
 
 

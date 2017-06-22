@@ -2,15 +2,13 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
 
+from .views import ArticleView, PageView
+
+
 try:
     from django.urls import url
 except ImportError:  # pragma: no cover
     from django.conf.urls import url
-
-from .views import ArticleView, PageView
-
-
-admin.autodiscover()
 
 
 urlpatterns = [
