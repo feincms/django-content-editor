@@ -315,6 +315,7 @@ django.jQuery(function($){
     orderMachine.sortable({
         handle: 'h3',
         placeholder: 'placeholder',
+        items: '.inline-related:not(.empty-form)',
         start: function(event, ui) {
             $(document).trigger('content-editor:deactivate', [ui.item]);
         },
