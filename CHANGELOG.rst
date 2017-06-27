@@ -10,6 +10,9 @@ Change log
 - Added Django 1.11 and Django@master to the Travis build.
 - Added a tox_ configuration file for building docs and running style
   checks and the test suite.
+- Added a check which errors if the model registered with the
+  ``ContentEditor`` has no ``regions`` attribute or property.
+- Expanded the documentation a bit.
 
 
 `1.0`_ (2017-01-23)
