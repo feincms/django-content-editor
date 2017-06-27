@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+`1.1`_ (2017-06-27)
+===================
+
 - Moved the ``JS`` form assets helper to django-js-asset_, thereby raising
   our own Python code coverage to 100%.
 - Added Django 1.11 and Django@master to the Travis build.
@@ -13,6 +16,9 @@ Change log
 - Added a check which errors if the model registered with the
   ``ContentEditor`` has no ``regions`` attribute or property.
 - Expanded the documentation a bit.
+- Fixed occasional problems when sorting by keeping the empty inline
+  formsets at the end at all times. Thanks to Tom Van Damme for the
+  contribution!
 
 
 `1.0`_ (2017-01-23)
@@ -141,4 +147,5 @@ Initial public release of django-content-editor.
 .. _0.9: https://github.com/matthiask/django-content-editor/compare/0.8.0...0.9.0
 .. _0.10: https://github.com/matthiask/django-content-editor/compare/0.9.0...0.10.0
 .. _1.0: https://github.com/matthiask/django-content-editor/compare/0.10.0...1.0.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.0.0...master
+.. _1.1: https://github.com/matthiask/django-content-editor/compare/1.0.0...1.1.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.1.0...master
