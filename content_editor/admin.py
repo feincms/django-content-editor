@@ -137,21 +137,27 @@ class ContentEditor(ModelAdmin):
             },
         })
 
+    def _content_editor_media(self, request, context):
+        return forms.Media(
+            css={'all': [
+                'content_editor/content_editor.css',
+            ]},
+            js=[
+                'content_editor/jquery-ui-1.11.4.custom.min.js',
+                'content_editor/tabbed_fieldsets.js',
+                JS('content_editor/content_editor.js', {
+                    'id': 'content-editor-context',
+                    'data-context': self._content_editor_context(
+                        request, response.context_data),
+                }),
+            ],
+        )
+
     def render_change_form(self, request, context, **kwargs):
         response = super(ContentEditor, self).render_change_form(
             request, context, **kwargs)
 
-        response.context_data['media'].add_css({'all': (
-            'content_editor/content_editor.css',
-        )})
-        response.context_data['media'].add_js((
-            'content_editor/jquery-ui-1.11.4.custom.min.js',
-            'content_editor/tabbed_fieldsets.js',
-            JS('content_editor/content_editor.js', {
-                'id': 'content-editor-context',
-                'data-context': self._content_editor_context(
-                    request, response.context_data),
-            }),
-        ))
+        response.context_data['media'] = response.context_data['media'] +\
+            self._content_editor_media(request, response.context_data)
 
         return response
