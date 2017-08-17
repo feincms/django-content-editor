@@ -254,24 +254,6 @@ class ContentEditorTest(TestCase):
         self.assertContains(response, 'child main text')
         self.assertContains(response, 'child sidebar text')
 
-    def test_js(self):
-        media = forms.Media()
-        media.add_js([
-            JS('asset1.js', {}),
-            JS('asset2.js', {'id': 'something', 'answer': '"42"'}),
-        ])
-
-        # We can test the exact representation since forms.Media has been
-        # really stable for a long time, and JS() uses flatatt which
-        # alphabetically sorts its attributes.
-        self.assertEqual(
-            '%s' % media,
-            '<script type="text/javascript" src="/static/asset1.js">'
-            '</script>\n'
-            '<script type="text/javascript" src="/static/asset2.js"'
-            ' answer="&quot;42&quot;" id="something"></script>'
-        )
-
     @isolate_apps()
     def test_model_checks(self):
         class Model(models.Model):
