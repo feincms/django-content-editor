@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+- Fixed our use of internal API of ``forms.Media`` that will be removed
+  in Django 2.0.
+
+
 `1.1`_ (2017-06-27)
 ===================
 
