@@ -148,7 +148,7 @@ class ContentEditor(ModelAdmin):
                 JS('content_editor/content_editor.js', {
                     'id': 'content-editor-context',
                     'data-context': self._content_editor_context(
-                        request, response.context_data),
+                        request, context)
                 }),
             ],
         )
