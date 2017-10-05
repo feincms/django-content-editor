@@ -4,8 +4,8 @@ dist: trusty
 cache: pip
 python:
 - '2.7'
-- '3.4'
 - '3.5'
+- '3.6'
 env:
 - REQ="Django>=1.9,<1.10"
 - REQ="Django>=1.10,<1.11"
