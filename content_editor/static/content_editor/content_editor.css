@@ -54,7 +54,7 @@
 
 /* Replace the broken content type counter for new contents with a "new" label */
 .order-machine .last-related .inline_label {
-    color: #f8f8f8;
+    color: transparent;
 }
 .order-machine .last-related .inline_label:before {
     color: #666;
