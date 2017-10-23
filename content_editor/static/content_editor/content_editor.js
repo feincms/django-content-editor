@@ -56,8 +56,8 @@ django.jQuery(function($){
 
     var orderMachine = $('.order-machine'),
         machineEmptyMessage = $('<p class="hidden machine-message"/>').text(ContentEditor.messages.empty).appendTo(orderMachine);
-    
-    
+
+
     // Pre map plugin regions
     var pluginRegions = (function() {
         var result = {};
@@ -68,7 +68,7 @@ django.jQuery(function($){
         return result;
     })();
 
-    
+
     function moveEmptyFormsToEnd() {
         orderMachine.append(orderMachine.find('.empty-form').detach());
     }
@@ -125,7 +125,7 @@ django.jQuery(function($){
     function hideNotAllowedPluginButtons($buttons) {
         $buttons = $buttons ? $buttons :
                             $('.control-unit.plugin-buttons .plugin-button');
-        
+
         var region = ContentEditor.currentRegion;
 
         $buttons.each(function() {
@@ -166,7 +166,7 @@ django.jQuery(function($){
         };
 
         if (regions.length < 2) return;
-        
+
         var controls = document.createElement('div'),
             select = buildDropdown(regions),
             regionInput = inline.find('.field-region input');
@@ -224,7 +224,7 @@ django.jQuery(function($){
             selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');
         }
         return $(selector.join(', '));
-    })(); 
+    })();
 
 
     reorderInlines(pluginInlineGroups);
@@ -315,7 +315,11 @@ django.jQuery(function($){
     orderMachine.sortable({
         handle: 'h3',
         placeholder: 'placeholder',
-        items: '.inline-related:not(.empty-form)',
+        // Newly added forms MUST be added at the end and remain there until
+        // they are saved; Django's inline formsets do not like "missing"
+        // primary keys within forms with index < initial form count
+        // Previously: items: '.inline-related:not(.empty-form)',
+        items: '.inline-related.has_original',
         start: function(event, ui) {
             $(document).trigger('content-editor:deactivate', [ui.item]);
         },

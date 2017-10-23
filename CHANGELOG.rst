@@ -7,6 +7,8 @@ Change log
 
 - Fixed our use of internal API of ``forms.Media`` that will be removed
   in Django 2.0.
+- Fixed an elusive bug with our formsets handling. Newly added content
+  blocks have to be saved before they can be reordered.
 
 
 `1.1`_ (2017-06-27)
