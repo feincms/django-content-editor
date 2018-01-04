@@ -7,7 +7,7 @@ django.jQuery(function($){
 
     window.ContentEditor = {
         addContent: function addContent(plugin) {
-            $('#' + plugin + '_set-group .add-row a').click();
+            $('#' + plugin + '_set-group .add-row a')[0].click();
         },
         addPluginButton: function addPluginButton(plugin, html) {
             var doAdd = function(plugin, html, title) {
