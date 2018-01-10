@@ -158,8 +158,7 @@ like being dragged around and break respectively become unresponsive
 when dropped. Because of this you should listen for those signals.
 
 Note that it is *not guaranteed* that the former event is only emitted
-once per inline.  Have a look at feincms3_'s code for a more bulletproof
-(and longer) solution.
+once per inline.
 
 ``app/static/app/plugin_ckeditor.js``::
 
