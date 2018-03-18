@@ -271,8 +271,8 @@ class ContentEditorTest(TestCase):
         self.assertEqual(
             site._registry[Model].check(),
             [checks.Error(
-                "ContentEditor models require a non-empty 'regions'"
-                " attribute or property.",
+                'ContentEditor models require a non-empty \'regions\''
+                ' attribute or property.',
                 obj=ModelAdmin,
                 id='content_editor.E002',
             )],

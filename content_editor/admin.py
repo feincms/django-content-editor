@@ -28,8 +28,8 @@ class ContentEditorChecks(ModelAdminChecks):
     def check_content_editor_regions_attribute(self, admin_obj):
         if not getattr(admin_obj.model, 'regions', False):
             return [checks.Error(
-                "ContentEditor models require a non-empty 'regions'"
-                " attribute or property.",
+                'ContentEditor models require a non-empty \'regions\''
+                ' attribute or property.',
                 obj=admin_obj.__class__,
                 id='content_editor.E002',
             )]
