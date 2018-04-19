@@ -9,6 +9,9 @@ Change log
   in Django 2.0.
 - Fixed an elusive bug with our formsets handling. Newly added content
   blocks have to be saved before they can be reordered.
+- Fixed a handful of minor CSS bugs.
+- Updated the documentation with a few improved recommendations.
+- Moved plugin buttons before the dropdown.
 
 
 `1.1`_ (2017-06-27)
