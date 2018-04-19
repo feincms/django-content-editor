@@ -311,11 +311,12 @@ If you also want nice icons to add new items, you might want to use
         ]
 
         class Media:
-            css = {'all': (
-                'https://maxcdn.bootstrapcdn.com/font-awesome'
-                '/4.5.0/css/font-awesome.min.css',
-            )}
             js = (
+                JS('https://use.fontawesome.com/releases/v5.0.10/js/all.js', {
+                    'defer': 'defer',
+                    'integrity': 'sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+',  # noqa
+                    'crossorigin': 'anonymous',
+                }, static=False),
                 'app/plugin_buttons.js',
             )
 
@@ -326,11 +327,11 @@ If you also want nice icons to add new items, you might want to use
         $(document).on('content-editor:ready', function() {
             ContentEditor.addPluginButton(
                 'app_richtext',
-                '<i class="fa fa-pencil"></i>'
+                '<i class="fas fa-pencil-alt"></i>'
             );
             ContentEditor.addPluginButton(
                 'app_download',
-                '<i class="fa fa-download"></i>'
+                '<i class="fas fa-download"></i>'
             );
         });
     })(django.jQuery);
