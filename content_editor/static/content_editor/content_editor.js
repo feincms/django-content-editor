@@ -15,7 +15,8 @@ django.jQuery(function($){
                 if (!unit) {
                     unit = document.createElement('div');
                     unit.className = 'control-unit plugin-buttons';
-                    document.querySelector('.machine-control').appendChild(unit);
+                    var mc = document.querySelector('.machine-control');
+                    mc.insertBefore(unit, mc.firstChild);
                 }
 
                 var button = document.createElement('a');
