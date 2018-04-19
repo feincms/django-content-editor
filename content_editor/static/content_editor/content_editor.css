@@ -102,6 +102,7 @@
     float: left;
     padding: 0 15px;
     border-left: 1px solid #eee;
+    height: 55px;
 }
 
 .control-unit:first-child {
