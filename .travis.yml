@@ -1,11 +1,10 @@
 language: python
-sudo: false
-dist: trusty
 cache: pip
+sudo: false
 python:
-- '2.7'
-- '3.5'
-- '3.6'
+- "3.6"
+- "3.5"
+- "2.7"
 env:
 - REQ="Django>=1.9,<1.10"
 - REQ="Django>=1.10,<1.11"
@@ -16,23 +15,21 @@ matrix:
   allow_failures:
     - env: REQ="https://github.com/django/django/archive/master.zip#egg=Django"
   exclude:
-    - python: '2.7'
+    - python: "2.7"
       env: REQ="Django>=2.0,<2.1"
-    - python: '2.7'
+    - python: "2.7"
       env: REQ="https://github.com/django/django/archive/master.zip#egg=Django"
 install:
-- pip install -U pip wheel setuptools
-- pip install $REQ coverage django-js-asset django-mptt flake8 pytz
+- pip install -U pip setuptools wheel
+- pip install $REQ coverage django-js-asset django-mptt
 - python setup.py install
-script: cd tests && ./manage.py test testapp && cd .. && flake8 .
-deploy:
-  provider: pypi
-  user: matthiask
-  password:
-    secure: RH180eHUnIjcSC1bdWX/IcbHTp4Bj6rQMZcZ6qSGfu8OYtdP0+zDBAUgYIBO3a1lT+3JGxc7XWZK7NP/A4UEgl6JCB/mPRNnT4vMEAujYICBtnuqjLNHqXsZhJvkSQzJTtQ8pXUZ46yVY1Z1MQf4dQQBuLKfgdsc/Ufc+jmQubDzpgbGv3o0Af5QggpuXDWxeVyTioIKPqP4MYbvWbctIUcjpWYG1YpWq10l8Ig0F7TfE1K+E49kARoiSJAdTAuUr9Fpos01AfhzLtvsaqOVtK6IMWDQrInHCo4sL/kEB5V1M/uTaVm217GtZw+lrb0cQiXmscEqrc7L0EQoflBokQq7jtf6xTBRGEW/LVZ8dKrToCLcD7jrWcVONjWj/pj+ZR9HsITtN9aSsJnsy0vRx1cs4OfMlTl/CqF0Tw6N29C26mCa7ZpfpxlYBZtfbemDYm/JqJWApYdVU3cu6knYu0RjbM/vaeoEfTeqkJ7FJpaSyuAkJgtiPVRiF5ACHFAy5DZQbud3Rmkp9i2FFUo+C5T/za8r1Pl/YVp/DTJzfBDS1UthgNX4SNIi9gJTHhFHMoqMIPuMYh3Czryl9hXFFPR8MaMS5cchj1+ZKG0NVG61sIoXLR2PaLzevhmlRwuGawq04oZDPSw0FAG0llgcDIBFGR86dxgb7fco4OkB56g=
-  distributions: sdist bdist_wheel
-  on:
-    tags: true
-    branch: master
-    condition: "$REQ = 'Django>=2.0,<2.1"
-    repo: matthiask/django-content-editor
+script: cd tests && ./manage.py test testapp && cd ..
+
+jobs:
+  include:
+    - stage: style
+      env: REQ=none
+      install: skip
+      script:
+        - pip install flake8
+        - flake8 .

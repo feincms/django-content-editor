@@ -12,15 +12,7 @@ except ImportError:  # pragma: no cover
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
-    url(
-        r'^articles/(?P<pk>\d+)/$',
-        ArticleView.as_view(),
-        name='article_detail',
-    ),
-    url(
-        r'^pages/(?P<pk>\d+)/$',
-        PageView.as_view(),
-        name='page_detail',
-    ),
+    url(r"^admin/", admin.site.urls),
+    url(r"^articles/(?P<pk>\d+)/$", ArticleView.as_view(), name="article_detail"),
+    url(r"^pages/(?P<pk>\d+)/$", PageView.as_view(), name="page_detail"),
 ]

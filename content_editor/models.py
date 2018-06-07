@@ -13,19 +13,19 @@ except ImportError:  # pragma: no cover
             self.__dict__.update(kwargs)
 
 
-__all__ = ('Region', 'Template', 'create_plugin_base')
+__all__ = ("Region", "Template", "create_plugin_base")
 
 
 class Region(SimpleNamespace):
-    key = ''
-    title = 'unnamed'
+    key = ""
+    title = "unnamed"
     inherited = False
 
 
 class Template(SimpleNamespace):
-    key = ''
+    key = ""
     template_name = None
-    title = ''
+    title = ""
     regions = []
 
 
@@ -43,7 +43,7 @@ def create_plugin_base(content_base):
     class PluginBase(models.Model):
         parent = models.ForeignKey(
             content_base,
-            related_name='%(app_label)s_%(class)s_set',
+            related_name="%(app_label)s_%(class)s_set",
             on_delete=models.CASCADE,
         )
         region = models.CharField(max_length=255)
@@ -52,10 +52,10 @@ def create_plugin_base(content_base):
         class Meta:
             abstract = True
             app_label = content_base._meta.app_label
-            ordering = ['ordering']
+            ordering = ["ordering"]
 
         def __str__(self):
-            return '%s<region=%s ordering=%s pk=%s>' % (
+            return "%s<region=%s ordering=%s pk=%s>" % (
                 self._meta.label,
                 self.region,
                 self.ordering,

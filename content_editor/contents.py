@@ -5,10 +5,10 @@ from operator import attrgetter
 
 
 __all__ = (
-    'Contents',
-    'contents_for_items',
-    'contents_for_item',
-    'contents_for_mptt_item',
+    "Contents",
+    "contents_for_items",
+    "contents_for_item",
+    "contents_for_mptt_item",
 )
 
 
@@ -29,8 +29,7 @@ class Contents(object):
     def _sort(self):
         for region_key in list(self._contents):
             self._contents[region_key] = sorted(
-                self._contents[region_key],
-                key=attrgetter('ordering'),
+                self._contents[region_key], key=attrgetter("ordering")
             )
         self._sorted = True
 
@@ -59,8 +58,7 @@ class Contents(object):
 
     def render_regions(self, renderer):
         return {
-            region.key: renderer.render(self[region.key])
-            for region in self._regions
+            region.key: renderer.render(self[region.key]) for region in self._regions
         }
 
 
@@ -70,8 +68,7 @@ def contents_for_items(items, plugins):
     for plugin in plugins:
         queryset = plugin.get_queryset().filter(parent__in=contents.keys())
         queryset._known_related_objects.setdefault(
-            plugin._meta.get_field('parent'),
-            {},
+            plugin._meta.get_field("parent"), {}
         ).update(items_dict)
         for obj in queryset:
             contents[obj.parent].add(obj)
@@ -89,7 +86,5 @@ def contents_for_item(item, plugins, inherit_from=None):
 
 def contents_for_mptt_item(item, plugins):
     return contents_for_item(
-        item,
-        plugins,
-        inherit_from=item.get_ancestors(ascending=True),
+        item, plugins, inherit_from=item.get_ancestors(ascending=True)
     )

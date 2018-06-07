@@ -4,23 +4,14 @@ from django.views import generic
 from content_editor.contents import contents_for_item, contents_for_mptt_item
 from content_editor.renderer import PluginRenderer
 
-from .models import (
-    AbstractRichText, Article, Bla, Download, Page, PageText, RichText,
-)
+from .models import AbstractRichText, Article, Bla, Download, Page, PageText, RichText
 
 
 renderer = PluginRenderer()
-renderer.register(
-    AbstractRichText,
-    lambda plugin: mark_safe(plugin.text),
-)
+renderer.register(AbstractRichText, lambda plugin: mark_safe(plugin.text))
 renderer.register(
     Download,
-    lambda plugin: format_html(
-        '<a href="{}">{}</a>',
-        plugin.file,
-        plugin.file,
-    ),
+    lambda plugin: format_html('<a href="{}">{}</a>', plugin.file, plugin.file),
 )
 
 
@@ -30,10 +21,10 @@ class ArticleView(generic.DetailView):
     def get_context_data(self, **kwargs):
         return super(ArticleView, self).get_context_data(
             content=contents_for_item(
-                self.object,
-                [RichText, Download, Bla],
+                self.object, [RichText, Download, Bla]
             ).render_regions(renderer),
-            **kwargs)
+            **kwargs
+        )
 
 
 class PageView(generic.DetailView):
@@ -41,8 +32,8 @@ class PageView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         return super(PageView, self).get_context_data(
-            content=contents_for_mptt_item(
-                self.object,
-                [PageText],
-            ).render_regions(renderer),
-            **kwargs)
+            content=contents_for_mptt_item(self.object, [PageText]).render_regions(
+                renderer
+            ),
+            **kwargs
+        )
