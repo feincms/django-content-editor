@@ -245,7 +245,7 @@ Here comes the renderer definition and a really short view.
     from django.views import generic
 
     from content_editor.renderer import PluginRenderer
-    from content_editor.contents import contents_for_mptt_item
+    from content_editor.contents import contents_for_item
 
     from .models import Article, RichText, Download
 
