@@ -10,6 +10,3 @@ django-content-editor -- Editing structured content
 .. image:: https://readthedocs.org/projects/django-content-editor/badge/?version=latest
     :target: https://django-content-editor.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-
-.. image:: https://codeclimate.com/github/matthiask/django-content-editor.png
-    :target: https://codeclimate.com/github/matthiask/django-content-editor
