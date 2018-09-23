@@ -7,7 +7,7 @@ django.jQuery(function($){
 
     window.ContentEditor = {
         addContent: function addContent(plugin) {
-            $('#' + plugin + '_set-group .add-row a').click();
+            $('#' + plugin + '_set-group .add-row a').click();  // TODO _set assumes too much.
         },
         addPluginButton: function addPluginButton(plugin, html) {
             var doAdd = function(plugin, html, title) {
@@ -147,7 +147,7 @@ django.jQuery(function($){
 
     // Fetch the inline type from id
     function getInlineType(inline) {
-        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr('id'));
+        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr('id'));  // TODO _set assumes too much.
         if (match) {
             return match[1];
         }
@@ -222,7 +222,7 @@ django.jQuery(function($){
     var pluginInlineGroups = (function selectPluginInlineGroups() {
         var selector = [];
         for (var i=0; i < ContentEditor.plugins.length; i++) {
-            selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');
+            selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');  // TODO _set assumes too much.
         }
         return $(selector.join(', '));
     })();
