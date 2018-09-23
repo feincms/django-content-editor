@@ -269,13 +269,17 @@ Here comes the renderer definition and a really short view.
         model = Article
 
         def get_context_data(self, **kwargs):
+            contents = contents_for_item(self.object, [RichText, Download])
             return super(ArticleView, self).get_context_data(
-                content=contents_for_mptt_item(
-                    self.object,
-                    [RichText, Download],
-                ).render_regions(renderer),
-                **kwargs)
+                content=contents.render_regions(renderer),
+                **kwargs
+            )
 
+.. note::
+
+   The ``TemplatePluginRenderer`` from `feincms3
+   <https://feincms3.readthedocs.io/>`__ also allows rendering plugins
+   with templates, not only with callables.
 
 After the ``render_regions`` call all that's left to do is add the
 content to the template.
@@ -303,6 +307,11 @@ If you also want nice icons to add new items, you might want to use
 `font awesome`_ and the following snippets:
 
 ``app/admin.py``::
+
+    from content_editor.admin import ContentEditor, ContentEditorInline
+    from js_asset import JS
+
+    # ... the RichTextInline from above
 
     class ArticleAdmin(ContentEditor):
         inlines = [
@@ -354,10 +363,11 @@ Regions have the following attributes:
 * ``title``: Something nice, will be visible in the content editor.
 * ``key``: The region key, used in the content proxy as attribute name
   for the list of plugins. Must contain a valid Python identifier.
-* ``inherited``: Only has an effect if you are using the bundled
-  ``contents_for_mptt_item`` or anything comparable: Models inherit
-  content from their ancestor chain if a region with ``inherited =
-  True`` is emtpy.
+* ``inherited``: Only has an effect if you are using the
+  ``inherit_from`` argument to ``contents_for_item`` (or
+  ``contents_for_mptt_item`` which passes the node's ancestors
+  automatically): Model instances inherit content from their other
+  instances if a region with ``inherited = True`` is empty.
 
 You are free to define additional attributes -- simply pass them
 when instantiating a new region.
@@ -367,8 +377,10 @@ Templates
 ~~~~~~~~~
 
 Various classes will expect the main model to have a ``template``
-attribute or property which returns a ``Template`` instance. Nothing
-of the sort is implemented yet.
+attribute or property which returns a ``Template`` instance.
+django-content-editor does not use the template class itself, but
+feincms3 includes a mixin which allows content managers to choose from a
+selection of templates per model instance.
 
 Templates have the following attributes:
 
@@ -404,13 +416,13 @@ Simple usage is as follows::
 
     article = Article.objects.get(...)
     c = Contents(article.regions)
-    for item in article.cms_richtext_set.all():
+    for item in article.app_richtext_set.all():
         c.add(item)
-    for item in article.cms_download_set.all():
+    for item in article.app_download_set.all():
         c.add(item)
 
-    # Returns a list of all items, sorted by the order of
-    article.regions # and by item ordering
+    # Returns a list of all items, sorted by the definition
+    # order of article.regions and by item ordering
     list(c)
 
     # Returns a list of all items from the given region
@@ -422,15 +434,15 @@ Simple usage is as follows::
     len(c)
 
     # Inherit content from the given contents instance if one of my
-    # regions is a. inherited and b. empty
+    # own regions is empty and has its "inherited" flag set.
     c.inherit_regions(some_other_contents_instance)
 
     # Plugins from unknown regions end up in _unknown_region_contents:
     c._unknown_region_contents
 
-For simple use cases, you'll probably want to take a closer look at
-the following helper methods instead of instantiating a ``Contents``
-class directly:
+For most use cases you'll probably want to take a closer look at the
+following helper methods instead of instantiating a ``Contents`` class
+directly:
 
 
 ``contents_for_items``
@@ -441,7 +453,8 @@ Returns a contents instance for a list of main models::
     articles = Article.objects.all()[:10]
     contents = contents_for_items(
         articles,
-        plugins=[RichText, Download])
+        plugins=[RichText, Download],
+    )
 
     something = [
         (article, contents[article])
@@ -458,12 +471,13 @@ helper calls ``contents_for_items`` to do the real work)::
     # ...
     contents = contents_for_item(
         article,
-        plugins=[RichText, Download])
+        plugins=[RichText, Download],
+    )
 
 It is also possible to add additional items for inheriting regions.
 This is most useful with a page tree where i.e. sidebar contents are
 inherited from ancestors (this example uses methods added by
-django-cte-forest_ as used in feincms3_)::
+django-tree-queries_ as used in feincms3_)::
 
     page = ...
     contents = contents_for_item(
@@ -490,18 +504,9 @@ the passed item::
 ``PluginRenderer`` class
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. warning::
+.. note::
 
-   I consider the ``PluginRenderer`` extremely experimental.  The
-   main problem with the current code is that it assumes too much,
-   and makes it hard i.e. to add a template plugin which simply
-   causes the main template to include the plugin template with
-   context and everything.
-
-   Also, its name does not tell that it's only usable for HTML right
-   now.
-
-   You should also take a close look at feincms3_'s
+   Most real-world use cases are better served by using feincms3_'s
    ``TemplatePluginRenderer``.
 
 Example::
@@ -526,7 +531,7 @@ Example::
         article,
         plugins=[RichText, Image])
 
-    return render(request, 'cms/article_detail.html', {
+    return render(request, 'app/article_detail.html', {
         'object': article,
         'content': {
             region.key: renderer.render(contents[region.key])
@@ -612,12 +617,9 @@ Glossary
 
 .. _Django: https://www.djangoproject.com/
 .. _FeinCMS: https://github.com/feincms/feincms/
-.. _newforms admin: https://code.djangoproject.com/wiki/NewformsAdminBranch
-.. _django-mptt: https://github.com/django-mptt/django-mptt/
 .. _comparable CMS systems: https://www.djangopackages.com/grids/g/cms/
-.. _draggable tree admin: http://django-mptt.github.io/django-mptt/admin.html#mptt-admin-draggablempttadmin
 .. _font awesome: https://fortawesome.github.io/Font-Awesome/
-.. _django-cte-forest: https://github.com/matthiask/django-cte-forest/
+.. _django-tree-queries: https://github.com/matthiask/django-tree-queries/
 .. _feincms3: https://feincms3.readthedocs.io/
 
 .. include:: ../CHANGELOG.rst
