@@ -92,9 +92,7 @@ class ContentEditorTest(TestCase):
         self.assertContains(response, 'id="content-editor-context"></sc', 1)
         self.assertContains(response, 'class="richtext"', 1)
         self.assertContains(
-            response,
-            "&quot;key&quot;: &quot;testapp_richtext&quot;",
-            1,
+            response, "&quot;key&quot;: &quot;testapp_richtext&quot;", 1
         )
         self.assertContains(
             response,

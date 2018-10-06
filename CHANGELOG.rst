@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+`1.2`_ (2018-10-06)
+===================
+
 - Fixed our use of internal API of ``forms.Media`` that will be removed
   in Django 2.0.
 - Fixed an elusive bug with our formsets handling. Newly added content
@@ -159,4 +162,5 @@ Initial public release of django-content-editor.
 .. _0.10: https://github.com/matthiask/django-content-editor/compare/0.9.0...0.10.0
 .. _1.0: https://github.com/matthiask/django-content-editor/compare/0.10.0...1.0.0
 .. _1.1: https://github.com/matthiask/django-content-editor/compare/1.0.0...1.1.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.1.0...master
+.. _1.2: https://github.com/matthiask/django-content-editor/compare/1.1.0...1.2
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.2...master
