@@ -65,8 +65,8 @@ support for adding rich text and download content blocks.
 
     # create_plugin_base does nothing outlandish, it only defines an
     # abstract base model with the following attributes:
-    # - a parent ForeignKey with a related_name the rest of the code
-    #   expects
+    # - a parent ForeignKey with a related_name that is guaranteed to
+    #   not clash
     # - a region CharField containing the region key defined above
     # - an ordering IntegerField for ordering plugin items
     # - a get_queryset() classmethod returning a queryset for the

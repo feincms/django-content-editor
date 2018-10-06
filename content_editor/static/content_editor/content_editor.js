@@ -1,4 +1,4 @@
-/* global django,Downcoder,ContentEditor */
+/* global django,ContentEditor */
 /* eslint indent:[2,4] */
 /* eslint comma-dangle:[2,"never"] */
 django.jQuery(function($){
@@ -6,45 +6,47 @@ django.jQuery(function($){
     if (!context) return;
 
     window.ContentEditor = {
-        addContent: function addContent(plugin) {
-            $('#' + plugin + '_set-group .add-row a').click();  // TODO _set assumes too much.
+        addContent: function addContent(label) {
+            var plugin = ContentEditor.pluginsByKey[label];
+            plugin && $('#' + plugin.prefix + '-group .add-row a').click();
         },
-        addPluginButton: function addPluginButton(plugin, html) {
-            var doAdd = function(plugin, html, title) {
-                var unit = document.querySelector('.control-unit.plugin-buttons');
-                if (!unit) {
-                    unit = document.createElement('div');
-                    unit.className = 'control-unit plugin-buttons';
-                    var mc = document.querySelector('.machine-control');
-                    mc.insertBefore(unit, mc.firstChild);
-                }
+        addPluginButton: function addPluginButton(label, html) {
+            var plugin = ContentEditor.pluginsByKey[label];
+            if (!plugin) return;
 
-                var button = document.createElement('a');
-                var $button = $(button);
-                $button.data("plugin", plugin);
-                button.className = 'plugin-button';
-                button.title = title;
-                button.addEventListener('click', function() {
-                    ContentEditor.addContent(plugin);
-                });
-                button.innerHTML = html;
-
-                unit.appendChild(button);
-
-                hideNotAllowedPluginButtons($button);
-            };
-
-            for (var i=0; i<ContentEditor.plugins.length; i++) {
-                if (ContentEditor.plugins[i][0] == plugin) {
-                    doAdd(plugin, html, ContentEditor.plugins[i][1]);
-                    break;
-                }
+            var unit = document.querySelector('.control-unit.plugin-buttons');
+            if (!unit) {
+                unit = document.createElement('div');
+                unit.className = 'control-unit plugin-buttons';
+                var mc = document.querySelector('.machine-control');
+                mc.insertBefore(unit, mc.firstChild);
             }
+
+            var button = document.createElement('a');
+            var $button = $(button);
+            $button.data("plugin", plugin.key);
+            button.className = 'plugin-button';
+            button.title = plugin.title;
+            button.addEventListener('click', function() {
+                ContentEditor.addContent(plugin.key);
+            });
+            button.innerHTML = html;
+
+            unit.appendChild(button);
+
+            hideNotAllowedPluginButtons($button);
         }
     };
 
     // .dataset.context instead of getAttribute would be nicer
     $.extend(window.ContentEditor, JSON.parse(context.getAttribute('data-context')));
+
+    ContentEditor.pluginsByKey = {};
+    ContentEditor.prefixToKey = {};
+    for (var i=0; i<ContentEditor.plugins.length; ++i) {
+        ContentEditor.pluginsByKey[ContentEditor.plugins[i].key] = ContentEditor.plugins[i];
+        ContentEditor.prefixToKey[ContentEditor.plugins[i].prefix] = ContentEditor.plugins[i].key;
+    }
 
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
@@ -64,7 +66,7 @@ django.jQuery(function($){
         var result = {};
         var plugins = ContentEditor.plugins;
         for (var i = 0; i < plugins.length; i++) {
-            result[plugins[i][0]] = plugins[i][2];
+            result[plugins[i].key] = plugins[i].regions;
         }
         return result;
     })();
@@ -101,7 +103,7 @@ django.jQuery(function($){
             select.options[idx++] = new Option(title, '', true);
 
         for (var i = 0; i < contents.length; i++) {
-            select.options[idx++] = new Option(contents[i][1], contents[i][0]);
+            select.options[idx++] = new Option(contents[i].title, contents[i].key);
         }
         return select;
     }
@@ -147,9 +149,9 @@ django.jQuery(function($){
 
     // Fetch the inline type from id
     function getInlineType(inline) {
-        var match = /^([a-z0-9_]+)_set-\d+$/g.exec($(inline).attr('id'));  // TODO _set assumes too much.
+        var match = /^([a-z0-9_]+)-\d+$/g.exec($(inline).attr('id'));
         if (match) {
-            return match[1];
+            return ContentEditor.prefixToKey[match[1]];
         }
         return null;
     }
@@ -161,7 +163,7 @@ django.jQuery(function($){
         var inlineType = getInlineType(inline);
         var regions = [];
         for (var i = 0; i < ContentEditor.regions.length; i++) {
-            if (!inlineType || !pluginRegions[inlineType] || $.inArray(ContentEditor.regions[i][0], pluginRegions[inlineType]) >= 0) {
+            if (!inlineType || !pluginRegions[inlineType] || $.inArray(ContentEditor.regions[i].key, pluginRegions[inlineType]) >= 0) {
                 regions.push(ContentEditor.regions[i]);
             }
         };
@@ -222,7 +224,7 @@ django.jQuery(function($){
     var pluginInlineGroups = (function selectPluginInlineGroups() {
         var selector = [];
         for (var i=0; i < ContentEditor.plugins.length; i++) {
-            selector.push('#' + ContentEditor.plugins[i][0] + '_set-group');  // TODO _set assumes too much.
+            selector.push('#' + ContentEditor.plugins[i].prefix + '-group');
         }
         return $(selector.join(', '));
     })();
@@ -274,8 +276,8 @@ django.jQuery(function($){
         var tabContainer = $('.tabs.regions');
         for (var i=0; i < ContentEditor.regions.length; i++) {
             var t = document.createElement('h2');
-            t.textContent = ContentEditor.regions[i][1];
-            t.setAttribute('data-region', ContentEditor.regions[i][0]);
+            t.textContent = ContentEditor.regions[i].title;
+            t.setAttribute('data-region', ContentEditor.regions[i].key);
             tabContainer.append(t);
         }
 

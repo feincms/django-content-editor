@@ -93,18 +93,13 @@ class ContentEditorTest(TestCase):
         self.assertContains(response, 'class="richtext"', 1)
         self.assertContains(
             response,
-            "[&quot;testapp_richtext&quot;, &quot;Rich text&quot;, "
-            "[&quot;main&quot;]]",
+            "&quot;key&quot;: &quot;testapp_richtext&quot;",
             1,
-        )
-        self.assertContains(
-            response, "[&quot;testapp_download&quot;, &quot;Download&quot;, null]", 1
         )
         self.assertContains(
             response,
-            "[[&quot;main&quot;, &quot;main region&quot;],"
-            " [&quot;sidebar&quot;, &quot;sidebar region&quot;]",
-            1,
+            "&quot;prefix&quot;: &quot;testapp_richtext_set&quot;",
+            # 2,  (Once by us, and once by inlines.js)
         )
 
         article = Article.objects.create(title="Test")

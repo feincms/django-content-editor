@@ -12,6 +12,8 @@ Change log
 - Fixed a handful of minor CSS bugs.
 - Updated the documentation with a few improved recommendations.
 - Moved plugin buttons before the dropdown.
+- Removed the JavaScript's dependency on the exact ``related_name``
+  value of plugins.
 
 
 `1.1`_ (2017-06-27)

@@ -114,34 +114,35 @@ class ContentEditor(ModelAdmin):
     checks_class = ContentEditorChecks
 
     def _content_editor_context(self, request, context):
-        plugins = [
-            (iaf.opts.model, iaf.opts)
-            for iaf in context.get("inline_admin_formsets", [])
-            if isinstance(iaf.opts, ContentEditorInline)
-        ]
         instance = context.get("original")
         if not instance:
             instance = self.model()
 
+        plugins = [
+            {
+                "key": "{}_{}".format(
+                    iaf.opts.model._meta.app_label, iaf.opts.model._meta.model_name
+                ),
+                "title": capfirst(force_text(iaf.opts.model._meta.verbose_name)),
+                "regions": iaf.opts.regions,
+                "prefix": iaf.formset.prefix,
+            }
+            for iaf in context.get("inline_admin_formsets", [])
+            if isinstance(iaf.opts, ContentEditorInline)
+        ]
+        regions = [
+            {
+                "key": region.key,
+                "title": force_text(region.title),
+                # TODO correct template when POSTing?
+            }
+            for region in instance.regions
+        ]
+
         return json.dumps(
             {
-                "plugins": [
-                    (
-                        "%s_%s"
-                        % (plugin[0]._meta.app_label, plugin[0]._meta.model_name),
-                        capfirst(force_text(plugin[0]._meta.verbose_name)),
-                        plugin[1].regions,
-                    )
-                    for plugin in plugins
-                ],
-                "regions": [
-                    (
-                        region.key,
-                        force_text(region.title),
-                        # TODO correct template when POSTing
-                    )
-                    for region in instance.regions
-                ],
+                "plugins": plugins,
+                "regions": regions,
                 "messages": {
                     "createNew": ugettext("Add new item"),
                     "empty": ugettext("No items"),
