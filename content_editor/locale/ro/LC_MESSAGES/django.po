@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-07 11:44+0200\n"
+"POT-Creation-Date: 2018-12-08 12:04+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Romanian (http://www.transifex.com/projects/p/feincms/"
@@ -20,15 +20,21 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
 "2:1));\n"
 
-#: admin.py:154
+#: admin.py:147
 msgid "Add new item"
 msgstr "Adaugă un obiect nou"
 
-#: admin.py:155
+#: admin.py:148
 #, fuzzy
 #| msgid "max. items"
 msgid "No items"
 msgstr "nr. de obiecte maxime"
+
+#: admin.py:149
+#, fuzzy
+#| msgid "raw contents"
+msgid "Toggle contents"
+msgstr "conținuturi neformatate"
 
 #~ msgid "Change %s"
 #~ msgstr "Modifică %s"
@@ -95,9 +101,6 @@ msgstr "nr. de obiecte maxime"
 
 #~ msgid "raw content"
 #~ msgstr "conținut neformatat"
-
-#~ msgid "raw contents"
-#~ msgstr "conținuturi neformatate"
 
 #~ msgid "text"
 #~ msgstr "text"

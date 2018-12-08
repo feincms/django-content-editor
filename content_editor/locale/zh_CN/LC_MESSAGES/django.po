@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-07 11:44+0200\n"
+"POT-Creation-Date: 2018-12-08 12:04+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/feincms/"
@@ -20,15 +20,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: admin.py:154
+#: admin.py:147
 msgid "Add new item"
 msgstr "新建"
 
-#: admin.py:155
+#: admin.py:148
 #, fuzzy
 #| msgid "max. items"
 msgid "No items"
 msgstr "最大条目数"
+
+#: admin.py:149
+#, fuzzy
+#| msgid "template contents"
+msgid "Toggle contents"
+msgstr "模板内容"
 
 #~ msgid "All"
 #~ msgstr "全部"
@@ -188,9 +194,6 @@ msgstr "最大条目数"
 #~ msgstr "版块"
 
 #~ msgid "template content"
-#~ msgstr "模板内容"
-
-#~ msgid "template contents"
 #~ msgstr "模板内容"
 
 #~ msgid "template"

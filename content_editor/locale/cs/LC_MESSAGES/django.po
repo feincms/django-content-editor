@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-07 11:44+0200\n"
+"POT-Creation-Date: 2018-12-08 12:04+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,15 +17,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: admin.py:154
+#: admin.py:147
 msgid "Add new item"
 msgstr "Přidej novou položku"
 
-#: admin.py:155
+#: admin.py:148
 #, fuzzy
 #| msgid "max. items"
 msgid "No items"
 msgstr "max. položek"
+
+#: admin.py:149
+#, fuzzy
+#| msgid "template contents"
+msgid "Toggle contents"
+msgstr "šablonové obsahy"
 
 #~ msgid "All"
 #~ msgstr "vše"
@@ -195,9 +201,6 @@ msgstr "max. položek"
 
 #~ msgid "template content"
 #~ msgstr "šablonový obsah"
-
-#~ msgid "template contents"
-#~ msgstr "šablonové obsahy"
 
 #~ msgid "template"
 #~ msgstr "šablona"
