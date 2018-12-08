@@ -385,7 +385,7 @@ django.jQuery(function($) {
     }
 
     tabContainer.find(".toggle").on("click", function() {
-      $(".order-machine fieldset.module").slideToggle(200);
+      $(".order-machine .inline-related").toggleClass("collapsed");
     });
   })();
 
