@@ -5,6 +5,11 @@ Change log
 `Next version`_
 ===============
 
+- Added a workaround for a bug with Django's responsive administration
+  panel CSS where form fields where shown below the 767px breakpoint
+  despite them being ``.hidden``.
+
+
 `1.2`_ (2018-10-06)
 ===================
 

@@ -156,3 +156,9 @@
     padding: 0 !important;
     margin: 0 !important;
 }
+
+/* CSS fix for Django's responsive admin interface (shows fields below the
+ * 767px breakpoint despite them being .hidden */
+.aligned .form-row.hidden {
+  display: none;
+}
