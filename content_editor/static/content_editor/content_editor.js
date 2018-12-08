@@ -104,8 +104,8 @@ django.jQuery(function($) {
     var inline = arg[0];
 
     inline.addEventListener("dragstart", function(e) {
-      // window.__fs_dragging = e.target.closest(".inline-related");
-      window.__fs_dragging = inline;
+      // window.__fs_dragging = inline;
+      window.__fs_dragging = e.target.closest(".inline-related");
       window.__fs_dragging.classList.add("fs-dragging");
 
       e.dataTransfer.dropEffect = "move";
@@ -131,7 +131,6 @@ django.jQuery(function($) {
     );
     inline.addEventListener("drop", function(e) {
       e.preventDefault();
-      console.log(window.__fs_dragging, e.target, e.target.closest(".inline-related"));
       insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
     });
 
