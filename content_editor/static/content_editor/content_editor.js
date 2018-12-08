@@ -98,41 +98,45 @@ django.jQuery(function($) {
     return result;
   })();
 
-  function ensureDraggable(inline) {
-    inline = inline[0];
+  function ensureDraggable(arg) {
+    if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return;
 
-    if (!inline.getAttribute("draggable")) {
-      inline.setAttribute("draggable", true);
-      inline.addEventListener("dragstart", function(e) {
-        e.target.closest(".inline-related").classList.add("fs-dragging");
-        e.dataTransfer.dropEffect = "move";
-        e.dataTransfer.effectAllowed = "move";
-        try {
-          e.dataTransfer.setData("text/plain", "thing");
-        } catch (e) {
-          // IE11 needs this.
-        }
+    var inline = arg[0];
 
-        window.___dragging = this;
-      });
-      inline.addEventListener("dragend", function(e) {
-        $(".fs-dragging").removeClass("fs-dragging");
-        $(".fs-dragover").removeClass("fs-dragover");
-      });
-      inline.addEventListener(
-        "dragover",
-        function(e) {
-          e.preventDefault();
-          $(".fs-dragover").removeClass("fs-dragover");
-          e.target.closest(".inline-related").classList.add("fs-dragover");
-        },
-        true
-      );
-      inline.addEventListener("drop", function(e) {
+    inline.addEventListener("dragstart", function(e) {
+      // window.__fs_dragging = e.target.closest(".inline-related");
+      window.__fs_dragging = inline;
+      window.__fs_dragging.classList.add("fs-dragging");
+
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.effectAllowed = "move";
+      try {
+        e.dataTransfer.setData("text/plain", "thing");
+      } catch (e) {
+        // IE11 needs this.
+      }
+    });
+    inline.addEventListener("dragend", function(e) {
+      $(".fs-dragging").removeClass("fs-dragging");
+      $(".fs-dragover").removeClass("fs-dragover");
+    });
+    inline.addEventListener(
+      "dragover",
+      function(e) {
         e.preventDefault();
-        insertBefore(window.___dragging, e.target.closest(".inline-related"));
-      });
-    } // !getAttribute("draggable")
+        $(".fs-dragover").removeClass("fs-dragover");
+        e.target.closest(".inline-related").classList.add("fs-dragover");
+      },
+      true
+    );
+    inline.addEventListener("drop", function(e) {
+      e.preventDefault();
+      console.log(window.__fs_dragging, e.target, e.target.closest(".inline-related"));
+      insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
+    });
+
+    inline.setAttribute("draggable", true);
+    arg.addClass("fs-draggable");
   }
 
   function reorderInlines(context) {
