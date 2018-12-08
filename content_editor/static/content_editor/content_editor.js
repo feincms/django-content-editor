@@ -79,8 +79,37 @@ django.jQuery(function($) {
     return result;
   })();
 
-  function moveEmptyFormsToEnd() {
-    orderMachine.append(orderMachine.find(".empty-form").detach());
+  function ensureDraggable(inline) {
+    inline = inline[0];
+
+    if (!inline.getAttribute("draggable")) {
+      inline.setAttribute("draggable", true);
+      inline.addEventListener("dragstart", function(e) {
+        e.target.closest(".inline-related").classList.add("fs-dragging");
+        e.dataTransfer.dropEffect = "move";
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", "thing");
+
+        window.___dragging = this;
+      });
+      inline.addEventListener("dragend", function(e) {
+        $(".fs-dragging").removeClass("fs-dragging");
+        $(".fs-dragover").removeClass("fs-dragover");
+      });
+      inline.addEventListener(
+        "dragover",
+        function(e) {
+          e.preventDefault();
+          $(".fs-dragover").removeClass("fs-dragover");
+          e.target.closest(".inline-related").classList.add("fs-dragover");
+        },
+        true
+      );
+      inline.addEventListener("drop", function(e) {
+        e.preventDefault();
+        insertBefore(window.___dragging, e.target.closest(".inline-related"));
+      });
+    } // !getAttribute("draggable")
   }
 
   function reorderInlines(context) {
@@ -88,21 +117,19 @@ django.jQuery(function($) {
     var inlines = context.find(".inline-related");
     inlines.not(".empty-form").each(function() {
       $(document).trigger("content-editor:deactivate", [$(this)]);
+
+      ensureDraggable($(this));
     });
+
     inlines.detach();
-    inlines.sort(function inlinesCompareFunction(a, b) {
-      var aOrdering =
-        $(a)
-          .find(".field-ordering input")
-          .val() || 1e9;
-      var bOrdering =
-        $(b)
-          .find(".field-ordering input")
-          .val() || 1e9;
-      return aOrdering - bOrdering;
-    });
     orderMachine.append(inlines);
-    moveEmptyFormsToEnd();
+
+    inlines.each(function() {
+      var ordering = $(".field-ordering input", this).val() || 1e9;
+      this.style.order = ordering;
+      ensureDraggable($(this));
+    });
+
     inlines.not(".empty-form").each(function() {
       $(document).trigger("content-editor:activate", [$(this)]);
     });
@@ -219,7 +246,38 @@ django.jQuery(function($) {
     orderMachine.find(".field-ordering input").each(function() {
       if (!isNaN(+this.value)) orderings.push(+this.value);
     });
-    row.find(".field-ordering input").val(10 + Math.max.apply(null, orderings));
+    var ordering = 10 + Math.max.apply(null, orderings);
+    row.find(".field-ordering input").val(ordering);
+    row.css("order", ordering);
+  }
+
+  function insertBefore(row, before) {
+    var beforeOrdering = +before.querySelector(".field-ordering input").value,
+      beforeRows = [],
+      afterRows = [];
+    orderMachine.find(".inline-related:not(.empty-form)").each(function() {
+      var thisOrderingField = this.querySelector(".field-ordering input");
+      if (this != row && !isNaN(+thisOrderingField.value)) {
+        if (+thisOrderingField.value >= beforeOrdering) {
+          afterRows.push([this, thisOrderingField]);
+        } else {
+          beforeRows.push([this, thisOrderingField]);
+        }
+      }
+    });
+    beforeRows.sort(function(a, b) {
+      return a[1].value - b[1].value;
+    });
+    afterRows.sort(function(a, b) {
+      return a[1].value - b[1].value;
+    });
+    var rows = [].concat(beforeRows);
+    rows.push([row, row.querySelector(".field-ordering input")]);
+    rows = rows.concat(afterRows);
+    for (var i = 0; i < rows.length; ++i) {
+      var row = rows[i];
+      row[1].value = row[0].style.order = 10 * (1 + i);
+    }
   }
 
   function hideInlinesFromOtherRegions() {
@@ -251,13 +309,12 @@ django.jQuery(function($) {
   // Always move empty forms to the end, because new plugins are inserted
   // just before its empty form. Also, assign region data.
   $(document).on("formset:added", function newForm(event, row) {
-    moveEmptyFormsToEnd();
-
     row.find(".field-region input").val(ContentEditor.currentRegion);
     row.attr("data-region", ContentEditor.currentRegion);
 
     setBiggestOrdering(row);
     attachMoveToRegionDropdown(row);
+    ensureDraggable(row);
 
     machineEmptyMessage.addClass("hidden");
 
@@ -340,41 +397,19 @@ django.jQuery(function($) {
       row.find("fieldset").removeClass("content-editor-hidden");
     });
 
-  // Start sortable; hide fieldsets when dragging, and hide fieldsets of to-be-deleted inlines.
-  orderMachine
-    .sortable({
-      handle: "h3",
-      placeholder: "placeholder",
-      // Newly added forms MUST be added at the end and remain there until
-      // they are saved; Django's inline formsets do not like "missing"
-      // primary keys within forms with index < initial form count
-      // Previously: items: '.inline-related:not(.empty-form)',
-      items: ".inline-related.has_original",
-      start: function(event, ui) {
-        $(document).trigger("content-editor:deactivate", [ui.item]);
-      },
-      stop: function(event, ui) {
-        $(document).trigger("content-editor:activate", [ui.item]);
-      }
-    })
-    .on(
-      "click",
-      ".delete>input[type=checkbox]",
-      function toggleForDeletionClass() {
-        $(this)
-          .closest(".inline-related")
-          [this.checked ? "addClass" : "removeClass"]("for-deletion");
-      }
-    );
+  // Hide fieldsets of to-be-deleted inlines.
+  orderMachine.on(
+    "click",
+    ".delete>input[type=checkbox]",
+    function toggleForDeletionClass() {
+      $(this)
+        .closest(".inline-related")
+        [this.checked ? "addClass" : "removeClass"]("for-deletion");
+    }
+  );
 
-  // Fill in ordering field and try to keep the current region tab (location hash).
+  // Try to keep the current region tab (location hash).
   $("form").submit(function() {
-    orderMachine
-      .find(".field-ordering input")
-      .each(function assignOrdering(index) {
-        this.value = 10 * (index + 1); // Avoid default=0 just because.
-      });
-
     var form = $(this);
     form.attr("action", form.attr("action") + window.location.hash);
     return true;
@@ -388,10 +423,10 @@ django.jQuery(function($) {
       ).click();
       return false;
     } else if (event.which == 27) {
-      orderMachine.sortable("cancel");
+      // TODO cancel an ongoing drag.
+      // orderMachine.sortable("cancel");
     }
   });
-
   (function buildPluginDropdown() {
     var select = buildDropdown(
       ContentEditor.plugins,

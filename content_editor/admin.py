@@ -155,7 +155,6 @@ class ContentEditor(ModelAdmin):
         return forms.Media(
             css={"all": ["content_editor/content_editor.css"]},
             js=[
-                "content_editor/jquery-ui-1.11.4.custom.min.js",
                 "content_editor/tabbed_fieldsets.js",
                 JS(
                     "content_editor/content_editor.js",

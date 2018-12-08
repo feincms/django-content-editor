@@ -42,6 +42,8 @@ html {
   margin: 4px 0 0 0;
   padding: 6px 10px;
   border: 1px solid #eee;
+  font-size: 13px;
+  font-weight: normal;
 }
 
 .order-machine {
@@ -51,12 +53,14 @@ html {
   border-bottom: none;
   position: relative;
   background: #fafafa;
+
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .order-machine .inline-related {
   border: 1px solid #eee;
   margin-top: 10px;
-  overflow: hidden;
 }
 
 .order-machine .inline-related h3 {
@@ -66,7 +70,7 @@ html {
   background: #f0f0f0;
 }
 
-.order-machine .inline-related.has_original h3 {
+.order-machine .inline-related h3 {
   cursor: move;
 }
 
@@ -79,8 +83,7 @@ html {
   content: "new";
 }
 
-/* Checkbox & label alignment of existing plugins */
-.ui-sortable-handle .delete {
+.order-machine .delete {
   position: relative;
   top: -1px;
 }
@@ -178,4 +181,19 @@ html {
  * 767px breakpoint despite them being .hidden */
 .aligned .form-row.hidden {
   display: none;
+}
+
+.fs-dragging {
+  opacity: 0.5;
+}
+
+.fs-dragover::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -8px;
+  height: 4px;
+  background: #79aec8;
 }

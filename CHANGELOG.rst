@@ -5,11 +5,20 @@ Change log
 `Next version`_
 ===============
 
+- Added back the possibility to move new content blocks in-between other
+  content blocks without having to save first. To achieve this the CSS
+  and JavaScript of the content editor was rewritten using `flex
+  ordering <https://developer.mozilla.org/en-US/docs/Web/CSS/order>`__
+  instead of modifying the order of elements in the DOM. This also
+  implies that reordering content blocks does not require deactivation
+  and activation steps anymore e.g. to preserve the functionality of a
+  rich text editor, possibly making it easier to implement custom
+  editors for individual plugins.
+- Added a button to the content editor to toggle the content of inlines
+  (making reordering contents easier).
 - Added a workaround for a bug with Django's responsive administration
   panel CSS where form fields where shown below the 767px breakpoint
   despite them being ``.hidden``.
-- Added a button to the content editor to toggle the content of inlines
-  (making reordering contents easier).
 - Reformatted the CSS and JavaScript code using `prettier
   <https://prettier.io/>`__.
 
