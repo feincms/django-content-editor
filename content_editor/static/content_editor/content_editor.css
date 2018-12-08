@@ -1,167 +1,174 @@
-.clearfix { *zoom:1; }
-.clearfix:before, .clearfix:after { content: " "; display: table; }
-.clearfix:after { clear: both; }
-
-.tabs>* {
-    float:left;
-    padding: 10px 15px;
-    margin: 0 4px 0 0;
-    cursor:pointer;
-    font-weight: bold;
-    font-size: 13px;
-    color: #666;
-    background: #f6f6f6;
-    border: 1px solid #eee;
-    border-bottom: none;
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+.clearfix:after {
+  clear: both;
 }
 
-.tabs>.has-error {
-    border-color: #ba2121;
-    color: #ba2121;
+.tabs > * {
+  float: left;
+  padding: 10px 15px;
+  margin: 0 4px 0 0;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 13px;
+  color: #666;
+  background: #f6f6f6;
+  border: 1px solid #eee;
+  border-bottom: none;
 }
 
-.tabs>.active {
-    background: #79aec8;
-    color: white;
-    border-color: #79aec8;
+.tabs > .has-error {
+  border-color: #ba2121;
+  color: #ba2121;
 }
 
-.tabs>.toggle {
-    float: right;
-    margin: 4px 0 0 0;
-    padding: 6px 10px;
-    border: 1px solid #eee;
+.tabs > .active {
+  background: #79aec8;
+  color: white;
+  border-color: #79aec8;
+}
+
+.tabs > .toggle {
+  float: right;
+  margin: 4px 0 0 0;
+  padding: 6px 10px;
+  border: 1px solid #eee;
 }
 
 .order-machine {
-    clear: both;
-    padding: 0 10px 10px 10px;
-    border: 1px solid #eee;
-    border-bottom: none;
-    position:relative;
-    background: #fafafa;
+  clear: both;
+  padding: 0 10px 10px 10px;
+  border: 1px solid #eee;
+  border-bottom: none;
+  position: relative;
+  background: #fafafa;
 }
 
 .order-machine .inline-related {
-    border: 1px solid #eee;
-    margin-top: 10px;
-    overflow: hidden;
+  border: 1px solid #eee;
+  margin-top: 10px;
+  overflow: hidden;
 }
 
 .order-machine .inline-related h3 {
-    border-top: none;
-    font-size: 15px;
-    padding: 7px 7px 7px 10px;
-    background: #f0f0f0;
+  border-top: none;
+  font-size: 15px;
+  padding: 7px 7px 7px 10px;
+  background: #f0f0f0;
 }
 
 .order-machine .inline-related.has_original h3 {
-    cursor: move;
+  cursor: move;
 }
 
 /* Replace the broken content type counter for new contents with a "new" label */
 .order-machine .last-related .inline_label {
-    color: transparent;
+  color: transparent;
 }
 .order-machine .last-related .inline_label:before {
-    color: #666;
-    content: 'new';
+  color: #666;
+  content: "new";
 }
 
 /* Checkbox & label alignment of existing plugins */
 .ui-sortable-handle .delete {
-    position: relative;
-    top: -1px;
+  position: relative;
+  top: -1px;
 }
 
 .order-machine .inline-related fieldset {
-    /* Animate out of view REAL FAST */
-    transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
-    max-height: 2000px;
+  /* Animate out of view REAL FAST */
+  transition: max-height 0.5s cubic-bezier(0, 1.05, 0, 1);
+  max-height: 2000px;
 }
 
 .order-machine .inline-related.for-deletion fieldset {
-    max-height: 0;
+  max-height: 0;
 }
 
 .machine-message {
-    margin: 1.5em 1em 1em;
-    text-align: center;
+  margin: 1.5em 1em 1em;
+  text-align: center;
 }
 
 /* Used when dragging */
 .placeholder {
-    height: 34px;
-    margin: 10px 0 0 0;
-    border: none;
-    opacity: 0.3;
-    background: #79aec8;
+  height: 34px;
+  margin: 10px 0 0 0;
+  border: none;
+  opacity: 0.3;
+  background: #79aec8;
 }
 
 .machine-control {
-    padding: 5px 10px 5px 0;
-    border: 1px solid #eee;
-    background: #f8f8f8;
-    height: 55px;
+  padding: 5px 10px 5px 0;
+  border: 1px solid #eee;
+  background: #f8f8f8;
+  height: 55px;
 }
 
 .control-unit {
-    float: left;
-    padding: 0 15px;
-    border-left: 1px solid #eee;
-    height: 55px;
+  float: left;
+  padding: 0 15px;
+  border-left: 1px solid #eee;
+  height: 55px;
 }
 
 .control-unit:first-child {
-    border-left: none;
+  border-left: none;
 }
 
 .control-unit select {
-    float: left;
-    position: relative;
-    top: 13px;
+  float: left;
+  position: relative;
+  top: 13px;
 }
 
 .control-unit .plugin-button {
-    margin: 0 .5rem;
-    font-size: 2.5rem;
-    cursor: pointer;
+  margin: 0 0.5rem;
+  font-size: 2.5rem;
+  cursor: pointer;
 }
 
 .inline-controls {
-    position: absolute;
-    right: 100px;
-    top: 2px;
+  position: absolute;
+  right: 100px;
+  top: 2px;
 }
 
 .inline-controls select {
-    border-color: #f8f8f8;
+  border-color: #f8f8f8;
 }
-
 
 /* tabbed_fieldsets.js support */
 #tabbed .modules {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 #tabbed .module {
-    border: 1px solid #eee;
-    margin-bottom: 0;
+  border: 1px solid #eee;
+  margin-bottom: 0;
 }
 
 #tabbed .form-row:last-child {
-    border: none;
+  border: none;
 }
 
 .content-editor-hidden {
-    /* We can't simply use display: none. Some admin widgets need to know
+  /* We can't simply use display: none. Some admin widgets need to know
      * their dimensions, so we can't have that -- use an alternative way
      * to hide the modules. */
-    visibility: hidden !important;
-    height: 0 !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 /* CSS fix for Django's responsive admin interface (shows fields below the

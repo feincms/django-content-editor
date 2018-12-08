@@ -10,6 +10,8 @@ Change log
   despite them being ``.hidden``.
 - Added a button to the content editor to toggle the content of inlines
   (making reordering contents easier).
+- Reformatted the CSS and JavaScript code using `prettier
+  <https://prettier.io/>`__.
 
 
 `1.2`_ (2018-10-06)

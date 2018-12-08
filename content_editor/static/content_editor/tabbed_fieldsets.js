@@ -1,47 +1,53 @@
 /* global django */
-/* eslint indent:[2,4] */
-/* eslint comma-dangle:[2,"never"] */
 django.jQuery(function($) {
-    var tabbed = $('.tabbed');
-    if (tabbed.length > 1) {
-        tabbed.eq(0).before(
-            '<div id="tabbed" class="clearfix">' +
-            '<div class="tabs clearfix"></div>' +
-            '<div class="modules"></div>' +
-            '</div>'
-        );
+  var tabbed = $(".tabbed");
+  if (tabbed.length > 1) {
+    tabbed
+      .eq(0)
+      .before(
+        '<div id="tabbed" class="clearfix">' +
+          '<div class="tabs clearfix"></div>' +
+          '<div class="modules"></div>' +
+          "</div>"
+      );
 
-        var $tabs = $('#tabbed > .tabs'),
-            $modules = $('#tabbed > .modules');
+    var $tabs = $("#tabbed > .tabs"),
+      $modules = $("#tabbed > .modules");
 
-        tabbed.each(function createTabs(index) {
-            var $old = $(this),
-                $title = $old.children('h2');
+    tabbed.each(function createTabs(index) {
+      var $old = $(this),
+        $title = $old.children("h2");
 
-            if ($old.find('.errorlist').length) {
-                $title.addClass('has-error');
-            }
+      if ($old.find(".errorlist").length) {
+        $title.addClass("has-error");
+      }
 
-            $title.attr('data-index', index);
-            $tabs.append($title);
+      $title.attr("data-index", index);
+      $tabs.append($title);
 
-            $old.addClass('content-editor-hidden');
+      $old.addClass("content-editor-hidden");
 
-            $modules.append($old);
-        });
+      $modules.append($old);
+    });
 
-        $tabs.on('click', '[data-index]', function() {
-            var $tab = $(this);
-            if ($tab.hasClass('active')) {
-                $tab.removeClass('active');
-                $modules.children().addClass('content-editor-hidden');
-            } else {
-                $tabs.find('.active').removeClass('active');
-                $tab.addClass('active');
-                $modules.children().addClass('content-editor-hidden').eq(
-                    $tab.data('index')
-                ).removeClass('content-editor-hidden');
-            }
-        }).find('.has-error').first().click();
-    }
+    $tabs
+      .on("click", "[data-index]", function() {
+        var $tab = $(this);
+        if ($tab.hasClass("active")) {
+          $tab.removeClass("active");
+          $modules.children().addClass("content-editor-hidden");
+        } else {
+          $tabs.find(".active").removeClass("active");
+          $tab.addClass("active");
+          $modules
+            .children()
+            .addClass("content-editor-hidden")
+            .eq($tab.data("index"))
+            .removeClass("content-editor-hidden");
+        }
+      })
+      .find(".has-error")
+      .first()
+      .click();
+  }
 });
