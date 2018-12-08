@@ -1,4 +1,23 @@
 /* global django,ContentEditor */
+
+/* Polyfilling a bit */
+if (!Element.prototype.matches)
+    Element.prototype.matches = Element.prototype.msMatchesSelector ||
+                                Element.prototype.webkitMatchesSelector;
+
+if (!Element.prototype.closest) {
+    Element.prototype.closest = function(s) {
+        var el = this;
+        if (!document.documentElement.contains(el)) return null;
+        do {
+            if (el.matches(s)) return el;
+            el = el.parentElement || el.parentNode;
+        } while (el !== null && el.nodeType === 1);
+        return null;
+    };
+}
+/* Polyfill end */
+
 django.jQuery(function($) {
   var context = document.getElementById("content-editor-context");
   if (!context) return;
@@ -88,7 +107,11 @@ django.jQuery(function($) {
         e.target.closest(".inline-related").classList.add("fs-dragging");
         e.dataTransfer.dropEffect = "move";
         e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("text/plain", "thing");
+        try {
+          e.dataTransfer.setData("text/plain", "thing");
+        } catch (e) {
+          // IE11 needs this.
+        }
 
         window.___dragging = this;
       });
