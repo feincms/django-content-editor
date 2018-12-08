@@ -51,7 +51,9 @@ django.jQuery(function($){
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
     $('.inline-group:first').before(
-        '<div class="tabs regions"></div>' +
+        '<div class="tabs regions">' +
+        '<button type="button" class="toggle">' + ContentEditor.messages.toggle + '</button>' +
+        '</div>' +
         '<div class="module">' +
         '<div class="order-machine"></div><div class="machine-control"></div>' +
         '</div>'
@@ -281,7 +283,7 @@ django.jQuery(function($){
             tabContainer.append(t);
         }
 
-        var tabs = tabContainer.children(), tab;
+        var tabs = tabContainer.find("h2"), tab;
         tabs.on('click', function() {
             ContentEditor.currentRegion = $(this).data('region');
             tabs.removeClass('active').filter('[data-region="' + ContentEditor.currentRegion + '"]').addClass('active');
@@ -299,6 +301,10 @@ django.jQuery(function($){
         } else {
             tabs.eq(0).click();
         }
+
+        tabContainer.find(".toggle").on("click", function() {
+            $(".order-machine fieldset.module").toggle();
+        });
 
     })();
 

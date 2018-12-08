@@ -146,6 +146,7 @@ class ContentEditor(ModelAdmin):
                 "messages": {
                     "createNew": ugettext("Add new item"),
                     "empty": ugettext("No items"),
+                    "toggle": ugettext("Toggle contents"),
                 },
             }
         )

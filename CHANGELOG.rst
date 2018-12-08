@@ -8,6 +8,8 @@ Change log
 - Added a workaround for a bug with Django's responsive administration
   panel CSS where form fields where shown below the 767px breakpoint
   despite them being ``.hidden``.
+- Added a button to the content editor to toggle the content of inlines
+  (making reordering contents easier).
 
 
 `1.2`_ (2018-10-06)
