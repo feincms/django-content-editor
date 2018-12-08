@@ -28,7 +28,9 @@
 
 .tabs>.toggle {
     float: right;
-    margin-right: 0;
+    margin: 4px 0 0 0;
+    padding: 6px 10px;
+    border: 1px solid #eee;
 }
 
 .order-machine {
