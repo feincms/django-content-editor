@@ -286,11 +286,6 @@ content to the template.
 
 ``app/templates/app/article_detail.html``::
 
-    {% extends "base.html" %}
-
-    {% block title %}{{ article }} - {{ block.super }}{% endblock %}
-
-    {% block content %}
     <article>
         <h1>{{ article }}</h1>
         {{ article.pub_date }}
@@ -298,7 +293,6 @@ content to the template.
         {{ content.main }}
     </article>
     <aside>{{ content.sidebar }}</aside>
-    {% endblock %}
 
 Finally, ensure that ``content_editor`` and ``app`` are added to your
 ``INSTALLED_APPS`` setting, and you're good to go.
