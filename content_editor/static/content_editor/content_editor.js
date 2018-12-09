@@ -116,7 +116,7 @@ django.jQuery(function($) {
         // IE11 needs this.
       }
     });
-    inline.addEventListener("dragend", function(e) {
+    inline.addEventListener("dragend", function() {
       $(".fs-dragging").removeClass("fs-dragging");
       $(".fs-dragover").removeClass("fs-dragover");
     });
@@ -301,8 +301,8 @@ django.jQuery(function($) {
     rows.push([row, row.querySelector(".field-ordering input")]);
     rows = rows.concat(afterRows);
     for (var i = 0; i < rows.length; ++i) {
-      var row = rows[i];
-      row[1].value = row[0].style.order = 10 * (1 + i);
+      var thisRow = rows[i];
+      thisRow[1].value = thisRow[0].style.order = 10 * (1 + i);
     }
   }
 
