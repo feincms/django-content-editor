@@ -111,7 +111,7 @@ django.jQuery(function($) {
       e.dataTransfer.dropEffect = "move";
       e.dataTransfer.effectAllowed = "move";
       try {
-        e.dataTransfer.setData("text/plain", "thing");
+        e.dataTransfer.setData("text/plain", "");
       } catch (e) {
         // IE11 needs this.
       }

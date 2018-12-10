@@ -72,6 +72,9 @@ html {
 
 .order-machine .inline-related h3 {
   cursor: move;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Replace the broken content type counter for new contents with a "new" label */
@@ -84,8 +87,9 @@ html {
 }
 
 .order-machine .delete {
-  position: relative;
-  top: -1px;
+  position: absolute;
+  top: 5px;
+  right: 5px;
 }
 
 .order-machine .inline-related fieldset {
@@ -93,6 +97,7 @@ html {
   transition: max-height 0.3s cubic-bezier(0, 1.05, 0, 1);
   max-height: 2000px;
   overflow: hidden;
+  position: relative;
 }
 
 .order-machine .inline-related.for-deletion fieldset,
@@ -179,12 +184,6 @@ html {
   margin: 0 !important;
 }
 
-/* CSS fix for Django's responsive admin interface (shows fields below the
- * 767px breakpoint despite them being .hidden */
-.aligned .form-row.hidden {
-  display: none;
-}
-
 .fs-dragging {
   opacity: 0.5;
 }
@@ -198,4 +197,21 @@ html {
   top: -8px;
   height: 4px;
   background: #79aec8;
+}
+
+
+@media screen and (max-width: 767px) {
+  /* CSS fix for Django's responsive admin interface (shows fields below the
+   * 767px breakpoint despite them being .hidden */
+  html .aligned .form-row.hidden {
+    display: none;
+  }
+
+  html .aligned .form-row > div {
+    width: calc(100vw - 90px);
+  }
+
+  html .order-machine .form-row {
+    padding: 10px;
+  }
 }
