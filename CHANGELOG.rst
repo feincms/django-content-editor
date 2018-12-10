@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+`1.3`_ (2018-12-10)
+===================
+
 - Added back the possibility to move new content blocks in-between other
   content blocks without having to save first. To achieve this the CSS
   and JavaScript of the content editor was rewritten using `flex
@@ -181,4 +184,5 @@ Initial public release of django-content-editor.
 .. _1.0: https://github.com/matthiask/django-content-editor/compare/0.10.0...1.0.0
 .. _1.1: https://github.com/matthiask/django-content-editor/compare/1.0.0...1.1.0
 .. _1.2: https://github.com/matthiask/django-content-editor/compare/1.1.0...1.2
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.2...master
+.. _1.3: https://github.com/matthiask/django-content-editor/compare/1.2...1.3
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.3...master
