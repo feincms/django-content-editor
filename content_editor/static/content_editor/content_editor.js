@@ -2,19 +2,20 @@
 
 /* Polyfilling a bit */
 if (!Element.prototype.matches)
-    Element.prototype.matches = Element.prototype.msMatchesSelector ||
-                                Element.prototype.webkitMatchesSelector;
+  Element.prototype.matches =
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.webkitMatchesSelector;
 
 if (!Element.prototype.closest) {
-    Element.prototype.closest = function(s) {
-        var el = this;
-        if (!document.documentElement.contains(el)) return null;
-        do {
-            if (el.matches(s)) return el;
-            el = el.parentElement || el.parentNode;
-        } while (el !== null && el.nodeType === 1);
-        return null;
-    };
+  Element.prototype.closest = function(s) {
+    var el = this;
+    if (!document.documentElement.contains(el)) return null;
+    do {
+      if (el.matches(s)) return el;
+      el = el.parentElement || el.parentNode;
+    } while (el !== null && el.nodeType === 1);
+    return null;
+  };
 }
 /* Polyfill end */
 
@@ -428,9 +429,12 @@ django.jQuery(function($) {
     "click",
     ".delete>input[type=checkbox]",
     function toggleForDeletionClass() {
-      $(this)
-        .closest(".inline-related")
-        [this.checked ? "addClass" : "removeClass"]("for-deletion");
+      var module = $(this).closest(".inline-related");
+      if (this.checked) {
+        module.addClass("for-deletion");
+      } else {
+        module.removeClass("for-deletion");
+      }
     }
   );
 

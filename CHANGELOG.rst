@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+- Added configuration to make running prettier and ESLint easy.
+
+
 `1.3`_ (2018-12-10)
 ===================
 

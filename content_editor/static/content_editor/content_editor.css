@@ -199,7 +199,6 @@ html {
   background: #79aec8;
 }
 
-
 @media screen and (max-width: 767px) {
   /* CSS fix for Django's responsive admin interface (shows fields below the
    * 767px breakpoint despite them being .hidden */
