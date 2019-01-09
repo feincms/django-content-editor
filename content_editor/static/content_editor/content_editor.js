@@ -135,7 +135,7 @@ django.jQuery(function($) {
       insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
     });
 
-    inline.setAttribute("draggable", true);
+    arg.find(">h3").attr("draggable", true);
     arg.addClass("fs-draggable");
   }
 

@@ -63,14 +63,12 @@ html {
   margin-top: 10px;
 }
 
-.order-machine .inline-related h3 {
+.order-machine .inline-related > h3 {
   border-top: none;
   font-size: 15px;
   padding: 7px 7px 7px 10px;
   background: #f0f0f0;
-}
 
-.order-machine .inline-related h3 {
   cursor: move;
   white-space: nowrap;
   overflow: hidden;
