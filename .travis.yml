@@ -29,15 +29,10 @@ matrix:
       env: REQ="Django>=1.11,<2.0"
     - python: 2.7
       env: REQ="Django>=1.11,<2.0"
-    # Note! Django 1.8's inlines.js does not emit the necessary events
-    # but you can just copy the script and its minified companion from
-    # Django 1.9 and things will just work -- really!
-    - python: 3.5
-      env: REQ="Django>=1.8,<1.9"
     - python: 3.4
-      env: REQ="Django>=1.8,<1.9"
+      env: REQ="Django>=1.9,<1.10"
     - python: 2.7
-      env: REQ="Django>=1.8,<1.9"
+      env: REQ="Django>=1.9,<1.10"
     - python: 3.7
       env: REQ="black flake8"
       install:
