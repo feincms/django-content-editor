@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-08 13:13+0100\n"
+"POT-Creation-Date: 2019-01-31 08:46+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/feincms/language/"
@@ -21,17 +21,21 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: admin.py:147
+#: admin.py:150
 msgid "Add new item"
 msgstr "Добавить элемент"
 
-#: admin.py:148
+#: admin.py:151
 #, fuzzy
 #| msgid "max. items"
-msgid "No items"
+msgid "No items."
 msgstr "макс. число элементов"
 
-#: admin.py:149
+#: admin.py:153
+msgid "No items. Region may inherit content."
+msgstr ""
+
+#: admin.py:155
 #, fuzzy
 #| msgid "template contents"
 msgid "Show/hide contents"

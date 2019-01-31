@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-12-08 13:13+0100\n"
+"POT-Creation-Date: 2019-01-31 08:46+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,14 +20,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:147
+#: admin.py:150
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: admin.py:148
-msgid "No items"
-msgstr "Keine Elemente"
+#: admin.py:151
+msgid "No items."
+msgstr "Keine Elemente."
 
-#: admin.py:149
+#: admin.py:153
+msgid "No items. Region may inherit content."
+msgstr "Keine Elemente. Region könnte Inhalt erben."
+
+#: admin.py:155
 msgid "Show/hide contents"
 msgstr "Inhalte ein-/ausblenden"

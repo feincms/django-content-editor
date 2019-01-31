@@ -6,6 +6,8 @@ Change log
 ===============
 
 - Added configuration to make running prettier and ESLint easy.
+- Added a different message when a region is empty and its ``inherited``
+  flag is set.
 
 
 `1.3`_ (2018-12-10)

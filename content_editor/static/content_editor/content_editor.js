@@ -62,13 +62,19 @@ django.jQuery(function($) {
     JSON.parse(context.getAttribute("data-context"))
   );
 
+  var i;
   ContentEditor.pluginsByKey = {};
   ContentEditor.prefixToKey = {};
-  for (var i = 0; i < ContentEditor.plugins.length; ++i) {
+  for (i = 0; i < ContentEditor.plugins.length; ++i) {
     ContentEditor.pluginsByKey[ContentEditor.plugins[i].key] =
       ContentEditor.plugins[i];
     ContentEditor.prefixToKey[ContentEditor.plugins[i].prefix] =
       ContentEditor.plugins[i].key;
+  }
+  ContentEditor.regionsByKey = {};
+  for (i = 0; i < ContentEditor.regions.length; ++i) {
+    ContentEditor.regionsByKey[ContentEditor.regions[i].key] =
+      ContentEditor.regions[i];
   }
 
   // Add basic structure. There is always at least one inline group if
@@ -319,6 +325,13 @@ django.jQuery(function($) {
     } else {
       machineEmptyMessage.removeClass("hidden");
     }
+    machineEmptyMessage.text(
+      ContentEditor.messages[
+        ContentEditor.regionsByKey[ContentEditor.currentRegion].inherited
+          ? "emptyInherited"
+          : "empty"
+      ]
+    );
   }
 
   var pluginInlineGroups = (function selectPluginInlineGroups() {

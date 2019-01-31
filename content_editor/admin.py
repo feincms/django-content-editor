@@ -136,6 +136,7 @@ class ContentEditor(ModelAdmin):
             {
                 "key": region.key,
                 "title": force_text(region.title),
+                "inherited": region.inherited,
                 # TODO correct template when POSTing?
             }
             for region in instance.regions
@@ -147,7 +148,8 @@ class ContentEditor(ModelAdmin):
                 "regions": regions,
                 "messages": {
                     "createNew": ugettext("Add new item"),
-                    "empty": ugettext("No items"),
+                    "empty": ugettext("No items."),
+                    "emptyInherited": ugettext("No items. Region may inherit content."),
                     "toggle": ugettext("Show/hide contents"),
                 },
             }
