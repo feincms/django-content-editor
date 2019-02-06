@@ -3,8 +3,9 @@ from __future__ import absolute_import, unicode_literals
 from collections import OrderedDict
 
 from django.db.models import Model
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.html import conditional_escape, mark_safe
+
+from six import python_2_unicode_compatible
 
 
 __all__ = ("PluginRenderer",)
