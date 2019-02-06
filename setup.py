@@ -23,7 +23,7 @@ setup(
     platforms=["OS Independent"],
     packages=find_packages(exclude=["tests", "testapp"]),
     include_package_data=True,
-    install_requires=["django-js-asset"],
+    install_requires=["django-js-asset", "six"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",

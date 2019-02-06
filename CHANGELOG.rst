@@ -10,6 +10,8 @@ Change log
   flag is set.
 - Make the ``regions`` attribute on ``ContentEditorInline`` objects a
   callable.
+- Added a six dependency, Django 3.0 will ship without
+  ``@python_2_unicode_compatible``.
 
 
 `1.3`_ (2018-12-10)
