@@ -85,7 +85,7 @@ def contents_for_item(item, plugins, inherit_from=None):
     return contents
 
 
-def contents_for_mptt_item(item, plugins):
+def contents_for_mptt_item(item, plugins):  # pragma: no cover
     warnings.warn(
         "contents_for_mptt_item has been deprecated. Call"
         " contents_for_item(item, plugins, inherit_from=item.get_ancestors("

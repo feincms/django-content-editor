@@ -4,7 +4,7 @@ from django.db import models
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 
-from .models import Article, Download, RichText
+from .models import Article, Download, RichText, Thing
 
 
 class RichTextarea(forms.Textarea):
@@ -25,6 +25,10 @@ class RichTextInline(ContentEditorInline):
         js = ("//cdn.ckeditor.com/4.5.6/standard/ckeditor.js", "app/plugin_ckeditor.js")
 
 
+class ThingInline(admin.TabularInline):
+    model = Thing
+
+
 admin.site.register(
     Article,
     ContentEditor,
@@ -33,5 +37,6 @@ admin.site.register(
         ContentEditorInline.create(
             model=Download, regions=lambda inline, regions: regions - {"sidebar"}
         ),
+        ThingInline,
     ],
 )

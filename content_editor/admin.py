@@ -71,7 +71,7 @@ class ContentEditorInline(StackedInline):
     extra = 0
     fk_name = "parent"
     regions = None
-    if VERSION > (1, 9):
+    if VERSION > (1, 9):  # pragma: no cover
         checks_class = ContentEditorInlineChecks
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
@@ -112,7 +112,7 @@ class ContentEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    if VERSION > (1, 9):
+    if VERSION > (1, 9):  # pragma: no cover
         checks_class = ContentEditorChecks
 
     def _content_editor_context(self, request, context):
