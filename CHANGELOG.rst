@@ -12,6 +12,8 @@ Change log
   callable.
 - Added a six dependency, Django 3.0 will ship without
   ``@python_2_unicode_compatible``.
+- Deprecated ``contents_for_mptt_item`` and removed the django-mptt
+  dependency from the testsuite.
 
 
 `1.3`_ (2018-12-10)

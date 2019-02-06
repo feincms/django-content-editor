@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import warnings
 from itertools import chain
 from operator import attrgetter
 
@@ -85,6 +86,13 @@ def contents_for_item(item, plugins, inherit_from=None):
 
 
 def contents_for_mptt_item(item, plugins):
+    warnings.warn(
+        "contents_for_mptt_item has been deprecated. Call"
+        " contents_for_item(item, plugins, inherit_from=item.get_ancestors("
+        "ascending=True) yourself.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     return contents_for_item(
         item, plugins, inherit_from=item.get_ancestors(ascending=True)
     )

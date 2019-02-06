@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.utils.safestring import mark_safe
 
 from content_editor.admin import ContentEditor, ContentEditorInline
-from content_editor.contents import contents_for_item, contents_for_mptt_item
+from content_editor.contents import contents_for_item
 from content_editor.renderer import PluginRenderer
 from testapp.models import Article, Bla, Download, Page, PageText, RichText
 
@@ -133,13 +133,9 @@ class ContentEditorTest(TestCase):
     def test_hierarchy(self):
         page = Page.objects.create(title="root")
         child = page.children.create(title="child 1")
-        page.refresh_from_db()
-        child.refresh_from_db()
 
-        self.assertEqual(list(child.get_ancestors()), [page])
-
-        with self.assertNumQueries(2):
-            contents = contents_for_mptt_item(child, plugins=[PageText])
+        with self.assertNumQueries(1):
+            contents = contents_for_item(child, plugins=[PageText], inherit_from=[page])
             self.assertEqual(contents.main, [])
             self.assertEqual(contents.sidebar, [])
 
@@ -150,8 +146,8 @@ class ContentEditorTest(TestCase):
             region="sidebar", ordering=20, text="page sidebar text"
         )
 
-        with self.assertNumQueries(2):
-            contents = contents_for_mptt_item(child, plugins=[PageText])
+        with self.assertNumQueries(1):
+            contents = contents_for_item(child, plugins=[PageText], inherit_from=[page])
             self.assertEqual(contents.main, [])
             self.assertEqual([c.text for c in contents.sidebar], ["page sidebar text"])
 
@@ -165,8 +161,8 @@ class ContentEditorTest(TestCase):
             region="main", ordering=20, text="child main text"
         )
 
-        with self.assertNumQueries(2):
-            contents = contents_for_mptt_item(child, plugins=[PageText])
+        with self.assertNumQueries(1):
+            contents = contents_for_item(child, plugins=[PageText], inherit_from=[page])
             self.assertEqual([c.text for c in contents.main], ["child main text"])
             self.assertEqual([c.text for c in contents.sidebar], ["child sidebar text"])
 

@@ -44,6 +44,6 @@ matrix:
     - env: REQ="https://github.com/django/django/archive/master.zip#egg=Django"
 install:
 - pip install -U pip setuptools wheel
-- pip install $REQ coverage django-js-asset django-mptt six
+- pip install $REQ coverage django-js-asset six
 - python setup.py install
 script: cd tests && ./manage.py test -v2 testapp

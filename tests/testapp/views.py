@@ -1,7 +1,7 @@
 from django.utils.html import format_html, mark_safe
 from django.views import generic
 
-from content_editor.contents import contents_for_item, contents_for_mptt_item
+from content_editor.contents import contents_for_item
 from content_editor.renderer import PluginRenderer
 
 from .models import AbstractRichText, Article, Bla, Download, Page, PageText, RichText
@@ -32,8 +32,8 @@ class PageView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         return super(PageView, self).get_context_data(
-            content=contents_for_mptt_item(self.object, [PageText]).render_regions(
-                renderer
-            ),
+            content=contents_for_item(
+                self.object, [PageText], inherit_from=filter(None, [self.object.parent])
+            ).render_regions(renderer),
             **kwargs
         )

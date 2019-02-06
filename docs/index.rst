@@ -358,10 +358,9 @@ Regions have the following attributes:
 * ``key``: The region key, used in the content proxy as attribute name
   for the list of plugins. Must contain a valid Python identifier.
 * ``inherited``: Only has an effect if you are using the
-  ``inherit_from`` argument to ``contents_for_item`` (or
-  ``contents_for_mptt_item`` which passes the node's ancestors
-  automatically): Model instances inherit content from their other
-  instances if a region with ``inherited = True`` is empty.
+  ``inherit_from`` argument to ``contents_for_item``: Model instances
+  inherit content from their other instances if a region with
+  ``inherited = True`` is empty.
 
 You are free to define additional attributes -- simply pass them
 when instantiating a new region.
@@ -480,19 +479,6 @@ django-tree-queries_ as used in feincms3_)::
         page.ancestors().reverse(),  # Prefer content closer to the
                                      # current page
     )
-
-
-``contents_for_mptt_item``
---------------------------
-
-Returns the contents instance for a given main model, inheriting
-content from ancestors if a given region is inheritable and empty in
-the passed item::
-
-    page = Page.objects.get(path=...)
-    contents = contents_for_mptt_item(
-        page,
-        plugins=[RichText, Download])
 
 
 ``PluginRenderer`` class

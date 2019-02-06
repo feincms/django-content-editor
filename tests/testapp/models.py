@@ -1,7 +1,6 @@
 from django.db import models
 
 from content_editor.models import Region, Template, create_plugin_base
-from mptt.models import MPTTModel
 
 
 try:
@@ -53,7 +52,7 @@ class Bla(ArticlePlugin):
         verbose_name = "bla"
 
 
-class Page(MPTTModel):
+class Page(models.Model):
     title = models.CharField(max_length=200)
     parent = models.ForeignKey(
         "self", related_name="children", blank=True, null=True, on_delete=models.CASCADE
