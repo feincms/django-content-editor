@@ -120,18 +120,24 @@ class ContentEditor(ModelAdmin):
         if not instance:
             instance = self.model()
 
-        plugins = [
-            {
-                "key": "{}_{}".format(
-                    iaf.opts.model._meta.app_label, iaf.opts.model._meta.model_name
-                ),
-                "title": capfirst(force_text(iaf.opts.model._meta.verbose_name)),
-                "regions": iaf.opts.regions,
-                "prefix": iaf.formset.prefix,
-            }
-            for iaf in context.get("inline_admin_formsets", [])
-            if isinstance(iaf.opts, ContentEditorInline)
-        ]
+        plugins = []
+        for iaf in context.get("inline_admin_formsets", []):
+            if not isinstance(iaf.opts, ContentEditorInline):
+                continue
+            regions = (
+                iaf.opts.regions({region.key for region in instance.regions})
+                if callable(iaf.opts.regions)
+                else iaf.opts.regions
+            )
+            meta = iaf.opts.model._meta
+            plugins.append(
+                {
+                    "key": "{}_{}".format(meta.app_label, meta.model_name),
+                    "title": capfirst(force_text(meta.verbose_name)),
+                    "regions": list(regions) if regions else None,
+                    "prefix": iaf.formset.prefix,
+                }
+            )
         regions = [
             {
                 "key": region.key,

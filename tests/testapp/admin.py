@@ -28,5 +28,10 @@ class RichTextInline(ContentEditorInline):
 admin.site.register(
     Article,
     ContentEditor,
-    inlines=[RichTextInline, ContentEditorInline.create(model=Download)],
+    inlines=[
+        RichTextInline,
+        ContentEditorInline.create(
+            model=Download, regions=lambda inline, regions: regions - {"sidebar"}
+        ),
+    ],
 )
