@@ -14,6 +14,7 @@ Change log
   ``@python_2_unicode_compatible``.
 - Deprecated ``contents_for_mptt_item`` and removed the django-mptt
   dependency from the testsuite.
+- Made the dependency of our JS on ``django.jQuery`` explicit.
 
 
 `1.3`_ (2018-12-10)
