@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+
+`1.4`_ (2019-03-18)
+===================
+
 - Added configuration to make running prettier and ESLint easy.
 - Added a different message when a region is empty and its ``inherited``
   flag is set.
@@ -14,7 +18,9 @@ Change log
   ``@python_2_unicode_compatible``.
 - Deprecated ``contents_for_mptt_item`` and removed the django-mptt
   dependency from the testsuite.
-- Made the dependency of our JS on ``django.jQuery`` explicit.
+- Made the dependency of our JS on ``django.jQuery`` explicit which is
+  necessary to avoid invalid orderings with Django 2.2 because of its
+  updated ``Media.merge`` algorithm.
 
 
 `1.3`_ (2018-12-10)
@@ -197,4 +203,5 @@ Initial public release of django-content-editor.
 .. _1.1: https://github.com/matthiask/django-content-editor/compare/1.0.0...1.1.0
 .. _1.2: https://github.com/matthiask/django-content-editor/compare/1.1.0...1.2
 .. _1.3: https://github.com/matthiask/django-content-editor/compare/1.2...1.3
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.3...master
+.. _1.4: https://github.com/matthiask/django-content-editor/compare/1.3...1.4
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.4...master
