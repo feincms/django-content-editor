@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+- Added an additional check to avoid processing inlines not managed by
+  the content editor.
+
 
 `1.4`_ (2019-03-18)
 ===================

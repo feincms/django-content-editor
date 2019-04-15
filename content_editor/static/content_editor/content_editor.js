@@ -348,7 +348,10 @@ django.jQuery(function($) {
 
   // Always move empty forms to the end, because new plugins are inserted
   // just before its empty form. Also, assign region data.
-  $(document).on("formset:added", function newForm(event, row) {
+  $(document).on("formset:added", function newForm(event, row, formsetName) {
+    // Not one of our managed inlines?
+    if (!ContentEditor.prefixToKey[formsetName]) return;
+
     row.find(".field-region input").val(ContentEditor.currentRegion);
     row.attr("data-region", ContentEditor.currentRegion);
 
@@ -361,7 +364,14 @@ django.jQuery(function($) {
     $(document).trigger("content-editor:activate", [row]);
   });
 
-  $(document).on("formset:removed", function resetInlines() {
+  $(document).on("formset:removed", function resetInlines(
+    _event,
+    _row,
+    formsetName
+  ) {
+    // Not one of our managed inlines?
+    if (!ContentEditor.prefixToKey[formsetName]) return;
+
     if (
       !orderMachine.find(
         '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
