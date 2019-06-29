@@ -13,8 +13,8 @@ django.jQuery(function($) {
 
     var $tabs = $("#tabbed > .tabs"),
       $modules = $("#tabbed > .modules"),
-      errorIndex = null,
-      uncollapseIndex = null;
+      errorIndex = -1,
+      uncollapseIndex = -1;
 
     tabbed.each(function createTabs(index) {
       var $old = $(this),
@@ -22,10 +22,10 @@ django.jQuery(function($) {
 
       if ($old.find(".errorlist").length) {
         $title.addClass("has-error");
-        errorIndex = errorIndex || index;
+        errorIndex = errorIndex < 0 ? index : errorIndex;
       }
       if ($old.is(".uncollapse")) {
-        uncollapseIndex = uncollapseIndex || index;
+        uncollapseIndex = uncollapseIndex < 0 ? index : uncollapseIndex;
       }
 
       $title.attr("data-index", index);
@@ -52,10 +52,9 @@ django.jQuery(function($) {
       }
     });
 
-    if (errorIndex || uncollapseIndex) {
-      $tabs
-        .find("[data-index=" + (errorIndex || uncollapseIndex) + "]")
-        .click();
+    if (errorIndex >= 0 || uncollapseIndex >= 0) {
+      var index = errorIndex >= 0 ? errorIndex : uncollapseIndex;
+      $tabs.find("[data-index=" + index + "]").click();
     }
   }
 });
