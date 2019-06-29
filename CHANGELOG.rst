@@ -7,6 +7,8 @@ Change log
 
 - Added an additional check to avoid processing inlines not managed by
   the content editor.
+- Allowed uncollapsing tabbed fieldsets after page load by specifying
+  ``"classes": ["tabbed", "uncollapse"]``
 
 
 `1.4`_ (2019-03-18)
