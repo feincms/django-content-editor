@@ -9,7 +9,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 from js_asset.js import JS
 
@@ -153,10 +153,10 @@ class ContentEditor(ModelAdmin):
                 "plugins": plugins,
                 "regions": regions,
                 "messages": {
-                    "createNew": ugettext("Add new item"),
-                    "empty": ugettext("No items."),
-                    "emptyInherited": ugettext("No items. Region may inherit content."),
-                    "toggle": ugettext("Show/hide contents"),
+                    "createNew": gettext("Add new item"),
+                    "empty": gettext("No items."),
+                    "emptyInherited": gettext("No items. Region may inherit content."),
+                    "toggle": gettext("Show/hide contents"),
                 },
             }
         )
