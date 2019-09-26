@@ -26,6 +26,7 @@ html {
   border-bottom: none;
 }
 
+.tabs > [data-region="_unknown_"],
 .tabs > .has-error {
   border-color: #ba2121;
   color: #ba2121;

@@ -234,9 +234,11 @@ django.jQuery(function($) {
     var regions = [];
     for (var i = 0; i < ContentEditor.regions.length; i++) {
       if (
-        !inlineType ||
-        !pluginRegions[inlineType] ||
-        $.inArray(ContentEditor.regions[i].key, pluginRegions[inlineType]) >= 0
+        (!inlineType ||
+          !pluginRegions[inlineType] ||
+          $.inArray(ContentEditor.regions[i].key, pluginRegions[inlineType]) >=
+            0) &&
+        ContentEditor.regions[i].key !== "_unknown_"
       ) {
         regions.push(ContentEditor.regions[i]);
       }
@@ -268,6 +270,17 @@ django.jQuery(function($) {
     orderMachine.find(".inline-related:not(.empty-form)").each(function() {
       var $this = $(this),
         region = $this.find(".field-region input").val();
+
+      if (!ContentEditor.regionsByKey[region]) {
+        var spec = {
+          key: "_unknown_",
+          title: ContentEditor.messages.unknownRegion,
+          inherited: false
+        };
+        ContentEditor.regions.push(spec);
+        ContentEditor.regionsByKey[spec.key] = spec;
+        region = spec.key;
+      }
 
       $this.attr("data-region", region);
       attachMoveToRegionDropdown($this);

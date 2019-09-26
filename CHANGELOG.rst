@@ -9,6 +9,7 @@ Change log
   the content editor.
 - Allowed uncollapsing tabbed fieldsets after page load by specifying
   ``"classes": ["tabbed", "uncollapse"]``
+- Added a place to edit items assigned to unknown regions.
 
 
 `1.4`_ (2019-03-18)

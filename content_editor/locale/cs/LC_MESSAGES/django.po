@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-31 08:46+0100\n"
+"POT-Creation-Date: 2019-09-26 10:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,21 +17,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
-#: admin.py:150
+#: admin.py:156
 msgid "Add new item"
 msgstr "Přidej novou položku"
 
-#: admin.py:151
+#: admin.py:157
 #, fuzzy
 #| msgid "max. items"
 msgid "No items."
 msgstr "max. položek"
 
-#: admin.py:153
+#: admin.py:158
 msgid "No items. Region may inherit content."
 msgstr ""
 
-#: admin.py:155
+#: admin.py:159
+msgid "Unknown region"
+msgstr ""
+
+#: admin.py:160
 #, fuzzy
 #| msgid "template contents"
 msgid "Show/hide contents"

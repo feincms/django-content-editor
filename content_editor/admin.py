@@ -156,6 +156,7 @@ class ContentEditor(ModelAdmin):
                     "createNew": gettext("Add new item"),
                     "empty": gettext("No items."),
                     "emptyInherited": gettext("No items. Region may inherit content."),
+                    "unknownRegion": gettext("Unknown region"),
                     "toggle": gettext("Show/hide contents"),
                 },
             }
