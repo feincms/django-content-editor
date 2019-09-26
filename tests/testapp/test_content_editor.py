@@ -1,10 +1,9 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core import checks
 from django.db import models
 from django.test import TestCase
+from django.test.utils import isolate_apps
 from django.utils.safestring import mark_safe
 
 from content_editor.admin import ContentEditor, ContentEditorInline
@@ -12,22 +11,10 @@ from content_editor.contents import contents_for_item
 from content_editor.renderer import PluginRenderer
 from testapp.models import Article, Bla, Download, Page, PageText, RichText
 
-
-# from django.utils import timezone
-
 try:
     from django.urls import reverse
 except ImportError:  # pragma: no cover
     from django.core.urlresolvers import reverse
-try:
-    from django.test.utils import isolate_apps
-except ImportError:  # pragma: no cover
-    # Do nothing decorator for Django 1.9
-    def isolate_apps():
-        def dec(fn):
-            return fn
-
-        return dec
 
 
 class ContentEditorTest(TestCase):

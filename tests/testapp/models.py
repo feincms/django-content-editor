@@ -1,12 +1,7 @@
 from django.db import models
+from django.urls import reverse
 
 from content_editor.models import Region, Template, create_plugin_base
-
-
-try:
-    from django.urls import reverse
-except ImportError:  # pragma: no cover
-    from django.core.urlresolvers import reverse
 
 
 class AbstractRichText(models.Model):

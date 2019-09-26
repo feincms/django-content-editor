@@ -1,17 +1,6 @@
-from __future__ import unicode_literals
+from types import SimpleNamespace
 
 from django.db import models
-
-from six import python_2_unicode_compatible
-
-
-try:
-    from types import SimpleNamespace
-except ImportError:  # pragma: no cover
-    # Python < 3.3
-    class SimpleNamespace(object):
-        def __init__(self, **kwargs):
-            self.__dict__.update(kwargs)
 
 
 __all__ = ("Region", "Template", "create_plugin_base")
@@ -40,7 +29,6 @@ def create_plugin_base(content_base):
     are ``parent``, ``region`` and ``ordering``.
     """
 
-    @python_2_unicode_compatible
     class PluginBase(models.Model):
         parent = models.ForeignKey(
             content_base,

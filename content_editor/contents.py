@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import warnings
 from itertools import chain
 from operator import attrgetter
