@@ -2,27 +2,29 @@ from django.utils.html import format_html, mark_safe
 from django.views import generic
 
 from content_editor.contents import contents_for_item
-from content_editor.renderer import PluginRenderer
 
-from .models import AbstractRichText, Article, Bla, Download, Page, PageText, RichText
+from .models import AbstractRichText, Article, Download, Page, PageText, RichText
 
 
-renderer = PluginRenderer()
-renderer.register(AbstractRichText, lambda plugin: mark_safe(plugin.text))
-renderer.register(
-    Download,
-    lambda plugin: format_html('<a href="{}">{}</a>', plugin.file, plugin.file),
-)
+def render_items(items):
+    for item in items:
+        if isinstance(item, AbstractRichText):
+            yield mark_safe(item.text)
+        elif isinstance(item, Download):
+            yield format_html('<a href="{}">{}</a>', item.file, item.file)
 
 
 class ArticleView(generic.DetailView):
     model = Article
 
     def get_context_data(self, **kwargs):
+        contents = contents_for_item(self.object, [RichText, Download])
+
         return super(ArticleView, self).get_context_data(
-            content=contents_for_item(
-                self.object, [RichText, Download, Bla]
-            ).render_regions(renderer),
+            content={
+                region.key: mark_safe("".join(render_items(contents[region.key])))
+                for region in self.object.regions
+            },
             **kwargs
         )
 
@@ -31,9 +33,13 @@ class PageView(generic.DetailView):
     model = Page
 
     def get_context_data(self, **kwargs):
+        contents = contents_for_item(
+            self.object, [PageText], inherit_from=filter(None, [self.object.parent])
+        )
         return super(PageView, self).get_context_data(
-            content=contents_for_item(
-                self.object, [PageText], inherit_from=filter(None, [self.object.parent])
-            ).render_regions(renderer),
+            content={
+                region.key: mark_safe("".join(render_items(contents[region.key])))
+                for region in self.object.regions
+            },
             **kwargs
         )

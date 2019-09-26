@@ -4,12 +4,10 @@ from django.core import checks
 from django.db import models
 from django.test import TestCase
 from django.test.utils import isolate_apps
-from django.utils.safestring import mark_safe
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import contents_for_item
-from content_editor.renderer import PluginRenderer
-from testapp.models import Article, Bla, Download, Page, PageText, RichText
+from testapp.models import Article, Download, Page, PageText, RichText
 
 try:
     from django.urls import reverse
@@ -62,14 +60,7 @@ class ContentEditorTest(TestCase):
         # Contents.__len__ also means that a Contents instance may be falsy
         self.assertEqual(len(contents), 2)
         self.assertTrue(contents)
-        self.assertFalse(contents_for_item(article, [Bla]))
-
-        article.testapp_bla_set.create(region="main", ordering=30)
-
-        response = self.client.get(article.get_absolute_url())
-        self.assertContains(
-            response, "<!-- testapp.Bla: testapp.Bla<region=main ordering=30 pk=1> -->"
-        )
+        self.assertFalse(contents_for_item(article, []))
 
     def test_admin(self):
         self.login()
@@ -117,7 +108,7 @@ class ContentEditorTest(TestCase):
         contents = contents_for_item(article, plugins=[RichText])
         self.assertEqual(len(contents._unknown_region_contents), 2)
 
-    def test_hierarchy(self):
+    def test_inheritance(self):
         page = Page.objects.create(title="root")
         child = page.children.create(title="child 1")
 
@@ -214,23 +205,4 @@ class ContentEditorTest(TestCase):
                     id="content_editor.E001",
                 )
             ],
-        )
-
-    def test_rendered_contents(self):
-        article = Article.objects.create(title="Test")
-        article.testapp_richtext_set.create(
-            text="<p>bla</p>", region="main", ordering=10
-        )
-        article.testapp_richtext_set.create(
-            text="<p>blah</p>", region="main", ordering=20
-        )
-
-        renderer = PluginRenderer()
-        renderer.register(RichText, lambda plugin: mark_safe(plugin.text))
-
-        contents = contents_for_item(article, [RichText])
-
-        self.assertEqual("%s" % renderer.render(contents.main), "<p>bla</p><p>blah</p>")
-        self.assertEqual(
-            list(renderer.render(contents.main)), ["<p>bla</p>", "<p>blah</p>"]
         )

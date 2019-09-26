@@ -40,9 +40,7 @@ support for adding rich text and download content blocks.
 
     from django.db import models
 
-    from content_editor.models import (
-        Template, Region, create_plugin_base
-    )
+    from content_editor.models import Region, create_plugin_base
 
 
     class Article(models.Model):
@@ -55,8 +53,7 @@ support for adding rich text and download content blocks.
         # feincms3's TemplateMixin.
         regions = [
             Region(key='main', title='main region'),
-            Region(key='sidebar', title='sidebar region',
-                   inherited=False),
+            Region(key='sidebar', title='sidebar region'),
         ]
 
         def __str__(self):
@@ -106,9 +103,7 @@ edited and ordered.
     from django.contrib import admin
     from django.db import models
 
-    from content_editor.admin import (
-        ContentEditor, ContentEditorInline
-    )
+    from content_editor.admin import ContentEditor, ContentEditorInline
 
     from .models import Article, Richtext, Download
 
@@ -214,72 +209,49 @@ once per inline.
                 });
             }
         );
-
-        // Or maybe something like this is already sufficient for a
-        // simpler scenario:
-        //
-        // $(document).on(
-        //     'content-editor:activate',
-        //     function(event, $row, formsetName) {
-        //         $row.find('textarea.richtext').each(function() {
-        //             CKEDITOR.replace(this.id, CKEDITOR.config);
-        //         });
-        //     }
-        // ).on(
-        //     'content-editor:deactivate',
-        //     function(event, $row, formsetName) {
-        //         $row.find('textarea.richtext').each(function() {
-        //             CKEDITOR.instances[this.id] &&
-        //             CKEDITOR.instances[this.id].destroy();
-        //         });
-        //     }
-        // );
     })(django.jQuery);
 
 
-Here comes the renderer definition and a really short view.
+Here's a possible view implementation:
 
 ``app/views.py``::
 
+    from django.shortcuts import get_object_or_404, render
     from django.utils.html import format_html, mark_safe
-    from django.views import generic
 
-    from content_editor.renderer import PluginRenderer
     from content_editor.contents import contents_for_item
 
     from .models import Article, RichText, Download
 
 
-    renderer = PluginRenderer()
-    renderer.register(
-        RichText,
-        lambda plugin: mark_safe(plugin.text),
-    )
-    renderer.register(
-        Download,
-        lambda plugin: format_html(
-            '<a href="{}">{}</a>',
-            plugin.file.url,
-            plugin.file.name,
-        ),
-    )
+    def render_items(items):
+        for item in items:
+            if isinstance(item, RichText):
+                yield mark_safe(item.text)
+            elif isinstance(item, Download):
+                yield format_html(
+                    '<a href="{}">{}</a>',
+                    item.file.url,
+                    item.file.name,
+                )
 
 
-    class ArticleView(generic.DetailView):
-        model = Article
-
-        def get_context_data(self, **kwargs):
-            contents = contents_for_item(self.object, [RichText, Download])
-            return super(ArticleView, self).get_context_data(
-                content=contents.render_regions(renderer),
-                **kwargs
-            )
+    def article_detail(request, id):
+        article = get_object_or_404(Article, id=id)
+        contents = contents_for_item(article, [RichText, Download])
+        return render(request, "app/article_detail.html", {
+            "article": article,
+            "content": {
+                region.key: mark_safe("".join(render_items(contents[region.key])))
+                for region in article.regions
+            },
+        })
 
 .. note::
 
    The ``TemplatePluginRenderer`` from `feincms3
-   <https://feincms3.readthedocs.io/>`__ also allows rendering plugins
-   with templates, not only with callables.
+   <https://feincms3.readthedocs.io/>`__ offers a more flexible and
+   capable method of rendering plugins.
 
 After the ``render_regions`` call all that's left to do is add the
 content to the template.
@@ -479,45 +451,6 @@ django-tree-queries_ as used in feincms3_)::
         page.ancestors().reverse(),  # Prefer content closer to the
                                      # current page
     )
-
-
-``PluginRenderer`` class
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. note::
-
-   Most real-world use cases are better served by using feincms3_'s
-   ``TemplatePluginRenderer``.
-
-Example::
-
-    renderer = PluginRenderer()
-    # Register renderers -- also handles subclasses
-    # Fallback for unknown plugins is a HTML comment containing the
-    # model label (app.model) and plugin.__str__
-    # The return value of renderers is autoescaped.
-    renderer.register(
-        RichText,
-        lambda plugin: mark_safe(plugin.text))
-    renderer.register(
-        Image,
-        lambda plugin: format_html(
-            '<img src={}" alt="">',
-            plugin.image.url,
-        ))
-
-    article = ...
-    contents = contents_for_item(
-        article,
-        plugins=[RichText, Image])
-
-    return render(request, 'app/article_detail.html', {
-        'object': article,
-        'content': {
-            region.key: renderer.render(contents[region.key])
-            for region in article.regions
-        },
-    })
 
 
 Design decisions

@@ -8,6 +8,9 @@ Change log
 - Changed the minimum versions to Django 1.11 and Python 3.5. Removed
   the dependency on six again.
 - Dropped the ``contents_for_mptt_item`` utility.
+- Dropped the ``PluginRenderer`` -- people should really either use
+  feincms3's ``TemplatePluginRenderer`` or implement a project-specific
+  solution.
 
 
 `1.5`_ (2019-09-26)

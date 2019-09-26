@@ -42,13 +42,6 @@ class Download(ArticlePlugin):
         verbose_name_plural = "downloads"
 
 
-class Bla(ArticlePlugin):
-    """Tests self.__str__ probably? Or something."""
-
-    class Meta:
-        verbose_name = "bla"
-
-
 class Thing(models.Model):
     """Added as inline to article admin to check whether non-ContentEditor
     inlines still work"""

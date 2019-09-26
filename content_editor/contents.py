@@ -49,11 +49,6 @@ class Contents(object):
                 continue
             self._contents[region.key] = contents[region.key]  # Still sorted
 
-    def render_regions(self, renderer):
-        return {
-            region.key: renderer.render(self[region.key]) for region in self._regions
-        }
-
 
 def contents_for_items(items, plugins):
     contents = {item: Contents(item.regions) for item in items}
