@@ -1,14 +1,8 @@
-import warnings
 from itertools import chain
 from operator import attrgetter
 
 
-__all__ = (
-    "Contents",
-    "contents_for_items",
-    "contents_for_item",
-    "contents_for_mptt_item",
-)
+__all__ = ("Contents", "contents_for_items", "contents_for_item")
 
 
 class Contents(object):
@@ -81,16 +75,3 @@ def contents_for_item(item, plugins, inherit_from=None):
     for item in inherit_from:
         contents.inherit_regions(all_contents[item])
     return contents
-
-
-def contents_for_mptt_item(item, plugins):  # pragma: no cover
-    warnings.warn(
-        "contents_for_mptt_item has been deprecated. Call"
-        " contents_for_item(item, plugins, inherit_from=item.get_ancestors("
-        "ascending=True) yourself.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return contents_for_item(
-        item, plugins, inherit_from=item.get_ancestors(ascending=True)
-    )

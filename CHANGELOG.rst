@@ -7,6 +7,7 @@ Change log
 
 - Changed the minimum versions to Django 1.11 and Python 3.5. Removed
   the dependency on six again.
+- Dropped the ``contents_for_mptt_item`` utility.
 
 
 `1.5`_ (2019-09-26)
