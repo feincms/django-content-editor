@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+
+`1.5`_ (2019-09-26)
+===================
+
 - Added an additional check to avoid processing inlines not managed by
   the content editor.
 - Allowed uncollapsing tabbed fieldsets after page load by specifying
@@ -210,4 +214,5 @@ Initial public release of django-content-editor.
 .. _1.2: https://github.com/matthiask/django-content-editor/compare/1.1.0...1.2
 .. _1.3: https://github.com/matthiask/django-content-editor/compare/1.2...1.3
 .. _1.4: https://github.com/matthiask/django-content-editor/compare/1.3...1.4
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.4...master
+.. _1.5: https://github.com/matthiask/django-content-editor/compare/1.4...1.5
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/1.5...master
