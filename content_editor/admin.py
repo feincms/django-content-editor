@@ -7,7 +7,6 @@ from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
-from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.utils.translation import gettext
 
@@ -133,7 +132,7 @@ class ContentEditor(ModelAdmin):
             plugins.append(
                 {
                     "key": "{}_{}".format(meta.app_label, meta.model_name),
-                    "title": capfirst(force_text(meta.verbose_name)),
+                    "title": capfirst(str(meta.verbose_name)),
                     "regions": list(regions) if regions else None,
                     "prefix": iaf.formset.prefix,
                 }
@@ -141,7 +140,7 @@ class ContentEditor(ModelAdmin):
         regions = [
             {
                 "key": region.key,
-                "title": force_text(region.title),
+                "title": str(region.title),
                 "inherited": region.inherited,
                 # TODO correct template when POSTing?
             }
