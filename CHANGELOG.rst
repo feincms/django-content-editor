@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+- Added Django 3.0 to the test matrix.
+
+
 `2.0`_ (2019-11-11)
 ===================
 
