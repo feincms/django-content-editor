@@ -6,7 +6,9 @@ Change log
 ===============
 
 - Added Django 3.0 and 3.1a1 to the test matrix.
-- Dropped support for Django<2.2 and Python<3.5.
+- Dropped Django 2.0 and 2.1.
+- Fixed a problem where the content editor JavaScript code would produce
+  an invalid ``action`` upon submit.
 
 
 `2.0`_ (2019-11-11)
