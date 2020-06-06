@@ -5,8 +5,11 @@ Change log
 `Next version`_
 ===============
 
+`3.0`_ (2020-06-06)
+===================
+
 - Added Django 3.0 and 3.1a1 to the test matrix.
-- Dropped Django 2.0 and 2.1.
+- Dropped Django 1.11, 2.0 and 2.1.
 - Fixed a problem where the content editor JavaScript code would produce
   an invalid ``action`` upon submit.
 
@@ -232,4 +235,5 @@ Initial public release of django-content-editor.
 .. _1.4: https://github.com/matthiask/django-content-editor/compare/1.3...1.4
 .. _1.5: https://github.com/matthiask/django-content-editor/compare/1.4...1.5
 .. _2.0: https://github.com/matthiask/django-content-editor/compare/1.5...2.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/2.0...master
+.. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/3.0...master
