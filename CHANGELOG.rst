@@ -5,7 +5,8 @@ Change log
 `Next version`_
 ===============
 
-- Added Django 3.0 to the test matrix.
+- Added Django 3.0 and 3.1a1 to the test matrix.
+- Dropped support for Django<2.2 and Python<3.5.
 
 
 `2.0`_ (2019-11-11)
