@@ -477,7 +477,7 @@ django.jQuery(function($) {
   // Try to keep the current region tab (location hash).
   $("form").submit(function() {
     var form = $(this);
-    form.attr("action", form.attr("action") + window.location.hash);
+    form.attr("action", (form.attr("action") || "") + window.location.hash);
     return true;
   });
 
