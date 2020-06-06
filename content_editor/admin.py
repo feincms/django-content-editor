@@ -1,6 +1,6 @@
 import json
 
-from django import forms, VERSION
+from django import forms
 from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
@@ -65,11 +65,10 @@ class ContentEditorInline(StackedInline):
     editor uses the type to differentiate between plugins and other inlines.
     """
 
+    checks_class = ContentEditorInlineChecks
     extra = 0
     fk_name = "parent"
     regions = None
-    if VERSION > (1, 9):  # pragma: no cover
-        checks_class = ContentEditorInlineChecks
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
@@ -109,8 +108,7 @@ class ContentEditor(ModelAdmin):
     the standard ``ModelAdmin`` class.
     """
 
-    if VERSION > (1, 9):  # pragma: no cover
-        checks_class = ContentEditorChecks
+    checks_class = ContentEditorChecks
 
     def _content_editor_context(self, request, context):
         instance = context.get("original")
