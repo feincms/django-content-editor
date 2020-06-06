@@ -4,15 +4,11 @@ from django.core import checks
 from django.db import models
 from django.test import TestCase
 from django.test.utils import isolate_apps
+from django.urls import reverse
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import contents_for_item
 from testapp.models import Article, Download, Page, PageText, RichText
-
-try:
-    from django.urls import reverse
-except ImportError:  # pragma: no cover
-    from django.core.urlresolvers import reverse
 
 
 class ContentEditorTest(TestCase):
