@@ -1,5 +1,5 @@
 /* global django */
-django.jQuery(function($) {
+django.jQuery(function ($) {
   var tabbed = $(".tabbed");
   if (tabbed.length > 1) {
     tabbed
@@ -36,7 +36,7 @@ django.jQuery(function($) {
       $modules.append($old);
     });
 
-    $tabs.on("click", "[data-index]", function() {
+    $tabs.on("click", "[data-index]", function () {
       var $tab = $(this);
       if ($tab.hasClass("active")) {
         $tab.removeClass("active");
