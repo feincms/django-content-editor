@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+- Added highlighting of the current content block in the editor.
+- Added focussing of the first input field of new content blocks.
+
+
 `3.0`_ (2020-06-06)
 ===================
 
