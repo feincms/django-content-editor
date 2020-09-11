@@ -375,6 +375,8 @@ django.jQuery(function ($) {
     machineEmptyMessage.addClass("hidden");
 
     $(document).trigger("content-editor:activate", [row]);
+
+    row.find("input, select, textarea").first().focus();
   });
 
   $(document).on("formset:removed", function resetInlines(
