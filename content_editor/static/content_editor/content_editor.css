@@ -93,10 +93,24 @@ html {
 
 .order-machine .inline-related fieldset {
   /* Animate out of view REAL FAST */
-  transition: max-height 0.3s cubic-bezier(0, 1.05, 0, 1);
+  transition: max-height 0.3s cubic-bezier(0, 1.05, 0, 1), background 0.3s;
   max-height: 2000px;
   overflow: hidden;
   position: relative;
+}
+
+.order-machine .inline-related {
+  transition: border 0.3s;
+}
+
+.order-machine .inline-related:hover,
+.order-machine .inline-related:focus-within {
+  border-color: #999;
+}
+
+.order-machine .inline-related fieldset:hover,
+.order-machine .inline-related fieldset:focus-within {
+  background: #f6f6f9;
 }
 
 .order-machine .inline-related.for-deletion fieldset,
