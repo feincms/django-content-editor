@@ -50,6 +50,12 @@ html {
   border: var(--ce-border);
   font-size: 13px;
   font-weight: normal;
+  user-select: none;
+  transition: 0.2s background;
+}
+
+.tabs > .toggle:hover {
+  background: var(--ce-grey-bg);
 }
 
 .order-machine {
@@ -75,7 +81,7 @@ html {
   font-weight: normal;
   padding: 7px 7px 7px 23px;
   background-color: var(--ce-grey-bg);
-  transition: 0.3s background, 0.3s color;
+  transition: 0.2s background, 0.2s color;
 
   cursor: move;
   white-space: nowrap;
@@ -102,14 +108,14 @@ html {
 
 .order-machine .inline-related fieldset {
   /* Animate out of view REAL FAST */
-  transition: max-height 0.3s cubic-bezier(0, 1.05, 0, 1), background 0.3s;
+  transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1), background 0.2s;
   max-height: 2000px;
   overflow: hidden;
   position: relative;
 }
 
 .order-machine .inline-related {
-  transition: border 0.3s;
+  transition: border 0.2s;
 }
 
 .order-machine .inline-related:hover > h3,
