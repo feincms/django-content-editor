@@ -13,6 +13,8 @@ Change log
 - Fixed a long-standing bug where dropping a content block on top of
   e.g. a CKEditor instance wouldn't actually move the dragged block to
   the new position.
+- Changed the JavaScript code to also handle Ctrl-S, not just Cmd-S to
+  save; modified the event handler to always save and continue.
 
 
 `3.0`_ (2020-06-06)

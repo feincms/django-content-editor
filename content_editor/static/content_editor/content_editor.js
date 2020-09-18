@@ -487,10 +487,8 @@ django.jQuery(function ($) {
 
   // Cmd-S and Escape behavior.
   $(document).keydown(function handleKeys(event) {
-    if (event.which == 83 && event.metaKey) {
-      $(
-        "form input[name=" + (event.shiftKey ? "_continue" : "_save") + "]"
-      ).click();
+    if (event.which == 83 && (event.metaKey || event.ctrlKey)) {
+      $("form input[name=_continue]").click();
       return false;
     } else if (event.which == 27) {
       // TODO cancel an ongoing drag.
