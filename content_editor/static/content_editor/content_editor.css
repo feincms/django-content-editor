@@ -1,48 +1,53 @@
 html {
   overflow-y: scroll;
+
+  /* Reuse Django's colors */
+  --ce-blue-bg: #79aec8;
+  --ce-grey-bg: #f8f8f8;
+  --ce-red: #ba2121;
+  --ce-border: 1px solid #eee;
+  --ce-title: #666;
 }
-.clearfix {
-  *zoom: 1;
-}
-.clearfix:before,
-.clearfix:after {
-  content: " ";
+
+.clearfix::after {
+  content: "";
   display: table;
-}
-.clearfix:after {
   clear: both;
 }
 
-.tabs > * {
+.tabs > .tab {
+  text-transform: none;
+  letter-spacing: 0;
   float: left;
   padding: 10px 15px;
   margin: 0 4px 0 0;
   cursor: pointer;
   font-weight: bold;
   font-size: 13px;
-  color: #666;
-  background: #f6f6f6;
-  border: 1px solid #eee;
+  color: var(--ce-title);
+  background: var(--ce-grey-bg);
+  border: var(--ce-border);
   border-bottom: none;
+  user-select: none;
+}
+
+.tabs > .active {
+  background: var(--ce-blue-bg);
+  color: white;
 }
 
 .tabs > [data-region="_unknown_"],
 .tabs > .has-error {
-  border-color: #ba2121;
-  color: #ba2121;
-}
-
-.tabs > .active {
-  background: #79aec8;
-  color: white;
-  border-color: #79aec8;
+  border-color: var(--ce-red);
+  color: var(--ce-red);
+  background: var(--ce-grey-bg);
 }
 
 .tabs > .toggle {
   float: right;
   margin: 4px 0 0 0;
   padding: 6px 10px;
-  border: 1px solid #eee;
+  border: var(--ce-border);
   font-size: 13px;
   font-weight: normal;
 }
@@ -50,25 +55,27 @@ html {
 .order-machine {
   clear: both;
   padding: 0 10px 10px 10px;
-  border: 1px solid #eee;
+  border: var(--ce-border);
   border-bottom: none;
   position: relative;
-  background: #fafafa;
 
   display: flex;
   flex-flow: column nowrap;
 }
 
 .order-machine .inline-related {
-  border: 1px solid #eee;
+  border: var(--ce-border);
+  border-bottom: 0;
   margin-top: 10px;
 }
 
 .order-machine .inline-related > h3 {
   border-top: none;
-  font-size: 15px;
-  padding: 7px 7px 7px 10px;
-  background: #f0f0f0;
+  font-size: 13px;
+  font-weight: normal;
+  padding: 7px 7px 7px 23px;
+  background-color: var(--ce-grey-bg);
+  transition: 0.3s background, 0.3s color;
 
   cursor: move;
   white-space: nowrap;
@@ -76,19 +83,21 @@ html {
   text-overflow: ellipsis;
 }
 
+.order-machine .inline-related > h3[draggable] {
+  background-repeat: no-repeat;
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJtZGktZHJhZy12ZXJ0aWNhbCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNhYWEiIGQ9Ik05LDNIMTFWNUg5VjNNMTMsM0gxNVY1SDEzVjNNOSw3SDExVjlIOVY3TTEzLDdIMTVWOUgxM1Y3TTksMTFIMTFWMTNIOVYxMU0xMywxMUgxNVYxM0gxM1YxMU05LDE1SDExVjE3SDlWMTVNMTMsMTVIMTVWMTdIMTNWMTVNOSwxOUgxMVYyMUg5VjE5TTEzLDE5SDE1VjIxSDEzVjE5WiIgLz48L3N2Zz4=");
+  background-position: 0 2px;
+}
+
 /* Replace the broken content type counter for new contents with a "new" label */
 .order-machine .last-related .inline_label {
-  color: transparent;
-}
-.order-machine .last-related .inline_label:before {
-  color: #666;
   content: "new";
 }
 
 .order-machine .delete {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 7px;
+  right: 7px;
 }
 
 .order-machine .inline-related fieldset {
@@ -103,14 +112,15 @@ html {
   transition: border 0.3s;
 }
 
-.order-machine .inline-related:hover,
-.order-machine .inline-related:focus-within {
-  border-color: #999;
+.order-machine .inline-related:hover > h3,
+.order-machine .inline-related:focus-within > h3 {
+  color: white;
+  background-color: var(--ce-blue-bg);
 }
 
-.order-machine .inline-related fieldset:hover,
-.order-machine .inline-related fieldset:focus-within {
-  background: #f6f6f9;
+.order-machine .inline-related:hover .delete label,
+.order-machine .inline-related:focus-within .delete label {
+  color: white;
 }
 
 .order-machine .inline-related.for-deletion fieldset,
@@ -123,26 +133,17 @@ html {
   text-align: center;
 }
 
-/* Used when dragging */
-.placeholder {
-  height: 34px;
-  margin: 10px 0 0 0;
-  border: none;
-  opacity: 0.3;
-  background: #79aec8;
-}
-
 .machine-control {
   padding: 5px 10px 5px 0;
-  border: 1px solid #eee;
-  background: #f8f8f8;
+  border: var(--ce-border);
+  background: var(--ce-grey-bg);
   height: 55px;
 }
 
 .control-unit {
   float: left;
   padding: 0 15px;
-  border-left: 1px solid #eee;
+  border-left: var(--ce-border);
   height: 55px;
 }
 
@@ -173,12 +174,17 @@ html {
 }
 
 /* tabbed_fieldsets.js support */
+#tabbed .tabs {
+  border-bottom: var(--ce-border);
+}
+
 #tabbed .modules {
   margin-bottom: 30px;
 }
 
 #tabbed .module {
-  border: 1px solid #eee;
+  border: var(--ce-border);
+  border-top: none;
   margin-bottom: 0;
 }
 
@@ -197,6 +203,19 @@ html {
   margin: 0 !important;
 }
 
+/* Used when dragging */
+.placeholder {
+  height: 34px;
+  margin: 10px 0 0 0;
+  border: none;
+  opacity: 0.3;
+  background: #79aec8;
+}
+
+.order-machine .inline-related {
+  position: relative;
+}
+
 .fs-dragging {
   opacity: 0.5;
 }
@@ -210,6 +229,17 @@ html {
   top: -8px;
   height: 4px;
   background: #79aec8;
+}
+
+.fs-dragover::after {
+  /* Cover fieldset with an overlay so that widgets do not swallow events */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
 }
 
 @media screen and (max-width: 767px) {

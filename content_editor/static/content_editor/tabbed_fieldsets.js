@@ -1,15 +1,18 @@
 /* global django */
 django.jQuery(function ($) {
   var tabbed = $(".tabbed");
-  if (tabbed.length > 1) {
-    tabbed
-      .eq(0)
-      .before(
-        '<div id="tabbed" class="clearfix">' +
-          '<div class="tabs clearfix"></div>' +
-          '<div class="modules"></div>' +
-          "</div>"
-      );
+  if (tabbed.length >= 1) {
+    var anchor = tabbed.eq(0);
+    /* Break out of the .inline-related containment, avoids ugly h3's */
+    if (anchor.parents(".inline-related").length) {
+      anchor = anchor.parents(".inline-related");
+    }
+    anchor.before(
+      '<div id="tabbed" class="clearfix">' +
+        '<div class="tabs clearfix"></div>' +
+        '<div class="modules"></div>' +
+        "</div>"
+    );
 
     var $tabs = $("#tabbed > .tabs"),
       $modules = $("#tabbed > .modules"),
@@ -29,6 +32,7 @@ django.jQuery(function ($) {
       }
 
       $title.attr("data-index", index);
+      $title.addClass("tab");
       $tabs.append($title);
 
       $old.addClass("content-editor-hidden");

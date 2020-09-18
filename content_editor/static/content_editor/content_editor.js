@@ -366,6 +366,7 @@ django.jQuery(function ($) {
     if (!ContentEditor.prefixToKey[formsetName]) return;
 
     row.find(".field-region input").val(ContentEditor.currentRegion);
+    row.find("h3 .inline_label").text(ContentEditor.messages.newItem);
     row.attr("data-region", ContentEditor.currentRegion);
 
     setBiggestOrdering(row);
@@ -415,6 +416,7 @@ django.jQuery(function ($) {
     var tabContainer = $(".tabs.regions");
     for (var i = 0; i < ContentEditor.regions.length; i++) {
       var t = document.createElement("h2");
+      t.className = "tab";
       t.textContent = ContentEditor.regions[i].title;
       t.setAttribute("data-region", ContentEditor.regions[i].key);
       tabContainer.append(t);

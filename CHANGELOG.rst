@@ -7,6 +7,12 @@ Change log
 
 - Added highlighting of the current content block in the editor.
 - Added focussing of the first input field of new content blocks.
+- Added a dragging affordance to content blocks.
+- Made hovered and focussed content blocks stand out more.
+- Fixed styling problems when using tabbed fieldsets with inlines.
+- Fixed a long-standing bug where dropping a content block on top of
+  e.g. a CKEditor instance wouldn't actually move the dragged block to
+  the new position.
 
 
 `3.0`_ (2020-06-06)
