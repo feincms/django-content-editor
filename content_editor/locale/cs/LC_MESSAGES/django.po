@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-18 09:27+0200\n"
+"POT-Creation-Date: 2020-09-18 10:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,9 +43,14 @@ msgstr ""
 
 #: admin.py:156
 #, fuzzy
-#| msgid "template contents"
-msgid "Show/hide contents"
-msgstr "šablonové obsahy"
+#| msgid "Collapse tree"
+msgid "Collapse all items"
+msgstr "Rozbal strom"
+
+#, fuzzy
+#~| msgid "template contents"
+#~ msgid "Show/hide contents"
+#~ msgstr "šablonové obsahy"
 
 #~ msgid "All"
 #~ msgstr "vše"
@@ -613,9 +618,6 @@ msgstr "šablonové obsahy"
 
 #~ msgid "Shortcuts"
 #~ msgstr "Zkratky"
-
-#~ msgid "Collapse tree"
-#~ msgstr "Rozbal strom"
 
 #~ msgid "Expand tree"
 #~ msgstr "Zabal strom"

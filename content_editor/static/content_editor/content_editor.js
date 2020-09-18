@@ -81,9 +81,9 @@ django.jQuery(function ($) {
   // we even have any plugins.
   $(".inline-group:first").before(
     '<div class="tabs regions">' +
-      '<button type="button" class="toggle">' +
+      '<label class="toggle"><input type="checkbox" /> ' +
       ContentEditor.messages.toggle +
-      "</button>" +
+      "</label>" +
       "</div>" +
       '<div class="module">' +
       '<div class="order-machine"></div><div class="machine-control"></div>' +
@@ -451,8 +451,11 @@ django.jQuery(function ($) {
       tabs.eq(0).click();
     }
 
-    tabContainer.find(".toggle").on("click", function () {
-      $(".order-machine .inline-related").toggleClass("collapsed");
+    tabContainer.find(".toggle input").on("change", function () {
+      $(".order-machine .inline-related").toggleClass(
+        "collapsed",
+        this.checked
+      );
     });
   })();
 
@@ -477,6 +480,10 @@ django.jQuery(function ($) {
       }
     }
   );
+
+  orderMachine.on("dblclick", "h3", function toggleCollapsed() {
+    $(this).parents(".inline-related").toggleClass("collapsed");
+  });
 
   // Try to keep the current region tab (location hash).
   $("form").submit(function () {

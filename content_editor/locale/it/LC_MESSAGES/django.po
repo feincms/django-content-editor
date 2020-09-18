@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-18 09:27+0200\n"
+"POT-Creation-Date: 2020-09-18 10:11+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/feincms/language/"
@@ -43,10 +43,13 @@ msgid "Unknown region"
 msgstr ""
 
 #: admin.py:156
+msgid "Collapse all items"
+msgstr ""
+
 #, fuzzy
-#| msgid "raw contents"
-msgid "Show/hide contents"
-msgstr "raw contenuti"
+#~| msgid "raw contents"
+#~ msgid "Show/hide contents"
+#~ msgstr "raw contenuti"
 
 #~ msgid "All"
 #~ msgstr "Tutto"

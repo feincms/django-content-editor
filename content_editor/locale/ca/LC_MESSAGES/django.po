@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-18 09:27+0200\n"
+"POT-Creation-Date: 2020-09-18 10:11+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Catalan (http://www.transifex.com/projects/p/feincms/language/"
@@ -45,9 +45,14 @@ msgstr ""
 
 #: admin.py:156
 #, fuzzy
-#| msgid "template contents"
-msgid "Show/hide contents"
-msgstr "plantilles de continguts"
+#| msgid "Collapse tree"
+msgid "Collapse all items"
+msgstr "Tancar l'arbre"
+
+#, fuzzy
+#~| msgid "template contents"
+#~ msgid "Show/hide contents"
+#~ msgstr "plantilles de continguts"
 
 #~ msgid "All"
 #~ msgstr "Tots"
@@ -573,9 +578,6 @@ msgstr "plantilles de continguts"
 
 #~ msgid "Shortcuts"
 #~ msgstr "Dreceres"
-
-#~ msgid "Collapse tree"
-#~ msgstr "Tancar l'arbre"
 
 #~ msgid "Expand tree"
 #~ msgstr "Expandir l'arbre"

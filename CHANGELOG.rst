@@ -15,6 +15,11 @@ Change log
   the new position.
 - Changed the JavaScript code to also handle Ctrl-S, not just Cmd-S to
   save; modified the event handler to always save and continue.
+- Replaced the collapse-all button with a checkbox to make it clearer
+  what the state is.
+- Allowed collapsing individual content blocks by doubleclicking the
+  title. This may change in the future (as all things) because it's not
+  discoverable at all.
 
 
 `3.0`_ (2020-06-06)
