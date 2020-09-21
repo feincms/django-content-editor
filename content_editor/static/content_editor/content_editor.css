@@ -1,12 +1,5 @@
 html {
   overflow-y: scroll;
-
-  /* Reuse Django's colors */
-  --ce-blue-bg: #79aec8;
-  --ce-grey-bg: #f8f8f8;
-  --ce-red: #ba2121;
-  --ce-border: 1px solid #eee;
-  --ce-title: #666;
 }
 
 .clearfix::after {
@@ -24,30 +17,34 @@ html {
   cursor: pointer;
   font-weight: bold;
   font-size: 13px;
-  color: var(--ce-title);
-  background: var(--ce-grey-bg);
-  border: var(--ce-border);
+  color: var(--body-quiet-color, #666);
+  background: var(--darkened-bg, #f8f8f8);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
   user-select: none;
 }
 
 .tabs > .active {
-  background: var(--ce-blue-bg);
+  background: var(--button-bg, #79aec8);
   color: white;
+}
+
+.tabs > .active:hover {
+  background: var(--button-hover-bg, #609ab6);
 }
 
 .tabs > [data-region="_unknown_"],
 .tabs > .has-error {
-  border-color: var(--ce-red);
-  color: var(--ce-red);
-  background: var(--ce-grey-bg);
+  border-color: var(--error-fg, #ba2121);
+  color: var(--error-fg, #ba2121);
+  background: var(--darkened-bg, #f8f8f8);
 }
 
 .tabs > .toggle {
   float: right;
   margin: 4px 0 0 0;
   padding: 6px 10px;
-  border: var(--ce-border);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   font-size: 13px;
   font-weight: normal;
   user-select: none;
@@ -55,13 +52,13 @@ html {
 }
 
 .tabs > .toggle:hover {
-  background: var(--ce-grey-bg);
+  background: var(--darkened-bg, #f8f8f8);
 }
 
 .order-machine {
   clear: both;
   padding: 0 10px 10px 10px;
-  border: var(--ce-border);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
   position: relative;
 
@@ -70,7 +67,7 @@ html {
 }
 
 .order-machine .inline-related {
-  border: var(--ce-border);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: 0;
   margin-top: 10px;
 }
@@ -80,7 +77,7 @@ html {
   font-size: 13px;
   font-weight: normal;
   padding: 7px 7px 7px 23px;
-  background-color: var(--ce-grey-bg);
+  background-color: var(--darkened-bg, #f8f8f8);
   transition: 0.2s background, 0.2s color;
 
   cursor: move;
@@ -121,7 +118,7 @@ html {
 .order-machine .inline-related:hover > h3,
 .order-machine .inline-related:focus-within > h3 {
   color: white;
-  background-color: var(--ce-blue-bg);
+  background-color: var(--button-bg, #79aec8);
 }
 
 .order-machine .inline-related:hover .delete label,
@@ -141,15 +138,15 @@ html {
 
 .machine-control {
   padding: 5px 10px 5px 0;
-  border: var(--ce-border);
-  background: var(--ce-grey-bg);
+  border: 1px solid var(--hairline-color, #e8e8e8);
+  background: var(--darkened-bg, #f8f8f8);
   height: 55px;
 }
 
 .control-unit {
   float: left;
   padding: 0 15px;
-  border-left: var(--ce-border);
+  border-left: 1px solid var(--hairline-color, #e8e8e8);
   height: 55px;
 }
 
@@ -181,7 +178,7 @@ html {
 
 /* tabbed_fieldsets.js support */
 #tabbed .tabs {
-  border-bottom: var(--ce-border);
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
 }
 
 #tabbed .modules {
@@ -189,7 +186,7 @@ html {
 }
 
 #tabbed .module {
-  border: var(--ce-border);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   border-top: none;
   margin-bottom: 0;
 }

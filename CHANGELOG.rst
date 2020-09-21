@@ -20,6 +20,8 @@ Change log
 - Allowed collapsing individual content blocks by doubleclicking the
   title. This may change in the future (as all things) because it's not
   discoverable at all.
+- Changed CSS variables to use the same names as `django-variable-admin
+  <https://github.com/matthiask/django-variable-admin/>`__.
 
 
 `3.0`_ (2020-06-06)
