@@ -492,16 +492,6 @@ django.jQuery(function ($) {
     return true;
   });
 
-  // Cmd-S and Escape behavior.
-  $(document).keydown(function handleKeys(event) {
-    if (event.which == 83 && (event.metaKey || event.ctrlKey)) {
-      $("form input[name=_continue]").click();
-      return false;
-    } else if (event.which == 27) {
-      // TODO cancel an ongoing drag.
-      // orderMachine.sortable("cancel");
-    }
-  });
   (function buildPluginDropdown() {
     var select = buildDropdown(
       ContentEditor.plugins,

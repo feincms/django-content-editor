@@ -163,6 +163,7 @@ class ContentEditor(ModelAdmin):
             css={"all": ["content_editor/content_editor.css"]},
             js=[
                 "admin/js/jquery.init.js",
+                "content_editor/save_shortcut.js",
                 "content_editor/tabbed_fieldsets.js",
                 JS(
                     "content_editor/content_editor.js",

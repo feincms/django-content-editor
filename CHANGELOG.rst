@@ -22,6 +22,9 @@ Change log
   discoverable at all.
 - Changed CSS variables to use the same names as `django-variable-admin
   <https://github.com/matthiask/django-variable-admin/>`__.
+- Moved the ``Ctrl-S`` and ``Cmd-S`` shortcut handling into its own
+  ``content_editor/save_shortcut.js`` static file to allow easier reuse
+  in other model admin classes.
 
 
 `3.0`_ (2020-06-06)
