@@ -40,7 +40,9 @@ Example: articles with rich text plugins
 First comes a models file which defines a simple article model with
 support for adding rich text and download content blocks.
 
-``app/models.py``::
+``app/models.py``:
+
+.. code-block:: python
 
     from django.db import models
 
@@ -101,7 +103,9 @@ should be treated a bit differently, that is, the content blocks should
 be added to the content editor where inlines of different types can be
 edited and ordered.
 
-``app/admin.py``::
+``app/admin.py``:
+
+.. code-block:: python
 
     from django import forms
     from django.contrib import admin
@@ -159,7 +163,9 @@ when dropped. Because of this you should listen for those signals.
 Note that it is *not guaranteed* that the former event is only emitted
 once per inline.
 
-``app/static/app/plugin_ckeditor.js``::
+``app/static/app/plugin_ckeditor.js``:
+
+.. code-block:: javascript
 
     /* global django, CKEDITOR */
     (function($) {
@@ -218,7 +224,9 @@ once per inline.
 
 Here's a possible view implementation:
 
-``app/views.py``::
+``app/views.py``:
+
+.. code-block:: python
 
     from django.shortcuts import get_object_or_404, render
     from django.utils.html import format_html, mark_safe
@@ -260,7 +268,9 @@ Here's a possible view implementation:
 After the ``render_regions`` call all that's left to do is add the
 content to the template.
 
-``app/templates/app/article_detail.html``::
+``app/templates/app/article_detail.html``:
+
+.. code-block:: html+django
 
     <article>
         <h1>{{ article }}</h1>
@@ -276,7 +286,9 @@ Finally, ensure that ``content_editor`` and ``app`` are added to your
 If you also want nice icons to add new items, you might want to use
 `font awesome`_ and the following snippets:
 
-``app/admin.py``::
+``app/admin.py``:
+
+.. code-block:: python
 
     from content_editor.admin import ContentEditor, ContentEditorInline
     from js_asset import JS
@@ -300,7 +312,9 @@ If you also want nice icons to add new items, you might want to use
             )
 
 
-``app/plugin_buttons.js``::
+``app/plugin_buttons.js``:
+
+.. code-block:: javascript
 
     (function($) {
         $(document).on("content-editor:ready", function() {
@@ -379,7 +393,9 @@ page tree inherits some aside-content from its ancestors.
    The ``Contents`` class and the helpers replace the monolithic
    ``ContentProxy`` concept in FeinCMS_.
 
-Simple usage is as follows::
+Simple usage is as follows:
+
+.. code-block:: python
 
     from content_editor.contents import Contents
 
@@ -417,7 +433,9 @@ directly:
 ``contents_for_items``
 ----------------------
 
-Returns a contents instance for a list of main models::
+Returns a contents instance for a list of main models:
+
+.. code-block:: python
 
     articles = Article.objects.all()[:10]
     contents = contents_for_items(
@@ -435,7 +453,9 @@ Returns a contents instance for a list of main models::
 ---------------------
 
 Returns the contents instance for a given main model (note that this
-helper calls ``contents_for_items`` to do the real work)::
+helper calls ``contents_for_items`` to do the real work):
+
+.. code-block:: python
 
     # ...
     contents = contents_for_item(
@@ -446,7 +466,9 @@ helper calls ``contents_for_items`` to do the real work)::
 It is also possible to add additional items for inheriting regions.
 This is most useful with a page tree where i.e. sidebar contents are
 inherited from ancestors (this example uses methods added by
-django-tree-queries_ as used in feincms3_)::
+django-tree-queries_ as used in feincms3_):
+
+.. code-block:: python
 
     page = ...
     contents = contents_for_item(
