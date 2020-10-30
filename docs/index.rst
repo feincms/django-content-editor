@@ -9,6 +9,10 @@ Version |release|
 
 **Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
+.. figure:: _static/django-content-editor.png
+
+   The content editing interface.
+
 Django's builtin admin application provides a really good and usable
 administration interface for creating and updating content.
 ``django-content-editor`` extends Django's inlines mechanism with an
