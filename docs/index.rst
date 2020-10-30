@@ -56,8 +56,8 @@ support for adding rich text and download content blocks.
         # different regions depending on other factors have a look at
         # feincms3's TemplateMixin.
         regions = [
-            Region(key='main', title='main region'),
-            Region(key='sidebar', title='sidebar region'),
+            Region(key="main", title="main region"),
+            Region(key="sidebar", title="sidebar region"),
         ]
 
         def __str__(self):
@@ -82,16 +82,16 @@ support for adding rich text and download content blocks.
         text = models.TextField(blank=True)
 
         class Meta:
-            verbose_name = 'rich text'
-            verbose_name_plural = 'rich texts'
+            verbose_name = "rich text"
+            verbose_name_plural = "rich texts"
 
 
     class Download(ArticlePlugin):
-        file = models.FileField(upload_to='downloads/%Y/%m/')
+        file = models.FileField(upload_to="downloads/%Y/%m/")
 
         class Meta:
-            verbose_name = 'download'
-            verbose_name_plural = 'downloads'
+            verbose_name = "download"
+            verbose_name_plural = "downloads"
 
 
 Next, the admin integration. Plugins are integrated as
@@ -117,7 +117,7 @@ edited and ordered.
             # Provide class so that the code in plugin_ckeditor.js knows
             # which text areas should be enhanced with a rich text
             # control:
-            default_attrs = {'class': 'richtext'}
+            default_attrs = {"class": "richtext"}
             if attrs:
                 default_attrs.update(attrs)
             super(RichTextarea, self).__init__(default_attrs)
@@ -126,14 +126,14 @@ edited and ordered.
     class RichTextInline(ContentEditorInline):
         model = RichText
         formfield_overrides = {
-            models.TextField: {'widget': RichTextarea},
+            models.TextField: {"widget": RichTextarea},
         }
-        regions = ['main']  # We only want rich texts in "main" region.
+        regions = ["main"]  # We only want rich texts in "main" region.
 
         class Media:
             js = (
-                '//cdn.ckeditor.com/4.5.6/standard/ckeditor.js',
-                'app/plugin_ckeditor.js',
+                "//cdn.ckeditor.com/4.5.6/standard/ckeditor.js",
+                "app/plugin_ckeditor.js",
             )
 
     admin.site.register(
@@ -165,50 +165,50 @@ once per inline.
     (function($) {
 
         /* Improve spacing */
-        var style = document.createElement('style');
-        style.type = 'text/css';
+        var style = document.createElement("style");
+        style.type = "text/css";
         style.innerHTML = "div[id*='cke_id_'] {margin-left:170px;}";
-        $('head').append(style);
+        $("head").append(style);
 
-        CKEDITOR.config.width = '787';
-        CKEDITOR.config.height= '300';
-        CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4;pre';
+        CKEDITOR.config.width = "787";
+        CKEDITOR.config.height= "300";
+        CKEDITOR.config.format_tags = "p;h1;h2;h3;h4;pre";
         CKEDITOR.config.toolbar = [[
-            'Maximize','-',
-            'Format','-',
-            'Bold','Italic','Underline','Strike','-',
-            'Subscript','Superscript','-',
-            'NumberedList','BulletedList','-',
-            'Anchor','Link','Unlink','-',
-            'Source'
+            "Maximize","-",
+            "Format","-",
+            "Bold","Italic","Underline","Strike","-",
+            "Subscript","Superscript","-",
+            "NumberedList","BulletedList","-",
+            "Anchor","Link","Unlink","-",
+            "Source"
         ]];
 
         // Activate and deactivate the CKEDITOR because it does not like
         // getting dragged or its underlying ID changed.
-        // The 'data-processed' attribute is set for compatibility with
+        // The "data-processed" attribute is set for compatibility with
         // django-ckeditor. (Respectively to prevent django-ckeditor's
         // ckeditor-init.js from initializing CKEditor again.)
 
         $(document).on(
-            'content-editor:activate',
+            "content-editor:activate",
             function(event, $row, formsetName) {
-                $row.find('textarea[data-type=ckeditortype]').each(function() {
-                    if (this.getAttribute('data-processed') != '1') {
-                        this.setAttribute('data-processed', '1')
-                        $($(this).data('external-plugin-resources')).each(function(){
+                $row.find("textarea[data-type=ckeditortype]").each(function() {
+                    if (this.getAttribute("data-processed") != "1") {
+                        this.setAttribute("data-processed", "1")
+                        $($(this).data("external-plugin-resources")).each(function(){
                             CKEDITOR.plugins.addExternal(this[0], this[1], this[2]);
                         });
-                        CKEDITOR.replace(this.id, $(this).data('config'));
+                        CKEDITOR.replace(this.id, $(this).data("config"));
                     }
                 });
             }
         ).on(
-            'content-editor:deactivate',
+            "content-editor:deactivate",
             function(event, $row, formsetName) {
-                $row.find('textarea[data-type=ckeditortype]').each(function() {
+                $row.find("textarea[data-type=ckeditortype]").each(function() {
                     try {
                         CKEDITOR.instances[this.id] && CKEDITOR.instances[this.id].destroy();
-                        this.setAttribute('data-processed', '0')
+                        this.setAttribute("data-processed", "0")
                     } catch(err) {}
                 });
             }
@@ -291,25 +291,25 @@ If you also want nice icons to add new items, you might want to use
 
         class Media:
             js = (
-                JS('https://use.fontawesome.com/releases/v5.0.10/js/all.js', {
-                    'defer': 'defer',
-                    'integrity': 'sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+',  # noqa
-                    'crossorigin': 'anonymous',
+                JS("https://use.fontawesome.com/releases/v5.0.10/js/all.js", {
+                    "defer": "defer",
+                    "integrity": "sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+",  # noqa
+                    "crossorigin": "anonymous",
                 }, static=False),
-                'app/plugin_buttons.js',
+                "app/plugin_buttons.js",
             )
 
 
 ``app/plugin_buttons.js``::
 
     (function($) {
-        $(document).on('content-editor:ready', function() {
+        $(document).on("content-editor:ready", function() {
             ContentEditor.addPluginButton(
-                'app_richtext',
+                "app_richtext",
                 '<i class="fas fa-pencil-alt"></i>'
             );
             ContentEditor.addPluginButton(
-                'app_download',
+                "app_download",
                 '<i class="fas fa-download"></i>'
             );
         });
@@ -395,7 +395,7 @@ Simple usage is as follows::
     list(c)
 
     # Returns a list of all items from the given region
-    c['main']
+    c["main"]
     # or
     c.main
 
@@ -451,7 +451,7 @@ django-tree-queries_ as used in feincms3_)::
     page = ...
     contents = contents_for_item(
         page,
-        plugins=[,,,],
+        plugins=[RichText, Download],
         page.ancestors().reverse(),  # Prefer content closer to the
                                      # current page
     )
