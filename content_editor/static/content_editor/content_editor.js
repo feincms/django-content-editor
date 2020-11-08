@@ -173,7 +173,7 @@ django.jQuery(function ($) {
     if (title) select.options[idx++] = new Option(title, "", true);
 
     for (var i = 0; i < contents.length; i++) {
-      select.options[idx++] = new Option(contents[i].title, contents[i].prefix);
+      select.options[idx++] = new Option(contents[i].title, contents[i].prefix || contents[i].key);
     }
     return select;
   }
