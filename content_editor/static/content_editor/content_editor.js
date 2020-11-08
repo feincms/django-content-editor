@@ -24,12 +24,11 @@ django.jQuery(function ($) {
   if (!context) return;
 
   window.ContentEditor = {
-    addContent: function addContent(label) {
-      var plugin = ContentEditor.pluginsByKey[label];
-      plugin && $("#" + plugin.prefix + "-group .add-row a").click();
+    addContent: function addContent(prefix) {
+      $("#" + prefix + "-group .add-row a").click();
     },
-    addPluginButton: function addPluginButton(label, html) {
-      var plugin = ContentEditor.pluginsByKey[label];
+    addPluginButton: function addPluginButton(prefix, html) {
+      var plugin = ContentEditor.pluginsByPrefix[prefix];
       if (!plugin) return;
 
       var unit = document.querySelector(".control-unit.plugin-buttons");
@@ -42,11 +41,11 @@ django.jQuery(function ($) {
 
       var button = document.createElement("a");
       var $button = $(button);
-      $button.data("plugin", plugin.key);
+      $button.data("plugin", plugin.prefix);
       button.className = "plugin-button";
       button.title = plugin.title;
       button.addEventListener("click", function () {
-        ContentEditor.addContent(plugin.key);
+        ContentEditor.addContent(plugin.prefix);
       });
       button.innerHTML = html;
 
@@ -63,13 +62,12 @@ django.jQuery(function ($) {
   );
 
   var i;
+  ContentEditor.pluginsByPrefix = {}
   ContentEditor.pluginsByKey = {};
   ContentEditor.prefixToKey = {};
   for (i = 0; i < ContentEditor.plugins.length; ++i) {
-    ContentEditor.pluginsByKey[ContentEditor.plugins[i].key] =
-      ContentEditor.plugins[i];
-    ContentEditor.prefixToKey[ContentEditor.plugins[i].prefix] =
-      ContentEditor.plugins[i].key;
+    ContentEditor.pluginsByPrefix[ContentEditor.plugins[i].prefix] =
+      ContentEditor.plugins[i]
   }
   ContentEditor.regionsByKey = {};
   for (i = 0; i < ContentEditor.regions.length; ++i) {
@@ -100,7 +98,7 @@ django.jQuery(function ($) {
     var result = {};
     var plugins = ContentEditor.plugins;
     for (var i = 0; i < plugins.length; i++) {
-      result[plugins[i].key] = plugins[i].regions;
+      result[plugins[i].prefix] = plugins[i].regions;
     }
     return result;
   })();
@@ -175,7 +173,7 @@ django.jQuery(function ($) {
     if (title) select.options[idx++] = new Option(title, "", true);
 
     for (var i = 0; i < contents.length; i++) {
-      select.options[idx++] = new Option(contents[i].title, contents[i].key);
+      select.options[idx++] = new Option(contents[i].title, contents[i].prefix);
     }
     return select;
   }
@@ -223,7 +221,7 @@ django.jQuery(function ($) {
   function getInlineType(inline) {
     var match = /^([a-z0-9_]+)-\d+$/g.exec($(inline).attr("id"));
     if (match) {
-      return ContentEditor.prefixToKey[match[1]];
+      return match[1];
     }
     return null;
   }
@@ -363,7 +361,7 @@ django.jQuery(function ($) {
   // just before its empty form. Also, assign region data.
   $(document).on("formset:added", function newForm(event, row, formsetName) {
     // Not one of our managed inlines?
-    if (!ContentEditor.prefixToKey[formsetName]) return;
+    if (!ContentEditor.pluginsByPrefix[formsetName]) return;
 
     row.find(".field-region input").val(ContentEditor.currentRegion);
     row.find("h3 .inline_label").text(ContentEditor.messages.newItem);
@@ -386,7 +384,7 @@ django.jQuery(function ($) {
     formsetName
   ) {
     // Not one of our managed inlines?
-    if (!ContentEditor.prefixToKey[formsetName]) return;
+    if (!ContentEditor.pluginsByPrefix[formsetName]) return;
 
     if (
       !orderMachine.find(

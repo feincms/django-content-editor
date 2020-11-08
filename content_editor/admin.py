@@ -1,3 +1,4 @@
+import itertools
 import json
 
 from django import forms
@@ -12,6 +13,9 @@ from js_asset.js import JS
 
 
 __all__ = ("ContentEditorInline", "ContentEditor")
+
+
+_inline_index = itertools.count()
 
 
 class ContentEditorChecks(ModelAdminChecks):
@@ -89,10 +93,7 @@ class ContentEditorInline(StackedInline):
         """
         kwargs["model"] = model
         return type(
-            str(
-                "ContentEditorInline_%s_%s"
-                % (model._meta.app_label, model._meta.model_name)
-            ),
+            str("ContentEditorInline_%s" % (next(_inline_index),)),
             (cls,),
             kwargs,
         )
@@ -124,11 +125,9 @@ class ContentEditor(ModelAdmin):
                 if callable(iaf.opts.regions)
                 else iaf.opts.regions
             )
-            meta = iaf.opts.model._meta
             plugins.append(
                 {
-                    "key": "{}_{}".format(meta.app_label, meta.model_name),
-                    "title": capfirst(str(meta.verbose_name)),
+                    "title": capfirst(str(iaf.opts.verbose_name)),
                     "regions": list(regions) if regions else None,
                     "prefix": iaf.formset.prefix,
                 }
