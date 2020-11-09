@@ -11,6 +11,8 @@ Change log
   ``<app_label>_<model_name>`` it now expects
   ``<app_label>_<model_name>_set``. This change allows using the same
   plugin model several times with different inlines.
+- Allowed configuring plugin buttons by setting the ``button`` attribute
+  of ``ContentEditorInline`` classes/objects.
 - Added highlighting of the current content block in the editor.
 - Added focussing of the first input field of new content blocks.
 - Added a dragging affordance to content blocks.

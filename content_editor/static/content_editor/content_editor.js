@@ -485,5 +485,10 @@ django.jQuery(function ($) {
       .wrap('<div class="control-unit"></div>');
   })();
 
+  ContentEditor.plugins.forEach(function (plugin) {
+    if (plugin.button)
+      ContentEditor.addPluginButton(plugin.prefix, plugin.button);
+  });
+
   $(document).trigger("content-editor:ready");
 });
