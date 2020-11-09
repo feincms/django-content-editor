@@ -279,11 +279,11 @@ django.jQuery(function ($) {
   }
 
   function insertBefore(row, before) {
-    const beforeOrdering = +before.querySelector(".field-ordering input").value,
+    const beforeOrdering = +qs(".field-ordering input", before).value,
       beforeRows = [],
       afterRows = [];
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
-      const thisOrderingField = this.querySelector(".field-ordering input");
+      const thisOrderingField = qs(".field-ordering input", this);
       if (this != row && !isNaN(+thisOrderingField.value)) {
         if (+thisOrderingField.value >= beforeOrdering) {
           afterRows.push([this, thisOrderingField]);
@@ -299,7 +299,7 @@ django.jQuery(function ($) {
       return a[1].value - b[1].value;
     });
     let rows = [].concat(beforeRows);
-    rows.push([row, row.querySelector(".field-ordering input")]);
+    rows.push([row, qs(".field-ordering input", row)]);
     rows = rows.concat(afterRows);
     for (let i = 0; i < rows.length; ++i) {
       const thisRow = rows[i];
