@@ -452,7 +452,7 @@ django.jQuery(function ($) {
   orderMachine.on(
     "click",
     ".delete>input[type=checkbox]",
-    function toggleForDeletionClass( {
+    function toggleForDeletionClass() {
       this.closest(".inline-related").classList.toggle(
         "for-deletion",
         this.checked
