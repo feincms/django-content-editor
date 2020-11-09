@@ -16,9 +16,7 @@ django.jQuery(function ($) {
       $("#" + prefix + "-group .add-row a").click();
     },
     addPluginButton: function addPluginButton(prefix, html) {
-      const plugin =
-        ContentEditor.pluginsByPrefix[prefix] ||
-        ContentEditor.pluginsByPrefix[prefix + "_set"];
+      const plugin = ContentEditor.pluginsByPrefix[prefix];
       if (!plugin) return;
 
       let unit = qs(".control-unit.plugin-buttons");
@@ -47,17 +45,13 @@ django.jQuery(function ($) {
   $.extend(window.ContentEditor, JSON.parse(context.dataset.context));
 
   ContentEditor.pluginsByPrefix = {};
-  ContentEditor.pluginsByKey = {};
-  ContentEditor.prefixToKey = {};
-  for (let i = 0; i < ContentEditor.plugins.length; ++i) {
-    ContentEditor.pluginsByPrefix[ContentEditor.plugins[i].prefix] =
-      ContentEditor.plugins[i];
-  }
+  ContentEditor.plugins.forEach(function (plugin) {
+    ContentEditor.pluginsByPrefix[plugin.prefix] = plugin;
+  });
   ContentEditor.regionsByKey = {};
-  for (let i = 0; i < ContentEditor.regions.length; ++i) {
-    ContentEditor.regionsByKey[ContentEditor.regions[i].key] =
-      ContentEditor.regions[i];
-  }
+  ContentEditor.regions.forEach(function (region) {
+    ContentEditor.regionsByKey[region.key] = region;
+  });
 
   // Add basic structure. There is always at least one inline group if
   // we even have any plugins.
@@ -80,6 +74,9 @@ django.jQuery(function ($) {
   // Pre map plugin regions
   const pluginRegions = (function () {
     const result = {};
+    ContentEditor.plugins.forEach(function (plugin) {
+      result[plugin.prefix] = plugin.regions;
+    });
     const plugins = ContentEditor.plugins;
     for (let i = 0; i < plugins.length; i++) {
       result[plugins[i].prefix] = plugins[i].regions;
@@ -172,12 +169,12 @@ django.jQuery(function ($) {
     $(ContentEditor.machineControlSelect)
       .find("option")
       .each(function () {
-        const $option = $(this);
-        const allowed = pluginRegions[$option.val()];
-        if (!allowed || $.inArray(ContentEditor.currentRegion, allowed) >= 0) {
-          $option.show();
+        const plugin = ContentEditor.pluginsByPrefix[this.value];
+        const regions = plugin ? plugin.regions : [];
+        if (!regions || regions.includes(ContentEditor.currentRegion)) {
+          $(this).show();
         } else {
-          $option.hide();
+          $(this).hide();
         }
       });
   }
@@ -193,7 +190,7 @@ django.jQuery(function ($) {
 
     buttons.forEach(function (button) {
       const plugin = button.dataset.plugin;
-      const regions = pluginRegions[plugin];
+      const regions = ContentEditor.pluginsByPrefix[plugin].regions;
 
       button.style.display =
         !regions || regions.includes(region) ? "inline" : "none";

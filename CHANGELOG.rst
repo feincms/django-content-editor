@@ -5,6 +5,12 @@ Change log
 `Next version`_
 ===============
 
+- **BACKWARDS INCOMPATIBLE**: Plugins now use the inline prefix inside
+  the content editor. ``ContentEditor.addPluginButton()`` now requires
+  the inline prefix of plugins, not an arbitrary key. E.g.  instead of
+  ``<app_label>_<model_name>`` it now expects
+  ``<app_label>_<model_name>_set``. This change allows using the same
+  plugin model several times with different inlines.
 - Added highlighting of the current content block in the editor.
 - Added focussing of the first input field of new content blocks.
 - Added a dragging affordance to content blocks.
