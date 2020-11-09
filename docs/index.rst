@@ -319,11 +319,11 @@ If you also want nice icons to add new items, you might want to use
     (function($) {
         $(document).on("content-editor:ready", function() {
             ContentEditor.addPluginButton(
-                "app_richtext",
+                "app_richtext_set",
                 '<i class="fas fa-pencil-alt"></i>'
             );
             ContentEditor.addPluginButton(
-                "app_download",
+                "app_download_set",
                 '<i class="fas fa-download"></i>'
             );
         });

@@ -4,25 +4,33 @@ django.jQuery(function ($) {
   const context = document.getElementById("content-editor-context");
   if (!context) return;
 
+  function qs(sel, ctx = document) {
+    return ctx.querySelector(sel);
+  }
+  function qsa(sel, ctx = document) {
+    return Array.prototype.slice.call(ctx.querySelectorAll(sel));
+  }
+
   window.ContentEditor = {
     addContent: function addContent(prefix) {
       $("#" + prefix + "-group .add-row a").click();
     },
     addPluginButton: function addPluginButton(prefix, html) {
-      const plugin = ContentEditor.pluginsByPrefix[prefix];
+      const plugin =
+        ContentEditor.pluginsByPrefix[prefix] ||
+        ContentEditor.pluginsByPrefix[prefix + "_set"];
       if (!plugin) return;
 
-      let unit = document.querySelector(".control-unit.plugin-buttons");
+      let unit = qs(".control-unit.plugin-buttons");
       if (!unit) {
         unit = document.createElement("div");
         unit.className = "control-unit plugin-buttons";
-        const mc = document.querySelector(".machine-control");
+        const mc = qs(".machine-control");
         mc.insertBefore(unit, mc.firstChild);
       }
 
       const button = document.createElement("a");
-      const $button = $(button);
-      $button.data("plugin", plugin.prefix);
+      button.setAttribute("data-plugin", plugin.prefix);
       button.className = "plugin-button";
       button.title = plugin.title;
       button.addEventListener("click", function () {
@@ -32,7 +40,7 @@ django.jQuery(function ($) {
 
       unit.appendChild(button);
 
-      hideNotAllowedPluginButtons($button);
+      hideNotAllowedPluginButtons([button]);
     },
   };
 
@@ -179,41 +187,35 @@ django.jQuery(function ($) {
   }
 
   // Hide not allowed plugin buttons
-  // If $buttons only checks this buttons, else checks all
-  function hideNotAllowedPluginButtons($buttons) {
-    $buttons = $buttons
-      ? $buttons
-      : $(".control-unit.plugin-buttons .plugin-button");
+  // If buttons only checks this buttons, else checks all
+  function hideNotAllowedPluginButtons(buttons) {
+    buttons = buttons
+      ? buttons
+      : qsa(".control-unit.plugin-buttons .plugin-button");
 
     const region = ContentEditor.currentRegion;
 
-    $buttons.each(function () {
-      const $button = $(this);
-      const plugin = $button.data("plugin");
-      const allowed = pluginRegions[plugin];
+    buttons.forEach(function (button) {
+      const plugin = button.dataset.plugin;
+      const regions = pluginRegions[plugin];
 
-      if (!allowed || $.inArray(region, allowed) >= 0) {
-        // Allowed
-        $button.show();
-      } else {
-        // Not allowed
-        $button.hide();
-      }
+      button.style.display =
+        !regions || regions.includes(region) ? "inline" : "none";
     });
   }
 
   // Fetch the inline type from id
-  function getInlineType(inline) {
-    const match = /^([a-z0-9_]+)-\d+$/g.exec($(inline).attr("id"));
+  function getInlineType($inline) {
+    const match = /^([a-z0-9_]+)-\d+$/g.exec($inline.attr("id"));
     if (match) {
       return match[1];
     }
     return null;
   }
 
-  function attachMoveToRegionDropdown(inline) {
+  function attachMoveToRegionDropdown($inline) {
     // Filter allowed regions
-    const inlineType = getInlineType(inline);
+    const inlineType = getInlineType($inline);
     const regions = [];
     for (let i = 0; i < ContentEditor.regions.length; i++) {
       if (
@@ -231,18 +233,18 @@ django.jQuery(function ($) {
 
     const controls = document.createElement("div"),
       select = buildDropdown(regions),
-      regionInput = inline.find(".field-region input");
+      regionInput = $inline.find(".field-region input");
 
     select.value = regionInput.val();
     controls.className = "inline-controls";
     controls.appendChild(select);
-    inline.append(controls);
+    $inline.append(controls);
 
     select.addEventListener("change", function () {
-      inline.attr("data-region", select.value);
+      $inline.attr("data-region", select.value);
       regionInput.val(select.value);
       hideInlinesFromOtherRegions();
-      setBiggestOrdering(inline);
+      setBiggestOrdering($inline);
       reorderInlines();
     });
   }
