@@ -25,6 +25,9 @@ Change log
 - Moved the ``Ctrl-S`` and ``Cmd-S`` shortcut handling into its own
   ``content_editor/save_shortcut.js`` static file to allow easier reuse
   in other model admin classes.
+- Started modernizing the JavaScript code, dropped Internet Explorer
+  polyfills. Django dropped support for legacy browsers in the
+  administration interface in the Django 3.1 release too.
 
 
 `3.0`_ (2020-06-06)

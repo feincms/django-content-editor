@@ -1,26 +1,7 @@
 /* global django,ContentEditor */
 
-/* Polyfilling a bit */
-if (!Element.prototype.matches)
-  Element.prototype.matches =
-    Element.prototype.msMatchesSelector ||
-    Element.prototype.webkitMatchesSelector;
-
-if (!Element.prototype.closest) {
-  Element.prototype.closest = function (s) {
-    var el = this;
-    if (!document.documentElement.contains(el)) return null;
-    do {
-      if (el.matches(s)) return el;
-      el = el.parentElement || el.parentNode;
-    } while (el !== null && el.nodeType === 1);
-    return null;
-  };
-}
-/* Polyfill end */
-
 django.jQuery(function ($) {
-  var context = document.getElementById("content-editor-context");
+  const context = document.getElementById("content-editor-context");
   if (!context) return;
 
   window.ContentEditor = {
@@ -28,19 +9,19 @@ django.jQuery(function ($) {
       $("#" + prefix + "-group .add-row a").click();
     },
     addPluginButton: function addPluginButton(prefix, html) {
-      var plugin = ContentEditor.pluginsByPrefix[prefix];
+      const plugin = ContentEditor.pluginsByPrefix[prefix];
       if (!plugin) return;
 
-      var unit = document.querySelector(".control-unit.plugin-buttons");
+      let unit = document.querySelector(".control-unit.plugin-buttons");
       if (!unit) {
         unit = document.createElement("div");
         unit.className = "control-unit plugin-buttons";
-        var mc = document.querySelector(".machine-control");
+        const mc = document.querySelector(".machine-control");
         mc.insertBefore(unit, mc.firstChild);
       }
 
-      var button = document.createElement("a");
-      var $button = $(button);
+      const button = document.createElement("a");
+      const $button = $(button);
       $button.data("plugin", plugin.prefix);
       button.className = "plugin-button";
       button.title = plugin.title;
@@ -61,16 +42,15 @@ django.jQuery(function ($) {
     JSON.parse(context.getAttribute("data-context"))
   );
 
-  var i;
   ContentEditor.pluginsByPrefix = {};
   ContentEditor.pluginsByKey = {};
   ContentEditor.prefixToKey = {};
-  for (i = 0; i < ContentEditor.plugins.length; ++i) {
+  for (let i = 0; i < ContentEditor.plugins.length; ++i) {
     ContentEditor.pluginsByPrefix[ContentEditor.plugins[i].prefix] =
       ContentEditor.plugins[i];
   }
   ContentEditor.regionsByKey = {};
-  for (i = 0; i < ContentEditor.regions.length; ++i) {
+  for (let i = 0; i < ContentEditor.regions.length; ++i) {
     ContentEditor.regionsByKey[ContentEditor.regions[i].key] =
       ContentEditor.regions[i];
   }
@@ -88,16 +68,16 @@ django.jQuery(function ($) {
       "</div>"
   );
 
-  var orderMachine = $(".order-machine"),
+  const orderMachine = $(".order-machine"),
     machineEmptyMessage = $('<p class="hidden machine-message"/>')
       .text(ContentEditor.messages.empty)
       .appendTo(orderMachine);
 
   // Pre map plugin regions
-  var pluginRegions = (function () {
-    var result = {};
-    var plugins = ContentEditor.plugins;
-    for (var i = 0; i < plugins.length; i++) {
+  const pluginRegions = (function () {
+    const result = {};
+    const plugins = ContentEditor.plugins;
+    for (let i = 0; i < plugins.length; i++) {
       result[plugins[i].prefix] = plugins[i].regions;
     }
     return result;
@@ -106,7 +86,7 @@ django.jQuery(function ($) {
   function ensureDraggable(arg) {
     if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return;
 
-    var inline = arg[0];
+    const inline = arg[0];
 
     inline.addEventListener("dragstart", function (e) {
       // window.__fs_dragging = inline;
@@ -145,7 +125,7 @@ django.jQuery(function ($) {
 
   function reorderInlines(context) {
     context = context || orderMachine;
-    var inlines = context.find(".inline-related");
+    const inlines = context.find(".inline-related");
     inlines.not(".empty-form").each(function () {
       $(document).trigger("content-editor:deactivate", [$(this)]);
 
@@ -156,7 +136,7 @@ django.jQuery(function ($) {
     orderMachine.append(inlines);
 
     inlines.each(function () {
-      var ordering = $(".field-ordering input", this).val() || 1e9;
+      const ordering = $(".field-ordering input", this).val() || 1e9;
       this.style.order = ordering;
       ensureDraggable($(this));
     });
@@ -167,12 +147,12 @@ django.jQuery(function ($) {
   }
 
   function buildDropdown(contents, title) {
-    var select = document.createElement("select"),
-      idx = 0;
+    const select = document.createElement("select");
+    let idx = 0;
 
     if (title) select.options[idx++] = new Option(title, "", true);
 
-    for (var i = 0; i < contents.length; i++) {
+    for (let i = 0; i < contents.length; i++) {
       // Option _values_ may either be the prefix (for plugins) or keys (for
       // regions)
       select.options[idx++] = new Option(
@@ -188,8 +168,8 @@ django.jQuery(function ($) {
     $(ContentEditor.machineControlSelect)
       .find("option")
       .each(function () {
-        var $option = $(this);
-        var allowed = pluginRegions[$option.val()];
+        const $option = $(this);
+        const allowed = pluginRegions[$option.val()];
         if (!allowed || $.inArray(ContentEditor.currentRegion, allowed) >= 0) {
           $option.show();
         } else {
@@ -205,12 +185,12 @@ django.jQuery(function ($) {
       ? $buttons
       : $(".control-unit.plugin-buttons .plugin-button");
 
-    var region = ContentEditor.currentRegion;
+    const region = ContentEditor.currentRegion;
 
     $buttons.each(function () {
-      var $button = $(this);
-      var plugin = $button.data("plugin");
-      var allowed = pluginRegions[plugin];
+      const $button = $(this);
+      const plugin = $button.data("plugin");
+      const allowed = pluginRegions[plugin];
 
       if (!allowed || $.inArray(region, allowed) >= 0) {
         // Allowed
@@ -224,7 +204,7 @@ django.jQuery(function ($) {
 
   // Fetch the inline type from id
   function getInlineType(inline) {
-    var match = /^([a-z0-9_]+)-\d+$/g.exec($(inline).attr("id"));
+    const match = /^([a-z0-9_]+)-\d+$/g.exec($(inline).attr("id"));
     if (match) {
       return match[1];
     }
@@ -233,9 +213,9 @@ django.jQuery(function ($) {
 
   function attachMoveToRegionDropdown(inline) {
     // Filter allowed regions
-    var inlineType = getInlineType(inline);
-    var regions = [];
-    for (var i = 0; i < ContentEditor.regions.length; i++) {
+    const inlineType = getInlineType(inline);
+    const regions = [];
+    for (let i = 0; i < ContentEditor.regions.length; i++) {
       if (
         (!inlineType ||
           !pluginRegions[inlineType] ||
@@ -249,7 +229,7 @@ django.jQuery(function ($) {
 
     if (regions.length < 2) return;
 
-    var controls = document.createElement("div"),
+    const controls = document.createElement("div"),
       select = buildDropdown(regions),
       regionInput = inline.find(".field-region input");
 
@@ -271,11 +251,11 @@ django.jQuery(function ($) {
   // We also want to the data attribute to be visible to selectors (that's why we're using $.attr)
   function assignRegionDataAttribute() {
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
-      var $this = $(this),
-        region = $this.find(".field-region input").val();
+      const $this = $(this);
+      let region = $this.find(".field-region input").val();
 
       if (!ContentEditor.regionsByKey[region]) {
-        var spec = {
+        const spec = {
           key: "_unknown_",
           title: ContentEditor.messages.unknownRegion,
           inherited: false,
@@ -291,21 +271,21 @@ django.jQuery(function ($) {
   }
 
   function setBiggestOrdering(row) {
-    var orderings = [];
+    const orderings = [];
     orderMachine.find(".field-ordering input").each(function () {
       if (!isNaN(+this.value)) orderings.push(+this.value);
     });
-    var ordering = 10 + Math.max.apply(null, orderings);
+    const ordering = 10 + Math.max.apply(null, orderings);
     row.find(".field-ordering input").val(ordering);
     row.css("order", ordering);
   }
 
   function insertBefore(row, before) {
-    var beforeOrdering = +before.querySelector(".field-ordering input").value,
+    const beforeOrdering = +before.querySelector(".field-ordering input").value,
       beforeRows = [],
       afterRows = [];
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
-      var thisOrderingField = this.querySelector(".field-ordering input");
+      const thisOrderingField = this.querySelector(".field-ordering input");
       if (this != row && !isNaN(+thisOrderingField.value)) {
         if (+thisOrderingField.value >= beforeOrdering) {
           afterRows.push([this, thisOrderingField]);
@@ -320,19 +300,19 @@ django.jQuery(function ($) {
     afterRows.sort(function (a, b) {
       return a[1].value - b[1].value;
     });
-    var rows = [].concat(beforeRows);
+    let rows = [].concat(beforeRows);
     rows.push([row, row.querySelector(".field-ordering input")]);
     rows = rows.concat(afterRows);
-    for (var i = 0; i < rows.length; ++i) {
-      var thisRow = rows[i];
+    for (let i = 0; i < rows.length; ++i) {
+      const thisRow = rows[i];
       thisRow[1].value = thisRow[0].style.order = 10 * (1 + i);
     }
   }
 
   function hideInlinesFromOtherRegions() {
-    var inlines = orderMachine.find(".inline-related:not(.empty-form)");
+    const inlines = orderMachine.find(".inline-related:not(.empty-form)");
     inlines.addClass("content-editor-hidden");
-    var shown = inlines.filter(
+    const shown = inlines.filter(
       '[data-region="' + ContentEditor.currentRegion + '"]'
     );
     machineEmptyMessage.addClass("hidden");
@@ -350,9 +330,9 @@ django.jQuery(function ($) {
     );
   }
 
-  var pluginInlineGroups = (function selectPluginInlineGroups() {
-    var selector = [];
-    for (var i = 0; i < ContentEditor.plugins.length; i++) {
+  const pluginInlineGroups = (function selectPluginInlineGroups() {
+    const selector = [];
+    for (let i = 0; i < ContentEditor.plugins.length; i++) {
       selector.push("#" + ContentEditor.plugins[i].prefix + "-group");
     }
     return $(selector.join(", "));
@@ -416,17 +396,16 @@ django.jQuery(function ($) {
 
   // Initialize tabs and currentRegion.
   (function () {
-    var tabContainer = $(".tabs.regions");
-    for (var i = 0; i < ContentEditor.regions.length; i++) {
-      var t = document.createElement("h2");
+    const tabContainer = $(".tabs.regions");
+    for (let i = 0; i < ContentEditor.regions.length; i++) {
+      const t = document.createElement("h2");
       t.className = "tab";
       t.textContent = ContentEditor.regions[i].title;
       t.setAttribute("data-region", ContentEditor.regions[i].key);
       tabContainer.append(t);
     }
 
-    var tabs = tabContainer.find("h2"),
-      tab;
+    const tabs = tabContainer.find("h2");
     tabs.on("click", function () {
       ContentEditor.currentRegion = $(this).data("region");
       tabs
@@ -442,6 +421,7 @@ django.jQuery(function ($) {
     });
 
     // Restore tab if location hash matches.
+    let tab;
     if (
       window.location.hash &&
       (tab = tabs.filter(
@@ -475,7 +455,7 @@ django.jQuery(function ($) {
     "click",
     ".delete>input[type=checkbox]",
     function toggleForDeletionClass() {
-      var module = $(this).closest(".inline-related");
+      const module = $(this).closest(".inline-related");
       if (this.checked) {
         module.addClass("for-deletion");
       } else {
@@ -490,13 +470,13 @@ django.jQuery(function ($) {
 
   // Try to keep the current region tab (location hash).
   $("form").submit(function () {
-    var form = $(this);
+    const form = $(this);
     form.attr("action", (form.attr("action") || "") + window.location.hash);
     return true;
   });
 
   (function buildPluginDropdown() {
-    var select = buildDropdown(
+    const select = buildDropdown(
       ContentEditor.plugins,
       ContentEditor.messages.createNew
     );
