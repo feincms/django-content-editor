@@ -62,12 +62,12 @@ django.jQuery(function ($) {
   );
 
   var i;
-  ContentEditor.pluginsByPrefix = {}
+  ContentEditor.pluginsByPrefix = {};
   ContentEditor.pluginsByKey = {};
   ContentEditor.prefixToKey = {};
   for (i = 0; i < ContentEditor.plugins.length; ++i) {
     ContentEditor.pluginsByPrefix[ContentEditor.plugins[i].prefix] =
-      ContentEditor.plugins[i]
+      ContentEditor.plugins[i];
   }
   ContentEditor.regionsByKey = {};
   for (i = 0; i < ContentEditor.regions.length; ++i) {
@@ -173,7 +173,12 @@ django.jQuery(function ($) {
     if (title) select.options[idx++] = new Option(title, "", true);
 
     for (var i = 0; i < contents.length; i++) {
-      select.options[idx++] = new Option(contents[i].title, contents[i].prefix || contents[i].key);
+      // Option _values_ may either be the prefix (for plugins) or keys (for
+      // regions)
+      select.options[idx++] = new Option(
+        contents[i].title,
+        contents[i].prefix || contents[i].key
+      );
     }
     return select;
   }
