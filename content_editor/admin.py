@@ -93,7 +93,7 @@ class ContentEditorInline(StackedInline):
         """
         kwargs["model"] = model
         return type(
-            str("ContentEditorInline_%s" % (next(_inline_index),)),
+            "ContentEditorInline_%s" % next(_inline_index),
             (cls,),
             kwargs,
         )
