@@ -452,18 +452,17 @@ django.jQuery(function ($) {
   orderMachine.on(
     "click",
     ".delete>input[type=checkbox]",
-    function toggleForDeletionClass() {
-      const module = $(this).closest(".inline-related");
-      if (this.checked) {
-        module.addClass("for-deletion");
-      } else {
-        module.removeClass("for-deletion");
-      }
+    function toggleForDeletionClass( {
+      this.closest(".inline-related").classList.toggle(
+        "for-deletion",
+        this.checked
+      );
     }
   );
 
-  orderMachine.on("dblclick", "h3", function toggleCollapsed() {
-    $(this).parents(".inline-related").toggleClass("collapsed");
+  orderMachine.on("dblclick", "h3", function toggleCollapsed(e) {
+    e.preventDefault();
+    this.closest(".inline-related").classList.toggle("collapsed");
   });
 
   // Try to keep the current region tab (location hash).
