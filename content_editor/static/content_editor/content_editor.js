@@ -44,11 +44,7 @@ django.jQuery(function ($) {
     },
   };
 
-  // .dataset.context instead of getAttribute would be nicer
-  $.extend(
-    window.ContentEditor,
-    JSON.parse(context.getAttribute("data-context"))
-  );
+  $.extend(window.ContentEditor, JSON.parse(context.dataset.context));
 
   ContentEditor.pluginsByPrefix = {};
   ContentEditor.pluginsByKey = {};
@@ -272,14 +268,14 @@ django.jQuery(function ($) {
     });
   }
 
-  function setBiggestOrdering(row) {
+  function setBiggestOrdering($row) {
     const orderings = [];
     orderMachine.find(".field-ordering input").each(function () {
       if (!isNaN(+this.value)) orderings.push(+this.value);
     });
     const ordering = 10 + Math.max.apply(null, orderings);
-    row.find(".field-ordering input").val(ordering);
-    row.css("order", ordering);
+    $row.find(".field-ordering input").val(ordering);
+    $row.css("order", ordering);
   }
 
   function insertBefore(row, before) {
@@ -346,23 +342,23 @@ django.jQuery(function ($) {
 
   // Always move empty forms to the end, because new plugins are inserted
   // just before its empty form. Also, assign region data.
-  $(document).on("formset:added", function newForm(event, row, formsetName) {
+  $(document).on("formset:added", function newForm(event, $row, formsetName) {
     // Not one of our managed inlines?
     if (!ContentEditor.pluginsByPrefix[formsetName]) return;
 
-    row.find(".field-region input").val(ContentEditor.currentRegion);
-    row.find("h3 .inline_label").text(ContentEditor.messages.newItem);
-    row.attr("data-region", ContentEditor.currentRegion);
+    $row.find(".field-region input").val(ContentEditor.currentRegion);
+    $row.find("h3 .inline_label").text(ContentEditor.messages.newItem);
+    $row.attr("data-region", ContentEditor.currentRegion);
 
-    setBiggestOrdering(row);
-    attachMoveToRegionDropdown(row);
-    ensureDraggable(row);
+    setBiggestOrdering($row);
+    attachMoveToRegionDropdown($row);
+    ensureDraggable($row);
 
     machineEmptyMessage.addClass("hidden");
 
-    $(document).trigger("content-editor:activate", [row]);
+    $(document).trigger("content-editor:activate", [$row]);
 
-    row.find("input, select, textarea").first().focus();
+    $row.find("input, select, textarea").first().focus();
   });
 
   $(document).on("formset:removed", function resetInlines(
