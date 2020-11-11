@@ -28,6 +28,7 @@ Change log
 - Allowed collapsing individual content blocks by doubleclicking the
   title. This may change in the future (as all things) because it's not
   discoverable at all.
+- Added a small note when a fieldset is collapsed.
 - Changed CSS variables to use the same names as `django-variable-admin
   <https://github.com/matthiask/django-variable-admin/>`__.
 - Moved the ``Ctrl-S`` and ``Cmd-S`` shortcut handling into its own

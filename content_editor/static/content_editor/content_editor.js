@@ -490,5 +490,14 @@ django.jQuery(function ($) {
       ContentEditor.addPluginButton(plugin.prefix, plugin.button);
   });
 
+  const style = document.createElement("style");
+  style.textContent = [
+    ".order-machine .inline-related.collapsed .inline_label::after {",
+    "  opacity: 0.5;",
+    '  content: " (' + ContentEditor.messages.collapsed + ')";',
+    "}",
+  ].join("\n");
+  document.head.appendChild(style);
+
   $(document).trigger("content-editor:ready");
 });

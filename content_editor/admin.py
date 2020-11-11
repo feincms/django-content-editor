@@ -155,6 +155,7 @@ class ContentEditor(ModelAdmin):
                     "newItem": gettext("New item"),
                     "unknownRegion": gettext("Unknown region"),
                     "toggle": gettext("Collapse all items"),
+                    "collapsed": gettext("collapsed"),
                 },
             }
         )
