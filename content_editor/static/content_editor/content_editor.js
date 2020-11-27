@@ -109,15 +109,20 @@ django.jQuery(function ($) {
     inline.addEventListener(
       "dragover",
       function (e) {
-        e.preventDefault();
-        $(".fs-dragover").removeClass("fs-dragover");
-        e.target.closest(".inline-related").classList.add("fs-dragover");
+        if (window.__fs_dragging) {
+          e.preventDefault();
+          $(".fs-dragover").removeClass("fs-dragover");
+          e.target.closest(".inline-related").classList.add("fs-dragover");
+        }
       },
       true
     );
     inline.addEventListener("drop", function (e) {
-      e.preventDefault();
-      insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
+      if (window.__fs_dragging) {
+        e.preventDefault();
+        insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
+        window.__fs_dragging = null;
+      }
     });
 
     arg.find(">h3").attr("draggable", true);
