@@ -297,8 +297,13 @@ If you also want nice icons to add new items, you might want to use
 
     class ArticleAdmin(ContentEditor):
         inlines = [
-            RichTextInline,
-            ContentEditorInline.create(model=Download),
+            RichTextInline.create(
+                button='<i class="fas fa-pencil-alt"></i>',
+            ),
+            ContentEditorInline.create(
+                model=Download,
+                button='<i class="fas fa-download"></i>',
+            ),
         ]
 
         class Media:
@@ -308,26 +313,7 @@ If you also want nice icons to add new items, you might want to use
                     "integrity": "sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+",  # noqa
                     "crossorigin": "anonymous",
                 }, static=False),
-                "app/plugin_buttons.js",
             )
-
-
-``app/plugin_buttons.js``:
-
-.. code-block:: javascript
-
-    (function($) {
-        $(document).on("content-editor:ready", function() {
-            ContentEditor.addPluginButton(
-                "app_richtext_set",
-                '<i class="fas fa-pencil-alt"></i>'
-            );
-            ContentEditor.addPluginButton(
-                "app_download_set",
-                '<i class="fas fa-download"></i>'
-            );
-        });
-    })(django.jQuery);
 
 
 
