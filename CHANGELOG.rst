@@ -37,6 +37,7 @@ Change log
 - Started modernizing the JavaScript code, dropped Internet Explorer
   polyfills. Django dropped support for legacy browsers in the
   administration interface in the Django 3.1 release too.
+- Changed the JavaScript code to not swallow unrelated drag/drop events.
 
 
 `3.0`_ (2020-06-06)
