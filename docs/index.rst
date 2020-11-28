@@ -113,7 +113,7 @@ edited and ordered.
 
     from content_editor.admin import ContentEditor, ContentEditorInline
 
-    from .models import Article, Richtext, Download
+    from .models import Article, RichText, Download
 
 
     class RichTextarea(forms.Textarea):
