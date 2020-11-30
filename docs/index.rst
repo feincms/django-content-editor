@@ -121,7 +121,7 @@ edited and ordered.
             # Provide class so that the code in plugin_ckeditor.js knows
             # which text areas should be enhanced with a rich text
             # control:
-            default_attrs = {"class": "richtext"}
+            default_attrs = {"data-type": "ckeditortype"}
             if attrs:
                 default_attrs.update(attrs)
             super(RichTextarea, self).__init__(default_attrs)
