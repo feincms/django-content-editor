@@ -19,7 +19,7 @@ class RichTextInline(ContentEditorInline):
     model = RichText
     formfield_overrides = {models.TextField: {"widget": RichTextarea}}
     fieldsets = [(None, {"fields": ("text", "region", "ordering")})]
-    regions = ("main",)
+    regions = {"main"}
 
     class Media:
         js = ("//cdn.ckeditor.com/4.5.6/standard/ckeditor.js", "app/plugin_ckeditor.js")
@@ -35,7 +35,7 @@ admin.site.register(
     inlines=[
         RichTextInline,
         ContentEditorInline.create(
-            model=Download, regions=lambda inline, regions: regions - {"sidebar"}
+            model=Download, regions=lambda self, regions: regions - {"sidebar"}
         ),
         ThingInline,
     ],
