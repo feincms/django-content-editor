@@ -12,7 +12,7 @@ from django.utils.translation import gettext
 from js_asset.js import JS
 
 
-__all__ = ("ContentEditorInline", "ContentEditor")
+__all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
 
 
 _inline_index = itertools.count()
@@ -187,3 +187,12 @@ class ContentEditor(ModelAdmin):
         ] + self._content_editor_media(request, response.context_data)
 
         return response
+
+
+def allow_regions(regions):
+    return set(regions)
+
+
+def deny_regions(regions):
+    regions = set(regions)
+    return lambda self, all_regions: all_regions - regions

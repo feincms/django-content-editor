@@ -2,7 +2,12 @@ from django import forms
 from django.contrib import admin
 from django.db import models
 
-from content_editor.admin import ContentEditor, ContentEditorInline
+from content_editor.admin import (
+    ContentEditor,
+    ContentEditorInline,
+    allow_regions,
+    deny_regions,
+)
 
 from .models import Article, Download, RichText, Thing
 
@@ -19,7 +24,7 @@ class RichTextInline(ContentEditorInline):
     model = RichText
     formfield_overrides = {models.TextField: {"widget": RichTextarea}}
     fieldsets = [(None, {"fields": ("text", "region", "ordering")})]
-    regions = {"main"}
+    regions = allow_regions({"main"})
 
     class Media:
         js = ("//cdn.ckeditor.com/4.5.6/standard/ckeditor.js", "app/plugin_ckeditor.js")
@@ -34,9 +39,7 @@ admin.site.register(
     ContentEditor,
     inlines=[
         RichTextInline,
-        ContentEditorInline.create(
-            model=Download, regions=lambda self, regions: regions - {"sidebar"}
-        ),
+        ContentEditorInline.create(model=Download, regions=deny_regions({"sidebar"})),
         ThingInline,
     ],
 )

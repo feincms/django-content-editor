@@ -132,7 +132,6 @@ edited and ordered.
         formfield_overrides = {
             models.TextField: {"widget": RichTextarea},
         }
-        regions = ["main"]  # We only want rich texts in "main" region.
 
         class Media:
             js = (
@@ -140,16 +139,15 @@ edited and ordered.
                 "app/plugin_ckeditor.js",
             )
 
-    admin.site.register(
-        Article,
-        ContentEditor,
-        inlines=[
+
+    @admin.register(Article)
+    class ArticleAdmin(ContentEditor):
+        inlines = [
             RichTextInline,
             # The create method serves as a shortcut; for quickly
             # creating inlines:
             ContentEditorInline.create(model=Download),
-        ],
-    )
+        ]
 
 
 Here's an example CKEditor integration. Especially noteworthy are the
@@ -283,6 +281,10 @@ content to the template.
 Finally, ensure that ``content_editor`` and ``app`` are added to your
 ``INSTALLED_APPS`` setting, and you're good to go.
 
+
+Custom buttons to add content blocks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 If you also want nice icons to add new items, you might want to use
 `font awesome`_ and the following snippets:
 
@@ -315,6 +317,40 @@ If you also want nice icons to add new items, you might want to use
                 }, static=False),
             )
 
+
+Restricting plugins to a subset of all available regions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The article above has two regions for adding content, ``main`` and
+``sidebar``. For example, you may want to allow rich text content blocks
+only in the ``main`` region. There are several ways to do this; you can
+either hardcode the list of allowed regions:
+
+.. code-block:: python
+
+    from content_editor.admin import ContentEditor, allow_regions
+    # Using the RichTextInline defined above
+
+    class ArticleAdmin(ContentEditor):
+        inlines = [
+            # Explicit:
+            RichTextInline.create(regions={"main"}),
+            # Using the helper which does exactly the same:
+            RichTextInline.create(regions=allow_regions({"main"})),
+        ]
+
+Or you may want to specify a list of denied regions. This may be less
+repetitive if you have many regions and many restrictions:
+
+.. code-block:: python
+
+    from content_editor.admin import ContentEditor, deny_regions
+    # Using the RichTextInline defined above
+
+    class ArticleAdmin(ContentEditor):
+        inlines = [
+            RichTextInline.create(regions=deny_regions({"sidebar"})),
+        ]
 
 
 Parts

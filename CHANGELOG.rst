@@ -5,6 +5,16 @@ Change log
 `Next version`_
 ===============
 
+- Fixed the rich text plugin to use the correct selector for the
+  documented JavaScript code.
+- Added ``allow_regions`` and ``deny_regions`` helpers to restrict
+  plugins to specific regions. This was possible before but may be a
+  little bit nicer with those helpers.
+
+
+`4.0`_ (2020-11-28)
+===================
+
 - **BACKWARDS INCOMPATIBLE**: Plugins now use the inline prefix inside
   the content editor. ``ContentEditor.addPluginButton()`` now requires
   the inline prefix of plugins, not an arbitrary key. E.g.  instead of
@@ -271,4 +281,5 @@ Initial public release of django-content-editor.
 .. _1.5: https://github.com/matthiask/django-content-editor/compare/1.4...1.5
 .. _2.0: https://github.com/matthiask/django-content-editor/compare/1.5...2.0
 .. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/3.0...master
+.. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.0...master
