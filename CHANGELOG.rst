@@ -10,6 +10,9 @@ Change log
 - Added ``allow_regions`` and ``deny_regions`` helpers to restrict
   plugins to specific regions. This was possible before but may be a
   little bit nicer with those helpers.
+- Added a workaround for a Chrome regression where the contents of a
+  collapsed fieldset were still visible. (See `the Chromium bug
+  <https://bugs.chromium.org/p/chromium/issues/detail?id=1151858>`__.)
 
 
 `4.0`_ (2020-11-28)
