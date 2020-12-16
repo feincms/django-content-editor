@@ -13,6 +13,9 @@ Change log
 - Added a workaround for a Chrome regression where the contents of a
   collapsed fieldset were still visible. (See `the Chromium bug
   <https://bugs.chromium.org/p/chromium/issues/detail?id=1151858>`__.)
+- Fixed an edge case where passing a generator to ``contents_for_item``
+  would cause too many queries because of a missing ``parent`` foreign
+  key caching.
 
 
 `4.0`_ (2020-11-28)

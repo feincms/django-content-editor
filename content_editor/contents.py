@@ -52,7 +52,7 @@ class Contents(object):
 
 def contents_for_items(items, plugins):
     contents = {item: Contents(item.regions) for item in items}
-    items_dict = {item.pk: item for item in items}
+    items_dict = {item.pk: item for item in contents}
     for plugin in plugins:
         queryset = plugin.get_queryset().filter(parent__in=contents.keys())
         queryset._known_related_objects.setdefault(
