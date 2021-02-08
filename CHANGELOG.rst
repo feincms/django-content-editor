@@ -288,4 +288,4 @@ Initial public release of django-content-editor.
 .. _2.0: https://github.com/matthiask/django-content-editor/compare/1.5...2.0
 .. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
 .. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.0...master
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.0...main
