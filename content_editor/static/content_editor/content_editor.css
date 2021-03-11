@@ -105,7 +105,8 @@ html {
 
 .order-machine .inline-related fieldset {
   /* Animate out of view REAL FAST */
-  transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1), background 0.2s, visibility 0.2s;
+  transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1), background 0.2s,
+    visibility 0.2s;
   max-height: 2000px;
   overflow: hidden;
   position: relative;

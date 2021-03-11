@@ -152,6 +152,8 @@ class ContentEditor(ModelAdmin):
                     "createNew": gettext("Add new item"),
                     "empty": gettext("No items."),
                     "emptyInherited": gettext("No items. Region may inherit content."),
+                    "noRegions": gettext("No regions available."),
+                    "noPlugins": gettext("No plugins allowed in this region."),
                     "newItem": gettext("New item"),
                     "unknownRegion": gettext("Unknown region"),
                     "toggle": gettext("Collapse all items"),
