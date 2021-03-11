@@ -179,7 +179,7 @@ django.jQuery(function ($) {
     if (!ContentEditor.regions.length) return false;
 
     const plugin = ContentEditor.pluginsByPrefix[prefix];
-    const regions = plugin.regions || ContentEditor.regions;
+    const regions = plugin.regions || Object.keys(ContentEditor.regionsByKey);
     return regions.includes(ContentEditor.currentRegion);
   }
 
