@@ -11,6 +11,24 @@ django.jQuery(function ($) {
     return Array.prototype.slice.call(ctx.querySelectorAll(sel));
   }
 
+  const LS = {
+    prefix: "ContentEditor:",
+    set: function (name, value) {
+      try {
+        window.localStorage.setItem(this.prefix + name, JSON.stringify(value));
+      } catch (e) {
+        /* empty */
+      }
+    },
+    get: function (name) {
+      try {
+        return JSON.parse(window.localStorage.getItem(this.prefix + name));
+      } catch (e) {
+        /* empty */
+      }
+    },
+  };
+
   window.ContentEditor = {
     addContent: function addContent(prefix) {
       $("#" + prefix + "-group .add-row a").click();
@@ -458,12 +476,15 @@ django.jQuery(function ($) {
       tabs.eq(0).click();
     }
 
-    tabContainer.find(".toggle input").on("change", function () {
+    const collapseAllInput = tabContainer.find(".toggle input");
+    collapseAllInput.on("change", function () {
       $(".order-machine .inline-related").toggleClass(
         "collapsed",
         this.checked
       );
+      LS.set("collapseAll", this.checked);
     });
+    collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change");
   })();
 
   $(document)
@@ -486,7 +507,7 @@ django.jQuery(function ($) {
     }
   );
 
-  orderMachine.on("dblclick", "h3", function toggleCollapsed(e) {
+  orderMachine.on("click", "h3", function toggleCollapsed(e) {
     e.preventDefault();
     this.closest(".inline-related").classList.toggle("collapsed");
   });

@@ -18,6 +18,10 @@ Change log
   key caching.
 - Disabled the content editor when there are no regions or when the current
   region doesn't allow any plugins.
+- Changed the content editor interface to collapse and expand fieldsets with a
+  single click instead of requiring a totally not discoverable doubleclick.
+- Switched to saving the "Collapse all items" state inside the browsers'
+  localStorage instead of starting with expanded fieldsets every time.
 
 
 `4.0`_ (2020-11-28)
