@@ -28,7 +28,7 @@ django.jQuery(function ($) {
       }
 
       const button = document.createElement("a");
-      button.setAttribute("data-plugin", plugin.prefix);
+      button.dataset.pluginPrefix = plugin.prefix;
       button.className = "plugin-button";
       button.title = plugin.title;
       button.addEventListener("click", function () {
@@ -69,6 +69,12 @@ django.jQuery(function ($) {
   const orderMachine = $(".order-machine"),
     machineEmptyMessage = $('<p class="hidden machine-message"/>')
       .text(ContentEditor.messages.empty)
+      .appendTo(orderMachine),
+    noRegionsMessage = $('<p class="hidden machine-message"/>')
+      .text(ContentEditor.messages.noRegions)
+      .appendTo(orderMachine),
+    noPluginsMessage = $('<p class="hidden machine-message"/>')
+      .text(ContentEditor.messages.noPlugins)
       .appendTo(orderMachine);
 
   // Pre map plugin regions
@@ -169,19 +175,43 @@ django.jQuery(function ($) {
     return select;
   }
 
+  function pluginInCurrentRegion(prefix) {
+    if (!ContentEditor.regions.length) return false;
+
+    const plugin = ContentEditor.pluginsByPrefix[prefix];
+    const regions = plugin.regions || ContentEditor.regions;
+    return regions.includes(ContentEditor.currentRegion);
+  }
+
   // Hides plugins that are not allowed in this region
   function hideNotAllowedDropdown() {
-    $(ContentEditor.machineControlSelect)
-      .find("option")
-      .each(function () {
-        const plugin = ContentEditor.pluginsByPrefix[this.value];
-        const regions = plugin ? plugin.regions : [];
-        if (!regions || regions.includes(ContentEditor.currentRegion)) {
-          $(this).show();
-        } else {
-          $(this).hide();
-        }
-      });
+    let visible = 0;
+    const control = $(ContentEditor.machineControlSelect);
+
+    control.find("option").each(function () {
+      if (!this.value) return;
+
+      if (pluginInCurrentRegion(this.value)) {
+        ++visible;
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+
+    control.attr("disabled", !visible);
+    control.css("opacity", visible ? 1 : 0.5);
+
+    if (visible) {
+      noRegionsMessage.hide();
+      noPluginsMessage.hide();
+    } else {
+      if (ContentEditor.currentRegion) {
+        noPluginsMessage.show();
+      } else {
+        noRegionsMessage.show();
+      }
+    }
   }
 
   // Hide not allowed plugin buttons
@@ -191,14 +221,9 @@ django.jQuery(function ($) {
       ? buttons
       : qsa(".control-unit.plugin-buttons .plugin-button");
 
-    const region = ContentEditor.currentRegion;
-
     buttons.forEach(function (button) {
-      const plugin = button.dataset.plugin;
-      const regions = ContentEditor.pluginsByPrefix[plugin].regions;
-
-      button.style.display =
-        !regions || regions.includes(region) ? "inline" : "none";
+      const plugin = button.dataset.pluginPrefix;
+      button.style.display = pluginInCurrentRegion(plugin) ? "inline" : "none";
     });
   }
 
@@ -363,36 +388,35 @@ django.jQuery(function ($) {
     $row.find("input, select, textarea").first().focus();
   });
 
-  $(document).on("formset:removed", function resetInlines(
-    _event,
-    _row,
-    formsetName
-  ) {
-    // Not one of our managed inlines?
-    if (!ContentEditor.pluginsByPrefix[formsetName]) return;
+  $(document).on(
+    "formset:removed",
+    function resetInlines(_event, _row, formsetName) {
+      // Not one of our managed inlines?
+      if (!ContentEditor.pluginsByPrefix[formsetName]) return;
 
-    if (
-      !orderMachine.find(
-        '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
-      ).length
-    ) {
-      machineEmptyMessage.removeClass("hidden");
-    }
-    orderMachine
-      .find(".inline-related.last-related:not(.empty-form)")
-      .each(function () {
-        $(document).trigger("content-editor:deactivate", [$(this)]);
-      });
-
-    // As soon as possible, but not sooner (let the inline.js code run to the end first)
-    setTimeout(function () {
+      if (
+        !orderMachine.find(
+          '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
+        ).length
+      ) {
+        machineEmptyMessage.removeClass("hidden");
+      }
       orderMachine
         .find(".inline-related.last-related:not(.empty-form)")
         .each(function () {
-          $(document).trigger("content-editor:activate", [$(this)]);
+          $(document).trigger("content-editor:deactivate", [$(this)]);
         });
-    }, 0);
-  });
+
+      // As soon as possible, but not sooner (let the inline.js code run to the end first)
+      setTimeout(function () {
+        orderMachine
+          .find(".inline-related.last-related:not(.empty-form)")
+          .each(function () {
+            $(document).trigger("content-editor:activate", [$(this)]);
+          });
+      }, 0);
+    }
+  );
 
   // Initialize tabs and currentRegion.
   (function () {

@@ -16,6 +16,8 @@ Change log
 - Fixed an edge case where passing a generator to ``contents_for_item``
   would cause too many queries because of a missing ``parent`` foreign
   key caching.
+- Disabled the content editor when there are no regions or when the current
+  region doesn't allow any plugins.
 
 
 `4.0`_ (2020-11-28)
