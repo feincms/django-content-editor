@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-11-11 09:15+0100\n"
+"POT-Creation-Date: 2021-03-11 12:18+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/feincms/language/"
@@ -35,22 +35,30 @@ msgid "No items. Region may inherit content."
 msgstr ""
 
 #: admin.py:155
+msgid "No regions available."
+msgstr ""
+
+#: admin.py:156
+msgid "No plugins allowed in this region."
+msgstr ""
+
+#: admin.py:157
 #, fuzzy
 #| msgid "max. items"
 msgid "New item"
 msgstr "max. öğe"
 
-#: admin.py:156
+#: admin.py:158
 msgid "Unknown region"
 msgstr ""
 
-#: admin.py:157
+#: admin.py:159
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Collapse all items"
 msgstr "Ağacı daralt"
 
-#: admin.py:158
+#: admin.py:160
 msgid "collapsed"
 msgstr ""
 
