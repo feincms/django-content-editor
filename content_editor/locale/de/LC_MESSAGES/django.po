@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11 12:18+0100\n"
+"POT-Creation-Date: 2021-03-15 14:04+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,41 +20,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:152
+#: admin.py:151
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: admin.py:153
+#: admin.py:152
 msgid "No items."
 msgstr "Keine Elemente."
 
-#: admin.py:154
+#: admin.py:153
 msgid "No items. Region may inherit content."
 msgstr "Keine Elemente. Region könnte Inhalt erben."
 
-#: admin.py:155
+#: admin.py:154
 msgid "No regions available."
 msgstr "Keine Regionen verfügbar."
 
-#: admin.py:156
+#: admin.py:155
 msgid "No plugins allowed in this region."
 msgstr "Keine der Elemente sind in dieser Region erlaubt."
 
-#: admin.py:157
+#: admin.py:156
 msgid "New item"
 msgstr "Neues Element"
 
-#: admin.py:158
+#: admin.py:157
 msgid "Unknown region"
 msgstr "Unbekannte Region"
 
-#: admin.py:159
+#: admin.py:158
 msgid "Collapse all items"
 msgstr "Alle Elemente ausblenden"
 
-#: admin.py:160
+#: admin.py:159
 msgid "collapsed"
 msgstr "ausgeblendet"
+
+#: admin.py:160
+msgid "marked for deletion"
+msgstr "zur Löschung markiert"
 
 #~ msgid "Show/hide contents"
 #~ msgstr "Inhalte ein-/ausblenden"

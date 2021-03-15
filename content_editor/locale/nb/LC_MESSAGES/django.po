@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11 12:18+0100\n"
+"POT-Creation-Date: 2021-03-15 14:04+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/projects/p/feincms/"
@@ -19,46 +19,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:152
+#: admin.py:151
 msgid "Add new item"
 msgstr "Legg til nytt objekt"
 
-#: admin.py:153
+#: admin.py:152
 #, fuzzy
 #| msgid "max. items"
 msgid "No items."
 msgstr "maks antall objekter"
 
-#: admin.py:154
+#: admin.py:153
 msgid "No items. Region may inherit content."
 msgstr ""
 
-#: admin.py:155
+#: admin.py:154
 msgid "No regions available."
 msgstr ""
 
-#: admin.py:156
+#: admin.py:155
 msgid "No plugins allowed in this region."
 msgstr ""
 
-#: admin.py:157
+#: admin.py:156
 #, fuzzy
 #| msgid "max. items"
 msgid "New item"
 msgstr "maks antall objekter"
 
-#: admin.py:158
+#: admin.py:157
 msgid "Unknown region"
 msgstr ""
 
-#: admin.py:159
+#: admin.py:158
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Collapse all items"
 msgstr "Slå sammen tre"
 
-#: admin.py:160
+#: admin.py:159
 msgid "collapsed"
+msgstr ""
+
+#: admin.py:160
+msgid "marked for deletion"
 msgstr ""
 
 #, fuzzy

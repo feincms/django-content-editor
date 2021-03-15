@@ -157,6 +157,7 @@ class ContentEditor(ModelAdmin):
                     "unknownRegion": gettext("Unknown region"),
                     "toggle": gettext("Collapse all items"),
                     "collapsed": gettext("collapsed"),
+                    "forDeletion": gettext("marked for deletion"),
                 },
             }
         )

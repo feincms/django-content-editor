@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-11 12:18+0100\n"
+"POT-Creation-Date: 2021-03-15 14:04+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Croatian (http://www.transifex.com/projects/p/feincms/"
@@ -20,46 +20,50 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: admin.py:152
+#: admin.py:151
 msgid "Add new item"
 msgstr "Dodaj novi unos"
 
-#: admin.py:153
+#: admin.py:152
 #, fuzzy
 #| msgid "max. items"
 msgid "No items."
 msgstr "najviše zapisa"
 
-#: admin.py:154
+#: admin.py:153
 msgid "No items. Region may inherit content."
 msgstr ""
 
-#: admin.py:155
+#: admin.py:154
 msgid "No regions available."
 msgstr ""
 
-#: admin.py:156
+#: admin.py:155
 msgid "No plugins allowed in this region."
 msgstr ""
 
-#: admin.py:157
+#: admin.py:156
 #, fuzzy
 #| msgid "max. items"
 msgid "New item"
 msgstr "najviše zapisa"
 
-#: admin.py:158
+#: admin.py:157
 msgid "Unknown region"
 msgstr ""
 
-#: admin.py:159
+#: admin.py:158
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Collapse all items"
 msgstr "Sažmi drvo"
 
-#: admin.py:160
+#: admin.py:159
 msgid "collapsed"
+msgstr ""
+
+#: admin.py:160
+msgid "marked for deletion"
 msgstr ""
 
 #, fuzzy

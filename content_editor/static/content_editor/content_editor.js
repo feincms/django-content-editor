@@ -543,12 +543,16 @@ django.jQuery(function ($) {
   });
 
   const style = document.createElement("style");
-  style.textContent = [
-    ".order-machine .inline-related.collapsed .inline_label::after {",
-    "  opacity: 0.5;",
-    '  content: " (' + ContentEditor.messages.collapsed + ')";',
-    "}",
-  ].join("\n");
+  style.textContent = `
+.order-machine .inline-related.collapsed .inline_label::after {
+  opacity: 0.5;
+  content: " (${ContentEditor.messages.collapsed})";
+}
+.order-machine .inline-related.for-deletion .inline_label::after {
+  opacity: 0.5;
+  content: " (${ContentEditor.messages.forDeletion})";
+}
+  `;
   document.head.appendChild(style);
 
   $(document).trigger("content-editor:ready");
