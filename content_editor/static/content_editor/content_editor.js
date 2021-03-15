@@ -455,7 +455,11 @@ django.jQuery(function ($) {
         .filter('[data-region="' + ContentEditor.currentRegion + '"]')
         .addClass("active");
       hideInlinesFromOtherRegions();
-      window.location.hash = "tab_" + ContentEditor.currentRegion;
+      window.history.replaceState(
+        null,
+        "",
+        "#tab_" + ContentEditor.currentRegion
+      );
 
       // Make sure only allowed plugins are in select
       hideNotAllowedDropdown();

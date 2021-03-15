@@ -22,6 +22,8 @@ Change log
   single click instead of requiring a totally not discoverable doubleclick.
 - Switched to saving the "Collapse all items" state inside the browsers'
   localStorage instead of starting with expanded fieldsets every time.
+- Changed the JavaScript code to not add history entries anymore when changing
+  tabs.
 
 
 `4.0`_ (2020-11-28)
