@@ -117,14 +117,9 @@ html {
 }
 
 .order-machine .inline-related:hover > h3,
-.order-machine .inline-related:focus-within > h3 {
+.order-machine .inline-related:not(.for-deletion):focus-within > h3 {
   color: white;
   background-color: var(--button-bg, #79aec8);
-}
-
-.order-machine .inline-related:hover .delete label,
-.order-machine .inline-related:focus-within .delete label {
-  color: white;
 }
 
 .order-machine .inline-related.for-deletion fieldset,
@@ -133,14 +128,15 @@ html {
   visibility: hidden;
 }
 
-.order-machine .inline-related.for-deletion h3::after {
+.order-machine .inline-related.for-deletion > h3::after {
   content: "";
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(255, 0, 0, 0.2);
+  background: var(--error-fg, #ba2121);
+  opacity: 0.3;
   pointer-events: none;
 }
 
