@@ -5,10 +5,10 @@ from django.db import models
 from django.test import TestCase
 from django.test.utils import isolate_apps
 from django.urls import reverse
+from testapp.models import Article, Download, Page, PageText, RichText
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import contents_for_item
-from testapp.models import Article, Download, Page, PageText, RichText
 
 
 class ContentEditorTest(TestCase):

@@ -8,7 +8,6 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-
 from js_asset.js import JS
 
 
