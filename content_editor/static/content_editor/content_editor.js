@@ -508,8 +508,10 @@ django.jQuery(function ($) {
   );
 
   orderMachine.on("click", "h3", function toggleCollapsed(e) {
-    e.preventDefault();
-    this.closest(".inline-related").classList.toggle("collapsed");
+    if (e.target.tagName === "H3") {
+      e.preventDefault();
+      this.closest(".inline-related").classList.toggle("collapsed");
+    }
   });
 
   // Try to keep the current region tab (location hash).
