@@ -511,7 +511,7 @@ django.jQuery(function ($) {
     }
   );
 
-  orderMachine.on("click", "h3", function toggleCollapsed(e) {
+  orderMachine.on("click", ".inline-related>h3", function toggleCollapsed(e) {
     if (e.target.tagName === "H3") {
       e.preventDefault();
       this.closest(".inline-related").classList.toggle("collapsed");
