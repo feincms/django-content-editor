@@ -508,6 +508,7 @@ django.jQuery(function ($) {
         "for-deletion",
         this.checked
       );
+      this.blur();
     }
   );
 
