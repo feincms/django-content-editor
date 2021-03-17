@@ -512,7 +512,7 @@ django.jQuery(function ($) {
   );
 
   orderMachine.on("click", ".inline-related>h3", function toggleCollapsed(e) {
-    if (e.target.tagName === "H3") {
+    if (!e.target.closest(".delete")) {
       e.preventDefault();
       this.closest(".inline-related").classList.toggle("collapsed");
     }
