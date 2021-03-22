@@ -272,18 +272,12 @@ django.jQuery(function ($) {
 
     if (regions.length < 2) return;
 
-    const controls = document.createElement("div"),
-      select = buildDropdown(regions),
-      regionInput = $inline.find(".field-region input"),
-      deleteCheckbox = $inline.find("span.delete");
+    const select = buildDropdown(regions),
+      regionInput = $inline.find(".field-region input");
 
+    select.className = "inline_move_to_region";
     select.value = regionInput.val();
-    controls.className = "inline-controls";
-    controls.appendChild(select);
-    if (deleteCheckbox.length) {
-      deleteCheckbox.appendTo(controls);
-    }
-    $inline.append(controls);
+    $inline.find("> h3").append(select);
 
     select.addEventListener("change", function () {
       $inline.attr("data-region", select.value);
@@ -517,7 +511,10 @@ django.jQuery(function ($) {
   );
 
   orderMachine.on("click", ".inline-related>h3", function toggleCollapsed(e) {
-    if (!e.target.closest(".delete")) {
+    if (
+      !e.target.closest(".delete") &&
+      !e.target.closest(".inline_move_to_region")
+    ) {
       e.preventDefault();
       this.closest(".inline-related").classList.toggle("collapsed");
     }

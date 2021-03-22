@@ -76,6 +76,7 @@ html {
   border-top: none;
   font-size: 13px;
   font-weight: normal;
+  height: 16px;
   padding: 7px 7px 7px 23px;
   background-color: var(--darkened-bg, #f8f8f8);
   transition: 0.2s background, 0.2s color;
@@ -169,28 +170,13 @@ html {
   cursor: pointer;
 }
 
-.inline-controls {
-  position: absolute;
-  right: 28px;
-  top: 2px;
-}
-
-.has_original .inline-controls {
-  right: 8px;
-}
-
-.inline-controls > * + * {
-  margin-left: 8px;
-}
-
-.inline-controls select {
-  border-color: #f8f8f8;
-  height: 26px;
-  font-size: 11px; /* Same as delete label */
-}
-
-.inline-controls label {
-  font-size: 11px; /* Same as delete label */
+.inline_move_to_region {
+  border-color: var(--hairline-color, #e8e8e8);
+  float: right;
+  font-size: 11px;
+  height: 22px;
+  margin: -2px 8px;
+  padding: 0px 1px;
 }
 
 /* tabbed_fieldsets.js support */
