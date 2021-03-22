@@ -274,11 +274,15 @@ django.jQuery(function ($) {
 
     const controls = document.createElement("div"),
       select = buildDropdown(regions),
-      regionInput = $inline.find(".field-region input");
+      regionInput = $inline.find(".field-region input"),
+      deleteCheckbox = $inline.find("span.delete");
 
     select.value = regionInput.val();
     controls.className = "inline-controls";
     controls.appendChild(select);
+    if (deleteCheckbox.length) {
+      deleteCheckbox.appendTo(controls);
+    }
     $inline.append(controls);
 
     select.addEventListener("change", function () {

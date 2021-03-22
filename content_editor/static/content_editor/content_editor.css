@@ -97,12 +97,6 @@ html {
   content: "new";
 }
 
-.order-machine .delete {
-  position: absolute;
-  top: 7px;
-  right: 7px;
-}
-
 .order-machine .inline-related fieldset {
   /* Animate out of view REAL FAST */
   transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1), background 0.2s,
@@ -177,13 +171,26 @@ html {
 
 .inline-controls {
   position: absolute;
-  right: 100px;
+  right: 28px;
   top: 2px;
+}
+
+.has_original .inline-controls {
+  right: 8px;
+}
+
+.inline-controls > * + * {
+  margin-left: 8px;
 }
 
 .inline-controls select {
   border-color: #f8f8f8;
   height: 26px;
+  font-size: 11px; /* Same as delete label */
+}
+
+.inline-controls label {
+  font-size: 11px; /* Same as delete label */
 }
 
 /* tabbed_fieldsets.js support */

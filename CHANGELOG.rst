@@ -24,6 +24,8 @@ Change log
   localStorage instead of starting with expanded fieldsets every time.
 - Changed the JavaScript code to not add history entries anymore when changing
   tabs.
+- Fixed the layout and sizing of controls in the title of heading blocks (the
+  dropdown to move the block to a different region and the delete checkbox).
 
 
 `4.0`_ (2020-11-28)
