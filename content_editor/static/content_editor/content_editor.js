@@ -480,7 +480,7 @@ django.jQuery(function ($) {
 
     const collapseAllInput = tabContainer.find(".toggle input");
     collapseAllInput.on("change", function () {
-      $(".order-machine .inline-related").toggleClass(
+      $(".order-machine .inline-related:not(.empty-form)").toggleClass(
         "collapsed",
         this.checked
       );
