@@ -524,6 +524,21 @@ django.jQuery(function ($) {
     }
   });
 
+  // Django only attaches the .collapse-toggle behavior to existing
+  // fieldset.module elements :-(
+  orderMachine.on("click", ".collapse-toggle", function toggleCollapsed(e) {
+    // This only reaches us if it hasn't been handled by Django's collapse.js
+    e.preventDefault();
+    const fieldset = this.closest("fieldset");
+    if (fieldset.classList.contains("collapsed")) {
+      e.target.textContent = window.gettext("Hide");
+      fieldset.classList.remove("collapsed");
+    } else {
+      e.target.textContent = window.gettext("Show");
+      fieldset.classList.add("collapsed");
+    }
+  });
+
   // Try to keep the current region tab (location hash).
   $("form").submit(function () {
     const form = $(this);

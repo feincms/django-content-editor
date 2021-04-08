@@ -27,6 +27,8 @@ Change log
 - Fixed the layout and sizing of controls in the title of heading blocks (the
   dropdown to move the block to a different region and the delete checkbox).
 - Changed the content editor to always add new items in an uncollapsed state.
+- Added a workaround for Django admin's failure to collapse/uncollapse
+  fieldsets which have been added dynamically.
 
 
 `4.0`_ (2020-11-28)
