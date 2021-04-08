@@ -21,12 +21,10 @@ class Template(SimpleNamespace):
 
 def create_plugin_base(content_base):
     """
-    This is purely an internal method. Here, we create a base class for
-    the concrete content types, which are built in
-    ``create_plugin``.
+    Create and return a base class for plugins
 
-    The three fields added to build a concrete content type class/model
-    are ``parent``, ``region`` and ``ordering``.
+    The base class contains a ``parent`` foreign key and the required
+    ``region`` and ``ordering`` fields.
     """
 
     class PluginBase(models.Model):
