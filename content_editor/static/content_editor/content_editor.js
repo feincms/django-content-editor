@@ -73,7 +73,11 @@ django.jQuery(function ($) {
 
   // Add basic structure. There is always at least one inline group if
   // we even have any plugins.
-  $(".inline-group:first").before(
+  let $anchor = $(".inline-group:first");
+  if (ContentEditor.plugins.length) {
+    $anchor = $("#" + ContentEditor.plugins[0].prefix + "-group");
+  }
+  $anchor.before(
     '<div class="tabs regions">' +
       '<label class="toggle"><input type="checkbox" /> ' +
       ContentEditor.messages.toggle +
