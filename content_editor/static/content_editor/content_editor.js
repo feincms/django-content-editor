@@ -524,8 +524,8 @@ django.jQuery(function ($) {
     }
   });
 
-  // Django only attaches the .collapse-toggle behavior to existing
-  // fieldset.module elements :-(
+  // Since we pulled out the fieldsets from their containing module
+  // we have to reimplement the Show/Hide toggle for order machine items.
   orderMachine.on("click", ".collapse-toggle", function toggleCollapsed(e) {
     // This only reaches us if it hasn't been handled by Django's collapse.js
     e.preventDefault();
