@@ -29,6 +29,8 @@ Change log
 - Changed the content editor to always add new items in an uncollapsed state.
 - Added a workaround for Django admin's failure to collapse/uncollapse
   fieldsets which have been added dynamically.
+- Changed the "Collapse all items" behavior to never collapse fieldsets with
+  errors inside.
 
 
 `4.0`_ (2020-11-28)

@@ -489,6 +489,14 @@ django.jQuery(function ($) {
         this.checked
       );
       LS.set("collapseAll", this.checked);
+
+      if (this.checked) {
+        $(".order-machine .inline-related:not(.empty-form) .errorlist").each(
+          function uncollapseInvalidFieldsets() {
+            this.closest(".inline-related").classList.remove("collapsed");
+          }
+        );
+      }
     });
     collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change");
   })();
