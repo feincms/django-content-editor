@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+
+`4.1`_ (2021-04-15)
+===================
+
 - Fixed the rich text plugin to use the correct selector for the
   documented JavaScript code.
 - Added ``allow_regions`` and ``deny_regions`` helpers to restrict
@@ -304,4 +308,5 @@ Initial public release of django-content-editor.
 .. _2.0: https://github.com/matthiask/django-content-editor/compare/1.5...2.0
 .. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
 .. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.0...main
+.. _4.1: https://github.com/matthiask/django-content-editor/compare/4.0...4.1
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.1...main
