@@ -31,6 +31,7 @@ Change log
   fieldsets which have been added dynamically.
 - Changed the "Collapse all items" behavior to never collapse fieldsets with
   errors inside.
+- Changed ``Region`` and ``Template`` to require all of their fields.
 
 
 `4.0`_ (2020-11-28)

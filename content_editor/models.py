@@ -1,22 +1,37 @@
-from types import SimpleNamespace
-
 from django.db import models
 
 
 __all__ = ("Region", "Template", "create_plugin_base")
 
 
-class Region(SimpleNamespace):
-    key = ""
-    title = "unnamed"
-    inherited = False
+class Type(dict):
+    _REQUIRED = set()
+
+    def __init__(self, **kwargs):
+        missing = self._REQUIRED - set(kwargs)
+        if missing:
+            raise TypeError(
+                f"Missing arguments to {self.__class__.__name__}: {missing}"
+            )
+        super().__init__(**kwargs)
+
+    def __getattr__(self, attr):
+        try:
+            return self[attr]
+        except KeyError:
+            raise AttributeError(f"Unknown attribute {attr!r}")
 
 
-class Template(SimpleNamespace):
-    key = ""
-    template_name = None
-    title = ""
-    regions = []
+class Region(Type):
+    _REQUIRED = {"key", "title", "inherited"}
+
+    def __init__(self, **kwargs):
+        kwargs.setdefault("inherited", False)
+        super().__init__(**kwargs)
+
+
+class Template(Type):
+    _REQUIRED = {"key", "template_name", "title", "regions"}
 
 
 def create_plugin_base(content_base):

@@ -57,6 +57,8 @@ class Page(models.Model):
 
     template = Template(
         key="test",
+        title="test",
+        template_name="test.html",
         regions=[
             Region(key="main", title="main region"),
             Region(key="sidebar", title="sidebar region", inherited=True),
