@@ -118,6 +118,9 @@ django.jQuery(function ($) {
     const inline = arg[0];
 
     inline.addEventListener("dragstart", function (e) {
+      // Only handle events from [draggable] elements
+      if (!e.target.closest("h3[draggable]")) return;
+
       // window.__fs_dragging = inline;
       window.__fs_dragging = e.target.closest(".inline-related");
       window.__fs_dragging.classList.add("fs-dragging");

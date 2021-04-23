@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+- Allowed dragging text etc. inside the content editor (made the ``dragstart``
+  handling only trigger when dragging the title of fieldsets).
+
 
 `4.1`_ (2021-04-15)
 ===================
