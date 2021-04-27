@@ -85,12 +85,31 @@ html {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 2px;
 }
 
 .order-machine .inline-related > h3[draggable] {
   background-repeat: no-repeat;
   background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJtZGktZHJhZy12ZXJ0aWNhbCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNhYWEiIGQ9Ik05LDNIMTFWNUg5VjNNMTMsM0gxNVY1SDEzVjNNOSw3SDExVjlIOVY3TTEzLDdIMTVWOUgxM1Y3TTksMTFIMTFWMTNIOVYxMU0xMywxMUgxNVYxM0gxM1YxMU05LDE1SDExVjE3SDlWMTVNMTMsMTVIMTVWMTdIMTNWMTVNOSwxOUgxMVYyMUg5VjE5TTEzLDE5SDE1VjIxSDEzVjE5WiIgLz48L3N2Zz4=");
   background-position: 0 2px;
+}
+
+.order-machine .inline-related > h3 > b,
+.order-machine h3 .inline_label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.order-machine .inline-related > h3 > b {
+  flex: 0 1 auto;
+}
+
+.order-machine h3 .inline_label {
+  flex: 1 1 0px;
 }
 
 /* Replace the broken content type counter for new contents with a "new" label */
@@ -172,10 +191,9 @@ html {
 
 .inline_move_to_region {
   border-color: var(--hairline-color, #e8e8e8);
-  float: right;
   font-size: 11px;
   height: 22px;
-  margin: -2px 8px;
+  margin: -2px 8px -2px auto;
   padding: 0px 1px;
 }
 

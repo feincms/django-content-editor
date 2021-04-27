@@ -7,6 +7,8 @@ Change log
 
 - Allowed dragging text etc. inside the content editor (made the ``dragstart``
   handling only trigger when dragging the title of fieldsets).
+- Fixed a bug where overlong fieldset titles would cause wrapping, which made
+  the region move dropdown and the deletion UI elements inaccessible.
 
 
 `4.1`_ (2021-04-15)

@@ -284,7 +284,7 @@ django.jQuery(function ($) {
 
     select.className = "inline_move_to_region";
     select.value = regionInput.val();
-    $inline.find("> h3").append(select);
+    $inline.find("> h3 .inline_label").after(select);
 
     select.addEventListener("change", function () {
       $inline.attr("data-region", select.value);
