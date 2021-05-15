@@ -4,8 +4,9 @@ django-content-editor -- Editing structured content
 
 Version |release|
 
-.. image:: https://travis-ci.org/matthiask/django-content-editor.svg?branch=main
-    :target: https://travis-ci.org/matthiask/django-content-editor
+.. image:: https://github.com/matthiask/django-content-editor/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/matthiask/django-content-editor/
+    :alt: CI Status
 
 **Tagline: The component formerly known as FeinCMS' ItemEditor.**
 
