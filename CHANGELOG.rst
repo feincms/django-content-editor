@@ -5,11 +5,21 @@ Change log
 `Next version`_
 ===============
 
+
+`5.0a1`_ (2021-06-08)
+=====================
+
 - Allowed dragging text etc. inside the content editor (made the ``dragstart``
   handling only trigger when dragging the title of fieldsets).
 - Fixed a bug where overlong fieldset titles would cause wrapping, which made
   the region move dropdown and the deletion UI elements inaccessible.
 - Made the submit row sticky in content editors.
+- Reworked the machine control to always add plugin buttons for all plugins and
+  removed the plugins dropdown and moved the control to the right hand side of
+  the editor to improve the visibility of plugin labels.
+- Made it possible to drag several content blocks at once.
+- Made it possible to directly insert plugins in the middle of the content, not
+  just at the end.
 
 
 `4.1`_ (2021-04-15)
@@ -315,4 +325,5 @@ Initial public release of django-content-editor.
 .. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
 .. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
 .. _4.1: https://github.com/matthiask/django-content-editor/compare/4.0...4.1
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/4.1...main
+.. _5.0a1: https://github.com/matthiask/django-content-editor/compare/4.1...5.0a1
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.0a1...main
