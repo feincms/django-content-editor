@@ -233,14 +233,27 @@ input:checked ~ .toggle-plugins-text.collapse-all {
 }
 
 .control-unit .plugin-button {
-  margin: 1rem 0;
+  margin: 8px -4px;
+  padding: 8px 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
+  border-radius: 4px;
+  transition: 0.1s background;
+  user-select: none;
+}
+
+.plugin-button.selected {
+  background: var(--primary, #79aec8);
 }
 
 .plugin-button-icon {
   width: 32px;
+}
+
+.plugin-button-icon.missing::before {
+  content: "?";
+  padding-left: 8px;
 }
 
 .inline_move_to_region {
@@ -324,6 +337,32 @@ input:checked ~ .toggle-plugins-text.collapse-all {
   bottom: 0;
   left: 0;
   z-index: 1;
+}
+
+.order-machine-insert-target {
+  position: absolute;
+  left: 50%;
+  top: -0.85em;
+  font-size: 1.5rem;
+  width: 1.25em;
+  height: 1.25em;
+  line-height: 1.25em;
+  border-radius: 99px;
+  background: var(--button-bg, #79aec8);
+  color: var(--button-fg, #fff);
+  display: none;
+  place-items: center;
+  cursor: pointer;
+}
+.order-machine-insertion .order-machine-insert-target {
+  display: grid;
+}
+.order-machine-insert-target:hover {
+  background: var(--button-hover-bg, #609ab6);
+}
+.order-machine-insert-target::before {
+  content: "+";
+  font-weight: bold;
 }
 
 @media screen and (max-width: 767px) {

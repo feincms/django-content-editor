@@ -29,6 +29,13 @@ django.jQuery(function ($) {
     },
   };
 
+  function unselectSelectedPlugin() {
+    qsa(".plugin-button.selected").forEach((btn) =>
+      btn.classList.remove("selected")
+    );
+    qs(".order-machine").classList.remove("order-machine-insertion");
+  }
+
   window.ContentEditor = {
     addContent: function addContent(prefix) {
       $("#" + prefix + "-group .add-row a").click();
@@ -37,24 +44,24 @@ django.jQuery(function ($) {
       const plugin = ContentEditor.pluginsByPrefix[prefix];
       if (!plugin) return;
 
-      let unit = qs(".control-unit.plugin-buttons");
-      if (!unit) {
-        unit = document.createElement("div");
-        unit.className = "control-unit plugin-buttons";
-        const mc = qs(".machine-control");
-        mc.appendChild(unit);
-      }
-
       const button = document.createElement("a");
       button.dataset.pluginPrefix = plugin.prefix;
       button.className = "plugin-button";
       button.title = plugin.title;
-      button.addEventListener("click", function () {
-        ContentEditor.addContent(plugin.prefix);
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (button.classList.contains("selected")) {
+          button.classList.remove("selected");
+          ContentEditor.addContent(plugin.prefix);
+        } else {
+          unselectSelectedPlugin();
+          button.classList.add("selected");
+          qs(".order-machine").classList.add("order-machine-insertion");
+        }
       });
 
       const icon = document.createElement("span");
-      icon.className = "plugin-button-icon";
+      icon.className = `plugin-button-icon ${iconHTML ? "" : " missing"}`;
       icon.innerHTML = iconHTML || "";
       button.appendChild(icon);
 
@@ -63,6 +70,7 @@ django.jQuery(function ($) {
       title.textContent = plugin.title;
       button.appendChild(title);
 
+      const unit = qs(".control-unit.plugin-buttons");
       unit.appendChild(button);
 
       hideNotAllowedPluginButtons([button]);
@@ -100,6 +108,11 @@ django.jQuery(function ($) {
           <span class="toggle-plugins-text collapse-all">${ContentEditor.messages.collapseAll}</span>
           <span class="toggle-plugins-text uncollapse-all">${ContentEditor.messages.uncollapseAll}</span>
         </label>
+        <div class="plugin-buttons control-unit">
+        </div>
+        <p class="small">
+          Per Doppelklick können Plugins am Ende eingefügt werden.
+        </p>
       </div>
     </div>
     <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
@@ -401,6 +414,18 @@ django.jQuery(function ($) {
   pluginInlineGroups.hide();
   assignRegionDataAttribute();
 
+  $(document).on(
+    "click",
+    ".order-machine-insert-target",
+    function handleInsertion(e) {
+      const plugin = qs(".plugin-button.selected");
+      if (!plugin) return;
+
+      ContentEditor._insertBefore = e.target.closest(".inline-related");
+      ContentEditor.addContent(plugin.dataset.pluginPrefix);
+    }
+  );
+
   // Always move empty forms to the end, because new plugins are inserted
   // just before its empty form. Also, assign region data.
   $(document).on("formset:added", function newForm(event, $row, formsetName) {
@@ -416,6 +441,11 @@ django.jQuery(function ($) {
     ensureDraggable($row);
 
     machineEmptyMessage.addClass("hidden");
+
+    if (ContentEditor._insertBefore) {
+      insertBefore($row[0], ContentEditor._insertBefore);
+      ContentEditor._insertBefore = null;
+    }
 
     $(document).trigger("content-editor:activate", [$row]);
 
@@ -522,6 +552,14 @@ django.jQuery(function ($) {
     toggleSidebar.attr("checked", LS.get("collapseSidebar")).trigger("change");
   })();
 
+  (function initializeInsertTargets() {
+    qsa(".order-machine .inline-related").forEach((inline) => {
+      const span = document.createElement("span");
+      span.className = "order-machine-insert-target";
+      inline.appendChild(span);
+    });
+  })();
+
   $(document)
     .on("content-editor:deactivate", function (event, row) {
       row.find("fieldset").addClass("content-editor-hidden");
@@ -568,6 +606,17 @@ django.jQuery(function ($) {
     } else {
       e.target.textContent = window.gettext("Show");
       fieldset.classList.add("collapsed");
+    }
+  });
+
+  // Unselect the currently selected plugin
+  $(document.body).on("click", function removeSelected(e) {
+    if (
+      !e.target.closest(".plugin-button") &&
+      !e.target.closest(".order-machine-insert-target")
+    ) {
+      console.log(e.target);
+      unselectSelectedPlugin();
     }
   });
 
