@@ -50,7 +50,7 @@ html {
 }
 
 .order-machine-wrapper.collapsed {
-  --control-width: 44px;
+  --control-width: 40px;
 }
 
 .order-machine {
@@ -177,10 +177,11 @@ html {
   height: 1em;
   background: url("triangle.svg") no-repeat 6px 0;
   background-size: contain;
+  transform: scaleX(-1);
 }
 
 .order-machine-wrapper.collapsed .toggle-sidebar::before {
-  transform: scaleX(-1);
+  transform: scaleX(1);
 }
 
 .toggle-sidebar input,
@@ -211,7 +212,7 @@ input:checked ~ .toggle-plugins-text.collapse-all {
 
 .control-unit {
   display: block;
-  padding: 0 12px;
+  padding: 0 8px;
   margin: 8px 0;
 }
 
