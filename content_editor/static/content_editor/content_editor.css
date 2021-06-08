@@ -55,11 +55,16 @@ html {
   background: var(--darkened-bg, #f8f8f8);
 }
 
-.order-machine {
+.order-machine-wrapper {
+  --control-width: 220px;
   clear: both;
+  display: grid;
+  grid-template-columns: 1fr var(--control-width);
+}
+
+.order-machine {
   padding: 0 10px 10px 10px;
   border: 1px solid var(--hairline-color, #e8e8e8);
-  border-bottom: none;
   position: relative;
 
   display: flex;
@@ -161,33 +166,32 @@ html {
 }
 
 .machine-control {
-  padding: 5px 10px 5px 0;
+  padding: 5px 0;
   border: 1px solid var(--hairline-color, #e8e8e8);
   background: var(--darkened-bg, #f8f8f8);
-  height: 55px;
 }
 
 .control-unit {
-  float: left;
   padding: 0 15px;
+  margin-bottom: 5px;
   border-left: 1px solid var(--hairline-color, #e8e8e8);
-  height: 55px;
 }
 
 .control-unit:first-child {
   border-left: none;
 }
 
-.control-unit select {
-  float: left;
-  position: relative;
-  top: 13px;
+.control-unit .plugin-button {
+  display: block;
+  margin: 0.5rem 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
-.control-unit .plugin-button {
-  margin: 0 0.5rem;
-  font-size: 2.5rem;
-  cursor: pointer;
+.control-unit .plugin-button::after {
+  content: attr(title);
+  text-indent: 4px;
 }
 
 .inline_move_to_region {

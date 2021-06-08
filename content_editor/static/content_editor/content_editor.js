@@ -83,7 +83,7 @@ django.jQuery(function ($) {
       ContentEditor.messages.toggle +
       "</label>" +
       "</div>" +
-      '<div class="module">' +
+      '<div class="module order-machine-wrapper">' +
       '<div class="order-machine"></div><div class="machine-control"></div>' +
       "</div>"
   );
@@ -248,7 +248,7 @@ django.jQuery(function ($) {
 
     buttons.forEach(function (button) {
       const plugin = button.dataset.pluginPrefix;
-      button.style.display = pluginInCurrentRegion(plugin) ? "inline" : "none";
+      button.classList.toggle("hidden", !pluginInCurrentRegion(plugin));
     });
   }
 
