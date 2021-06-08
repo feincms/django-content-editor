@@ -585,14 +585,14 @@ django.jQuery(function ($) {
   const style = document.createElement("style");
   style.textContent = `
 .order-machine .inline-related .inline_label::after {
-  content: " (${window.gettext("Hide")})";
+  content: "(${window.gettext("Hide")})";
   opacity: 0.7;
 }
 .order-machine .inline-related .inline_label:hover::after {
   text-decoration: underline;
 }
 .order-machine .inline-related.collapsed .inline_label::after {
-  content: " (${window.gettext("Show")})";
+  content: "(${window.gettext("Show")})";
   color: var(--link-fg, #447e9b);
   opacity: 1;
 }
