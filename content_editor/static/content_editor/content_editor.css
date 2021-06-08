@@ -77,7 +77,7 @@ html {
   font-size: 13px;
   font-weight: normal;
   height: 16px;
-  padding: 7px 7px 7px 23px;
+  padding: 7px 7px 7px 32px;
   background-color: var(--darkened-bg, #f8f8f8);
   transition: 0.2s background, 0.2s color;
 
@@ -93,8 +93,9 @@ html {
 
 .order-machine .inline-related > h3[draggable] {
   background-repeat: no-repeat;
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIGlkPSJtZGktZHJhZy12ZXJ0aWNhbCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9IiNhYWEiIGQ9Ik05LDNIMTFWNUg5VjNNMTMsM0gxNVY1SDEzVjNNOSw3SDExVjlIOVY3TTEzLDdIMTVWOUgxM1Y3TTksMTFIMTFWMTNIOVYxMU0xMywxMUgxNVYxM0gxM1YxMU05LDE1SDExVjE3SDlWMTVNMTMsMTVIMTVWMTdIMTNWMTVNOSwxOUgxMVYyMUg5VjE5TTEzLDE5SDE1VjIxSDEzVjE5WiIgLz48L3N2Zz4=");
-  background-position: 0 2px;
+  background-image: url("drag-handle.svg");
+  background-position: 8px 5px;
+  background-size: 16px;
 }
 
 .order-machine .inline-related > h3 > b,
