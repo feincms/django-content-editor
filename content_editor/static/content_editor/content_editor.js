@@ -90,7 +90,8 @@ django.jQuery(function ($) {
     `
     <div class="tabs regions"></div>
     <div class="module order-machine-wrapper">
-      <div class="order-machine"></div>
+      <div class="order-machine">
+      </div>
       <div class="machine-control">
         <label class="toggle-sidebar control-unit"><input type="checkbox" />${ContentEditor.messages.toggleSidebar}
         </label>
@@ -101,6 +102,7 @@ django.jQuery(function ($) {
         </label>
       </div>
     </div>
+    <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
     `
   );
 

@@ -159,6 +159,7 @@ class ContentEditor(ModelAdmin):
                     "uncollapseAll": gettext("Uncollapse all items"),
                     "toggleSidebar": gettext("Toggle sidebar"),
                     "forDeletion": gettext("marked for deletion"),
+                    "selectMultiple": gettext("Use Ctrl-Click to select multiple plugins."),
                 },
             }
         )

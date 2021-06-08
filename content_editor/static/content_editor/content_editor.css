@@ -294,6 +294,12 @@ input:checked ~ .toggle-plugins-text.collapse-all {
   position: relative;
 }
 
+.order-machine-help {
+  font-size: 11px;
+  margin-top: -28px;
+  margin-bottom: 30px;
+}
+
 .fs-dragging {
   opacity: 0.5;
 }
