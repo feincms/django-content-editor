@@ -92,13 +92,13 @@ django.jQuery(function ($) {
     <div class="module order-machine-wrapper">
       <div class="order-machine"></div>
       <div class="machine-control">
-          <label class="toggle-sidebar control-unit"><input type="checkbox" />${ContentEditor.messages.toggleSidebar}
-          </label>
-          <label class="toggle-plugins control-unit">
-            <input type="checkbox" />
-            <span class="toggle-plugins-text collapse-all">${ContentEditor.messages.collapseAll}</span>
-            <span class="toggle-plugins-text uncollapse-all">${ContentEditor.messages.uncollapseAll}</span>
-          </label>
+        <label class="toggle-sidebar control-unit"><input type="checkbox" />${ContentEditor.messages.toggleSidebar}
+        </label>
+        <label class="toggle-plugins control-unit">
+          <input type="checkbox" />
+          <span class="toggle-plugins-text collapse-all">${ContentEditor.messages.collapseAll}</span>
+          <span class="toggle-plugins-text uncollapse-all">${ContentEditor.messages.uncollapseAll}</span>
+        </label>
       </div>
     </div>
     `
