@@ -83,14 +83,12 @@ django.jQuery(function ($) {
     <div class="module order-machine-wrapper">
       <div class="order-machine"></div>
       <div class="machine-control">
-        <div class="control-unit">
-          <label class="toggle-plugins">
+          <label class="toggle-sidebar control-unit">
+            <input type="checkbox" /> ${ContentEditor.messages.toggleSidebar}
+          </label>
+          <label class="toggle-plugins control-unit">
             <input type="checkbox" /> ${ContentEditor.messages.toggle}
           </label>
-          <label class="toggle-sidebar">
-            <input type="checkbox" /> Toggle sidebar
-          </label>
-        </div>
       </div>
     </div>
     `
@@ -512,11 +510,13 @@ django.jQuery(function ($) {
     collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change");
 
     const toggleSidebar = $(".toggle-sidebar input");
+    const omWrapper = document.querySelector(".order-machine-wrapper");
     toggleSidebar.on("change", function () {
-      document
-        .querySelector(".order-machine-wrapper")
-        .classList.toggle("collapsed", this.checked);
+      omWrapper.classList.toggle("collapsed", this.checked);
+      LS.set("collapseSidebar", this.checked);
     });
+    toggleSidebar.checked = LS.get("collapseSidebar");
+    omWrapper.classList.toggle("collapsed", toggleSidebar.checked);
   })();
 
   $(document)
@@ -595,9 +595,16 @@ django.jQuery(function ($) {
 
   const style = document.createElement("style");
   style.textContent = `
+.order-machine .inline-related .inline_label::after {
+  opacity: 0.5;
+  content: " (${window.gettext("Hide")})";
+}
+.order-machine .inline-related .inline_label:hover::after {
+  text-decoration: underline;
+}
 .order-machine .inline-related.collapsed .inline_label::after {
   opacity: 0.5;
-  content: " (${ContentEditor.messages.collapsed})";
+  content: " (${window.gettext("Show")})";
 }
 .order-machine .inline-related.for-deletion .inline_label::after {
   opacity: 0.5;

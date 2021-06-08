@@ -40,21 +40,6 @@ html {
   background: var(--darkened-bg, #f8f8f8);
 }
 
-.tabs > .toggle-plugins {
-  float: right;
-  margin: 4px 0 0 0;
-  padding: 6px 10px;
-  border: 1px solid var(--hairline-color, #e8e8e8);
-  font-size: 13px;
-  font-weight: normal;
-  user-select: none;
-  transition: 0.2s background;
-}
-
-.tabs > .toggle-plugins:hover {
-  background: var(--darkened-bg, #f8f8f8);
-}
-
 .order-machine-wrapper {
   --control-width: 220px;
   clear: both;
@@ -178,18 +163,34 @@ html {
   width: 220px;
 }
 
-.control-unit {
-  padding: 0 12px;
-  margin: 8px 0;
-  border-top: 1px solid var(--hairline-color, #e8e8e8);
+.toggle-sidebar {
+  cursor: pointer;
 }
 
-.control-unit:first-child {
-  border-top: none;
+.toggle-sidebar::before {
+  content: ">";
+  font-size: 1.5rem;
+  transform-origin: 50% 50%;
+  display: inline-block;
+  position: relative;
+  top: 2px;
+}
+
+.order-machine-wrapper.collapsed .toggle-sidebar::before {
+  transform: rotate(180deg);
+}
+
+.toggle-sidebar input {
+  display: none;
+}
+
+.control-unit {
+  display: block;
+  padding: 0 12px;
+  margin: 8px 0;
 }
 
 .control-unit .plugin-button {
-  display: block;
   margin: 1rem 0;
   cursor: pointer;
   display: flex;
@@ -199,10 +200,6 @@ html {
 .control-unit .plugin-button::after {
   content: attr(title);
   text-indent: 10px;
-}
-
-.control-unit > label {
-  display: block;
 }
 
 .control-unit select {
