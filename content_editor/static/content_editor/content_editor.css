@@ -40,7 +40,7 @@ html {
   background: var(--darkened-bg, #f8f8f8);
 }
 
-.tabs > .toggle {
+.tabs > .toggle-plugins {
   float: right;
   margin: 4px 0 0 0;
   padding: 6px 10px;
@@ -51,7 +51,7 @@ html {
   transition: 0.2s background;
 }
 
-.tabs > .toggle:hover {
+.tabs > .toggle-plugins:hover {
   background: var(--darkened-bg, #f8f8f8);
 }
 
@@ -60,6 +60,12 @@ html {
   clear: both;
   display: grid;
   grid-template-columns: 1fr var(--control-width);
+  transition: grid-template-columns 0.2s;
+  overflow-x: hidden;
+}
+
+.order-machine-wrapper.collapsed {
+  --control-width: 46px;
 }
 
 .order-machine {
@@ -169,21 +175,22 @@ html {
   padding: 5px 0;
   border: 1px solid var(--hairline-color, #e8e8e8);
   background: var(--darkened-bg, #f8f8f8);
+  width: 220px;
 }
 
 .control-unit {
-  padding: 0 15px;
-  margin-bottom: 5px;
-  border-left: 1px solid var(--hairline-color, #e8e8e8);
+  padding: 0 12px;
+  margin: 8px 0;
+  border-top: 1px solid var(--hairline-color, #e8e8e8);
 }
 
 .control-unit:first-child {
-  border-left: none;
+  border-top: none;
 }
 
 .control-unit .plugin-button {
   display: block;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -191,7 +198,15 @@ html {
 
 .control-unit .plugin-button::after {
   content: attr(title);
-  text-indent: 4px;
+  text-indent: 10px;
+}
+
+.control-unit > label {
+  display: block;
+}
+
+.control-unit select {
+  width: 100%;
 }
 
 .inline_move_to_region {
@@ -290,6 +305,6 @@ html {
 @media screen and (min-width: 768px) {
   .submit-row {
     position: sticky;
-    bottom: 0;
+    bottom: -20px;
   }
 }

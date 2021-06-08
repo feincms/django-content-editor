@@ -42,7 +42,7 @@ django.jQuery(function ($) {
         unit = document.createElement("div");
         unit.className = "control-unit plugin-buttons";
         const mc = qs(".machine-control");
-        mc.insertBefore(unit, mc.firstChild);
+        mc.appendChild(unit);
       }
 
       const button = document.createElement("a");
@@ -78,14 +78,22 @@ django.jQuery(function ($) {
     $anchor = $("#" + ContentEditor.plugins[0].prefix + "-group");
   }
   $anchor.before(
-    '<div class="tabs regions">' +
-      '<label class="toggle"><input type="checkbox" /> ' +
-      ContentEditor.messages.toggle +
-      "</label>" +
-      "</div>" +
-      '<div class="module order-machine-wrapper">' +
-      '<div class="order-machine"></div><div class="machine-control"></div>' +
-      "</div>"
+    `
+    <div class="tabs regions"></div>
+    <div class="module order-machine-wrapper">
+      <div class="order-machine"></div>
+      <div class="machine-control">
+        <div class="control-unit">
+          <label class="toggle-plugins">
+            <input type="checkbox" /> ${ContentEditor.messages.toggle}
+          </label>
+          <label class="toggle-sidebar">
+            <input type="checkbox" /> Toggle sidebar
+          </label>
+        </div>
+      </div>
+    </div>
+    `
   );
 
   const orderMachine = $(".order-machine"),
@@ -485,7 +493,7 @@ django.jQuery(function ($) {
       tabs.eq(0).click();
     }
 
-    const collapseAllInput = tabContainer.find(".toggle input");
+    const collapseAllInput = $(".toggle-plugins input");
     collapseAllInput.on("change", function () {
       $(".order-machine .inline-related:not(.empty-form)").toggleClass(
         "collapsed",
@@ -502,6 +510,13 @@ django.jQuery(function ($) {
       }
     });
     collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change");
+
+    const toggleSidebar = $(".toggle-sidebar input");
+    toggleSidebar.on("change", function () {
+      document
+        .querySelector(".order-machine-wrapper")
+        .classList.toggle("collapsed", this.checked);
+    });
   })();
 
   $(document)
