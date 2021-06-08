@@ -9,6 +9,7 @@ Change log
   handling only trigger when dragging the title of fieldsets).
 - Fixed a bug where overlong fieldset titles would cause wrapping, which made
   the region move dropdown and the deletion UI elements inaccessible.
+- Made the submit row sticky in content editors.
 
 
 `4.1`_ (2021-04-15)

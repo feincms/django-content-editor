@@ -281,3 +281,10 @@ html {
     padding: 10px;
   }
 }
+
+@media screen and (min-width: 768px) {
+  .submit-row {
+    position: sticky;
+    bottom: 0;
+  }
+}
