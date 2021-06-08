@@ -294,7 +294,13 @@ Change log
 `0.1`_ (2016-02-16)
 ===================
 
-Initial public release of django-content-editor.
+Initial public release of django-content-editor. 
+
+The last common commit of FeinCMS 1 and django-content-editor before the fork
+was `made in 2015
+<https://github.com/feincms/feincms/commit/30d1e263e1ac32cdd1550517de003791e533b2de>`__.
+The core concepts were basically unchanged since 2009. django-content-editor is
+a modernization of FeinCMS's ItemEditor while keeping the good parts about it.
 
 
 .. _django-ckeditor: https://pypi.python.org/pypi/django-ckeditor
