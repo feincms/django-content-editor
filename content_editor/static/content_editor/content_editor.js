@@ -8,7 +8,7 @@ django.jQuery(function ($) {
     return ctx.querySelector(sel);
   }
   function qsa(sel, ctx = document) {
-    return Array.prototype.slice.call(ctx.querySelectorAll(sel));
+    return Array.from(ctx.querySelectorAll(sel));
   }
 
   const LS = {
@@ -140,6 +140,7 @@ django.jQuery(function ($) {
       // window.__fs_dragging = inline;
       window.__fs_dragging = e.target.closest(".inline-related");
       window.__fs_dragging.classList.add("fs-dragging");
+      window.__fs_dragging.classList.add("selected");
 
       e.dataTransfer.dropEffect = "move";
       e.dataTransfer.effectAllowed = "move";
@@ -167,7 +168,15 @@ django.jQuery(function ($) {
     inline.addEventListener("drop", function (e) {
       if (window.__fs_dragging) {
         e.preventDefault();
-        insertBefore(window.__fs_dragging, e.target.closest(".inline-related"));
+        const before = e.target.closest(".inline-related");
+        const toMove = qsa(".order-machine .inline-related.selected").map(
+          (inline) => [inline, +inline.style.order]
+        );
+        toMove.sort((a, b) => a[1] - b[1]);
+        toMove.forEach((row) => {
+          insertBefore(row[0], before);
+          row[0].classList.remove("selected");
+        });
         window.__fs_dragging = null;
       }
     });
