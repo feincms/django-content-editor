@@ -127,8 +127,7 @@ html {
   transition: border 0.2s;
 }
 
-.order-machine .inline-related:hover > h3,
-.order-machine .inline-related:not(.for-deletion):focus-within > h3 {
+.order-machine .inline-related.selected > h3 {
   color: white;
   background-color: var(--button-bg, #79aec8);
 }
@@ -197,13 +196,8 @@ html {
   align-items: center;
 }
 
-.control-unit .plugin-button::after {
-  content: attr(title);
-  text-indent: 10px;
-}
-
-.control-unit select {
-  width: 100%;
+.plugin-button-icon {
+  width: 32px;
 }
 
 .inline_move_to_region {

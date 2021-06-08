@@ -33,7 +33,7 @@ django.jQuery(function ($) {
     addContent: function addContent(prefix) {
       $("#" + prefix + "-group .add-row a").click();
     },
-    addPluginButton: function addPluginButton(prefix, html) {
+    addPluginButton: function addPluginButton(prefix, iconHTML) {
       const plugin = ContentEditor.pluginsByPrefix[prefix];
       if (!plugin) return;
 
@@ -52,7 +52,16 @@ django.jQuery(function ($) {
       button.addEventListener("click", function () {
         ContentEditor.addContent(plugin.prefix);
       });
-      button.innerHTML = html;
+
+      const icon = document.createElement("span");
+      icon.className = "plugin-button-icon";
+      icon.innerHTML = iconHTML || "";
+      button.appendChild(icon);
+
+      const title = document.createElement("span");
+      title.className = "plugin-button-title";
+      title.textContent = plugin.title;
+      button.appendChild(title);
 
       unit.appendChild(button);
 
@@ -214,24 +223,21 @@ django.jQuery(function ($) {
     return regions.includes(ContentEditor.currentRegion);
   }
 
-  // Hides plugins that are not allowed in this region
-  function hideNotAllowedDropdown() {
+  // Hide not allowed plugin buttons
+  // If buttons only checks this buttons, else checks all
+  function hideNotAllowedPluginButtons(buttons) {
+    buttons = buttons
+      ? buttons
+      : qsa(".control-unit.plugin-buttons .plugin-button");
+
     let visible = 0;
-    const control = $(ContentEditor.machineControlSelect);
 
-    control.find("option").each(function () {
-      if (!this.value) return;
-
-      if (pluginInCurrentRegion(this.value)) {
-        ++visible;
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
+    buttons.forEach(function (button) {
+      const plugin = button.dataset.pluginPrefix;
+      const isVisible = pluginInCurrentRegion(plugin);
+      button.classList.toggle("hidden", !isVisible);
+      visible += isVisible ? 1 : 0;
     });
-
-    control.attr("disabled", !visible);
-    control.css("opacity", visible ? 1 : 0.5);
 
     if (visible) {
       noRegionsMessage.hide();
@@ -243,19 +249,6 @@ django.jQuery(function ($) {
         noRegionsMessage.show();
       }
     }
-  }
-
-  // Hide not allowed plugin buttons
-  // If buttons only checks this buttons, else checks all
-  function hideNotAllowedPluginButtons(buttons) {
-    buttons = buttons
-      ? buttons
-      : qsa(".control-unit.plugin-buttons .plugin-button");
-
-    buttons.forEach(function (button) {
-      const plugin = button.dataset.pluginPrefix;
-      button.classList.toggle("hidden", !pluginInCurrentRegion(plugin));
-    });
   }
 
   // Fetch the inline type from id
@@ -473,7 +466,6 @@ django.jQuery(function ($) {
       );
 
       // Make sure only allowed plugins are in select
-      hideNotAllowedDropdown();
       hideNotAllowedPluginButtons();
     });
 
@@ -541,7 +533,10 @@ django.jQuery(function ($) {
   );
 
   orderMachine.on("click", ".inline-related>h3", function toggleCollapsed(e) {
-    if (
+    if (e.ctrlKey) {
+      e.preventDefault();
+      this.closest(".inline-related").classList.toggle("selected");
+    } else if (
       !e.target.closest(".delete") &&
       !e.target.closest(".inline_move_to_region")
     ) {
@@ -572,25 +567,8 @@ django.jQuery(function ($) {
     return true;
   });
 
-  (function buildPluginDropdown() {
-    const select = buildDropdown(
-      ContentEditor.plugins,
-      ContentEditor.messages.createNew
-    );
-    select.addEventListener("change", function () {
-      ContentEditor.addContent(select.value);
-      select.value = "";
-    });
-    ContentEditor.machineControlSelect = select;
-    hideNotAllowedDropdown();
-    $(select)
-      .appendTo(".machine-control")
-      .wrap('<div class="control-unit"></div>');
-  })();
-
   ContentEditor.plugins.forEach(function (plugin) {
-    if (plugin.button)
-      ContentEditor.addPluginButton(plugin.prefix, plugin.button);
+    ContentEditor.addPluginButton(plugin.prefix, plugin.button);
   });
 
   const style = document.createElement("style");
