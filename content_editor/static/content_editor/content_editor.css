@@ -50,7 +50,7 @@ html {
 }
 
 .order-machine-wrapper.collapsed {
-  --control-width: 46px;
+  --control-width: 44px;
 }
 
 .order-machine {
@@ -162,24 +162,50 @@ html {
   width: 220px;
 }
 
-.toggle-sidebar {
+.toggle-sidebar,
+.toggle-plugins {
   cursor: pointer;
 }
 
 .toggle-sidebar::before {
-  content: ">";
-  font-size: 1.5rem;
-  transform-origin: 50% 50%;
+  content: "";
+  transform-origin: 37% 50%;
   display: inline-block;
   position: relative;
   top: 2px;
+  width: 32px;
+  height: 1em;
+  background: url("triangle.svg") no-repeat 6px 0;
+  background-size: contain;
 }
 
 .order-machine-wrapper.collapsed .toggle-sidebar::before {
-  transform: rotate(180deg);
+  transform: scaleX(-1);
 }
 
-.toggle-sidebar input {
+.toggle-sidebar input,
+.toggle-plugins input {
+  display: none;
+}
+
+.toggle-plugins-text {
+  background: url("collapse-all.svg") no-repeat 4px 2px;
+  background-size: 16px;
+  padding-left: 32px;
+}
+
+.toggle-plugins-text.uncollapse-all {
+  display: none;
+}
+
+input:checked ~ .toggle-plugins-text {
+  background-image: url("uncollapse-all.svg");
+}
+
+input:checked ~ .toggle-plugins-text.uncollapse-all {
+  display: block;
+}
+input:checked ~ .toggle-plugins-text.collapse-all {
   display: none;
 }
 
@@ -187,6 +213,11 @@ html {
   display: block;
   padding: 0 12px;
   margin: 8px 0;
+}
+
+.plugin-buttons {
+  border-top: 1px solid var(--hairline-color, #e8e8e8);
+  margin-top: 16px;
 }
 
 .control-unit .plugin-button {

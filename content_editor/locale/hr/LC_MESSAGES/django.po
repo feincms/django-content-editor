@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-15 14:04+0100\n"
+"POT-Creation-Date: 2021-06-08 17:12+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Croatian (http://www.transifex.com/projects/p/feincms/"
@@ -59,10 +59,16 @@ msgid "Collapse all items"
 msgstr "Sažmi drvo"
 
 #: admin.py:159
-msgid "collapsed"
-msgstr ""
+#, fuzzy
+#| msgid "Collapse tree"
+msgid "Uncollapse all items"
+msgstr "Sažmi drvo"
 
 #: admin.py:160
+msgid "Toggle sidebar"
+msgstr ""
+
+#: admin.py:161
 msgid "marked for deletion"
 msgstr ""
 
