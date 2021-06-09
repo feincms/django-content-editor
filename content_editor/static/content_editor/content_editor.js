@@ -36,6 +36,10 @@ django.jQuery(function ($) {
     qs(".order-machine").classList.remove("order-machine-insertion");
   }
 
+  document.body.addEventListener("keyup", (e) => {
+    if (e.key === "Escape") unselectSelectedPlugin();
+  });
+
   window.ContentEditor = {
     addContent: function addContent(prefix) {
       $("#" + prefix + "-group .add-row a").click();
