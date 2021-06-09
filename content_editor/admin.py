@@ -171,7 +171,12 @@ class ContentEditor(ModelAdmin):
 
     def _content_editor_media(self, request, context):
         return forms.Media(
-            css={"all": ["content_editor/content_editor.css"]},
+            css={
+                "all": [
+                    "content_editor/material-icons.css",
+                    "content_editor/content_editor.css",
+                ]
+            },
             js=[
                 "admin/js/jquery.init.js",
                 "content_editor/save_shortcut.js",
