@@ -92,8 +92,11 @@ html {
   gap: 2px;
 }
 
-.order-machine .inline-related > h3[draggable]::before {
+h3[draggable] {
   cursor: move;
+}
+
+.order-machine .inline-related > h3[draggable]::before {
   content: "reorder";
   font-family: "Material Icons";
   font-size: 24px;
