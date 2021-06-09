@@ -364,11 +364,12 @@ input:checked ~ .toggle-plugins-text.collapse-all {
   z-index: 1;
 }
 .order-machine-insertion .order-machine-insert-target {
-  opacity: 1;
+  opacity: 0.5;
   pointer-events: all;
   transition: opacity 0.1s;
 }
 .order-machine-insert-target:hover {
+  opacity: 1;
   background: var(--button-hover-bg, #609ab6);
 }
 .order-machine-insert-target::before {
