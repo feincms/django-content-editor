@@ -658,6 +658,7 @@ django.jQuery(function ($) {
   content: "(${window.gettext("Hide")})";
   opacity: 0.7;
   margin-left: 0.5ch;
+  cursor: pointer;
 }
 .order-machine .inline-related .inline_label:hover::after {
   text-decoration: underline;
