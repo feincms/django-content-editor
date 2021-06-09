@@ -160,10 +160,10 @@ class ContentEditor(ModelAdmin):
                     "toggleSidebar": gettext("Toggle sidebar"),
                     "forDeletion": gettext("marked for deletion"),
                     "selectMultiple": gettext(
-                        "Use Ctrl-Click to select and move multiple plugins."
+                        "Use Ctrl-Click to select and move multiple items."
                     ),
                     "dblclickInsertion": gettext(
-                        "Doubleclicking inserts the plugin at the end."
+                        "Doubleclicking inserts an item at the end."
                     ),
                 },
             }

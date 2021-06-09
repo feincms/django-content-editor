@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-09 14:42+0200\n"
+"POT-Creation-Date: 2021-06-09 16:07+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/feincms/language/"
@@ -65,16 +65,10 @@ msgid "marked for deletion"
 msgstr "zur Löschung markiert"
 
 #: admin.py:163
-msgid "Use Ctrl-Click to select and move multiple plugins."
+msgid "Use Ctrl-Click to select and move multiple items."
 msgstr ""
-"Mit Ctrl-Click können mehrere Plugins ausgewählt und verschoben werden."
+"Mit Ctrl-Click können mehrere Elemente ausgewählt und verschoben werden."
 
 #: admin.py:166
-msgid "Doubleclicking inserts the plugin at the end."
-msgstr "Ein Doppelklick fügt das Plugin am Ende hinzu."
-
-#~ msgid "collapsed"
-#~ msgstr "ausgeblendet"
-
-#~ msgid "Show/hide contents"
-#~ msgstr "Inhalte ein-/ausblenden"
+msgid "Doubleclicking inserts an item at the end."
+msgstr "Ein Doppelklick fügt ein Element am Ende hinzu."
