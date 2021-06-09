@@ -341,8 +341,8 @@ input:checked ~ .toggle-plugins-text.collapse-all {
 
 .order-machine-insert-target {
   position: absolute;
-  left: 50%;
-  top: -0.85em;
+  left: 48%;
+  top: -0.9em;
   font-size: 1.5rem;
   width: 1.25em;
   height: 1.25em;
@@ -350,22 +350,29 @@ input:checked ~ .toggle-plugins-text.collapse-all {
   border-radius: 99px;
   background: var(--button-bg, #79aec8);
   color: var(--button-fg, #fff);
+  box-shadow: 0 0 3px 1px var(--button-fg);
   display: grid;
   place-items: center;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.1s;
   pointer-events: none;
+}
+.order-machine-insert-target.last {
+  top: auto;
+  bottom: -8px;
+  left: calc(48% + 10px);
+  z-index: 1;
 }
 .order-machine-insertion .order-machine-insert-target {
   opacity: 1;
   pointer-events: all;
+  transition: opacity 0.1s;
 }
 .order-machine-insert-target:hover {
   background: var(--button-hover-bg, #609ab6);
 }
 .order-machine-insert-target::before {
-  content: "+";
+  content: "→";
   font-weight: bold;
 }
 

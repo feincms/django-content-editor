@@ -103,6 +103,7 @@ django.jQuery(function ($) {
     <div class="tabs regions"></div>
     <div class="module order-machine-wrapper">
       <div class="order-machine">
+        <span class="order-machine-insert-target last"></span>
       </div>
       <div class="machine-control">
         <label class="toggle-sidebar control-unit"><input type="checkbox" />${ContentEditor.messages.toggleSidebar}
@@ -619,7 +620,6 @@ django.jQuery(function ($) {
       !e.target.closest(".plugin-button") &&
       !e.target.closest(".order-machine-insert-target")
     ) {
-      console.log(e.target);
       unselectSelectedPlugin();
     }
   });
