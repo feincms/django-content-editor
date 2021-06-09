@@ -187,6 +187,9 @@ django.jQuery(function ($) {
     inline.addEventListener("dragend", function () {
       $(".fs-dragging").removeClass("fs-dragging");
       $(".fs-dragover").removeClass("fs-dragover");
+      qsa(".order-machine .inline-related.selected").forEach((el) =>
+        el.classList.remove("selected")
+      );
     });
     inline.addEventListener(
       "dragover",
