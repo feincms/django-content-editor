@@ -162,6 +162,9 @@ class ContentEditor(ModelAdmin):
                     "selectMultiple": gettext(
                         "Use Ctrl-Click to select and move multiple plugins."
                     ),
+                    "dblclickInsertion": gettext(
+                        "Doubleclicking inserts the plugin at the end."
+                    ),
                 },
             }
         )

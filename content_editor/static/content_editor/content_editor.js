@@ -115,9 +115,7 @@ django.jQuery(function ($) {
         </label>
         <div class="plugin-buttons control-unit">
         </div>
-        <p class="small">
-          Per Doppelklick können Plugins am Ende eingefügt werden.
-        </p>
+        <p class="small invisible-when-collapsed">${ContentEditor.messages.dblclickInsertion}</p>
       </div>
     </div>
     <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>

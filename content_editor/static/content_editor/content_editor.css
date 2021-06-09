@@ -195,6 +195,10 @@ html {
   transform: scaleX(1);
 }
 
+.order-machine-wrapper.collapsed .invisible-when-collapsed {
+  opacity: 0;
+}
+
 .toggle-sidebar input,
 .toggle-plugins input {
   display: none;
