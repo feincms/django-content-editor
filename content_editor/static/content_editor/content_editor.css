@@ -79,7 +79,7 @@ html {
   font-size: 13px;
   font-weight: normal;
   height: 16px;
-  padding: 7px 7px 7px 32px;
+  padding: 7px 7px 7px 10px;
   background-color: var(--darkened-bg, #f8f8f8);
   transition: 0.2s background, 0.2s color;
 
@@ -92,12 +92,14 @@ html {
   gap: 2px;
 }
 
-.order-machine .inline-related > h3[draggable] {
-  background-repeat: no-repeat;
-  background-image: url("drag-handle.svg");
-  background-position: 8px 5px;
-  background-size: 16px;
+.order-machine .inline-related > h3[draggable]::before {
   cursor: move;
+  content: "reorder";
+  font-family: "Material Icons";
+  font-size: 24px;
+  position: relative;
+  top: -6px;
+  left: -2px;
 }
 
 .order-machine .inline-related > h3 > b,
@@ -173,58 +175,6 @@ html {
   width: 220px;
 }
 
-.toggle-sidebar,
-.toggle-plugins {
-  cursor: pointer;
-}
-
-.toggle-sidebar::before {
-  content: "";
-  transform-origin: 37% 50%;
-  display: inline-block;
-  position: relative;
-  top: 2px;
-  width: 32px;
-  height: 1em;
-  background: url("triangle.svg") no-repeat 6px 0;
-  background-size: contain;
-  transform: scaleX(-1);
-}
-
-.order-machine-wrapper.collapsed .toggle-sidebar::before {
-  transform: scaleX(1);
-}
-
-.order-machine-wrapper.collapsed .invisible-when-collapsed {
-  opacity: 0;
-}
-
-.toggle-sidebar input,
-.toggle-plugins input {
-  display: none;
-}
-
-.toggle-plugins-text {
-  background: url("collapse-all.svg") no-repeat 4px 2px;
-  background-size: 16px;
-  padding-left: 32px;
-}
-
-.toggle-plugins-text.uncollapse-all {
-  display: none;
-}
-
-input:checked ~ .toggle-plugins-text {
-  background-image: url("uncollapse-all.svg");
-}
-
-input:checked ~ .toggle-plugins-text.uncollapse-all {
-  display: block;
-}
-input:checked ~ .toggle-plugins-text.collapse-all {
-  display: none;
-}
-
 .control-unit {
   display: block;
   padding: 0 8px;
@@ -258,6 +208,39 @@ input:checked ~ .toggle-plugins-text.collapse-all {
 .plugin-button-icon.missing::before {
   content: "?";
   padding-left: 8px;
+}
+
+.toggle-sidebar,
+.collapse-items {
+  cursor: pointer;
+}
+
+.toggle-sidebar .plugin-button-icon {
+  transform-origin: 37% 50%;
+  display: inline-block;
+}
+
+.order-machine-wrapper.collapsed .toggle-sidebar .plugin-button-icon {
+  transform: scaleX(-1);
+}
+
+.order-machine-wrapper.collapsed .invisible-when-collapsed {
+  opacity: 0;
+}
+
+.toggle-sidebar input,
+.collapse-items input {
+  display: none;
+}
+
+.collapse-items .uncollapse-all {
+  display: none;
+}
+.collapse-items input:checked ~ .uncollapse-all {
+  display: flex;
+}
+.collapse-items input:checked ~ .collapse-all {
+  display: none;
 }
 
 .inline_move_to_region {

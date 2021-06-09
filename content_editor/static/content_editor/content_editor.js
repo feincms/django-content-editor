@@ -106,12 +106,28 @@ django.jQuery(function ($) {
         <span class="order-machine-insert-target last"></span>
       </div>
       <div class="machine-control">
-        <label class="toggle-sidebar control-unit"><input type="checkbox" />${ContentEditor.messages.toggleSidebar}
+        <label class="toggle-sidebar control-unit">
+          <div class="plugin-button">
+            <span class="plugin-button-icon">
+              <span class="material-icons">chevron_right</span>
+            </span>
+            <input type="checkbox" />${ContentEditor.messages.toggleSidebar}
+          </div>
         </label>
-        <label class="toggle-plugins control-unit">
+        <label class="collapse-items control-unit">
           <input type="checkbox" />
-          <span class="toggle-plugins-text collapse-all">${ContentEditor.messages.collapseAll}</span>
-          <span class="toggle-plugins-text uncollapse-all">${ContentEditor.messages.uncollapseAll}</span>
+          <div class="plugin-button collapse-all">
+            <span class="plugin-button-icon">
+              <span class="material-icons">unfold_less</span>
+            </span>
+            ${ContentEditor.messages.collapseAll}
+          </div>
+          <div class="plugin-button uncollapse-all">
+            <span class="plugin-button-icon">
+              <span class="material-icons">unfold_more</span>
+            </span>
+            ${ContentEditor.messages.uncollapseAll}
+          </div>
         </label>
         <div class="plugin-buttons control-unit">
         </div>
@@ -528,7 +544,7 @@ django.jQuery(function ($) {
       tabs.eq(0).click();
     }
 
-    const collapseAllInput = $(".toggle-plugins input");
+    const collapseAllInput = $(".collapse-items input");
     collapseAllInput.on("change", function () {
       $(".order-machine .inline-related:not(.empty-form)").toggleClass(
         "collapsed",
