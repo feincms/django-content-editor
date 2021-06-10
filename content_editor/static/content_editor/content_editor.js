@@ -74,7 +74,7 @@ django.jQuery(function ($) {
       title.textContent = plugin.title;
       button.appendChild(title);
 
-      const unit = qs(".control-unit.plugin-buttons");
+      const unit = qs(".plugin-buttons");
       unit.appendChild(button);
 
       hideNotAllowedPluginButtons([button]);
@@ -106,7 +106,7 @@ django.jQuery(function ($) {
         <span class="order-machine-insert-target last"></span>
       </div>
       <div class="machine-control">
-        <label class="toggle-sidebar control-unit">
+        <label class="toggle-sidebar">
           <div class="plugin-button">
             <span class="plugin-button-icon">
               <span class="material-icons">chevron_right</span>
@@ -114,7 +114,7 @@ django.jQuery(function ($) {
             <input type="checkbox" />${ContentEditor.messages.toggleSidebar}
           </div>
         </label>
-        <label class="collapse-items control-unit">
+        <label class="collapse-items">
           <input type="checkbox" />
           <div class="plugin-button collapse-all">
             <span class="plugin-button-icon">
@@ -129,8 +129,7 @@ django.jQuery(function ($) {
             ${ContentEditor.messages.uncollapseAll}
           </div>
         </label>
-        <div class="plugin-buttons control-unit">
-        </div>
+        <div class="plugin-buttons"></div>
         <p class="small invisible-when-collapsed">${ContentEditor.messages.dblclickInsertion}</p>
       </div>
     </div>
@@ -273,9 +272,7 @@ django.jQuery(function ($) {
   // Hide not allowed plugin buttons
   // If buttons only checks this buttons, else checks all
   function hideNotAllowedPluginButtons(buttons) {
-    buttons = buttons
-      ? buttons
-      : qsa(".control-unit.plugin-buttons .plugin-button");
+    buttons = buttons ? buttons : qsa(".plugin-buttons .plugin-button");
 
     let visible = 0;
 

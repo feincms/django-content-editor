@@ -178,20 +178,14 @@ h3[draggable] {
   width: 220px;
 }
 
-.control-unit {
-  display: block;
-  padding: 0 8px;
-  margin: 16px 0;
-}
-
 .plugin-buttons {
   border-top: 1px solid var(--hairline-color, #e8e8e8);
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
-.control-unit .plugin-button {
-  margin: 8px -4px;
-  padding: 8px 4px;
+.plugin-button {
+  margin: 4px 4px;
+  padding: 4px 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
