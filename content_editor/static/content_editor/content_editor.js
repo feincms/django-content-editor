@@ -346,14 +346,17 @@ django.jQuery(function ($) {
       let region = $this.find(".field-region input").val();
 
       if (!ContentEditor.regionsByKey[region]) {
-        const spec = {
-          key: "_unknown_",
-          title: ContentEditor.messages.unknownRegion,
-          inherited: false,
-        };
-        ContentEditor.regions.push(spec);
-        ContentEditor.regionsByKey[spec.key] = spec;
-        region = spec.key;
+        const key = `_unknown_${region}`;
+        if (!ContentEditor.regionsByKey[key]) {
+          const spec = {
+            key: `_unknown_${region}`,
+            title: `${ContentEditor.messages.unknownRegion}: ${region}`,
+            inherited: false,
+          };
+          ContentEditor.regions.push(spec);
+          ContentEditor.regionsByKey[spec.key] = spec;
+        }
+        region = key;
       }
 
       $this.attr("data-region", region);

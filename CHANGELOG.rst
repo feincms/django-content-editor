@@ -22,9 +22,10 @@ Change log
   just at the end.
 - Added a bundled copy of `Google's Material Icons library
   <https://fonts.google.com/icons>`__ for use in the editor.
-- Stop overflowing the content editor horizontally when using (very) long
+- Stopped overflowing the content editor horizontally when using (very) long
   descriptions for content blocks.
 - Changed the transitions to avoid ugly artefacts when switching regions.
+- Stopped merging unknown regions into one tab.
 
 
 `4.1`_ (2021-04-15)

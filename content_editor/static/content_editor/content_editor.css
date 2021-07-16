@@ -34,7 +34,7 @@ html {
   background: var(--button-hover-bg, #609ab6);
 }
 
-.tabs > [data-region="_unknown_"],
+.tabs > [data-region^="_unknown_"],
 .tabs > .has-error {
   border-color: var(--error-fg, #ba2121);
   color: var(--error-fg, #ba2121);
