@@ -515,11 +515,11 @@ django.jQuery(function ($) {
     const tabs = tabContainer.find("h2");
     tabs.on("click", function () {
       ContentEditor.currentRegion = $(this).data("region");
+      hideInlinesFromOtherRegions();
       tabs
         .removeClass("active")
         .filter('[data-region="' + ContentEditor.currentRegion + '"]')
         .addClass("active");
-      hideInlinesFromOtherRegions();
       window.history.replaceState(
         null,
         "",
