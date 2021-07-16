@@ -345,8 +345,8 @@ h3[draggable] {
 }
 .order-machine-insert-target.last {
   top: auto;
-  bottom: -8px;
-  left: calc(48% + 10px);
+  bottom: 2px;
+  left: 48.2%;
   z-index: 1;
 }
 .order-machine-insertion .order-machine-insert-target {
