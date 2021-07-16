@@ -60,12 +60,14 @@ html {
 }
 
 .order-machine {
-  padding: 0 10px 10px 10px;
+  padding: 0 10px 20px 10px;
   border: 1px solid var(--hairline-color, #e8e8e8);
   position: relative;
 
   display: flex;
   flex-flow: column nowrap;
+
+  overflow: hidden;
 }
 
 .order-machine .inline-related {
