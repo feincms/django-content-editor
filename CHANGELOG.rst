@@ -26,6 +26,7 @@ Change log
   descriptions for content blocks.
 - Changed the transitions to avoid ugly artefacts when switching regions.
 - Stopped merging unknown regions into one tab.
+- Fixed one instance of a slightly timing-dependent initialization.
 
 
 `4.1`_ (2021-04-15)

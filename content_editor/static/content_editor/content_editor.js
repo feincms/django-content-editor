@@ -534,18 +534,20 @@ django.jQuery(function ($) {
     });
 
     // Restore tab if location hash matches.
-    let tab;
-    if (
-      window.location.hash &&
-      (tab = tabs.filter(
-        '[data-region="' + window.location.hash.substr(5) + '"]'
-      )) &&
-      tab.length
-    ) {
-      tab.click();
-    } else {
-      tabs.eq(0).click();
-    }
+    window.setTimeout(function () {
+      let tab;
+      if (
+        window.location.hash &&
+        (tab = tabs.filter(
+          '[data-region="' + window.location.hash.substr(5) + '"]'
+        )) &&
+        tab.length
+      ) {
+        tab.click();
+      } else {
+        tabs.eq(0).click();
+      }
+    }, 1);
 
     const collapseAllInput = $(".collapse-items input");
     collapseAllInput.on("change", function () {
