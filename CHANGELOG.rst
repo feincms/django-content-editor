@@ -6,7 +6,7 @@ Change log
 ===============
 
 
-`5.0a7`_ (2021-09-28)
+`5.0a8`_ (2021-09-28)
 =====================
 
 - Allowed dragging text etc. inside the content editor (made the ``dragstart``
@@ -338,5 +338,5 @@ a modernization of FeinCMS's ItemEditor while keeping the good parts about it.
 .. _3.0: https://github.com/matthiask/django-content-editor/compare/2.0...3.0
 .. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
 .. _4.1: https://github.com/matthiask/django-content-editor/compare/4.0...4.1
-.. _5.0a7: https://github.com/matthiask/django-content-editor/compare/4.1...5.0a7
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.0a7...main
+.. _5.0a8: https://github.com/matthiask/django-content-editor/compare/4.1...5.0a8
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.0a8...main
