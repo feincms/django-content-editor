@@ -279,7 +279,7 @@ django.jQuery(function ($) {
     buttons.forEach(function (button) {
       const plugin = button.dataset.pluginPrefix;
       const isVisible = pluginInCurrentRegion(plugin);
-      button.classList.toggle("hidden", !isVisible);
+      button.classList.toggle("content-editor-hidden", !isVisible);
       visible += isVisible ? 1 : 0;
     });
 
