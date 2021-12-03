@@ -27,6 +27,7 @@ Change log
 - Changed the transitions to avoid ugly artefacts when switching regions.
 - Stopped merging unknown regions into one tab.
 - Fixed one instance of a slightly timing-dependent initialization.
+- Added Python 3.10, Django 4.0rc1 to the CI.
 
 
 `4.1`_ (2021-04-15)
