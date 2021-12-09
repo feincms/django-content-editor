@@ -5,6 +5,9 @@ Change log
 `Next version`_
 ===============
 
+- Added pre-commit.
+- Changed the minimum versions to Django 3.2 and Python 3.8.
+
 
 `5.0`_ (2021-12-03)
 ===================

@@ -17,7 +17,7 @@ class RichTextarea(forms.Textarea):
         default_attrs = {"class": "richtext"}
         if attrs:  # pragma: no cover
             default_attrs.update(attrs)
-        super(RichTextarea, self).__init__(default_attrs)
+        super().__init__(default_attrs)
 
 
 class RichTextInline(ContentEditorInline):

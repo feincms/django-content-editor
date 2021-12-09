@@ -29,7 +29,7 @@ class ContentEditorTest(TestCase):
         with self.assertNumQueries(0):
             self.assertEqual(
                 "%s" % richtext,
-                "testapp.RichText<region=main ordering=10 pk=%s>" % (richtext.pk,),
+                f"testapp.RichText<region=main ordering=10 pk={richtext.pk}>",
             )
 
         with self.assertNumQueries(2):  # Two content types.

@@ -57,7 +57,7 @@ def create_plugin_base(content_base):
             ordering = ["ordering"]
 
         def __str__(self):
-            return "%s<region=%s ordering=%s pk=%s>" % (
+            return "{}<region={} ordering={} pk={}>".format(
                 self._meta.label,
                 self.region,
                 self.ordering,

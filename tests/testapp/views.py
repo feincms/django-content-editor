@@ -20,7 +20,7 @@ class ArticleView(generic.DetailView):
     def get_context_data(self, **kwargs):
         contents = contents_for_item(self.object, [RichText, Download])
 
-        return super(ArticleView, self).get_context_data(
+        return super().get_context_data(
             content={
                 region.key: mark_safe("".join(render_items(contents[region.key])))
                 for region in self.object.regions
@@ -36,7 +36,7 @@ class PageView(generic.DetailView):
         contents = contents_for_item(
             self.object, [PageText], inherit_from=filter(None, [self.object.parent])
         )
-        return super(PageView, self).get_context_data(
+        return super().get_context_data(
             content={
                 region.key: mark_safe("".join(render_items(contents[region.key])))
                 for region in self.object.regions

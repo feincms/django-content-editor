@@ -19,7 +19,7 @@ _inline_index = itertools.count()
 
 class ContentEditorChecks(ModelAdminChecks):
     def check(self, admin_obj, **kwargs):
-        errors = super(ContentEditorChecks, self).check(admin_obj, **kwargs)
+        errors = super().check(admin_obj, **kwargs)
         errors.extend(self.check_content_editor_regions_attribute(admin_obj))
         return errors
 
@@ -39,7 +39,7 @@ class ContentEditorChecks(ModelAdminChecks):
 
 class ContentEditorInlineChecks(InlineModelAdminChecks):
     def check(self, inline_obj, **kwargs):
-        errors = super(ContentEditorInlineChecks, self).check(inline_obj, **kwargs)
+        errors = super().check(inline_obj, **kwargs)
         errors.extend(self.check_content_editor_fields_in_fieldset(inline_obj))
         return errors
 
@@ -79,9 +79,7 @@ class ContentEditorInline(StackedInline):
         # `request` was made a positional argument in dbb0df2a0 (2015-12-24)
         if db_field.name in ("region", "ordering"):
             kwargs["widget"] = forms.HiddenInput
-        return super(ContentEditorInline, self).formfield_for_dbfield(
-            db_field, *args, **kwargs
-        )
+        return super().formfield_for_dbfield(db_field, *args, **kwargs)
 
     @classmethod
     def create(cls, model, **kwargs):
@@ -192,9 +190,7 @@ class ContentEditor(ModelAdmin):
         )
 
     def render_change_form(self, request, context, **kwargs):
-        response = super(ContentEditor, self).render_change_form(
-            request, context, **kwargs
-        )
+        response = super().render_change_form(request, context, **kwargs)
 
         response.context_data["media"] = response.context_data[
             "media"

@@ -5,7 +5,7 @@ from operator import attrgetter
 __all__ = ("Contents", "contents_for_items", "contents_for_item")
 
 
-class Contents(object):
+class Contents:
     def __init__(self, regions):
         self._regions = regions
         self._sorted = False
