@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+
+`5.1`_ (2021-12-30)
+===================
+
 - Added pre-commit.
 - Changed the minimum versions to Django 3.2 and Python 3.8.
 - Added compatibility with `django-jazzmin
@@ -345,4 +349,5 @@ a modernization of FeinCMS's ItemEditor while keeping the good parts about it.
 .. _4.0: https://github.com/matthiask/django-content-editor/compare/3.0...4.0
 .. _4.1: https://github.com/matthiask/django-content-editor/compare/4.0...4.1
 .. _5.0: https://github.com/matthiask/django-content-editor/compare/4.1...5.0
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.0...main
+.. _5.1: https://github.com/matthiask/django-content-editor/compare/5.0...5.1
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.1...main
