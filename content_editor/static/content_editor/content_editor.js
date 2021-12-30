@@ -217,7 +217,7 @@ django.jQuery(function ($) {
       }
     })
 
-    arg.find(">h3").attr("draggable", true)
+    arg.find(">h3, .card-title").attr("draggable", true) // Default admin, Jazzmin
     arg.addClass("fs-draggable")
   }
 

@@ -7,6 +7,8 @@ Change log
 
 - Added pre-commit.
 - Changed the minimum versions to Django 3.2 and Python 3.8.
+- Added compatibility with `django-jazzmin
+  <https://github.com/farridav/django-jazzmin/>`__.
 
 
 `5.0`_ (2021-12-03)
