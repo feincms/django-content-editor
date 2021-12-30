@@ -400,7 +400,7 @@ h3[draggable] {
 
 /* JAZZMIN  start */
 
-.order-machine .card-header > .card-title[draggable]::before {
+#jazzy-navbar ~ .content-wrapper .card-header > .card-title[draggable]::before {
   content: "drag_indicator";
   font-family: "Material Icons";
   font-size: 24px;
@@ -409,7 +409,7 @@ h3[draggable] {
   left: -2px;
 }
 
-.card-body div[id*="cke_id_"]{
+#jazzy-navbar ~ .content-wrapper .card-body div[id*="cke_id_"]{
   margin-left: 0;
   width: 100% !important;
 }
