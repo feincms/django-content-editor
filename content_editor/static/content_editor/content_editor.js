@@ -162,63 +162,63 @@ django.jQuery(function ($) {
   })()
 
   function ensureDraggable(arg) {
-    if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return
+    if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return;
 
-    const inline = arg[0]
+    const inline = arg[0];
 
     inline.addEventListener("dragstart", function (e) {
       // Only handle events from [draggable] elements
-      if (!e.target.closest("h3[draggable]")) return
+      if (!e.target.closest("h3[draggable]")) return;
 
       // window.__fs_dragging = inline;
-      window.__fs_dragging = e.target.closest(".inline-related")
-      window.__fs_dragging.classList.add("fs-dragging")
-      window.__fs_dragging.classList.add("selected")
+      window.__fs_dragging = e.target.closest(".inline-related");
+      window.__fs_dragging.classList.add("fs-dragging");
+      window.__fs_dragging.classList.add("selected");
 
-      e.dataTransfer.dropEffect = "move"
-      e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.dropEffect = "move";
+      e.dataTransfer.effectAllowed = "move";
       try {
-        e.dataTransfer.setData("text/plain", "")
+        e.dataTransfer.setData("text/plain", "");
       } catch (e) {
         // IE11 needs this.
       }
-    })
+    });
     inline.addEventListener("dragend", function () {
-      $(".fs-dragging").removeClass("fs-dragging")
-      $(".fs-dragover").removeClass("fs-dragover")
+      $(".fs-dragging").removeClass("fs-dragging");
+      $(".fs-dragover").removeClass("fs-dragover");
       qsa(".order-machine .inline-related.selected").forEach((el) =>
         el.classList.remove("selected")
-      )
-    })
+      );
+    });
     inline.addEventListener(
       "dragover",
       function (e) {
         if (window.__fs_dragging) {
-          e.preventDefault()
-          $(".fs-dragover").removeClass("fs-dragover")
-          e.target.closest(".inline-related").classList.add("fs-dragover")
+          e.preventDefault();
+          $(".fs-dragover").removeClass("fs-dragover");
+          e.target.closest(".inline-related").classList.add("fs-dragover");
         }
       },
       true
-    )
+    );
     inline.addEventListener("drop", function (e) {
       if (window.__fs_dragging) {
-        e.preventDefault()
-        const before = e.target.closest(".inline-related")
+        e.preventDefault();
+        const before = e.target.closest(".inline-related");
         const toMove = qsa(".order-machine .inline-related.selected").map(
           (inline) => [inline, +inline.style.order]
-        )
-        toMove.sort((a, b) => a[1] - b[1])
+        );
+        toMove.sort((a, b) => a[1] - b[1]);
         toMove.forEach((row) => {
-          insertBefore(row[0], before)
-          row[0].classList.remove("selected")
-        })
-        window.__fs_dragging = null
+          insertBefore(row[0], before);
+          row[0].classList.remove("selected");
+        });
+        window.__fs_dragging = null;
       }
-    })
+    });
 
-    arg.find("h3").attr("draggable", true)
-    arg.addClass("fs-draggable")
+    arg.find(">h3, .card-title").attr("draggable", true); // Default admin, Jazzmin
+    arg.addClass("fs-draggable");
   }
 
   function reorderInlines(context) {

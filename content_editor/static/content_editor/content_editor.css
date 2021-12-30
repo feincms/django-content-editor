@@ -400,18 +400,45 @@ h3[draggable] {
 
 /* JAZZMIN  start */
 
-#jazzy-navbar ~ .content-wrapper .card-header > .card-title[draggable]::before {
+#jazzy-navbar ~ .content-wrapper .order-machine {
+  padding-top: 12px;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable]::before {
   content: "drag_indicator";
   font-family: "Material Icons";
   font-size: 24px;
   position: relative;
-  top: 6px;
+  top: 7px;
   left: -2px;
 }
 
-#jazzy-navbar ~ .content-wrapper .card-body div[id*="cke_id_"]{
+#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable] {
+  margin-bottom: 9px;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable] + .card-tools.delete {
+  margin-top: 7px;
+  margin-right: 2px;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-body div[id*="cke_id_"]{
   margin-left: 0;
   width: 100% !important;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header {
+  padding: 0 1.25rem;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine .inline-related {
+  border: 0;
+  padding: 5px;
+  margin-top: 0;
+}
+
+#jazzy-navbar ~ .content-wrapper .order-machine-help {
+  margin-left: 25px;
 }
 
 /* JAZZMIN end */
