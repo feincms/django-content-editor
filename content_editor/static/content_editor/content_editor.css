@@ -107,16 +107,6 @@ h3[draggable] {
   left: -2px;
 }
 
-/* JAZZMIN DRAGGABLE */
-.order-machine .card-header > .card-title[draggable]::before {
-  content: "drag_indicator";
-  font-family: "Material Icons";
-  font-size: 24px;
-  position: relative;
-  top: 6px;
-  left: -2px;
-}
-
 .order-machine .inline-related > h3 > b,
 .order-machine h3 .inline_label {
   overflow: hidden;
@@ -404,3 +394,24 @@ h3[draggable] {
     bottom: -20px;
   }
 }
+
+/* =====| OVERRIDES |===== */
+
+
+/* JAZZMIN  start */
+
+.order-machine .card-header > .card-title[draggable]::before {
+  content: "drag_indicator";
+  font-family: "Material Icons";
+  font-size: 24px;
+  position: relative;
+  top: 6px;
+  left: -2px;
+}
+
+.card-body div[id*="cke_id_"]{
+  margin-left: 0;
+  width: 100% !important;
+}
+
+/* JAZZMIN end */
