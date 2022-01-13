@@ -5,6 +5,10 @@ Change log
 `Next version`_
 ===============
 
+
+`6.0`_ (2022-01-13)
+===================
+
 - Made the ``inherit_from`` argument to ``contents_for_item`` keyword-only.
 - Added an optional ``regions`` argument to ``contents_for_items`` and
   ``contents_for_item`` which allows passing in a list of ``Region`` objects to
@@ -357,4 +361,5 @@ a modernization of FeinCMS's ItemEditor while keeping the good parts about it.
 .. _4.1: https://github.com/matthiask/django-content-editor/compare/4.0...4.1
 .. _5.0: https://github.com/matthiask/django-content-editor/compare/4.1...5.0
 .. _5.1: https://github.com/matthiask/django-content-editor/compare/5.0...5.1
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/5.1...main
+.. _6.0: https://github.com/matthiask/django-content-editor/compare/5.1...6.0
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.0...main
