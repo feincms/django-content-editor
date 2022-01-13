@@ -1,3 +1,4 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 
@@ -28,6 +29,8 @@ class Region(Type):
     def __init__(self, **kwargs):
         kwargs.setdefault("inherited", False)
         super().__init__(**kwargs)
+        if self.key == "regions":
+            raise ImproperlyConfigured("'regions' cannot be used as a Region key .")
 
 
 class Template(Type):

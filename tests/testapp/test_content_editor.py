@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core import checks
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.test import TestCase
 from django.test.utils import isolate_apps
@@ -9,6 +10,7 @@ from testapp.models import Article, Download, Page, PageText, RichText
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import contents_for_item
+from content_editor.models import Region
 
 
 class ContentEditorTest(TestCase):
@@ -199,3 +201,9 @@ class ContentEditorTest(TestCase):
                 )
             ],
         )
+
+    def test_invalid_region(self):
+        with self.assertRaises(ImproperlyConfigured):
+            Region(key="regions", title="regions")
+        with self.assertRaises(TypeError):
+            Region(key="regions")

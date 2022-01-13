@@ -5,6 +5,13 @@ Change log
 `Next version`_
 ===============
 
+- Made the ``inherit_from`` argument to ``contents_for_item`` keyword-only.
+- Added an optional ``regions`` argument to ``contents_for_items`` and
+  ``contents_for_item`` which allows passing in a list of ``Region`` objects to
+  limit the regions fetched.
+- Renamed the undocumented ``_regions`` attribute of the ``Contents`` object to
+  ``regions``.
+
 
 `5.1`_ (2021-12-30)
 ===================
