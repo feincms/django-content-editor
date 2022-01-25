@@ -5,6 +5,8 @@ Change log
 `Next version`_
 ===============
 
+- Fixed an edge case where multiple machine messages were shown.
+
 
 `6.0`_ (2022-01-13)
 ===================

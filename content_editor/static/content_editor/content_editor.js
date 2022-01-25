@@ -284,14 +284,18 @@ django.jQuery(function ($) {
     })
 
     if (visible) {
-      noRegionsMessage.hide()
       noPluginsMessage.hide()
     } else {
       if (ContentEditor.currentRegion) {
         noPluginsMessage.show()
-      } else {
-        noRegionsMessage.show()
+        machineEmptyMessage.hide()
       }
+    }
+
+    if (ContentEditor.regions.length) {
+      noRegionsMessage.hide()
+    } else {
+      noRegionsMessage.show()
     }
   }
 
