@@ -6,6 +6,8 @@ Change log
 ===============
 
 - Fixed an edge case where multiple machine messages were shown.
+- Made it possible to move plugins out of unknown regions even if there is only
+  one valid region at all.
 
 
 `6.0`_ (2022-01-13)

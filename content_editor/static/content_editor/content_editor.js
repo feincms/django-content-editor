@@ -318,13 +318,13 @@ django.jQuery(function ($) {
           !pluginRegions[inlineType] ||
           $.inArray(ContentEditor.regions[i].key, pluginRegions[inlineType]) >=
             0) &&
-        ContentEditor.regions[i].key !== "_unknown_"
+        !/^_unknown_/.test(ContentEditor.regions[i].key)
       ) {
         regions.push(ContentEditor.regions[i])
       }
     }
 
-    if (regions.length < 2) return
+    if (regions.length < 2 && /^_unknown_/.test($inline.data("region"))) return
 
     const select = buildDropdown(regions),
       regionInput = $inline.find(".field-region input")
