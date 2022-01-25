@@ -324,7 +324,7 @@ django.jQuery(function ($) {
       }
     }
 
-    if (regions.length < 2 && /^_unknown_/.test($inline.data("region"))) return
+    if (regions.length < 2 && !/^_unknown_/.test($inline.data("region"))) return
 
     const select = buildDropdown(regions),
       regionInput = $inline.find(".field-region input")
