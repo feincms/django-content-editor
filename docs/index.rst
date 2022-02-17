@@ -370,6 +370,9 @@ Regions have the following attributes:
 * ``title``: Something nice, will be visible in the content editor.
 * ``key``: The region key, used in the content proxy as attribute name
   for the list of plugins. Must contain a valid Python identifier.
+  ``"regions"`` and names starting with an underscore cannot be used. The
+  recommendation is to use ``"main"`` when you only have a single region and no
+  better idea.
 * ``inherited``: Only has an effect if you are using the
   ``inherit_from`` argument to ``contents_for_item``: Model instances
   inherit content from their other instances if a region with

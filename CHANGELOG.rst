@@ -5,6 +5,8 @@ Change log
 `Next version`_
 ===============
 
+- **POSSIBLY BACKWARDS INCOMPATIBLE:** Disallowed region keys starting with an
+  underscore. It was a bad idea to allow these in the first place.
 - Fixed an edge case where multiple machine messages were shown.
 - Made it possible to move plugins out of unknown regions even if there is only
   one valid region at all.

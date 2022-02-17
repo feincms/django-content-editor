@@ -9,7 +9,7 @@ from django.urls import reverse
 from testapp.models import Article, Download, Page, PageText, RichText
 
 from content_editor.admin import ContentEditor, ContentEditorInline
-from content_editor.contents import contents_for_item
+from content_editor.contents import Contents, contents_for_item
 from content_editor.models import Region
 
 
@@ -59,6 +59,14 @@ class ContentEditorTest(TestCase):
         self.assertEqual(len(contents), 2)
         self.assertTrue(contents)
         self.assertFalse(contents_for_item(article, []))
+
+        # Regions may be limited
+        contents = contents_for_item(
+            article,
+            plugins=[RichText, Download],
+            regions=[Region(key="other", title="other")],
+        )
+        self.assertEqual(list(contents), [])
 
     def test_admin(self):
         self.login()
@@ -202,8 +210,21 @@ class ContentEditorTest(TestCase):
             ],
         )
 
-    def test_invalid_region(self):
+    def test_invalid_region_objects(self):
         with self.assertRaises(ImproperlyConfigured):
             Region(key="regions", title="regions")
+        with self.assertRaises(ImproperlyConfigured):
+            Region(key="_private", title="private")
         with self.assertRaises(TypeError):
             Region(key="regions")
+
+    def test_invalid_content_regions(self):
+        c = Contents([Region(key="main", title="main")])
+
+        self.assertEqual(c.blub, [])
+        self.assertEqual(c["blub"], [])
+
+        with self.assertRaises(AttributeError):
+            c._blub
+        with self.assertRaises(KeyError):
+            c["_blub"]

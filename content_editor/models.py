@@ -30,7 +30,9 @@ class Region(Type):
         kwargs.setdefault("inherited", False)
         super().__init__(**kwargs)
         if self.key == "regions":
-            raise ImproperlyConfigured("'regions' cannot be used as a Region key .")
+            raise ImproperlyConfigured("'regions' cannot be used as a Region key.")
+        elif self.key.startswith("_"):
+            raise ImproperlyConfigured("Region keys must not start with an underscore.")
 
 
 class Template(Type):
