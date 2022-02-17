@@ -28,14 +28,14 @@ class Contents:
 
     def __getattr__(self, key):
         if key.startswith("_"):
-            raise AttributeError(f"Invalid attribute {key!r} on {self!r}")
+            raise AttributeError(f"Invalid region key {key!r} on {self!r}")
         if not self._sorted:
             self._sort()
         return self._contents.get(key, [])
 
     def __getitem__(self, key):
         if key.startswith("_"):
-            raise KeyError(f"Invalid attribute {key!r} on {self!r}")
+            raise KeyError(f"Invalid region key {key!r} on {self!r}")
         if not self._sorted:
             self._sort()
         return self._contents.get(key, [])
