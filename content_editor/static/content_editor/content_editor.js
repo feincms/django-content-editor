@@ -506,7 +506,6 @@ django.jQuery(function ($) {
   }
 
   $(document).on("formset:added", function (event, $row, formsetName) {
-    console.log(arguments)
     if (event.detail && event.detail.formsetName) {
       // Django >= 4.1
       handleFormsetAdded($(event.target), event.detail.formsetName)
