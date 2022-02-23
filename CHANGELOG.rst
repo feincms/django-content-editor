@@ -7,6 +7,9 @@ Change log
 
 .. _Next version: https://github.com/matthiask/django-content-editor/compare/6.0...main
 
+- Changed the handling of ``formset:added`` and ``formset:removed`` for
+  compatibility with Django 4.1.
+
 
 `6.1`_ (2022-02-17)
 ===================

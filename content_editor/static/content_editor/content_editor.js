@@ -454,9 +454,9 @@ django.jQuery(function ($) {
 
   // Always move empty forms to the end, because new plugins are inserted
   // just before its empty form. Also, assign region data.
-  $(document).on("formset:added", function newForm(event, $row, formsetName) {
+  function handleFormsetAdded($row, prefix) {
     // Not one of our managed inlines?
-    if (!ContentEditor.pluginsByPrefix[formsetName]) return
+    if (!ContentEditor.pluginsByPrefix[prefix]) return
 
     $row.find(".field-region input").val(ContentEditor.currentRegion)
     $row.find("h3 .inline_label").text(ContentEditor.messages.newItem)
@@ -476,37 +476,53 @@ django.jQuery(function ($) {
     $(document).trigger("content-editor:activate", [$row])
 
     $row.find("input, select, textarea").first().focus()
-  })
+  }
 
-  $(document).on(
-    "formset:removed",
-    function resetInlines(_event, _row, formsetName) {
-      // Not one of our managed inlines?
-      if (!ContentEditor.pluginsByPrefix[formsetName]) return
+  function handleFormsetRemoved(prefix) {
+    // Not one of our managed inlines?
+    if (!ContentEditor.pluginsByPrefix[prefix]) return
 
-      if (
-        !orderMachine.find(
-          '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
-        ).length
-      ) {
-        machineEmptyMessage.removeClass("hidden")
-      }
+    if (
+      !orderMachine.find(
+        '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
+      ).length
+    ) {
+      machineEmptyMessage.removeClass("hidden")
+    }
+    orderMachine
+      .find(".inline-related.last-related:not(.empty-form)")
+      .each(function () {
+        $(document).trigger("content-editor:deactivate", [$(this)])
+      })
+
+    // As soon as possible, but not sooner (let the inline.js code run to the end first)
+    setTimeout(function () {
       orderMachine
         .find(".inline-related.last-related:not(.empty-form)")
         .each(function () {
-          $(document).trigger("content-editor:deactivate", [$(this)])
+          $(document).trigger("content-editor:activate", [$(this)])
         })
+    }, 0)
+  }
 
-      // As soon as possible, but not sooner (let the inline.js code run to the end first)
-      setTimeout(function () {
-        orderMachine
-          .find(".inline-related.last-related:not(.empty-form)")
-          .each(function () {
-            $(document).trigger("content-editor:activate", [$(this)])
-          })
-      }, 0)
+  $(document).on("formset:added", function (event, $row, formsetName) {
+    console.log(arguments)
+    if (event.detail && event.detail.formsetName) {
+      // Django >= 4.1
+      handleFormsetAdded($(event.target), event.detail.formsetName)
+    } else {
+      handleFormsetAdded($row, formsetName)
     }
-  )
+  })
+
+  $(document).on("formset:removed", function (event, $row, formsetName) {
+    if (event.detail && event.detail.formsetName) {
+      // Django >= 4.1
+      handleFormsetRemoved(event.detail.formsetName)
+    } else {
+      handleFormsetRemoved(formsetName)
+    }
+  })
 
   // Initialize tabs and currentRegion.
   ;(function () {

@@ -403,7 +403,11 @@ h3[draggable] {
   padding-top: 12px;
 }
 
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable]::before {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper
+  .card-header
+  > .card-title[draggable]::before {
   content: "drag_indicator";
   font-family: "Material Icons";
   font-size: 24px;
@@ -413,7 +417,7 @@ h3[draggable] {
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body > h6 {
-  display: none
+  display: none;
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body .tabs > .tab {
@@ -423,23 +427,36 @@ h3[draggable] {
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body .tabs > .active {
-  background: rgba(200,200,200, 0.2);
+  background: rgba(200, 200, 200, 0.2);
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body .tabs > .active:hover {
-  background: rgba(200,200,200, 0.5)
+  background: rgba(200, 200, 200, 0.5);
 }
 
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable] {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper
+  .card-header
+  > .card-title[draggable] {
   margin-bottom: 9px;
 }
 
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header > .card-title[draggable] + .card-tools.delete {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper
+  .card-header
+  > .card-title[draggable]
+  + .card-tools.delete {
   margin-top: 7px;
   margin-right: 2px;
 }
 
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-body div[id*="cke_id_"]{
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper
+  .card-body
+  div[id*="cke_id_"] {
   margin-left: 0;
   width: 100% !important;
 }
@@ -458,7 +475,10 @@ h3[draggable] {
   margin-left: 25px;
 }
 
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control {
   width: 35px;
   overflow: hidden;
   display: grid;
@@ -467,27 +487,57 @@ h3[draggable] {
 #jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed {
   margin-right: 34px;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control > *,
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control > * > * {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  > *,
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  > *
+  > * {
   padding: 0;
   border: 0;
   max-width: 42px;
   line-break: none;
   white-space: nowrap;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control span.plugin-button-title {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  span.plugin-button-title {
   display: none;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control .plugin-button {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  .plugin-button {
   margin-left: 6px;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control .plugin-button-icon {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  .plugin-button-icon {
   margin-left: 10px;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control .plugin-button-icon .material-icons {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  .plugin-button-icon
+  .material-icons {
   margin-left: -3px;
 }
-#jazzy-navbar ~ .content-wrapper .order-machine-wrapper.collapsed .machine-control .plugin-button-icon {
+#jazzy-navbar
+  ~ .content-wrapper
+  .order-machine-wrapper.collapsed
+  .machine-control
+  .plugin-button-icon {
   margin-right: 100%;
   margin-left: 0;
 }
