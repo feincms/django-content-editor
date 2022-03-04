@@ -5,7 +5,13 @@ Change log
 `Next version`_
 ===============
 
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.0...main
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.2...main
+
+
+`6.2`_ (2022-03-04)
+===================
+
+.. _6.2: https://github.com/matthiask/django-content-editor/compare/6.1...6.2
 
 - Changed the handling of ``formset:added`` and ``formset:removed`` for
   compatibility with Django 4.1.
