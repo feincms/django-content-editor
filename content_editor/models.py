@@ -26,13 +26,15 @@ class Type(dict):
 class Region(Type):
     _REQUIRED = {"key", "title", "inherited"}
 
-    def __init__(self, **kwargs):
+    def __init__(self, *, key, **kwargs):
         kwargs.setdefault("inherited", False)
-        super().__init__(**kwargs)
-        if self.key == "regions":
+        if key == "regions":
             raise ImproperlyConfigured("'regions' cannot be used as a Region key.")
-        elif self.key.startswith("_"):
-            raise ImproperlyConfigured("Region keys must not start with an underscore.")
+        elif key.startswith("_"):
+            raise ImproperlyConfigured(f"Region key {key!r} cannot start with '_'.")
+        elif not key.isidentifier():
+            raise ImproperlyConfigured(f"Region key {key!r} is no identifier.")
+        super().__init__(key=key, **kwargs)
 
 
 class Template(Type):

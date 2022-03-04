@@ -9,6 +9,9 @@ Change log
 
 - Changed the handling of ``formset:added`` and ``formset:removed`` for
   compatibility with Django 4.1.
+- **POSSIBLY BACKWARDS INCOMPATIBLE:** Disallowed region keys which do not have
+  the form of an identifer, e.g. ``content-main``. Such keys cannot be used in
+  templates etc. and are therefore a bad idea.
 
 
 `6.1`_ (2022-02-17)

@@ -215,8 +215,10 @@ class ContentEditorTest(TestCase):
             Region(key="regions", title="regions")
         with self.assertRaises(ImproperlyConfigured):
             Region(key="_private", title="private")
+        with self.assertRaises(ImproperlyConfigured):
+            Region(key="content-main", title="content")
         with self.assertRaises(TypeError):
-            Region(key="regions")
+            Region(key="valid")  # title is missing
 
     def test_invalid_content_regions(self):
         c = Contents([Region(key="main", title="main")])
