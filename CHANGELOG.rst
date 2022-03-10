@@ -7,6 +7,9 @@ Change log
 
 .. _Next version: https://github.com/matthiask/django-content-editor/compare/6.2...main
 
+- Increased the ``max-height`` of content editor fieldsets so that stupidly
+  high fieldsets stay completely visible.
+
 
 `6.2`_ (2022-03-04)
 ===================
