@@ -130,7 +130,7 @@ h3[draggable] {
 .order-machine .inline-related fieldset {
   /* Animate out of view REAL FAST */
   transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1);
-  max-height: 2000px;
+  max-height: 6500px;
   overflow: hidden;
   position: relative;
 }
