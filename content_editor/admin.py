@@ -103,8 +103,10 @@ class ContentEditorInline(StackedInline):
             ContentEditorInline.create(MyPlugin, form=MyPluginForm, ...)
         """
         kwargs["model"] = model
+        opts = model._meta
         return type(
-            "ContentEditorInline_%s" % next(_inline_index),
+            "ContentEditorInline_%s_%s_%s"
+            % (opts.app_label, opts.model_name, next(_inline_index)),
             (cls,),
             kwargs,
         )
