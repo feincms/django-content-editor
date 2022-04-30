@@ -11,7 +11,7 @@ author = "Feinheit AG"
 copyright = "2016-2017," + author
 version = __import__("content_editor").__version__
 release = subprocess.check_output(
-    "git fetch --tags; git describe", shell=True, universal_newlines=True
+    "git fetch --tags; git describe", shell=True, text=True
 ).strip()
 language = "en"
 
