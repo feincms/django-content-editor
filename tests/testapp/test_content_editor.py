@@ -192,9 +192,30 @@ class ContentEditorTest(TestCase):
             # and ordering fields
             fieldsets = [(None, {"fields": ("text",)})]
 
+        class InvalidRegionsStringInline(ContentEditorInline):
+            model = RichText
+            regions = "main"
+
+        class InvalidRegionsCallableInline(ContentEditorInline):
+            model = RichText
+
+            def regions(self, all):
+                return "main"
+
+        class ValidRegionsGeneratorInline(ContentEditorInline):
+            model = RichText
+
+            def regions(self, all):
+                yield "main"
+
         class ArticleAdmin(ContentEditor):
             model = Article
-            inlines = [RichTextInline]
+            inlines = [
+                RichTextInline,
+                InvalidRegionsStringInline,
+                InvalidRegionsCallableInline,
+                ValidRegionsGeneratorInline,
+            ]
 
         site = CustomAdminSite()
         site.register(Article, ArticleAdmin)
@@ -206,7 +227,17 @@ class ContentEditorTest(TestCase):
                     "fieldsets must contain both 'region' and 'ordering'.",
                     obj=RichTextInline,
                     id="content_editor.E001",
-                )
+                ),
+                checks.Error(
+                    "regions must be 'None' or an iterable. Current value is 'main'.",
+                    obj=InvalidRegionsStringInline,
+                    id="content_editor.E003",
+                ),
+                checks.Error(
+                    "regions must be 'None' or an iterable. Current value is 'main'.",
+                    obj=InvalidRegionsCallableInline,
+                    id="content_editor.E003",
+                ),
             ],
         )
 

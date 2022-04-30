@@ -41,6 +41,7 @@ class ContentEditorInlineChecks(InlineModelAdminChecks):
     def check(self, inline_obj, **kwargs):
         errors = super().check(inline_obj, **kwargs)
         errors.extend(self.check_content_editor_fields_in_fieldset(inline_obj))
+        errors.extend(self.check_content_editor_iterable_regions(inline_obj))
         return errors
 
     def check_content_editor_fields_in_fieldset(self, obj):
@@ -58,6 +59,18 @@ class ContentEditorInlineChecks(InlineModelAdminChecks):
                 id="content_editor.E001",
             )
         ]
+
+    def check_content_editor_iterable_regions(self, obj):
+        if obj.regions is None:
+            return
+
+        regions = obj.regions(set()) if callable(obj.regions) else obj.regions
+        if isinstance(regions, str) or not hasattr(regions, "__iter__"):
+            yield checks.Error(
+                f"regions must be 'None' or an iterable. Current value is {regions!r}.",
+                obj=obj.__class__,
+                id="content_editor.E003",
+            )
 
 
 class ContentEditorInline(StackedInline):

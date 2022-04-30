@@ -11,6 +11,8 @@ Change log
   high fieldsets stay completely visible.
 - Changed missing icons to a generic extension icon instead of the question
   mark.
+- Added a system check for the ``regions`` attribute of content editor inlines.
+  It verifies that the attribute is either ``None`` or an iterable.
 
 
 `6.2`_ (2022-03-04)
