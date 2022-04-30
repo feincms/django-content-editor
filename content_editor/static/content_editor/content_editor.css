@@ -203,11 +203,6 @@ h3[draggable] {
   width: 32px;
 }
 
-.plugin-button-icon.missing::before {
-  content: "?";
-  padding-left: 8px;
-}
-
 .toggle-sidebar,
 .collapse-items {
   cursor: pointer;

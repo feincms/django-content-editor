@@ -9,6 +9,8 @@ Change log
 
 - Increased the ``max-height`` of content editor fieldsets so that stupidly
   high fieldsets stay completely visible.
+- Changed missing icons to a generic extension icon instead of the question
+  mark.
 
 
 `6.2`_ (2022-03-04)

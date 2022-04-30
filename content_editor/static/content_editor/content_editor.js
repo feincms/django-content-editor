@@ -65,8 +65,9 @@ django.jQuery(function ($) {
       })
 
       const icon = document.createElement("span")
-      icon.className = `plugin-button-icon ${iconHTML ? "" : " missing"}`
-      icon.innerHTML = iconHTML || ""
+      icon.className = "plugin-button-icon"
+      icon.innerHTML =
+        iconHTML || '<span class="material-icons">extension</span>'
       button.appendChild(icon)
 
       const title = document.createElement("span")
