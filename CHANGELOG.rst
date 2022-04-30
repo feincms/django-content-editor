@@ -5,7 +5,13 @@ Change log
 `Next version`_
 ===============
 
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.2...main
+.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.3...main
+
+
+`6.3`_ (2022-04-30)
+===================
+
+.. _6.3: https://github.com/matthiask/django-content-editor/compare/6.2...6.3
 
 - Increased the ``max-height`` of content editor fieldsets so that stupidly
   high fieldsets stay completely visible.
