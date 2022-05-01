@@ -158,18 +158,12 @@ class ContentEditorTest(TestCase):
         class Model(models.Model):
             name = models.CharField()
 
-        class CustomAdminSite(admin.AdminSite):
-            pass
-
         class ModelAdmin(ContentEditor):
             model = Model
             inlines = []
 
-        site = CustomAdminSite()
-        site.register(Model, ModelAdmin)
-
         self.assertEqual(
-            site._registry[Model].check(),
+            ModelAdmin(Model, admin.AdminSite()).check(),
             [
                 checks.Error(
                     "ContentEditor models require a non-empty 'regions'"
@@ -181,10 +175,10 @@ class ContentEditorTest(TestCase):
         )
 
     def test_inline_checks(self):
-        self.assertEqual(admin.site._registry[Article].check(), [])
-
-        class CustomAdminSite(admin.AdminSite):
-            pass
+        self.assertEqual(
+            admin.ModelAdmin(Article, admin.AdminSite()).check(),
+            [],
+        )
 
         class RichTextInline(ContentEditorInline):
             model = RichText
@@ -217,11 +211,8 @@ class ContentEditorTest(TestCase):
                 ValidRegionsGeneratorInline,
             ]
 
-        site = CustomAdminSite()
-        site.register(Article, ArticleAdmin)
-
         self.assertEqual(
-            site._registry[Article].check(),
+            ArticleAdmin(Article, admin.AdminSite()).check(),
             [
                 checks.Error(
                     "fieldsets must contain both 'region' and 'ordering'.",
