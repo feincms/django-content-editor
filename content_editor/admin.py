@@ -130,13 +130,18 @@ class ContentEditor(ModelAdmin):
             instance = self.model()
 
         plugins = []
+        adding_not_allowed = ["_adding_not_allowed"]
         for iaf in context.get("inline_admin_formsets", []):
             if not isinstance(iaf.opts, ContentEditorInline):
                 continue
             regions = (
-                iaf.opts.regions({region.key for region in instance.regions})
-                if callable(iaf.opts.regions)
-                else iaf.opts.regions
+                (
+                    iaf.opts.regions({region.key for region in instance.regions})
+                    if callable(iaf.opts.regions)
+                    else iaf.opts.regions
+                )
+                if iaf.opts.has_add_permission(request, instance)
+                else adding_not_allowed
             )
             plugins.append(
                 {

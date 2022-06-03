@@ -7,6 +7,8 @@ Change log
 
 .. _Next version: https://github.com/matthiask/django-content-editor/compare/6.3...main
 
+- Stopped showing plugin buttons if user has no permission to add the plugin.
+
 
 `6.3`_ (2022-04-30)
 ===================
