@@ -2,7 +2,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 
-__all__ = ("Region", "Template", "create_plugin_base")
+__all__ = ("Type", "Region", "Template", "create_plugin_base")
 
 
 class Type(dict):
