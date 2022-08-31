@@ -8,6 +8,9 @@ Change log
 .. _Next version: https://github.com/matthiask/django-content-editor/compare/6.3...main
 
 - Stopped showing plugin buttons if user has no permission to add the plugin.
+- Added Django 4.1 to the CI matrix.
+- Added ``Type`` to ``content_editor.models.__all__`` since it is used in
+  feincms3.
 
 
 `6.3`_ (2022-04-30)

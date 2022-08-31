@@ -21,7 +21,7 @@ repos:
       - id: pyupgrade
         args: [--py38-plus]
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: 1.8.0
+    rev: 1.9.0
     hooks:
       - id: django-upgrade
         args: [--target-version, "3.2"]
@@ -48,11 +48,11 @@ repos:
         args: [--list-different, --no-semi, "--trailing-comma=es5"]
         exclude: "^conf/|.*\\.html$"
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.22.0
+    rev: v8.23.0
     hooks:
       - id: eslint
         additional_dependencies:
-          - eslint@^8.22.0
+          - eslint@^8.23.0
           - eslint-config-prettier
           - "@babel/core"
           - "@babel/eslint-parser"
