@@ -11,6 +11,7 @@ Change log
 - Added Django 4.1 to the CI matrix.
 - Added ``Type`` to ``content_editor.models.__all__`` since it is used in
   feincms3.
+- Tweak the plugin button positioning a bit.
 
 
 `6.3`_ (2022-04-30)

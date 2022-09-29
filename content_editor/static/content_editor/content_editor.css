@@ -200,7 +200,10 @@ h3[draggable] {
 }
 
 .plugin-button-icon {
-  width: 32px;
+  width: 24px;
+  display: grid;
+  place-items: center;
+  margin-right: 0.75rem;
 }
 
 .toggle-sidebar,
@@ -209,8 +212,7 @@ h3[draggable] {
 }
 
 .toggle-sidebar .plugin-button-icon {
-  transform-origin: 37% 50%;
-  display: inline-block;
+  transform-origin: center;
 }
 
 .order-machine-wrapper.collapsed .toggle-sidebar .plugin-button-icon {
