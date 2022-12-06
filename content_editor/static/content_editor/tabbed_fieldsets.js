@@ -10,7 +10,7 @@ django.jQuery(function ($) {
     anchor.before(
       '<div id="tabbed" class="clearfix">' +
         '<div class="tabs clearfix"></div>' +
-        '<div class="modules"></div>' +
+        '<div class="modules tabbed-modules"></div>' +
         "</div>"
     )
 

@@ -41,6 +41,13 @@ html {
   background: var(--darkened-bg, #f8f8f8);
 }
 
+@media (max-width: 767px) {
+  .tabbed-modules .form-row {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
 .order-machine-wrapper {
   --control-width: 220px;
   clear: both;

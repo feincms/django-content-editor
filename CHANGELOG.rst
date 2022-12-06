@@ -12,6 +12,7 @@ Change log
 - Added ``Type`` to ``content_editor.models.__all__`` since it is used in
   feincms3.
 - Tweak the plugin button positioning a bit.
+- Added padding to form rows in tabbed fieldsets below 767px.
 
 
 `6.3`_ (2022-04-30)
