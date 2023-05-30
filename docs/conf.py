@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(".."))
 
 project = "django-content-editor"
 author = "Feinheit AG"
-copyright = "2016-2017," + author
+copyright = "2016-2017," + author  # noqa: A001
 version = __import__("content_editor").__version__
 release = subprocess.check_output(
     "git fetch --tags; git describe", shell=True, text=True

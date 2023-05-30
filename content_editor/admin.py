@@ -105,8 +105,7 @@ class ContentEditorInline(StackedInline):
         kwargs["model"] = model
         opts = model._meta
         return type(
-            "ContentEditorInline_%s_%s_%s"
-            % (opts.app_label, opts.model_name, next(_inline_index)),
+            f"ContentEditorInline_{opts.app_label}_{opts.model_name}_{next(_inline_index)}",
             (cls,),
             kwargs,
         )

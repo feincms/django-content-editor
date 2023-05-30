@@ -2,18 +2,17 @@
 Change log
 ==========
 
-`Next version`_
-===============
-
-.. _Next version: https://github.com/matthiask/django-content-editor/compare/6.3...main
+Next version
+============
 
 - Stopped showing plugin buttons if user has no permission to add the plugin.
-- Added Django 4.1 and 4.2 to the CI matrix.
+- Added Python 3.11, Django 4.1 and 4.2 to the CI matrix.
 - Removed Django 4.0 from the CI (3.2 is still there).
 - Added ``Type`` to ``content_editor.models.__all__`` since it is used in
   feincms3.
 - Tweak the plugin button positioning a bit.
 - Added padding to form rows in tabbed fieldsets below 767px.
+- Switched to hatchling and ruff.
 
 
 `6.3`_ (2022-04-30)

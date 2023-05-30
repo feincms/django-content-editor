@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, re_path
 
-from .views import ArticleView, PageView
+from testapp.views import ArticleView, PageView
 
 
 urlpatterns = [

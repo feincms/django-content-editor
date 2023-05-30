@@ -19,8 +19,8 @@ class Type(dict):
     def __getattr__(self, attr):
         try:
             return self[attr]
-        except KeyError:
-            raise AttributeError(f"Unknown attribute {attr!r}")
+        except KeyError as exc:
+            raise AttributeError(f"Unknown attribute {attr!r}") from exc
 
 
 class Region(Type):

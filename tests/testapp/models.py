@@ -48,6 +48,9 @@ class Thing(models.Model):
 
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return ""
+
 
 class Page(models.Model):
     title = models.CharField(max_length=200)
@@ -68,6 +71,9 @@ class Page(models.Model):
     class Meta:
         verbose_name = "page"
         verbose_name_plural = "pages"
+
+    def __str__(self):
+        return self.title
 
     def get_absolute_url(self):
         return reverse("page_detail", kwargs={"pk": self.pk})

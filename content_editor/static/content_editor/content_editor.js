@@ -31,7 +31,7 @@ django.jQuery(function ($) {
 
   function unselectSelectedPlugin() {
     qsa(".plugin-button.selected").forEach((btn) =>
-      btn.classList.remove("selected")
+      btn.classList.remove("selected"),
     )
     qs(".order-machine").classList.remove("order-machine-insertion")
   }
@@ -135,7 +135,7 @@ django.jQuery(function ($) {
       </div>
     </div>
     <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
-    `
+    `,
   )
 
   const orderMachine = $(".order-machine"),
@@ -188,7 +188,7 @@ django.jQuery(function ($) {
       $(".fs-dragging").removeClass("fs-dragging")
       $(".fs-dragover").removeClass("fs-dragover")
       qsa(".order-machine .inline-related.selected").forEach((el) =>
-        el.classList.remove("selected")
+        el.classList.remove("selected"),
       )
     })
     inline.addEventListener(
@@ -200,14 +200,14 @@ django.jQuery(function ($) {
           e.target.closest(".inline-related").classList.add("fs-dragover")
         }
       },
-      true
+      true,
     )
     inline.addEventListener("drop", function (e) {
       if (window.__fs_dragging) {
         e.preventDefault()
         const before = e.target.closest(".inline-related")
         const toMove = qsa(".order-machine .inline-related.selected").map(
-          (inline) => [inline, +inline.style.order]
+          (inline) => [inline, +inline.style.order],
         )
         toMove.sort((a, b) => a[1] - b[1])
         toMove.forEach((row) => {
@@ -256,7 +256,7 @@ django.jQuery(function ($) {
       // regions)
       select.options[idx++] = new Option(
         contents[i].title,
-        contents[i].prefix || contents[i].key
+        contents[i].prefix || contents[i].key,
       )
     }
     return select
@@ -412,7 +412,7 @@ django.jQuery(function ($) {
     const inlines = orderMachine.find(".inline-related:not(.empty-form)")
     inlines.addClass("content-editor-hidden")
     const shown = inlines.filter(
-      '[data-region="' + ContentEditor.currentRegion + '"]'
+      '[data-region="' + ContentEditor.currentRegion + '"]',
     )
     machineEmptyMessage.addClass("hidden")
     if (shown.length) {
@@ -425,7 +425,7 @@ django.jQuery(function ($) {
         ContentEditor.regionsByKey[ContentEditor.currentRegion].inherited
           ? "emptyInherited"
           : "empty"
-      ]
+      ],
     )
   }
 
@@ -450,7 +450,7 @@ django.jQuery(function ($) {
 
       ContentEditor._insertBefore = e.target.closest(".inline-related")
       ContentEditor.addContent(plugin.dataset.pluginPrefix)
-    }
+    },
   )
 
   // Always move empty forms to the end, because new plugins are inserted
@@ -485,7 +485,7 @@ django.jQuery(function ($) {
 
     if (
       !orderMachine.find(
-        '.inline-related[data-region="' + ContentEditor.currentRegion + '"]'
+        '.inline-related[data-region="' + ContentEditor.currentRegion + '"]',
       ).length
     ) {
       machineEmptyMessage.removeClass("hidden")
@@ -546,7 +546,7 @@ django.jQuery(function ($) {
       window.history.replaceState(
         null,
         "",
-        "#tab_" + ContentEditor.currentRegion
+        "#tab_" + ContentEditor.currentRegion,
       )
 
       // Make sure only allowed plugins are in select
@@ -559,7 +559,7 @@ django.jQuery(function ($) {
       if (
         window.location.hash &&
         (tab = tabs.filter(
-          '[data-region="' + window.location.hash.substr(5) + '"]'
+          '[data-region="' + window.location.hash.substr(5) + '"]',
         )) &&
         tab.length
       ) {
@@ -573,7 +573,7 @@ django.jQuery(function ($) {
     collapseAllInput.on("change", function () {
       $(".order-machine .inline-related:not(.empty-form)").toggleClass(
         "collapsed",
-        this.checked
+        this.checked,
       )
       LS.set("collapseAll", this.checked)
 
@@ -581,7 +581,7 @@ django.jQuery(function ($) {
         $(".order-machine .inline-related:not(.empty-form) .errorlist").each(
           function uncollapseInvalidFieldsets() {
             this.closest(".inline-related").classList.remove("collapsed")
-          }
+          },
         )
       }
     })
@@ -618,10 +618,10 @@ django.jQuery(function ($) {
     function toggleForDeletionClass() {
       this.closest(".inline-related").classList.toggle(
         "for-deletion",
-        this.checked
+        this.checked,
       )
       this.blur()
-    }
+    },
   )
 
   orderMachine.on("click", ".inline-related>h3", function toggleCollapsed(e) {

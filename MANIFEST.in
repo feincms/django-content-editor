@@ -1,8 +1,0 @@
-include AUTHORS
-include CONTRIBUTING.rst
-include LICENSE
-include MANIFEST.in
-include README.rst
-recursive-include content_editor/static *
-recursive-include content_editor/locale *
-recursive-include content_editor/templates *

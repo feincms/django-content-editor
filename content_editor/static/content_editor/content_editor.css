@@ -90,7 +90,9 @@ html {
   height: 16px;
   padding: 7px;
   background-color: var(--darkened-bg, #f8f8f8);
-  transition: 0.2s background, 0.2s color;
+  transition:
+    0.2s background,
+    0.2s color;
 
   white-space: nowrap;
   overflow: hidden;

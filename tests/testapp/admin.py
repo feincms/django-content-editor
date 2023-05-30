@@ -8,8 +8,7 @@ from content_editor.admin import (
     allow_regions,
     deny_regions,
 )
-
-from .models import Article, Download, RichText, Thing
+from testapp.models import Article, Download, RichText, Thing
 
 
 class RichTextarea(forms.Textarea):

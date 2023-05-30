@@ -6,11 +6,11 @@ from django.db import models
 from django.test import TestCase
 from django.test.utils import isolate_apps
 from django.urls import reverse
-from testapp.models import Article, Download, Page, PageText, RichText
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import Contents, contents_for_item
 from content_editor.models import Region
+from testapp.models import Article, Download, Page, PageText, RichText
 
 
 class ContentEditorTest(TestCase):
@@ -158,6 +158,9 @@ class ContentEditorTest(TestCase):
         class Model(models.Model):
             name = models.CharField()
 
+            def __str__(self):
+                return self.name
+
         class ModelAdmin(ContentEditor):
             model = Model
             inlines = []
@@ -193,13 +196,13 @@ class ContentEditorTest(TestCase):
         class InvalidRegionsCallableInline(ContentEditorInline):
             model = RichText
 
-            def regions(self, all):
+            def regions(self, all_regions):
                 return "main"
 
         class ValidRegionsGeneratorInline(ContentEditorInline):
             model = RichText
 
-            def regions(self, all):
+            def regions(self, all_regions):
                 yield "main"
 
         class ArticleAdmin(ContentEditor):
@@ -249,6 +252,6 @@ class ContentEditorTest(TestCase):
         self.assertEqual(c["blub"], [])
 
         with self.assertRaises(AttributeError):
-            c._blub
+            _read = c._blub
         with self.assertRaises(KeyError):
             c["_blub"]

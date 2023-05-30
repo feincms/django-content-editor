@@ -11,7 +11,7 @@ django.jQuery(function ($) {
       '<div id="tabbed" class="clearfix">' +
         '<div class="tabs clearfix"></div>' +
         '<div class="modules tabbed-modules"></div>' +
-        "</div>"
+        "</div>",
     )
 
     var $tabs = $("#tabbed > .tabs"),
