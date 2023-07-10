@@ -44,6 +44,9 @@ tests = [
 [project.urls]
 Homepage = "https://github.com/matthiask/django-content-editor/"
 
+[tool.hatch.build]
+include = ["content_editor/"]
+
 [tool.hatch.version]
 path = "content_editor/__init__.py"
 
