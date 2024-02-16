@@ -684,9 +684,12 @@ django.jQuery(function ($) {
   }
 
   $("form").submit(function () {
+    this.action += "#restore"
     saveEditorState()
   })
-  setTimeout(restoreEditorState, 1)
+  setTimeout(() => {
+    if (location.hash.includes("restore")) restoreEditorState()
+  }, 1)
 
   ContentEditor.plugins.forEach(function (plugin) {
     ContentEditor.addPluginButton(plugin.prefix, plugin.button)
