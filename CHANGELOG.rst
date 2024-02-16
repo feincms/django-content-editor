@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+6.4 (2024-02-16)
+================
+
 - Stopped showing plugin buttons if user has no permission to add the plugin.
 - Added Python 3.11, Django 4.1 and 4.2 to the CI matrix.
 - Removed Django 4.0 from the CI (3.2 is still there).
