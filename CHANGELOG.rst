@@ -13,6 +13,8 @@ Next version
 - Tweak the plugin button positioning a bit.
 - Added padding to form rows in tabbed fieldsets below 767px.
 - Switched to hatchling and ruff.
+- Started restoring not only the region but also the collapsed state of inlines
+  and the vertical scroll position.
 
 
 `6.3`_ (2022-04-30)

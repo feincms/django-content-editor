@@ -11,23 +11,27 @@ django.jQuery(function ($) {
     return Array.from(ctx.querySelectorAll(sel))
   }
 
-  const LS = {
-    prefix: "ContentEditor:",
-    set: function (name, value) {
-      try {
-        window.localStorage.setItem(this.prefix + name, JSON.stringify(value))
-      } catch (e) {
-        /* empty */
-      }
-    },
-    get: function (name) {
-      try {
-        return JSON.parse(window.localStorage.getItem(this.prefix + name))
-      } catch (e) {
-        /* empty */
-      }
-    },
+  const safeStorage = (storage, prefix = "ContentEditor:") => {
+    return {
+      set(name, value) {
+        try {
+          storage.setItem(prefix + name, JSON.stringify(value))
+        } catch (_e) {
+          /* empty */
+        }
+      },
+      get(name) {
+        try {
+          return JSON.parse(storage.getItem(prefix + name))
+        } catch (_e) {
+          /* empty */
+        }
+      },
+    }
   }
+
+  const LS = safeStorage(localStorage)
+  const SS = safeStorage(sessionStorage)
 
   function unselectSelectedPlugin() {
     qsa(".plugin-button.selected").forEach((btn) =>
@@ -543,31 +547,10 @@ django.jQuery(function ($) {
         .removeClass("active")
         .filter('[data-region="' + ContentEditor.currentRegion + '"]')
         .addClass("active")
-      window.history.replaceState(
-        null,
-        "",
-        "#tab_" + ContentEditor.currentRegion,
-      )
 
       // Make sure only allowed plugins are in select
       hideNotAllowedPluginButtons()
     })
-
-    // Restore tab if location hash matches.
-    window.setTimeout(function () {
-      let tab
-      if (
-        window.location.hash &&
-        (tab = tabs.filter(
-          '[data-region="' + window.location.hash.substr(5) + '"]',
-        )) &&
-        tab.length
-      ) {
-        tab.click()
-      } else {
-        tabs.eq(0).click()
-      }
-    }, 1)
 
     const collapseAllInput = $(".collapse-items input")
     collapseAllInput.on("change", function () {
@@ -662,12 +645,48 @@ django.jQuery(function ($) {
     }
   })
 
-  // Try to keep the current region tab (location hash).
+  const saveEditorState = () => {
+    SS.set(location.pathname, {
+      region: ContentEditor.currentRegion,
+      scrollY: window.scrollY,
+      collapsed: qsa(
+        ".order-machine .inline-related.collapsed:not(.empty-form)",
+      ).map((inline) => {
+        return qs(".field-ordering input", inline).value
+      }),
+    })
+  }
+
+  const restoreEditorState = () => {
+    const state = SS.get(location.pathname)
+    if (state) {
+      let tabs = $(".tabs.regions .tab")
+      let tab = tabs.filter(`[data-region="${state.region}"]`)
+      if (tab.length) {
+        tab.click()
+      } else {
+        tabs.eq(0).click()
+      }
+
+      qsa(".order-machine .inline-related:not(.empty-form)").forEach(
+        (inline) => {
+          let collapsed = state.collapsed.includes(
+            qs(".field-ordering input", inline).value,
+          )
+          inline.classList.toggle("collapsed", collapsed)
+        },
+      )
+
+      setTimeout(() => {
+        window.scrollTo(0, state.scrollY)
+      }, 200)
+    }
+  }
+
   $("form").submit(function () {
-    const form = $(this)
-    form.attr("action", (form.attr("action") || "") + window.location.hash)
-    return true
+    saveEditorState()
   })
+  setTimeout(restoreEditorState, 1)
 
   ContentEditor.plugins.forEach(function (plugin) {
     ContentEditor.addPluginButton(plugin.prefix, plugin.button)
