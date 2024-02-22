@@ -658,9 +658,12 @@ django.jQuery(function ($) {
   }
 
   const restoreEditorState = () => {
-    const state = SS.get(location.pathname)
+    let tabs = $(".tabs.regions .tab")
+
+    const state = location.hash.includes("restore")
+      ? SS.get(location.pathname)
+      : null
     if (state) {
-      let tabs = $(".tabs.regions .tab")
       let tab = tabs.filter(`[data-region="${state.region}"]`)
       if (tab.length) {
         tab.click()
@@ -680,6 +683,8 @@ django.jQuery(function ($) {
       setTimeout(() => {
         window.scrollTo(0, state.scrollY)
       }, 200)
+    } else {
+      tabs.eq(0).click()
     }
   }
 
@@ -687,9 +692,7 @@ django.jQuery(function ($) {
     this.action += "#restore"
     saveEditorState()
   })
-  setTimeout(() => {
-    if (location.hash.includes("restore")) restoreEditorState()
-  }, 1)
+  setTimeout(restoreEditorState, 1)
 
   ContentEditor.plugins.forEach(function (plugin) {
     ContentEditor.addPluginButton(plugin.prefix, plugin.button)

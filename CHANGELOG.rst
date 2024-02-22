@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+- Fixed the content editor initialization: The active region was only set after
+  saving and not initially.
+
+
 6.4 (2024-02-16)
 ================
 
