@@ -1,4 +1,7 @@
-/* From https://fonts.googleapis.com/icon?family=Material+Icons */
+/*
+npx google-font-downloader "https://fonts.googleapis.com/icon?family=Material+Icons"
+Current version: v141
+*/
 
 /* fallback */
 @font-face {
@@ -20,6 +23,6 @@
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -moz-font-feature-settings: "liga";
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
 }
