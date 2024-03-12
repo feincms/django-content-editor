@@ -136,16 +136,16 @@ h3[draggable] {
   content: "new";
 }
 
-.order-machine .inline-related fieldset {
-  /* Animate out of view REAL FAST */
-  transition: max-height 0.2s cubic-bezier(0, 1.05, 0, 1);
-  max-height: 6500px;
-  overflow: hidden;
-  position: relative;
-}
-
 .order-machine .inline-related {
   transition: border 0.2s;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  transition: grid-template-rows 0.2s ease-out;
+}
+
+.order-machine .inline-related fieldset {
+  position: relative;
+  overflow: hidden;
 }
 
 .order-machine .inline-related.selected > h3 {
@@ -153,10 +153,14 @@ h3[draggable] {
   background-color: var(--button-bg, #79aec8);
 }
 
-.order-machine .inline-related.for-deletion fieldset,
-.order-machine .inline-related.collapsed fieldset {
-  max-height: 0;
-  visibility: hidden;
+.order-machine .inline-related.empty-form {
+  display: none; /* Override display: grid; above */
+}
+
+.order-machine .inline-related.for-deletion,
+.order-machine .inline-related.collapsed {
+  overflow: hidden;
+  grid-template-rows: min-content 0fr;
 }
 
 .order-machine .inline-related.for-deletion > h3::after {
