@@ -166,6 +166,12 @@ django.jQuery(function ($) {
     return result
   })()
 
+  function shouldInsertAfter(inline, clientY) {
+    const rect = inline.getBoundingClientRect()
+    const yMid = rect.y + rect.height / 2 + 5 // Compensate for margin
+    return clientY > yMid
+  }
+
   function ensureDraggable(arg) {
     if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return
 
@@ -201,7 +207,12 @@ django.jQuery(function ($) {
         if (window.__fs_dragging) {
           e.preventDefault()
           $(".fs-dragover").removeClass("fs-dragover")
-          e.target.closest(".inline-related").classList.add("fs-dragover")
+          const inline = e.target.closest(".inline-related")
+          inline.classList.add("fs-dragover")
+          inline.classList.toggle(
+            "fs-dragover--after",
+            shouldInsertAfter(inline, e.clientY),
+          )
         }
       },
       true,
@@ -209,13 +220,14 @@ django.jQuery(function ($) {
     inline.addEventListener("drop", function (e) {
       if (window.__fs_dragging) {
         e.preventDefault()
-        const before = e.target.closest(".inline-related")
+        const inline = e.target.closest(".inline-related")
         const toMove = qsa(".order-machine .inline-related.selected").map(
           (inline) => [inline, +inline.style.order],
         )
-        toMove.sort((a, b) => a[1] - b[1])
+        const orAfter = shouldInsertAfter(inline, e.clientY)
+        toMove.sort((a, b) => (orAfter ? -1 : 1) * (a[1] - b[1]))
         toMove.forEach((row) => {
-          insertBefore(row[0], before)
+          insertAdjacent(row[0], inline, orAfter)
           row[0].classList.remove("selected")
         })
         window.__fs_dragging = null
@@ -383,14 +395,18 @@ django.jQuery(function ($) {
     $row.css("order", ordering)
   }
 
-  function insertBefore(row, before) {
-    const beforeOrdering = +qs(".field-ordering input", before).value,
+  function insertAdjacent(row, inline, after = false) {
+    const inlineOrdering = +qs(".field-ordering input", inline).value,
       beforeRows = [],
       afterRows = []
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
       const thisOrderingField = qs(".field-ordering input", this)
       if (this != row && !isNaN(+thisOrderingField.value)) {
-        if (+thisOrderingField.value >= beforeOrdering) {
+        if (
+          after
+            ? +thisOrderingField.value > inlineOrdering
+            : +thisOrderingField.value >= inlineOrdering
+        ) {
           afterRows.push([this, thisOrderingField])
         } else {
           beforeRows.push([this, thisOrderingField])
@@ -474,7 +490,7 @@ django.jQuery(function ($) {
     machineEmptyMessage.addClass("hidden")
 
     if (ContentEditor._insertBefore) {
-      insertBefore($row[0], ContentEditor._insertBefore)
+      insertAdjacent($row[0], ContentEditor._insertBefore)
       ContentEditor._insertBefore = null
     }
 

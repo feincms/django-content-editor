@@ -321,6 +321,10 @@ h3[draggable] {
   height: 4px;
   background: #79aec8;
 }
+.fs-dragover--after::before {
+  top: auto;
+  bottom: -8px;
+}
 
 .fs-dragover::after {
   /* Cover fieldset with an overlay so that widgets do not swallow events */

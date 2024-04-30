@@ -10,6 +10,8 @@ Next version
 - Removed the maximum height from content editor inlines.
 - Started showing the target indicator again when dragging over collapsed
   plugins.
+- Allowed dragging plugins to positions *after* existing plugins, not just
+  *before*. This allows dragging a plugin directly to the end, finally.
 
 
 6.4 (2024-02-16)
