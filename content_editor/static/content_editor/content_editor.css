@@ -159,7 +159,6 @@ h3[draggable] {
 
 .order-machine .inline-related.for-deletion,
 .order-machine .inline-related.collapsed {
-  overflow: hidden;
   grid-template-rows: min-content 0fr;
 }
 

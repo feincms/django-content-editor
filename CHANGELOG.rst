@@ -8,6 +8,8 @@ Next version
 - Fixed the content editor initialization: The active region was only set after
   saving and not initially.
 - Removed the maximum height from content editor inlines.
+- Started showing the target indicator again when dragging over collapsed
+  plugins.
 
 
 6.4 (2024-02-16)
