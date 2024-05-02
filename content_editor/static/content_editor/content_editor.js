@@ -364,7 +364,10 @@ django.jQuery(function ($) {
   function assignRegionDataAttribute() {
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
       const $this = $(this)
-      let region = $this.find(".field-region input").val()
+      // Try input first and fall back to the readonly presentation
+      let region =
+        $this.find(".field-region input").val() ||
+        $this.find(".field-region .readonly").text()
 
       if (!ContentEditor.regionsByKey[region]) {
         const key = `_unknown_${region}`
