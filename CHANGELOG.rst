@@ -12,6 +12,10 @@ Next version
   plugins.
 - Allowed dragging plugins to positions *after* existing plugins, not just
   *before*. This allows dragging a plugin directly to the end, finally.
+- Changed the content editor to work better if changing the parent object isn't
+  allowed. Plugin buttons (which didn't do anything) are now hidden, and the
+  region tabs work correctly.
+- Updated the bundled material icons font.
 
 
 6.4 (2024-02-16)
