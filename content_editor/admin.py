@@ -125,11 +125,11 @@ class ContentEditor(ModelAdmin):
 
     def _content_editor_context(self, request, context):
         instance = context.get("original")
-        show_plugins = True
+        allow_change = True
         if instance is None:
             instance = self.model()
         else:
-            show_plugins = self.has_change_permission(request, instance)
+            allow_change = self.has_change_permission(request, instance)
 
         plugins = []
         adding_not_allowed = ["_adding_not_allowed"]
@@ -142,7 +142,7 @@ class ContentEditor(ModelAdmin):
                     if callable(iaf.opts.regions)
                     else iaf.opts.regions
                 )
-                if show_plugins and iaf.opts.has_add_permission(request, instance)
+                if allow_change and iaf.opts.has_add_permission(request, instance)
                 else adding_not_allowed
             )
             plugins.append(
@@ -167,6 +167,7 @@ class ContentEditor(ModelAdmin):
             {
                 "plugins": plugins,
                 "regions": regions,
+                "allowChange": allow_change,
                 "messages": {
                     "createNew": gettext("Add new item"),
                     "empty": gettext("No items."),

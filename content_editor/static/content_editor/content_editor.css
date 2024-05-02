@@ -57,7 +57,7 @@ html {
 }
 
 .order-machine-wrapper.collapsed {
-  --control-width: 10px;
+  --control-width: 20px;
 }
 
 @media (min-width: 1024px) {
@@ -67,7 +67,7 @@ html {
 }
 
 .order-machine {
-  padding: 0 10px 20px 10px;
+  padding: 0 10px 10px 10px;
   border: 1px solid var(--hairline-color, #e8e8e8);
   position: relative;
 
@@ -406,6 +406,12 @@ h3[draggable] {
     position: sticky;
     bottom: -20px;
   }
+}
+
+.order-machine-readonly .plugin-buttons + p,
+.order-machine-readonly + .order-machine-help,
+.order-machine-readonly .inline-related > h3[draggable]::before {
+  display: none;
 }
 
 /* =====| OVERRIDES |===== */

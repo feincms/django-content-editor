@@ -740,5 +740,9 @@ django.jQuery(function ($) {
   `
   document.head.appendChild(style)
 
+  if (!ContentEditor.allowChange) {
+    $(".order-machine-wrapper").addClass("order-machine-readonly")
+  }
+
   $(document).trigger("content-editor:ready")
 })
