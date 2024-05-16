@@ -124,7 +124,11 @@ class ContentEditor(ModelAdmin):
     checks_class = ContentEditorChecks
 
     def _content_editor_context(self, request, context):
-        instance = context.get("original")
+        try:
+            instance = context["adminform"].form.instance
+        except (AttributeError, KeyError):
+            instance = context.get("original")
+
         allow_change = True
         if instance is None:
             instance = self.model()

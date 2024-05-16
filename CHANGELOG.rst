@@ -16,6 +16,8 @@ Next version
   allowed. Plugin buttons (which didn't do anything) are now hidden, and the
   region tabs work correctly.
 - Updated the bundled material icons font.
+- Preferred the admin form's model instance to the ``original`` context
+  variable. This lets us pick better content editor defaults.
 
 
 6.4 (2024-02-16)
