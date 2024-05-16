@@ -18,6 +18,7 @@ Next version
 - Updated the bundled material icons font.
 - Preferred the admin form's model instance to the ``original`` context
   variable. This lets us pick better content editor defaults.
+- Started hiding all plugin buttons when showing an unknown region.
 
 
 6.4 (2024-02-16)

@@ -295,7 +295,9 @@ django.jQuery(function ($) {
 
     buttons.forEach(function (button) {
       const plugin = button.dataset.pluginPrefix
-      const isVisible = pluginInCurrentRegion(plugin)
+      const isVisible =
+        pluginInCurrentRegion(plugin) &&
+        !/^_unknown_/.test(ContentEditor.currentRegion)
       button.classList.toggle("content-editor-hidden", !isVisible)
       visible += isVisible ? 1 : 0
     })
