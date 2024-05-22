@@ -85,10 +85,12 @@ html {
 
 .order-machine .inline-related > h3 {
   border-top: none;
+  border-bottom: none;
   font-size: 13px;
   font-weight: normal;
   height: 16px;
   padding: 7px;
+  margin: 0;
   background-color: var(--darkened-bg, #f8f8f8);
   transition:
     0.2s background,
@@ -160,6 +162,7 @@ h3[draggable] {
 .order-machine .inline-related.for-deletion,
 .order-machine .inline-related.collapsed {
   grid-template-rows: min-content 0fr;
+  border-bottom: 1px solid var(--hairline-color);
 }
 
 .order-machine .inline-related.for-deletion > h3::after {
