@@ -123,7 +123,9 @@ django.jQuery(($) => {
       fragment.innerHTML =
         plugin.button || '<span class="material-icons">extension</span>'
       const button = fragment.content.firstElementChild
-      for (const title of qsa(`.dynamic-${plugin.prefix} > h3`)) {
+      for (const title of qsa(
+        `.dynamic-${plugin.prefix} > h3, #${plugin.prefix}-empty > h3`,
+      )) {
         title.insertAdjacentElement("afterbegin", button.cloneNode(true))
       }
     }
