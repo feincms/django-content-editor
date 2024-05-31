@@ -187,18 +187,25 @@ h3[draggable] {
   z-index: 1982;
   top: 0;
   left: 0;
-  right: 10vw;
   box-shadow: 0 0 3px 0 rgba(0, 0, 50, 0.3);
 
   padding: 10px 20px 10px 10px;
 
-  column-width: 180px;
+  --_v: 8;
+  display: grid;
   column-gap: 10px;
-  column-fill: balance;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(var(--_v), minmax(0, 1fr));
 
   opacity: 0;
   visibility: none;
   pointer-events: none;
+}
+
+@media screen and (max-width: 767px) {
+  .plugin-buttons {
+    display: block;
+  }
 }
 
 .plugin-buttons-visible .plugin-buttons {
@@ -271,7 +278,7 @@ h3[draggable] {
   border: none;
 }
 
-.content-editor-hidden {
+.content-editor-invisible {
   /* We can't simply use display: none. Some admin widgets need to know
      * their dimensions, so we can't have that -- use an alternative way
      * to hide the modules. */
@@ -280,6 +287,10 @@ h3[draggable] {
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
+}
+
+.content-editor-hide {
+  display: none !important;
 }
 
 /* Used when dragging */

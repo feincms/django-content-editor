@@ -1,5 +1,5 @@
 /* global django */
-django.jQuery(function ($) {
+django.jQuery(($) => {
   var tabbed = $(".tabbed")
   if (tabbed.length >= 1) {
     var anchor = tabbed.eq(0)
@@ -35,7 +35,7 @@ django.jQuery(function ($) {
       $title.addClass("tab")
       $tabs.append($title)
 
-      $old.addClass("content-editor-hidden")
+      $old.addClass("content-editor-invisible")
 
       $modules.append($old)
     })
@@ -44,15 +44,15 @@ django.jQuery(function ($) {
       var $tab = $(this)
       if ($tab.hasClass("active")) {
         $tab.removeClass("active")
-        $modules.children().addClass("content-editor-hidden")
+        $modules.children().addClass("content-editor-invisible")
       } else {
         $tabs.find(".active").removeClass("active")
         $tab.addClass("active")
         $modules
           .children()
-          .addClass("content-editor-hidden")
+          .addClass("content-editor-invisible")
           .eq($tab.data("index"))
-          .removeClass("content-editor-hidden")
+          .removeClass("content-editor-invisible")
       }
     })
 

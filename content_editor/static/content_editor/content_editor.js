@@ -133,6 +133,7 @@ django.jQuery(($) => {
   addPluginIconsToInlines()
 
   const orderMachineWrapper = $(".order-machine-wrapper")
+  const pluginButtons = qs(".plugin-buttons")
   const orderMachine = $(".order-machine")
   const machineEmptyMessage = $('<p class="hidden machine-message"/>')
     .text(ContentEditor.messages.empty)
@@ -288,12 +289,17 @@ django.jQuery(($) => {
       const isVisible =
         pluginInCurrentRegion(plugin) &&
         !/^_unknown_/.test(ContentEditor.currentRegion)
-      button.classList.toggle("content-editor-hidden", !isVisible)
+      button.classList.toggle("content-editor-hide", !isVisible)
       visible += isVisible ? 1 : 0
     })
 
     if (visible) {
       noPluginsMessage.hide()
+
+      pluginButtons.style.setProperty(
+        "--_v",
+        Math.max(7, Math.ceil(visible / 3)),
+      )
     } else {
       if (ContentEditor.currentRegion) {
         noPluginsMessage.show()
@@ -421,13 +427,13 @@ django.jQuery(($) => {
 
   function hideInlinesFromOtherRegions() {
     const inlines = orderMachine.find(".inline-related:not(.empty-form)")
-    inlines.addClass("content-editor-hidden")
+    inlines.addClass("content-editor-invisible")
     const shown = inlines.filter(
       `[data-region="${ContentEditor.currentRegion}"]`,
     )
     machineEmptyMessage.addClass("hidden")
     if (shown.length) {
-      shown.removeClass("content-editor-hidden")
+      shown.removeClass("content-editor-invisible")
     } else {
       machineEmptyMessage.removeClass("hidden")
     }
@@ -605,10 +611,10 @@ django.jQuery(($) => {
 
   $(document)
     .on("content-editor:deactivate", (event, row) => {
-      row.find("fieldset").addClass("content-editor-hidden")
+      row.find("fieldset").addClass("content-editor-invisible")
     })
     .on("content-editor:activate", (event, row) => {
-      row.find("fieldset").removeClass("content-editor-hidden")
+      row.find("fieldset").removeClass("content-editor-invisible")
     })
 
   // Hide fieldsets of to-be-deleted inlines.
