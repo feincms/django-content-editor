@@ -1,6 +1,6 @@
 /* global django,ContentEditor */
 
-django.jQuery(function ($) {
+django.jQuery(($) => {
   const context = document.getElementById("content-editor-context")
   if (!context) return
 
@@ -33,20 +33,9 @@ django.jQuery(function ($) {
   const LS = safeStorage(localStorage)
   const SS = safeStorage(sessionStorage)
 
-  function unselectSelectedPlugin() {
-    qsa(".plugin-button.selected").forEach((btn) =>
-      btn.classList.remove("selected"),
-    )
-    qs(".order-machine").classList.remove("order-machine-insertion")
-  }
-
-  document.body.addEventListener("keyup", (e) => {
-    if (e.key === "Escape") unselectSelectedPlugin()
-  })
-
   window.ContentEditor = {
     addContent: function addContent(prefix) {
-      $("#" + prefix + "-group .add-row a").click()
+      $(`#${prefix}-group .add-row a`).click()
     },
     addPluginButton: function addPluginButton(prefix, iconHTML) {
       const plugin = ContentEditor.pluginsByPrefix[prefix]
@@ -56,16 +45,10 @@ django.jQuery(function ($) {
       button.dataset.pluginPrefix = plugin.prefix
       button.className = "plugin-button"
       button.title = plugin.title
-      button.addEventListener("click", function (e) {
+      button.addEventListener("click", (e) => {
         e.preventDefault()
-        if (button.classList.contains("selected")) {
-          button.classList.remove("selected")
-          ContentEditor.addContent(plugin.prefix)
-        } else {
-          unselectSelectedPlugin()
-          button.classList.add("selected")
-          qs(".order-machine").classList.add("order-machine-insertion")
-        }
+        ContentEditor.addContent(plugin.prefix)
+        orderMachineWrapper.removeClass("plugin-buttons-visible")
       })
 
       const icon = document.createElement("span")
@@ -89,11 +72,11 @@ django.jQuery(function ($) {
   $.extend(window.ContentEditor, JSON.parse(context.dataset.context))
 
   ContentEditor.pluginsByPrefix = {}
-  ContentEditor.plugins.forEach(function (plugin) {
+  ContentEditor.plugins.forEach((plugin) => {
     ContentEditor.pluginsByPrefix[plugin.prefix] = plugin
   })
   ContentEditor.regionsByKey = {}
-  ContentEditor.regions.forEach(function (region) {
+  ContentEditor.regions.forEach((region) => {
     ContentEditor.regionsByKey[region.key] = region
   })
 
@@ -101,24 +84,12 @@ django.jQuery(function ($) {
   // we even have any plugins.
   let $anchor = $(".inline-group:first")
   if (ContentEditor.plugins.length) {
-    $anchor = $("#" + ContentEditor.plugins[0].prefix + "-group")
+    $anchor = $(`#${ContentEditor.plugins[0].prefix}-group`)
   }
   $anchor.before(
     `
-    <div class="tabs regions"></div>
-    <div class="module order-machine-wrapper">
-      <div class="order-machine">
-        <span class="order-machine-insert-target last"></span>
-      </div>
-      <div class="machine-control">
-        <label class="toggle-sidebar">
-          <div class="plugin-button">
-            <span class="plugin-button-icon">
-              <span class="material-icons">chevron_right</span>
-            </span>
-            <input type="checkbox" />${ContentEditor.messages.toggleSidebar}
-          </div>
-        </label>
+    <div class="tabs regions">
+      <div class="machine-collapse">
         <label class="collapse-items">
           <input type="checkbox" />
           <div class="plugin-button collapse-all">
@@ -134,29 +105,34 @@ django.jQuery(function ($) {
             ${ContentEditor.messages.uncollapseAll}
           </div>
         </label>
-        <div class="plugin-buttons"></div>
-        <p class="small invisible-when-collapsed">${ContentEditor.messages.dblclickInsertion}</p>
       </div>
+    </div>
+    <div class="module order-machine-wrapper">
+      <div class="order-machine">
+        <span class="order-machine-insert-target last"></span>
+      </div>
+      <div class="plugin-buttons"></div>
     </div>
     <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
     `,
   )
 
-  const orderMachine = $(".order-machine"),
-    machineEmptyMessage = $('<p class="hidden machine-message"/>')
-      .text(ContentEditor.messages.empty)
-      .appendTo(orderMachine),
-    noRegionsMessage = $('<p class="hidden machine-message"/>')
-      .text(ContentEditor.messages.noRegions)
-      .appendTo(orderMachine),
-    noPluginsMessage = $('<p class="hidden machine-message"/>')
-      .text(ContentEditor.messages.noPlugins)
-      .appendTo(orderMachine)
+  const orderMachineWrapper = $(".order-machine-wrapper")
+  const orderMachine = $(".order-machine")
+  const machineEmptyMessage = $('<p class="hidden machine-message"/>')
+    .text(ContentEditor.messages.empty)
+    .appendTo(orderMachine)
+  const noRegionsMessage = $('<p class="hidden machine-message"/>')
+    .text(ContentEditor.messages.noRegions)
+    .appendTo(orderMachine)
+  const noPluginsMessage = $('<p class="hidden machine-message"/>')
+    .text(ContentEditor.messages.noPlugins)
+    .appendTo(orderMachine)
 
   // Pre map plugin regions
-  const pluginRegions = (function () {
+  const pluginRegions = (() => {
     const result = {}
-    ContentEditor.plugins.forEach(function (plugin) {
+    ContentEditor.plugins.forEach((plugin) => {
       result[plugin.prefix] = plugin.regions
     })
     const plugins = ContentEditor.plugins
@@ -177,7 +153,7 @@ django.jQuery(function ($) {
 
     const inline = arg[0]
 
-    inline.addEventListener("dragstart", function (e) {
+    inline.addEventListener("dragstart", (e) => {
       // Only handle events from [draggable] elements
       if (!e.target.closest("h3[draggable]")) return
 
@@ -194,7 +170,7 @@ django.jQuery(function ($) {
         // IE11 needs this.
       }
     })
-    inline.addEventListener("dragend", function () {
+    inline.addEventListener("dragend", () => {
       $(".fs-dragging").removeClass("fs-dragging")
       $(".fs-dragover").removeClass("fs-dragover")
       qsa(".order-machine .inline-related.selected").forEach((el) =>
@@ -203,7 +179,7 @@ django.jQuery(function ($) {
     })
     inline.addEventListener(
       "dragover",
-      function (e) {
+      (e) => {
         if (window.__fs_dragging) {
           e.preventDefault()
           $(".fs-dragover").removeClass("fs-dragover")
@@ -217,7 +193,7 @@ django.jQuery(function ($) {
       },
       true,
     )
-    inline.addEventListener("drop", function (e) {
+    inline.addEventListener("drop", (e) => {
       if (window.__fs_dragging) {
         e.preventDefault()
         const inline = e.target.closest(".inline-related")
@@ -239,8 +215,7 @@ django.jQuery(function ($) {
   }
 
   function reorderInlines(context) {
-    context = context || orderMachine
-    const inlines = context.find(".inline-related")
+    const inlines = (context || orderMachine).find(".inline-related")
     inlines.not(".empty-form").each(function () {
       $(document).trigger("content-editor:deactivate", [$(this)])
 
@@ -288,12 +263,12 @@ django.jQuery(function ($) {
 
   // Hide not allowed plugin buttons
   // If buttons only checks this buttons, else checks all
-  function hideNotAllowedPluginButtons(buttons) {
-    buttons = buttons ? buttons : qsa(".plugin-buttons .plugin-button")
+  function hideNotAllowedPluginButtons(_buttons) {
+    const buttons = _buttons ? _buttons : qsa(".plugin-buttons .plugin-button")
 
     let visible = 0
 
-    buttons.forEach(function (button) {
+    buttons.forEach((button) => {
       const plugin = button.dataset.pluginPrefix
       const isVisible =
         pluginInCurrentRegion(plugin) &&
@@ -345,14 +320,14 @@ django.jQuery(function ($) {
 
     if (regions.length < 2 && !/^_unknown_/.test($inline.data("region"))) return
 
-    const select = buildDropdown(regions),
-      regionInput = $inline.find(".field-region input")
+    const select = buildDropdown(regions)
+    const regionInput = $inline.find(".field-region input")
 
     select.className = "inline_move_to_region"
     select.value = regionInput.val()
     $inline.find("> h3 .inline_label").after(select)
 
-    select.addEventListener("change", function () {
+    select.addEventListener("change", () => {
       $inline.attr("data-region", select.value)
       regionInput.val(select.value)
       hideInlinesFromOtherRegions()
@@ -393,7 +368,7 @@ django.jQuery(function ($) {
   function setBiggestOrdering($row) {
     const orderings = []
     orderMachine.find(".field-ordering input").each(function () {
-      if (!isNaN(+this.value)) orderings.push(+this.value)
+      if (!Number.isNaN(+this.value)) orderings.push(+this.value)
     })
     const ordering = 10 + Math.max.apply(null, orderings)
     $row.find(".field-ordering input").val(ordering)
@@ -401,12 +376,12 @@ django.jQuery(function ($) {
   }
 
   function insertAdjacent(row, inline, after = false) {
-    const inlineOrdering = +qs(".field-ordering input", inline).value,
-      beforeRows = [],
-      afterRows = []
+    const inlineOrdering = +qs(".field-ordering input", inline).value
+    const beforeRows = []
+    const afterRows = []
     orderMachine.find(".inline-related:not(.empty-form)").each(function () {
       const thisOrderingField = qs(".field-ordering input", this)
-      if (this != row && !isNaN(+thisOrderingField.value)) {
+      if (this !== row && !Number.isNaN(+thisOrderingField.value)) {
         if (
           after
             ? +thisOrderingField.value > inlineOrdering
@@ -418,12 +393,8 @@ django.jQuery(function ($) {
         }
       }
     })
-    beforeRows.sort(function (a, b) {
-      return a[1].value - b[1].value
-    })
-    afterRows.sort(function (a, b) {
-      return a[1].value - b[1].value
-    })
+    beforeRows.sort((a, b) => a[1].value - b[1].value)
+    afterRows.sort((a, b) => a[1].value - b[1].value)
     let rows = [].concat(beforeRows)
     rows.push([row, qs(".field-ordering input", row)])
     rows = rows.concat(afterRows)
@@ -437,7 +408,7 @@ django.jQuery(function ($) {
     const inlines = orderMachine.find(".inline-related:not(.empty-form)")
     inlines.addClass("content-editor-hidden")
     const shown = inlines.filter(
-      '[data-region="' + ContentEditor.currentRegion + '"]',
+      `[data-region="${ContentEditor.currentRegion}"]`,
     )
     machineEmptyMessage.addClass("hidden")
     if (shown.length) {
@@ -457,7 +428,7 @@ django.jQuery(function ($) {
   const pluginInlineGroups = (function selectPluginInlineGroups() {
     const selector = []
     for (let i = 0; i < ContentEditor.plugins.length; i++) {
-      selector.push("#" + ContentEditor.plugins[i].prefix + "-group")
+      selector.push(`#${ContentEditor.plugins[i].prefix}-group`)
     }
     return $(selector.join(", "))
   })()
@@ -469,12 +440,30 @@ django.jQuery(function ($) {
   $(document).on(
     "click",
     ".order-machine-insert-target",
-    function handleInsertion(e) {
-      const plugin = qs(".plugin-button.selected")
-      if (!plugin) return
+    function handleClick(e) {
+      if (e.target.classList.contains("selected")) {
+        hidePluginButtons()
+        ContentEditor._insertBefore = null
+        e.target.classList.remove("selected")
+      } else {
+        e.target.classList.add("selected")
 
-      ContentEditor._insertBefore = e.target.closest(".inline-related")
-      ContentEditor.addContent(plugin.dataset.pluginPrefix)
+        const pos = e.target.getBoundingClientRect()
+        const buttons = qs(".plugin-buttons")
+        buttons.style.left = `${pos.left + window.scrollX + 30}px`
+
+        const y =
+          pos.top +
+          window.scrollY +
+          (e.target.classList.contains("last")
+            ? 30 - buttons.getBoundingClientRect().height
+            : 0)
+        buttons.style.top = `${y}px`
+
+        orderMachineWrapper.addClass("plugin-buttons-visible")
+
+        ContentEditor._insertBefore = e.target.closest(".inline-related")
+      }
     },
   )
 
@@ -510,7 +499,7 @@ django.jQuery(function ($) {
 
     if (
       !orderMachine.find(
-        '.inline-related[data-region="' + ContentEditor.currentRegion + '"]',
+        `.inline-related[data-region="${ContentEditor.currentRegion}"]`,
       ).length
     ) {
       machineEmptyMessage.removeClass("hidden")
@@ -522,7 +511,7 @@ django.jQuery(function ($) {
       })
 
     // As soon as possible, but not sooner (let the inline.js code run to the end first)
-    setTimeout(function () {
+    setTimeout(() => {
       orderMachine
         .find(".inline-related.last-related:not(.empty-form)")
         .each(function () {
@@ -531,8 +520,8 @@ django.jQuery(function ($) {
     }, 0)
   }
 
-  $(document).on("formset:added", function (event, $row, formsetName) {
-    if (event.detail && event.detail.formsetName) {
+  $(document).on("formset:added", (event, $row, formsetName) => {
+    if (event.detail?.formsetName) {
       // Django >= 4.1
       handleFormsetAdded($(event.target), event.detail.formsetName)
     } else {
@@ -540,8 +529,8 @@ django.jQuery(function ($) {
     }
   })
 
-  $(document).on("formset:removed", function (event, $row, formsetName) {
-    if (event.detail && event.detail.formsetName) {
+  $(document).on("formset:removed", (event, $row, formsetName) => {
+    if (event.detail?.formsetName) {
       // Django >= 4.1
       handleFormsetRemoved(event.detail.formsetName)
     } else {
@@ -550,7 +539,7 @@ django.jQuery(function ($) {
   })
 
   // Initialize tabs and currentRegion.
-  ;(function () {
+  ;(() => {
     const tabContainer = $(".tabs.regions")
     for (let i = 0; i < ContentEditor.regions.length; i++) {
       const t = document.createElement("h2")
@@ -566,7 +555,7 @@ django.jQuery(function ($) {
       hideInlinesFromOtherRegions()
       tabs
         .removeClass("active")
-        .filter('[data-region="' + ContentEditor.currentRegion + '"]')
+        .filter(`[data-region="${ContentEditor.currentRegion}"]`)
         .addClass("active")
 
       // Make sure only allowed plugins are in select
@@ -590,14 +579,6 @@ django.jQuery(function ($) {
       }
     })
     collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change")
-
-    const toggleSidebar = $(".toggle-sidebar input")
-    const omWrapper = document.querySelector(".order-machine-wrapper")
-    toggleSidebar.on("change", function () {
-      omWrapper.classList.toggle("collapsed", this.checked)
-      LS.set("collapseSidebar", this.checked)
-    })
-    toggleSidebar.attr("checked", LS.get("collapseSidebar")).trigger("change")
   })()
   ;(function initializeInsertTargets() {
     qsa(".order-machine .inline-related").forEach((inline) => {
@@ -608,10 +589,10 @@ django.jQuery(function ($) {
   })()
 
   $(document)
-    .on("content-editor:deactivate", function (event, row) {
+    .on("content-editor:deactivate", (event, row) => {
       row.find("fieldset").addClass("content-editor-hidden")
     })
-    .on("content-editor:activate", function (event, row) {
+    .on("content-editor:activate", (event, row) => {
       row.find("fieldset").removeClass("content-editor-hidden")
     })
 
@@ -657,12 +638,23 @@ django.jQuery(function ($) {
   })
 
   // Unselect the currently selected plugin
-  $(document.body).on("click", function removeSelected(e) {
+  const hidePluginButtons = () => {
+    orderMachineWrapper.removeClass("plugin-buttons-visible")
+    for (const el of qsa(".order-machine-insert-target.selected")) {
+      el.classList.remove("selected")
+    }
+  }
+
+  document.body.addEventListener("keyup", (e) => {
+    if (e.key === "Escape") hidePluginButtons()
+  })
+
+  document.body.addEventListener("click", (e) => {
     if (
-      !e.target.closest(".plugin-button") &&
-      !e.target.closest(".order-machine-insert-target")
+      !e.target.closest(".order-machine-insert-target") &&
+      !e.target.closest(".plugin-buttons")
     ) {
-      unselectSelectedPlugin()
+      hidePluginButtons()
     }
   })
 
@@ -679,13 +671,13 @@ django.jQuery(function ($) {
   }
 
   const restoreEditorState = () => {
-    let tabs = $(".tabs.regions .tab")
+    const tabs = $(".tabs.regions .tab")
 
     const state = location.hash.includes("restore")
       ? SS.get(location.pathname)
       : null
     if (state) {
-      let tab = tabs.filter(`[data-region="${state.region}"]`)
+      const tab = tabs.filter(`[data-region="${state.region}"]`)
       if (tab.length) {
         tab.click()
       } else {
@@ -694,7 +686,7 @@ django.jQuery(function ($) {
 
       qsa(".order-machine .inline-related:not(.empty-form)").forEach(
         (inline) => {
-          let collapsed = state.collapsed.includes(
+          const collapsed = state.collapsed.includes(
             qs(".field-ordering input", inline).value,
           )
           inline.classList.toggle("collapsed", collapsed)
@@ -715,7 +707,7 @@ django.jQuery(function ($) {
   })
   setTimeout(restoreEditorState, 1)
 
-  ContentEditor.plugins.forEach(function (plugin) {
+  ContentEditor.plugins.forEach((plugin) => {
     ContentEditor.addPluginButton(plugin.prefix, plugin.button)
   })
 

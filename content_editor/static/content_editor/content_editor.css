@@ -9,6 +9,15 @@ html {
   clear: both;
 }
 
+.tabs.regions {
+  display: flex;
+}
+
+.machine-collapse {
+  order: 1;
+  margin-left: auto;
+}
+
 .tabs > .tab {
   text-transform: none;
   letter-spacing: 0;
@@ -23,6 +32,9 @@ html {
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
   user-select: none;
+  transition:
+    0.15s background,
+    0.15s color;
 }
 
 .tabs > .active {
@@ -49,25 +61,11 @@ html {
 }
 
 .order-machine-wrapper {
-  --control-width: 220px;
   clear: both;
-  display: grid;
-  grid-template-columns: 1fr var(--control-width);
-  transition: grid-template-columns 0.2s;
-}
-
-.order-machine-wrapper.collapsed {
-  --control-width: 20px;
-}
-
-@media (min-width: 1024px) {
-  .order-machine-wrapper.collapsed {
-    --control-width: 0px;
-  }
 }
 
 .order-machine {
-  padding: 0 10px 10px 10px;
+  padding: 10px 10px 20px 30px;
   border: 1px solid var(--hairline-color, #e8e8e8);
   position: relative;
 
@@ -93,8 +91,8 @@ html {
   margin: 0;
   background-color: var(--darkened-bg, #f8f8f8);
   transition:
-    0.2s background,
-    0.2s color;
+    0.15s background,
+    0.15s color;
 
   white-space: nowrap;
   overflow: hidden;
@@ -139,10 +137,10 @@ h3[draggable] {
 }
 
 .order-machine .inline-related {
-  transition: border 0.2s;
+  transition: border 0.15s;
   display: grid;
   grid-template-rows: min-content 1fr;
-  transition: grid-template-rows 0.2s ease-out;
+  transition: grid-template-rows 0.15s ease-out;
 }
 
 .order-machine .inline-related fieldset {
@@ -183,20 +181,33 @@ h3[draggable] {
 }
 
 .machine-control {
-  border: 1px solid var(--hairline-color, #e8e8e8);
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-  background: var(--darkened-bg, #f8f8f8);
-  position: sticky;
-  top: 0;
-  align-self: flex-start;
-
-  width: 220px;
 }
 
 .plugin-buttons {
-  border-top: 1px solid var(--hairline-color, #e8e8e8);
-  margin-top: 8px;
+  border: 1px solid var(--hairline-color, #e8e8e8);
+  background: var(--darkened-bg, #f8f8f8);
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 10vw;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 50, 0.3);
+
+  padding: 10px 20px 10px 10px;
+
+  column-width: 180px;
+  column-gap: 10px;
+  column-fill: balance;
+
+  opacity: 0;
+  visibility: none;
+  pointer-events: none;
+}
+
+.plugin-buttons-visible .plugin-buttons {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
 }
 
 .plugin-button {
@@ -208,10 +219,7 @@ h3[draggable] {
   border-radius: 4px;
   transition: 0.1s background;
   user-select: none;
-}
-
-.plugin-button.selected {
-  background: var(--primary, #79aec8);
+  break-inside: avoid;
 }
 
 .plugin-button-icon {
@@ -221,24 +229,10 @@ h3[draggable] {
   margin-right: 0.75rem;
 }
 
-.toggle-sidebar,
 .collapse-items {
   cursor: pointer;
 }
 
-.toggle-sidebar .plugin-button-icon {
-  transform-origin: center;
-}
-
-.order-machine-wrapper.collapsed .toggle-sidebar .plugin-button-icon {
-  transform: scaleX(-1);
-}
-
-.order-machine-wrapper.collapsed .invisible-when-collapsed {
-  opacity: 0;
-}
-
-.toggle-sidebar input,
 .collapse-items input {
   display: none;
 }
@@ -342,9 +336,9 @@ h3[draggable] {
 
 .order-machine-insert-target {
   position: absolute;
-  left: 48%;
-  top: -0.9em;
-  font-size: 1.5rem;
+  left: -28px;
+  top: -20px;
+  font-size: 1.25rem;
   width: 1.25em;
   height: 1.25em;
   line-height: 1.25em;
@@ -355,34 +349,33 @@ h3[draggable] {
   display: grid;
   place-items: center;
   cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0.5;
+  transition:
+    color 0.15s,
+    background 0.15s,
+    opacity,
+    0.15s;
 }
 .order-machine-insert-target.last {
   top: auto;
-  bottom: 2px;
-  left: 48.2%;
+  bottom: 3px;
+  left: 2px;
   z-index: 1;
 }
-.order-machine-insertion .order-machine-insert-target {
-  opacity: 0.5;
-  pointer-events: all;
-  transition: opacity 0.1s;
-}
-.order-machine-insert-target:hover {
+.order-machine-insert-target:hover,
+.order-machine-insert-target.selected {
   opacity: 1;
   background: var(--button-hover-bg, #609ab6);
 }
 .order-machine-insert-target::before {
-  content: "→";
+  content: "+";
   font-weight: bold;
 }
 
 @media screen and (max-width: 767px) {
   /* CSS fix for Django's responsive admin interface (shows fields below the
    * 767px breakpoint despite them being .hidden */
-  html .aligned .form-row.hidden,
-  .toggle-sidebar {
+  html .aligned .form-row.hidden {
     display: none;
   }
 

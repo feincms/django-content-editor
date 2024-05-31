@@ -33,16 +33,11 @@ repos:
       - id: prettier
         args: [--list-different, --no-semi]
         exclude: "^conf/|.*\\.html$"
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v8.54.0
+  - repo: https://github.com/biomejs/pre-commit
+    rev: "v0.1.0"
     hooks:
-      - id: eslint
-        additional_dependencies:
-          - eslint
-          - eslint-config-prettier
-          - "@babel/core"
-          - "@babel/eslint-parser"
-          - "@babel/preset-env"
+      - id: biome-check
+        additional_dependencies: ["@biomejs/biome@1.7.3"]
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: 1.7.0
     hooks:

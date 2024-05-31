@@ -182,13 +182,9 @@ class ContentEditor(ModelAdmin):
                     "unknownRegion": gettext("Unknown region"),
                     "collapseAll": gettext("Collapse all items"),
                     "uncollapseAll": gettext("Uncollapse all items"),
-                    "toggleSidebar": gettext("Toggle sidebar"),
                     "forDeletion": gettext("marked for deletion"),
                     "selectMultiple": gettext(
                         "Use Ctrl-Click to select and move multiple items."
-                    ),
-                    "dblclickInsertion": gettext(
-                        "Doubleclicking inserts an item at the end."
                     ),
                 },
             }
