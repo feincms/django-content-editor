@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+7.0a1 (2024-05-31)
+==================
+
 - Switched from ESLint to biome.
 - Completely revamped the plugin buttons control. It now doesn't take up any
   place on the side anymore but instead appears when clicking the insertion
