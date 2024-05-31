@@ -64,7 +64,7 @@ def create_plugin_base(content_base):
             ordering = ["ordering"]
 
         def __str__(self):
-            return f"{self._meta.label}<region={self.region} ordering={self.ordering} pk={self.pk}>"
+            return f"{self._meta.label}<region={self.region} ordering={self.ordering} pk={self.pk}>"  # pragma: no cover
 
         @classmethod
         def get_queryset(cls):

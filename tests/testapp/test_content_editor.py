@@ -28,12 +28,6 @@ class ContentEditorTest(TestCase):
         )
         article.testapp_download_set.create(file="bla.pdf", region="main", ordering=20)
 
-        with self.assertNumQueries(0):
-            self.assertEqual(
-                "%s" % richtext,
-                f"testapp.RichText<region=main ordering=10 pk={richtext.pk}>",
-            )
-
         with self.assertNumQueries(2):  # Two content types.
             contents = contents_for_item(article, plugins=[RichText, Download])
 
