@@ -294,6 +294,7 @@ django.jQuery(($) => {
     })
 
     if (visible) {
+      orderMachineWrapper.removeClass("order-machine-hide-insert-targets")
       noPluginsMessage.hide()
 
       pluginButtons.style.setProperty(
@@ -301,6 +302,8 @@ django.jQuery(($) => {
         Math.max(7, Math.ceil(visible / 3)),
       )
     } else {
+      orderMachineWrapper.addClass("order-machine-hide-insert-targets")
+
       if (ContentEditor.currentRegion) {
         noPluginsMessage.show()
         machineEmptyMessage.hide()

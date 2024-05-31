@@ -380,6 +380,10 @@ h3[draggable] {
   font-weight: bold;
 }
 
+.order-machine-hide-insert-targets .order-machine-insert-target {
+  display: none;
+}
+
 @media screen and (max-width: 767px) {
   /* CSS fix for Django's responsive admin interface (shows fields below the
    * 767px breakpoint despite them being .hidden */
@@ -413,6 +417,7 @@ h3[draggable] {
 }
 
 .order-machine-readonly .plugin-buttons + p,
+.order-machine-readonly .order-machine-insert-target,
 .order-machine-readonly + .order-machine-help,
 .order-machine-readonly .inline-related > h3[draggable]::before {
   display: none;
