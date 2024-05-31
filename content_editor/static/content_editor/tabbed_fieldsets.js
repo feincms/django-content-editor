@@ -1,8 +1,8 @@
 /* global django */
 django.jQuery(($) => {
-  var tabbed = $(".tabbed")
+  const tabbed = $(".tabbed")
   if (tabbed.length >= 1) {
-    var anchor = tabbed.eq(0)
+    let anchor = tabbed.eq(0)
     /* Break out of the .inline-related containment, avoids ugly h3's */
     if (anchor.parents(".inline-related").length) {
       anchor = anchor.parents(".inline-related")
@@ -14,14 +14,14 @@ django.jQuery(($) => {
         "</div>",
     )
 
-    var $tabs = $("#tabbed > .tabs"),
-      $modules = $("#tabbed > .modules"),
-      errorIndex = -1,
-      uncollapseIndex = -1
+    const $tabs = $("#tabbed > .tabs")
+    const $modules = $("#tabbed > .modules")
+    let errorIndex = -1
+    let uncollapseIndex = -1
 
     tabbed.each(function createTabs(index) {
-      var $old = $(this),
-        $title = $old.children("h2")
+      const $old = $(this)
+      const $title = $old.children("h2")
 
       if ($old.find(".errorlist").length) {
         $title.addClass("has-error")
@@ -41,7 +41,7 @@ django.jQuery(($) => {
     })
 
     $tabs.on("click", "[data-index]", function () {
-      var $tab = $(this)
+      const $tab = $(this)
       if ($tab.hasClass("active")) {
         $tab.removeClass("active")
         $modules.children().addClass("content-editor-invisible")
@@ -57,8 +57,8 @@ django.jQuery(($) => {
     })
 
     if (errorIndex >= 0 || uncollapseIndex >= 0) {
-      var index = errorIndex >= 0 ? errorIndex : uncollapseIndex
-      $tabs.find("[data-index=" + index + "]").click()
+      const index = errorIndex >= 0 ? errorIndex : uncollapseIndex
+      $tabs.find(`[data-index=${index}]`).click()
     }
   }
 })

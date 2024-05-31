@@ -11,6 +11,9 @@ class AbstractRichText(models.Model):
         abstract = True
         verbose_name = "rich text"
 
+    def __str__(self):
+        return self.text
+
 
 class Article(models.Model):
     title = models.CharField(max_length=200)
@@ -40,6 +43,9 @@ class Download(ArticlePlugin):
     class Meta:
         verbose_name = "download"
         verbose_name_plural = "downloads"
+
+    def __str__(self):
+        return self.file.name
 
 
 class Thing(models.Model):

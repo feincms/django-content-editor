@@ -1,7 +1,7 @@
 /* global django */
-django.jQuery(function ($) {
+django.jQuery(($) => {
   $(document).keydown(function handleKeys(event) {
-    if (event.which == 83 && (event.metaKey || event.ctrlKey)) {
+    if (event.which === 83 && (event.metaKey || event.ctrlKey)) {
       $("form input[name=_continue]").click()
       return false
     }
