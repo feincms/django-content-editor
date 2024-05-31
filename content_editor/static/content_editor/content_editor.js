@@ -48,7 +48,7 @@ django.jQuery(($) => {
       button.addEventListener("click", (e) => {
         e.preventDefault()
         ContentEditor.addContent(plugin.prefix)
-        orderMachineWrapper.removeClass("plugin-buttons-visible")
+        hidePluginButtons()
       })
 
       const icon = document.createElement("span")
