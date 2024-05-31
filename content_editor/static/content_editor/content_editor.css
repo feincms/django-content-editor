@@ -184,7 +184,7 @@ h3[draggable] {
   border: 1px solid var(--hairline-color, #e8e8e8);
   background: var(--darkened-bg, #f8f8f8);
   position: absolute;
-  z-index: 2;
+  z-index: 1982;
   top: 0;
   left: 0;
   right: 10vw;
