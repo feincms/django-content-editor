@@ -117,6 +117,19 @@ django.jQuery(($) => {
     `,
   )
 
+  const addPluginIconsToInlines = () => {
+    for (const plugin of ContentEditor.plugins) {
+      const fragment = document.createElement("template")
+      fragment.innerHTML =
+        plugin.button || '<span class="material-icons">extension</span>'
+      const button = fragment.content.firstElementChild
+      for (const title of qsa(`.dynamic-${plugin.prefix} > h3`)) {
+        title.insertAdjacentElement("afterbegin", button.cloneNode(true))
+      }
+    }
+  }
+  addPluginIconsToInlines()
+
   const orderMachineWrapper = $(".order-machine-wrapper")
   const orderMachine = $(".order-machine")
   const machineEmptyMessage = $('<p class="hidden machine-message"/>')

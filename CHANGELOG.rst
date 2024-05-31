@@ -12,6 +12,7 @@ Next version
 - Completely revamped the plugin buttons control. It now doesn't take up any
   place on the side anymore but instead appears when clicking the insertion
   target.
+- Added plugin icons to inlines instead of the generic drag handle.
 
 
 6.5 (2024-05-16)

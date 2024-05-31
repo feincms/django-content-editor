@@ -107,12 +107,9 @@ h3[draggable] {
   cursor: move;
 }
 
-.order-machine .inline-related > h3[draggable]::before {
-  content: "drag_indicator";
-  font-family: "Material Icons";
-  font-size: 24px;
+.order-machine h3 .material-icons {
   position: relative;
-  top: -6px;
+  top: -4px;
   left: -2px;
 }
 
