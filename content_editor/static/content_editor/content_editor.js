@@ -462,10 +462,10 @@ django.jQuery(($) => {
     "click",
     ".order-machine-insert-target",
     function handleClick(e) {
-      if (e.target.classList.contains("selected")) {
-        hidePluginButtons()
+      const isSelected = e.target.classList.contains("selected")
+      hidePluginButtons()
+      if (isSelected) {
         ContentEditor._insertBefore = null
-        e.target.classList.remove("selected")
       } else {
         e.target.classList.add("selected")
 
