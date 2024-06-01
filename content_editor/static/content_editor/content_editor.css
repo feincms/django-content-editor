@@ -195,7 +195,7 @@ h3[draggable] {
   display: grid;
   column-gap: 10px;
   grid-auto-flow: column;
-  grid-template-rows: repeat(var(--_v), minmax(0, 1fr));
+  grid-template-rows: repeat(var(--_v), min-content);
 
   opacity: 0;
   visibility: none;

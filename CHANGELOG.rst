@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+- Changed the plugin buttons grid to allow collapsing empty rows.
+
+
 7.0 (2024-05-31)
 ================
 
