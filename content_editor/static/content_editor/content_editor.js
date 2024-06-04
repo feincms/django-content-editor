@@ -165,7 +165,12 @@ django.jQuery(($) => {
   }
 
   function ensureDraggable(arg) {
-    if (arg.hasClass("empty-form") || arg.hasClass("fs-draggable")) return
+    if (
+      !ContentEditor.allowChange ||
+      arg.hasClass("empty-form") ||
+      arg.hasClass("fs-draggable")
+    )
+      return
 
     const inline = arg[0]
 
@@ -304,7 +309,7 @@ django.jQuery(($) => {
     } else {
       orderMachineWrapper.addClass("order-machine-hide-insert-targets")
 
-      if (ContentEditor.currentRegion) {
+      if (ContentEditor.currentRegion && ContentEditor.allowChange) {
         noPluginsMessage.show()
         machineEmptyMessage.hide()
       }
