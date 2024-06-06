@@ -86,6 +86,7 @@ class ContentEditorInline(StackedInline):
     fk_name = "parent"
     regions = None
     button = ""
+    icon = ""
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
@@ -104,6 +105,8 @@ class ContentEditorInline(StackedInline):
         """
         kwargs["model"] = model
         opts = model._meta
+        if icon := kwargs.get("icon"):
+            kwargs.setdefault("button", f'<span class="material-icons">{icon}</span>')
         return type(
             f"ContentEditorInline_{opts.app_label}_{opts.model_name}_{next(_inline_index)}",
             (cls,),
