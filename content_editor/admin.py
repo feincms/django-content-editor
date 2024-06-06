@@ -105,8 +105,6 @@ class ContentEditorInline(StackedInline):
         """
         kwargs["model"] = model
         opts = model._meta
-        if icon := kwargs.get("icon"):
-            kwargs.setdefault("button", f'<span class="material-icons">{icon}</span>')
         return type(
             f"ContentEditorInline_{opts.app_label}_{opts.model_name}_{next(_inline_index)}",
             (cls,),
@@ -152,12 +150,15 @@ class ContentEditor(ModelAdmin):
                 if allow_change and iaf.opts.has_add_permission(request, instance)
                 else adding_not_allowed
             )
+            button = iaf.opts.button
+            if not button and iaf.opts.icon:
+                button = f'<span class="material-icons">{iaf.opts.icon}</span>'
             plugins.append(
                 {
                     "title": capfirst(str(iaf.opts.verbose_name)),
                     "regions": list(regions) if regions else None,
                     "prefix": iaf.formset.prefix,
-                    "button": iaf.opts.button,
+                    "button": button,
                 }
             )
         regions = [
