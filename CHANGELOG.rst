@@ -7,6 +7,7 @@ Next version
 
 - Changed the plugin buttons grid to allow collapsing empty rows.
 - Disabled dragging plugins when changes are not allowed anyway.
+- Stopped collapsing plugin initially when they contain errors.
 
 
 7.0 (2024-05-31)

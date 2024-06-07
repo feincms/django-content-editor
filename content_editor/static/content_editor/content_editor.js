@@ -718,7 +718,10 @@ django.jQuery(($) => {
           const collapsed = state.collapsed.includes(
             qs(".field-ordering input", inline).value,
           )
-          inline.classList.toggle("collapsed", collapsed)
+          inline.classList.toggle(
+            "collapsed",
+            collapsed && !inline.querySelector(".errorlist"),
+          )
         },
       )
 
