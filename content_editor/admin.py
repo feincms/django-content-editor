@@ -87,6 +87,7 @@ class ContentEditorInline(StackedInline):
     regions = None
     button = ""
     icon = ""
+    color = ""
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
@@ -159,6 +160,7 @@ class ContentEditor(ModelAdmin):
                     "regions": list(regions) if regions else None,
                     "prefix": iaf.formset.prefix,
                     "button": button,
+                    "color": iaf.opts.color,
                 }
             )
         regions = [

@@ -56,6 +56,9 @@ django.jQuery(($) => {
       icon.innerHTML =
         iconHTML || '<span class="material-icons">extension</span>'
       button.appendChild(icon)
+      if (plugin.color) {
+        icon.style.color = plugin.color
+      }
 
       const title = document.createElement("span")
       title.className = "plugin-button-title"
@@ -123,6 +126,9 @@ django.jQuery(($) => {
       fragment.innerHTML =
         plugin.button || '<span class="material-icons">extension</span>'
       const button = fragment.content.firstElementChild
+      if (plugin.color) {
+        button.style.color = plugin.color
+      }
       for (const title of qsa(
         `.dynamic-${plugin.prefix} > h3, #${plugin.prefix}-empty > h3`,
       )) {

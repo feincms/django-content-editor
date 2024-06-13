@@ -294,30 +294,19 @@ If you also want nice icons to add new items, you might want to use
 .. code-block:: python
 
     from content_editor.admin import ContentEditor, ContentEditorInline
-    from js_asset import JS
 
     # ... the RichTextInline from above
 
     class ArticleAdmin(ContentEditor):
         inlines = [
-            RichTextInline.create(
-                button='<i class="fas fa-pencil-alt"></i>',
-            ),
-            ContentEditorInline.create(
-                model=Download,
-                button='<i class="fas fa-download"></i>',
-            ),
+            RichTextInline.create(icon="notes"),
+            ContentEditorInline.create(model=Download, icon="download"),
         ]
 
-        class Media:
-            js = (
-                JS("https://use.fontawesome.com/releases/v5.0.10/js/all.js", {
-                    "defer": "defer",
-                    "integrity": "sha384-slN8GvtUJGnv6ca26v8EzVaR9DC58QEwsIk9q1QXdCU8Yu8ck/tL/5szYlBbqmS+",  # noqa
-                    "crossorigin": "anonymous",
-                }, static=False),
-            )
+The content editor bundles the Google material icons font.
 
+Additional options include ``button`` (where you can set the HTML code for the
+icon if you need more control) and ``color`` to set a CSS color for the icon.
 
 Restricting plugins to a subset of all available regions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
