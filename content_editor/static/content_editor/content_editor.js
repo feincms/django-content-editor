@@ -170,6 +170,29 @@ django.jQuery(($) => {
     return clientY > yMid
   }
 
+  function startMouseMonitor() {
+    const updater = (e) => {
+      window.__fs_clientY = e.clientY
+    }
+    window.addEventListener("mousemove", updater)
+    window.addEventListener("dragover", updater)
+
+    const interval = setInterval(() => {
+      const clientY = window.__fs_clientY
+      if (clientY && clientY / window.innerHeight < 0.1) {
+        window.scrollBy(0, -10)
+      } else if (clientY && clientY / window.innerHeight > 0.9) {
+        window.scrollBy(0, 10)
+      }
+    }, 10)
+
+    return () => {
+      window.removeEventListener("mousemove", updater)
+      window.removeEventListener("dragover", updater)
+      clearInterval(interval)
+    }
+  }
+
   function ensureDraggable(arg) {
     if (
       !ContentEditor.allowChange ||
@@ -179,6 +202,7 @@ django.jQuery(($) => {
       return
 
     const inline = arg[0]
+    let cancelMouseMonitor
 
     inline.addEventListener("dragstart", (e) => {
       // Only handle events from [draggable] elements
@@ -196,6 +220,8 @@ django.jQuery(($) => {
       } catch (e) {
         // IE11 needs this.
       }
+
+      cancelMouseMonitor = startMouseMonitor()
     })
     inline.addEventListener("dragend", () => {
       $(".fs-dragging").removeClass("fs-dragging")
@@ -203,6 +229,8 @@ django.jQuery(($) => {
       qsa(".order-machine .inline-related.selected").forEach((el) =>
         el.classList.remove("selected"),
       )
+      cancelMouseMonitor()
+      cancelMouseMonitor = null
     })
     inline.addEventListener(
       "dragover",
