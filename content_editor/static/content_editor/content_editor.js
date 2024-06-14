@@ -768,7 +768,7 @@ django.jQuery(($) => {
   }
 
   $("form").submit(function () {
-    this.action += "#restore"
+    this.action = `${this.action.split("#")[0]}#restore`
     saveEditorState()
   })
   setTimeout(restoreEditorState, 1)
