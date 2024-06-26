@@ -113,6 +113,15 @@ class ContentEditorInline(StackedInline):
         )
 
 
+def auto_icon_colors(content_editor):
+    hue = 330
+    for inline in content_editor.inlines:
+        if issubclass(inline, ContentEditorInline) and not inline.color:
+            inline.color = f"oklch(0.5 0.2 {hue})"
+            hue -= 20
+    return content_editor
+
+
 class ContentEditor(ModelAdmin):
     """
     The ``ContentEditor`` is a drop-in replacement for ``ModelAdmin`` with the
@@ -139,6 +148,7 @@ class ContentEditor(ModelAdmin):
 
         plugins = []
         adding_not_allowed = ["_adding_not_allowed"]
+
         for iaf in context.get("inline_admin_formsets", []):
             if not isinstance(iaf.opts, ContentEditorInline):
                 continue
