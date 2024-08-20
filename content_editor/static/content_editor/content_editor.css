@@ -157,6 +157,12 @@ h3[draggable] {
   border-bottom: 1px solid var(--hairline-color);
 }
 
+.order-machine .inline-related.for-deletion > fieldset:nth-child(n + 3),
+.order-machine .inline-related.collapsed > fieldset:nth-child(n + 3) {
+  /* grid-template-rows animates the first fieldset, all other fieldsets jump out of existence */
+  display: none;
+}
+
 .order-machine .inline-related.for-deletion > h3::after {
   content: "";
   position: absolute;

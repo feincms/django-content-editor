@@ -9,6 +9,8 @@ Next version
 - Disabled dragging plugins when changes are not allowed anyway.
 - Stopped collapsing plugin initially when they contain errors.
 - Added automatic scrolling while dragging plugins.
+- Fixed a bug where a plugin with multiple fieldsets wouldn't collapse
+  completely.
 
 
 7.0 (2024-05-31)
