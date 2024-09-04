@@ -151,6 +151,16 @@ edited and ordered.
         ]
 
 
+.. note::
+
+   The following section is outdated; the content editor uses `flex ordering
+   <https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout/Ordering_flex_items>`__
+   since 2018, fixing the problem where moving DOM elements would freeze the
+   associated JavaScript widgets.
+
+   These days it should be enough to initialize widgets on page load and
+   when Django itself emits the `formset:added event <https://docs.djangoproject.com/en/latest/ref/contrib/admin/javascript/>`__.
+
 Here's an example CKEditor integration. Especially noteworthy are the
 two signals emitted by the content editor: ``content-editor:activate``
 and ``content-editor:deactivate``. Since content blocks can be
