@@ -11,6 +11,7 @@ Next version
 - Added automatic scrolling while dragging plugins.
 - Fixed a bug where a plugin with multiple fieldsets wouldn't collapse
   completely.
+- Added Django 5.1 to the CI.
 
 
 7.0 (2024-05-31)
