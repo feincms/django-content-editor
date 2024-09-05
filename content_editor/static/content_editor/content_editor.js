@@ -82,6 +82,9 @@ django.jQuery(($) => {
   ContentEditor.regions.forEach((region) => {
     ContentEditor.regionsByKey[region.key] = region
   })
+  ContentEditor.hasSections = ContentEditor.plugins.some(
+    (plugin) => plugin.sections,
+  )
 
   // Add basic structure. There is always at least one inline group if
   // we even have any plugins.
@@ -262,11 +265,108 @@ django.jQuery(($) => {
           row[0].classList.remove("selected")
         })
         window.__fs_dragging = null
+
+        updateSections()
       }
     })
 
     arg.find(">h3, .card-title").attr("draggable", true) // Default admin, Jazzmin
     arg.addClass("fs-draggable")
+  }
+
+  function findInlinesInOrder(context) {
+    const inlines = (context || orderMachine).find(
+      `.inline-related:not(.empty-form)[data-region="${ContentEditor.currentRegion}`,
+    )
+    inlines.sort((a, b) => a.style.order - b.style.order)
+    return inlines
+  }
+
+  let sectionsMap = new Map()
+
+  function updateSections(context) {
+    /* Bail out early if we wouldn't do nothing anyway */
+    if (!ContentEditor.hasSections) return
+
+    const inlines = findInlinesInOrder(context)
+
+    let indent = 0
+    let nextIndent
+    const stack = []
+    const wrapper = orderMachineWrapper[0]
+    const wrapperRect = wrapper.getBoundingClientRect()
+
+    const newSectionsMap = new Map()
+
+    function closeSection(atInline) {
+      const fromInline = stack.pop()
+      const from = fromInline.getBoundingClientRect()
+      const until = atInline.getBoundingClientRect()
+
+      let div = sectionsMap.get(fromInline)
+      if (div) {
+        sectionsMap.delete(fromInline)
+      } else {
+        div = document.createElement("div")
+        div.classList.add("order-machine-section")
+        wrapper.prepend(div)
+      }
+
+      newSectionsMap.set(fromInline, div)
+      div.style.top = `${from.top - wrapperRect.top - 5}px`
+      div.style.left = `${from.left - wrapperRect.left - 5}px`
+      div.style.right = "5px"
+      div.style.height = `${until.top - from.top + until.height + 10}px`
+    }
+
+    for (const inline of inlines) {
+      const prefix = inline.id.replace(/-[0-9]+$/, "")
+      inline.style.marginInlineStart = `${30 * indent}px`
+      nextIndent = Math.max(
+        0,
+        indent + ContentEditor.pluginsByPrefix[prefix].sections,
+      )
+
+      while (indent < nextIndent) {
+        stack.push(inline)
+        ++indent
+      }
+
+      while (indent > nextIndent) {
+        closeSection(inline)
+        --indent
+      }
+
+      indent = nextIndent
+    }
+
+    while (stack.length) {
+      closeSection(inlines[inlines.length - 1])
+    }
+
+    for (const section of sectionsMap.values()) {
+      section.remove()
+    }
+    sectionsMap = newSectionsMap
+  }
+
+  if (ContentEditor.hasSections) {
+    /* From https://www.freecodecamp.org/news/javascript-debounce-example/ */
+    function debounce(func, timeout = 300) {
+      let timer
+      return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          func.apply(this, args)
+        }, timeout)
+      }
+    }
+    const debouncedIndentInlines = debounce(updateSections, 10)
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      debouncedIndentInlines()
+    })
+    resizeObserver.observe(orderMachineWrapper[0])
   }
 
   function reorderInlines(context) {
@@ -512,12 +612,13 @@ django.jQuery(($) => {
         e.target.classList.add("selected")
 
         const pos = e.target.getBoundingClientRect()
+        const wrapperRect = orderMachineWrapper[0].getBoundingClientRect()
         const buttons = qs(".plugin-buttons")
-        buttons.style.left = `${pos.left + window.scrollX + 30}px`
+        buttons.style.left = `${pos.left - wrapperRect.left + 30}px`
 
         const y =
-          pos.top +
-          window.scrollY +
+          pos.top -
+          wrapperRect.top +
           (e.target.classList.contains("last")
             ? 30 - buttons.getBoundingClientRect().height
             : 0)
@@ -554,6 +655,8 @@ django.jQuery(($) => {
     $(document).trigger("content-editor:activate", [$row])
 
     $row.find("input, select, textarea").first().focus()
+
+    updateSections()
   }
 
   function handleFormsetRemoved(prefix) {
@@ -580,6 +683,8 @@ django.jQuery(($) => {
         .each(function () {
           $(document).trigger("content-editor:activate", [$(this)])
         })
+
+      updateSections()
     }, 0)
   }
 
@@ -623,6 +728,8 @@ django.jQuery(($) => {
 
       // Make sure only allowed plugins are in select
       hideNotAllowedPluginButtons()
+
+      updateSections()
     })
 
     const collapseAllInput = $(".collapse-items input")

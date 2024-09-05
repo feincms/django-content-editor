@@ -60,6 +60,7 @@ html {
 
 .order-machine-wrapper {
   clear: both;
+  position: relative;
 }
 
 .order-machine {
@@ -73,10 +74,16 @@ html {
   overflow: hidden;
 }
 
+.order-machine-section {
+  position: absolute;
+  background: rgba(0 0 0 / 0.1);
+  pointer-events: none;
+}
+
 .order-machine .inline-related {
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: 0;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
 .order-machine .inline-related > h3 {
