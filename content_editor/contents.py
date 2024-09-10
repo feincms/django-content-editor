@@ -78,6 +78,6 @@ def contents_for_item(item, plugins, *, inherit_from=None, regions=None):
         [item] + inherit_from, plugins=plugins, regions=regions
     )
     contents = all_contents[item]
-    for item in inherit_from:
-        contents.inherit_regions(all_contents[item])
+    for other in inherit_from:
+        contents.inherit_regions(all_contents[other])
     return contents
