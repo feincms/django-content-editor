@@ -760,6 +760,7 @@ django.jQuery(($) => {
       )
 
       setTimeout(() => {
+        window.history.replaceState(null, "", ".")
         window.scrollTo(0, state.scrollY)
       }, 200)
     } else {
