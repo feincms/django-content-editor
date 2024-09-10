@@ -32,7 +32,9 @@ html {
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
   user-select: none;
-  transition: 0.15s background, 0.15s color;
+  transition:
+    0.15s background,
+    0.15s color;
 }
 
 .tabs > .active {
@@ -95,7 +97,9 @@ html {
   padding: 7px;
   margin: 0;
   background-color: var(--darkened-bg, #f8f8f8);
-  transition: 0.15s background, 0.15s color;
+  transition:
+    0.15s background,
+    0.15s color;
 
   white-space: nowrap;
   overflow: hidden;

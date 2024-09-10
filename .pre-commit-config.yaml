@@ -23,12 +23,6 @@ repos:
     hooks:
       - id: ruff
       - id: ruff-format
-  - repo: https://github.com/biomejs/pre-commit
-    rev: "v0.4.0"
-    hooks:
-      - id: biome-check
-        additional_dependencies: ["@biomejs/biome@1.8.1"]
-        args: [--unsafe]
   - repo: https://github.com/tox-dev/pyproject-fmt
     rev: 2.2.3
     hooks:
@@ -37,3 +31,18 @@ repos:
     rev: v0.19
     hooks:
       - id: validate-pyproject
+  - repo: local
+    hooks:
+      - id: prettier
+        name: prettier
+        entry: npx prettier@3.3.3 --no-semi --write
+        language: system
+        types_or: [css, scss]
+        require_serial: true
+      - id: eslint
+        name: eslint
+        entry: yarn eslint content_editor
+        language: system
+        types_or: [javascript]
+        require_serial: true
+        verbose: true

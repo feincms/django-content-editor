@@ -73,14 +73,12 @@
 
     $.extend(window.ContentEditor, JSON.parse(_contentEditorContext))
 
-    ContentEditor.pluginsByPrefix = {}
-    ContentEditor.plugins.forEach((plugin) => {
-      ContentEditor.pluginsByPrefix[plugin.prefix] = plugin
-    })
-    ContentEditor.regionsByKey = {}
-    ContentEditor.regions.forEach((region) => {
-      ContentEditor.regionsByKey[region.key] = region
-    })
+    ContentEditor.pluginsByPrefix = Object.fromEntries(
+      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin]),
+    )
+    ContentEditor.regionsByKey = Object.fromEntries(
+      ContentEditor.regions.map((region) => [region.key, region]),
+    )
     ContentEditor.hasSections = ContentEditor.plugins.some(
       (plugin) => plugin.sections,
     )
@@ -154,17 +152,9 @@
       .appendTo(orderMachine)
 
     // Pre map plugin regions
-    const pluginRegions = (() => {
-      const result = {}
-      ContentEditor.plugins.forEach((plugin) => {
-        result[plugin.prefix] = plugin.regions
-      })
-      const plugins = ContentEditor.plugins
-      for (let i = 0; i < plugins.length; i++) {
-        result[plugins[i].prefix] = plugins[i].regions
-      }
-      return result
-    })()
+    const pluginRegions = Object.fromEntries(
+      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin.regions]),
+    )
 
     function shouldInsertAfter(inline, clientY) {
       const rect = inline.getBoundingClientRect()
@@ -219,7 +209,7 @@
         e.dataTransfer.effectAllowed = "move"
         try {
           e.dataTransfer.setData("text/plain", "")
-        } catch (e) {
+        } catch (_e) {
           // IE11 needs this.
         }
 
@@ -228,9 +218,9 @@
       inline.addEventListener("dragend", () => {
         $(".fs-dragging").removeClass("fs-dragging")
         $(".fs-dragover").removeClass("fs-dragover")
-        qsa(".order-machine .inline-related.selected").forEach((el) =>
-          el.classList.remove("selected"),
-        )
+        for (const el of qsa(".order-machine .inline-related.selected")) {
+          el.classList.remove("selected")
+        }
         cancelMouseMonitor()
         cancelMouseMonitor = null
       })
@@ -259,10 +249,10 @@
           )
           const orAfter = shouldInsertAfter(inline, e.clientY)
           toMove.sort((a, b) => (orAfter ? -1 : 1) * (a[1] - b[1]))
-          toMove.forEach((row) => {
+          for (const row of toMove) {
             insertAdjacent(row[0], inline, orAfter)
             row[0].classList.remove("selected")
-          })
+          }
           window.__fs_dragging = null
 
           updateSections()
@@ -424,14 +414,14 @@
 
       let visible = 0
 
-      buttons.forEach((button) => {
+      for (const button of buttons) {
         const plugin = button.dataset.pluginPrefix
         const isVisible =
           pluginInCurrentRegion(plugin) &&
           !/^_unknown_/.test(ContentEditor.currentRegion)
         button.classList.toggle("content-editor-hide", !isVisible)
         visible += isVisible ? 1 : 0
-      })
+      }
 
       if (visible) {
         orderMachineWrapper.removeClass("order-machine-hide-insert-targets")
@@ -754,19 +744,19 @@
       })
       collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change")
     })()
-    ;(function initializeInsertTargets() {
-      qsa(".order-machine .inline-related").forEach((inline) => {
-        const span = document.createElement("span")
-        span.className = "order-machine-insert-target"
-        inline.appendChild(span)
-      })
-    })()
+
+    /* Initialize targets */
+    for (const inline of qsa(".order-machine .inline-related")) {
+      const span = document.createElement("span")
+      span.className = "order-machine-insert-target"
+      inline.appendChild(span)
+    }
 
     $(document)
-      .on("content-editor:deactivate", (event, row) => {
+      .on("content-editor:deactivate", (_event, row) => {
         row.find("fieldset").addClass("content-editor-invisible")
       })
-      .on("content-editor:activate", (event, row) => {
+      .on("content-editor:activate", (_event, row) => {
         row.find("fieldset").removeClass("content-editor-invisible")
       })
 
@@ -858,17 +848,17 @@
           tabs.eq(0).click()
         }
 
-        qsa(".order-machine .inline-related:not(.empty-form)").forEach(
-          (inline) => {
-            const collapsed = state.collapsed.includes(
-              qs(".field-ordering input", inline).value,
-            )
-            inline.classList.toggle(
-              "collapsed",
-              collapsed && !inline.querySelector(".errorlist"),
-            )
-          },
-        )
+        for (const inline of qsa(
+          ".order-machine .inline-related:not(.empty-form)",
+        )) {
+          const collapsed = state.collapsed.includes(
+            qs(".field-ordering input", inline).value,
+          )
+          inline.classList.toggle(
+            "collapsed",
+            collapsed && !inline.querySelector(".errorlist"),
+          )
+        }
 
         setTimeout(() => {
           window.history.replaceState(null, "", ".")
@@ -885,9 +875,9 @@
     })
     setTimeout(restoreEditorState, 1)
 
-    ContentEditor.plugins.forEach((plugin) => {
+    for (const plugin of ContentEditor.plugins) {
       ContentEditor.addPluginButton(plugin.prefix, plugin.button)
-    })
+    }
 
     const style = document.createElement("style")
     style.textContent = `
