@@ -272,8 +272,8 @@
       arg.addClass("fs-draggable")
     }
 
-    function findInlinesInOrder(context) {
-      const inlines = (context || orderMachine).find(
+    function findInlinesInOrder() {
+      const inlines = orderMachine.find(
         `.inline-related:not(.empty-form)[data-region="${ContentEditor.currentRegion}`,
       )
       inlines.sort((a, b) => a.style.order - b.style.order)
@@ -283,11 +283,11 @@
     let sectionsMap = new Map()
     let childrenMap = null
 
-    function updateSections(context) {
+    function updateSections() {
       /* Bail out early if we wouldn't do nothing anyway */
       if (!ContentEditor.hasSections) return
 
-      const inlines = findInlinesInOrder(context)
+      const inlines = findInlinesInOrder()
 
       let indent = 0
       let nextIndent
