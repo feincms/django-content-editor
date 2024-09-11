@@ -297,6 +297,7 @@
 
       const newSectionsMap = new Map()
       const newChildrenMap = new Map()
+      const topLevel = []
 
       function closeSection(atInline) {
         const fromInline = stack.pop()
@@ -331,6 +332,8 @@
 
         if (stack.length) {
           newChildrenMap.get(stack[stack.length - 1]).push(inline)
+        } else {
+          topLevel.push(inline)
         }
 
         while (indent < nextIndent) {
@@ -357,6 +360,10 @@
 
       sectionsMap = newSectionsMap
       childrenMap = newChildrenMap
+
+      for (const inline of topLevel) {
+        hideSection(inline, inline.classList.contains("collapsed"))
+      }
     }
 
     if (ContentEditor.hasSections) {
