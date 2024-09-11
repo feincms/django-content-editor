@@ -12,6 +12,10 @@ Next version
 - Fixed a bug where a plugin with multiple fieldsets wouldn't collapse
   completely.
 - Added Django 5.1 to the CI.
+- Introduced sections. Content editor inlines can now define a ``sections``
+  attribute; recommended values include 0 (the default), 1 (open one section)
+  and -1 (close one section). Those sections are collapsed and moved as one
+  unit during editing.
 
 
 7.0 (2024-05-31)

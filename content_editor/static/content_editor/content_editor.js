@@ -243,6 +243,10 @@
       inline.addEventListener("drop", (e) => {
         if (window.__fs_dragging) {
           e.preventDefault()
+          for (let inline of qsa(".order-machine .inline-related.selected")) {
+            selectSection(inline)
+          }
+
           const inline = e.target.closest(".inline-related")
           const toMove = qsa(".order-machine .inline-related.selected").map(
             (inline) => [inline, +inline.style.order],
@@ -729,6 +733,16 @@
             /* Hiding is recursive, showing uncollapsed child sections too */
             hideSection(child, hide)
           }
+        }
+      }
+    }
+
+    function selectSection(inline) {
+      const children = childrenMap && childrenMap.get(inline)
+      if (children) {
+        for (let child of children) {
+          child.classList.add("selected")
+          selectSection(child)
         }
       }
     }
