@@ -31,6 +31,21 @@
   const LS = safeStorage(localStorage)
   const SS = safeStorage(sessionStorage)
 
+  const prepareContentEditorObject = () => {
+    Object.assign(ContentEditor, JSON.parse(_contentEditorContext))
+    Object.assign(ContentEditor, {
+      pluginsByPrefix: Object.fromEntries(
+        ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin]),
+      ),
+      regionsByKey: Object.fromEntries(
+        ContentEditor.regions.map((region) => [region.key, region]),
+      ),
+      hasSections: ContentEditor.plugins.some(
+        (plugin) => plugin.sections,
+      ),
+    })
+  }
+
   django.jQuery(($) => {
     window.ContentEditor = {
       addContent: function addContent(prefix) {
@@ -71,17 +86,7 @@
       },
     }
 
-    $.extend(window.ContentEditor, JSON.parse(_contentEditorContext))
-
-    ContentEditor.pluginsByPrefix = Object.fromEntries(
-      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin]),
-    )
-    ContentEditor.regionsByKey = Object.fromEntries(
-      ContentEditor.regions.map((region) => [region.key, region]),
-    )
-    ContentEditor.hasSections = ContentEditor.plugins.some(
-      (plugin) => plugin.sections,
-    )
+    prepareContentEditorObject()
 
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
