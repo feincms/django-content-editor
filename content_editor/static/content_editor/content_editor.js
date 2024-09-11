@@ -14,14 +14,14 @@
       set(name, value) {
         try {
           storage.setItem(prefix + name, JSON.stringify(value))
-        } catch (_e) {
+        } finally {
           /* empty */
         }
       },
       get(name) {
         try {
           return JSON.parse(storage.getItem(prefix + name))
-        } catch (_e) {
+        } finally {
           /* empty */
         }
       },
@@ -209,7 +209,7 @@
         e.dataTransfer.effectAllowed = "move"
         try {
           e.dataTransfer.setData("text/plain", "")
-        } catch (_e) {
+        } finally {
           // IE11 needs this.
         }
 
@@ -363,7 +363,7 @@
       }
       const debouncedIndentInlines = debounce(updateSections, 10)
 
-      const resizeObserver = new ResizeObserver((entries) => {
+      const resizeObserver = new ResizeObserver((_entries) => {
         debouncedIndentInlines()
       })
       resizeObserver.observe(orderMachineWrapper[0])
