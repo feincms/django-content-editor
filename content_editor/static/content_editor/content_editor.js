@@ -717,17 +717,17 @@
         /* Could have been hidden through sections */
         inline.classList.remove("order-machine-hide")
       }
-      hideChildren(inline, collapsed)
+      hideSection(inline, collapsed)
     }
 
-    function hideChildren(inline, hide = true) {
+    function hideSection(inline, hide = true) {
       const children = childrenMap && childrenMap.get(inline)
       if (children) {
         for (let child of children) {
           child.classList.toggle("content-editor-hide", hide)
-          if (hide) {
-            /* Hiding is recursive */
-            hideChildren(child)
+          if (hide || !child.classList.contains("collapsed")) {
+            /* Hiding is recursive, showing uncollapsed child sections too */
+            hideSection(child, hide)
           }
         }
       }
