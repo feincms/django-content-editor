@@ -272,6 +272,7 @@
     }
 
     let sectionsMap = new Map()
+    let childrenMap = null
 
     function updateSections(context) {
       /* Bail out early if we wouldn't do nothing anyway */
@@ -286,6 +287,7 @@
       const wrapperRect = wrapper.getBoundingClientRect()
 
       const newSectionsMap = new Map()
+      const newChildrenMap = new Map()
 
       function closeSection(atInline) {
         const fromInline = stack.pop()
@@ -306,6 +308,8 @@
         div.style.left = `${from.left - wrapperRect.left - 5}px`
         div.style.right = "5px"
         div.style.height = `${until.top - from.top + until.height + 10}px`
+
+        div.classList.toggle("content-editor-hide", fromInline.classList.contains("collapsed"))
       }
 
       for (const inline of inlines) {
@@ -316,9 +320,14 @@
           indent + ContentEditor.pluginsByPrefix[prefix].sections,
         )
 
+        if (stack.length) {
+          newChildrenMap.get(stack[stack.length - 1]).push(inline)
+        }
+
         while (indent < nextIndent) {
           stack.push(inline)
           ++indent
+          newChildrenMap.set(inline, [])
         }
 
         while (indent > nextIndent) {
@@ -336,7 +345,9 @@
       for (const section of sectionsMap.values()) {
         section.remove()
       }
+
       sectionsMap = newSectionsMap
+      childrenMap = newChildrenMap
     }
 
     if (ContentEditor.hasSections) {
@@ -700,6 +711,28 @@
       }
     })
 
+    function collapseInline(inline, collapsed = true) {
+      inline.classList.toggle("collapsed", collapsed)
+      if (!collapsed) {
+        /* Could have been hidden through sections */
+        inline.classList.remove("order-machine-hide")
+      }
+      hideChildren(inline, collapsed)
+    }
+
+    function hideChildren(inline, hide = true) {
+      const children = childrenMap && childrenMap.get(inline)
+      if (children) {
+        for (let child of children) {
+          child.classList.toggle("content-editor-hide", hide)
+          if (hide) {
+            /* Hiding is recursive */
+            hideChildren(child)
+          }
+        }
+      }
+    }
+
     // Initialize tabs and currentRegion.
     ;(() => {
       const tabContainer = $(".tabs.regions")
@@ -725,25 +758,27 @@
 
         updateSections()
       })
+    })()
 
+    function initializeCollapseAll() {
       const collapseAllInput = $(".collapse-items input")
       collapseAllInput.on("change", function () {
-        $(".order-machine .inline-related:not(.empty-form)").toggleClass(
-          "collapsed",
-          this.checked,
-        )
+        for (const inline of qsa(".order-machine .inline-related:not(.empty-form)")) {
+          collapseInline(inline, this.checked)
+        }
         LS.set("collapseAll", this.checked)
 
         if (this.checked) {
           $(".order-machine .inline-related:not(.empty-form) .errorlist").each(
             function uncollapseInvalidFieldsets() {
+              /* XXX handle sections */
               this.closest(".inline-related").classList.remove("collapsed")
             },
           )
         }
       })
       collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change")
-    })()
+    }
 
     /* Initialize targets */
     for (const inline of qsa(".order-machine .inline-related")) {
@@ -782,7 +817,8 @@
         !e.target.closest(".inline_move_to_region")
       ) {
         e.preventDefault()
-        this.closest(".inline-related").classList.toggle("collapsed")
+        const inline = this.closest(".inline-related")
+        collapseInline(inline, !inline.classList.contains("collapsed"))
       }
     })
 
@@ -827,10 +863,8 @@
         region: ContentEditor.currentRegion,
         scrollY: window.scrollY,
         collapsed: qsa(
-          ".order-machine .inline-related.collapsed:not(.empty-form)",
-        ).map((inline) => {
-          return qs(".field-ordering input", inline).value
-        }),
+          ".order-machine .inline-related.collapsed:not(.empty-form) .field-ordering input",
+        ).map((input) => input.value)
       })
     }
 
@@ -841,6 +875,19 @@
         ? SS.get(location.pathname)
         : null
       if (state) {
+        for (const inline of qsa(
+          ".order-machine .inline-related:not(.empty-form)",
+        )) {
+          const collapsed = state.collapsed.includes(
+            qs(".field-ordering input", inline).value,
+          )
+          /* XXX handle sections */
+          inline.classList.toggle(
+            "collapsed",
+            collapsed && !inline.querySelector(".errorlist"),
+          )
+        }
+
         const tab = tabs.filter(`[data-region="${state.region}"]`)
         if (tab.length) {
           tab.click()
@@ -848,17 +895,7 @@
           tabs.eq(0).click()
         }
 
-        for (const inline of qsa(
-          ".order-machine .inline-related:not(.empty-form)",
-        )) {
-          const collapsed = state.collapsed.includes(
-            qs(".field-ordering input", inline).value,
-          )
-          inline.classList.toggle(
-            "collapsed",
-            collapsed && !inline.querySelector(".errorlist"),
-          )
-        }
+        initializeCollapseAll()
 
         setTimeout(() => {
           window.history.replaceState(null, "", ".")
@@ -866,6 +903,7 @@
         }, 200)
       } else {
         tabs.eq(0).click()
+        initializeCollapseAll()
       }
     }
 
@@ -873,6 +911,7 @@
       this.action = `${this.action.split("#")[0]}#restore`
       saveEditorState()
     })
+
     setTimeout(restoreEditorState, 1)
 
     for (const plugin of ContentEditor.plugins) {
