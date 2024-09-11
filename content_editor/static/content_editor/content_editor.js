@@ -361,6 +361,7 @@
       sectionsMap = newSectionsMap
       childrenMap = newChildrenMap
 
+      /* Top level inline's sections should be hidden if the inline is collapsed */
       for (const inline of topLevel) {
         hideSection(inline, inline.classList.contains("collapsed"))
       }
