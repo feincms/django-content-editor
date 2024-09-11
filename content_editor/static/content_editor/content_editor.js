@@ -2,36 +2,36 @@
 ;(() => {
   const _contentEditorContext = document.currentScript.dataset.context
 
+  function qs(sel, ctx = document) {
+    return ctx.querySelector(sel)
+  }
+  function qsa(sel, ctx = document) {
+    return Array.from(ctx.querySelectorAll(sel))
+  }
+
+  const safeStorage = (storage, prefix = "ContentEditor:") => {
+    return {
+      set(name, value) {
+        try {
+          storage.setItem(prefix + name, JSON.stringify(value))
+        } catch (_e) {
+          /* empty */
+        }
+      },
+      get(name) {
+        try {
+          return JSON.parse(storage.getItem(prefix + name))
+        } catch (_e) {
+          /* empty */
+        }
+      },
+    }
+  }
+
+  const LS = safeStorage(localStorage)
+  const SS = safeStorage(sessionStorage)
+
   django.jQuery(($) => {
-    function qs(sel, ctx = document) {
-      return ctx.querySelector(sel)
-    }
-    function qsa(sel, ctx = document) {
-      return Array.from(ctx.querySelectorAll(sel))
-    }
-
-    const safeStorage = (storage, prefix = "ContentEditor:") => {
-      return {
-        set(name, value) {
-          try {
-            storage.setItem(prefix + name, JSON.stringify(value))
-          } catch (_e) {
-            /* empty */
-          }
-        },
-        get(name) {
-          try {
-            return JSON.parse(storage.getItem(prefix + name))
-          } catch (_e) {
-            /* empty */
-          }
-        },
-      }
-    }
-
-    const LS = safeStorage(localStorage)
-    const SS = safeStorage(sessionStorage)
-
     window.ContentEditor = {
       addContent: function addContent(prefix) {
         $(`#${prefix}-group .add-row a`).click()
