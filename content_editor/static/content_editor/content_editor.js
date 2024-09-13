@@ -40,9 +40,7 @@
       regionsByKey: Object.fromEntries(
         ContentEditor.regions.map((region) => [region.key, region]),
       ),
-      hasSections: ContentEditor.plugins.some(
-        (plugin) => plugin.sections,
-      ),
+      hasSections: ContentEditor.plugins.some((plugin) => plugin.sections),
     })
   }
 
@@ -248,7 +246,7 @@
       inline.addEventListener("drop", (e) => {
         if (window.__fs_dragging) {
           e.preventDefault()
-          for (let inline of qsa(".order-machine .inline-related.selected")) {
+          for (const inline of qsa(".order-machine .inline-related.selected")) {
             selectSection(inline)
           }
 
@@ -319,7 +317,10 @@
         div.style.right = "5px"
         div.style.height = `${until.top - from.top + until.height + 10}px`
 
-        div.classList.toggle("content-editor-hide", fromInline.classList.contains("collapsed"))
+        div.classList.toggle(
+          "content-editor-hide",
+          fromInline.classList.contains("collapsed"),
+        )
       }
 
       for (const inline of inlines) {
@@ -719,7 +720,7 @@
       }
     })
 
-    $(document).on("formset:removed", (event, $row, formsetName) => {
+    $(document).on("formset:removed", (event, _$row, formsetName) => {
       if (event.detail?.formsetName) {
         // Django >= 4.1
         handleFormsetRemoved(event.detail.formsetName)
@@ -738,9 +739,9 @@
     }
 
     function hideSection(inline, hide = true) {
-      const children = childrenMap && childrenMap.get(inline)
+      const children = childrenMap?.get(inline)
       if (children) {
-        for (let child of children) {
+        for (const child of children) {
           child.classList.toggle("content-editor-hide", hide)
           if (hide || !child.classList.contains("collapsed")) {
             /* Hiding is recursive, showing uncollapsed child sections too */
@@ -751,15 +752,14 @@
     }
 
     function selectSection(inline) {
-      const children = childrenMap && childrenMap.get(inline)
+      const children = childrenMap?.get(inline)
       if (children) {
-        for (let child of children) {
+        for (const child of children) {
           child.classList.add("selected")
           selectSection(child)
         }
       }
     }
-
     // Initialize tabs and currentRegion.
     ;(() => {
       const tabContainer = $(".tabs.regions")
@@ -790,7 +790,9 @@
     function initializeCollapseAll() {
       const collapseAllInput = $(".collapse-items input")
       collapseAllInput.on("change", function () {
-        for (const inline of qsa(".order-machine .inline-related:not(.empty-form)")) {
+        for (const inline of qsa(
+          ".order-machine .inline-related:not(.empty-form)",
+        )) {
           collapseInline(inline, this.checked)
         }
         LS.set("collapseAll", this.checked)
@@ -891,7 +893,7 @@
         scrollY: window.scrollY,
         collapsed: qsa(
           ".order-machine .inline-related.collapsed:not(.empty-form) .field-ordering input",
-        ).map((input) => input.value)
+        ).map((input) => input.value),
       })
     }
 
