@@ -413,14 +413,16 @@
       const select = document.createElement("select")
       let idx = 0
 
-      if (title) select.options[idx++] = new Option(title, "", true)
+      if (title) {
+        select.options[idx++] = new Option(title, "", true)
+      }
 
-      for (let i = 0; i < contents.length; i++) {
+      for (const content of contents) {
         // Option _values_ may either be the prefix (for plugins) or keys (for
         // regions)
         select.options[idx++] = new Option(
-          contents[i].title,
-          contents[i].prefix || contents[i].key,
+          content.title,
+          content.prefix || content.key,
         )
       }
       return select
@@ -489,17 +491,14 @@
       // Filter allowed regions
       const inlineType = getInlineType($inline)
       const regions = []
-      for (let i = 0; i < ContentEditor.regions.length; i++) {
+      for (const region of ContentEditor.regions) {
         if (
           (!inlineType ||
             !pluginRegions[inlineType] ||
-            $.inArray(
-              ContentEditor.regions[i].key,
-              pluginRegions[inlineType],
-            ) >= 0) &&
-          !/^_unknown_/.test(ContentEditor.regions[i].key)
+            $.inArray(region.key, pluginRegions[inlineType]) >= 0) &&
+          !/^_unknown_/.test(region.key)
         ) {
-          regions.push(ContentEditor.regions[i])
+          regions.push(region)
         }
       }
 
@@ -611,13 +610,11 @@
       )
     }
 
-    const pluginInlineGroups = (function selectPluginInlineGroups() {
-      const selector = []
-      for (let i = 0; i < ContentEditor.plugins.length; i++) {
-        selector.push(`#${ContentEditor.plugins[i].prefix}-group`)
-      }
-      return $(selector.join(", "))
-    })()
+    const pluginInlineGroups = $(
+      ContentEditor.plugins
+        .map((plugin) => `#${plugin.prefix}-group`)
+        .join(", "),
+    )
 
     reorderInlines(pluginInlineGroups)
     pluginInlineGroups.hide()
@@ -763,11 +760,11 @@
     // Initialize tabs and currentRegion.
     ;(() => {
       const tabContainer = $(".tabs.regions")
-      for (let i = 0; i < ContentEditor.regions.length; i++) {
+      for (const region of ContentEditor.regions) {
         const t = document.createElement("h2")
         t.className = "tab"
-        t.textContent = ContentEditor.regions[i].title
-        t.setAttribute("data-region", ContentEditor.regions[i].key)
+        t.textContent = region.title
+        t.setAttribute("data-region", region.key)
         tabContainer.append(t)
       }
 
