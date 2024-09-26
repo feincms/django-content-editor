@@ -16,8 +16,6 @@ Next version
   attribute; recommended values include 0 (the default), 1 (open one section)
   and -1 (close one section). Those sections are collapsed and moved as one
   unit during editing.
-- Dropped compatibility with Python < 3.10.
-- Dropped Django 4.1 from the CI. Django 3.2 is still there.
 
 
 7.0 (2024-05-31)
