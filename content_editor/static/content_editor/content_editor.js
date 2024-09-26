@@ -399,7 +399,19 @@
       orderMachine.append(inlines)
 
       inlines.each(function () {
-        const ordering = $(".field-ordering input", this).val() || 1e9
+        const span = document.createElement("span")
+        span.className = "order-machine-insert-target"
+        this.appendChild(span)
+
+        // Be extra careful because multiple fields could be on one line
+        qs(`.field-ordering input[name$="-ordering"]`, this).classList.add(
+          "order-machine-ordering",
+        )
+        qs(`.field-region input[name$="-region"]`, this).classList.add(
+          "order-machine-region",
+        )
+
+        const ordering = $(".order-machine-ordering", this).val() || 1e9
         this.style.order = ordering
         ensureDraggable($(this))
       })
@@ -506,7 +518,7 @@
         return
 
       const select = buildDropdown(regions)
-      const regionInput = $inline.find(".field-region input")
+      const regionInput = $inline.find(".order-machine-region")
 
       select.className = "inline_move_to_region"
       select.value = regionInput.val()
@@ -528,7 +540,7 @@
         const $this = $(this)
         // Try input first and fall back to the readonly presentation
         let region =
-          $this.find(".field-region input").val() ||
+          $this.find(".order-machine-region").val() ||
           $this.find(".field-region .readonly").text()
 
         if (!ContentEditor.regionsByKey[region]) {
@@ -552,20 +564,20 @@
 
     function setBiggestOrdering($row) {
       const orderings = []
-      orderMachine.find(".field-ordering input").each(function () {
+      orderMachine.find(".order-machine-ordering").each(function () {
         if (!Number.isNaN(+this.value)) orderings.push(+this.value)
       })
       const ordering = 10 + Math.max.apply(null, orderings)
-      $row.find(".field-ordering input").val(ordering)
+      $row.find(".order-machine-ordering").val(ordering)
       $row.css("order", ordering)
     }
 
     function insertAdjacent(row, inline, after = false) {
-      const inlineOrdering = +qs(".field-ordering input", inline).value
+      const inlineOrdering = +qs(".order-machine-ordering", inline).value
       const beforeRows = []
       const afterRows = []
       orderMachine.find(".inline-related:not(.empty-form)").each(function () {
-        const thisOrderingField = qs(".field-ordering input", this)
+        const thisOrderingField = qs(".order-machine-ordering", this)
         if (this !== row && !Number.isNaN(+thisOrderingField.value)) {
           if (
             after
@@ -581,7 +593,7 @@
       beforeRows.sort((a, b) => a[1].value - b[1].value)
       afterRows.sort((a, b) => a[1].value - b[1].value)
       let rows = [].concat(beforeRows)
-      rows.push([row, qs(".field-ordering input", row)])
+      rows.push([row, qs(".order-machine-ordering", row)])
       rows = rows.concat(afterRows)
       for (let i = 0; i < rows.length; ++i) {
         const thisRow = rows[i]
@@ -657,7 +669,7 @@
       // Not one of our managed inlines?
       if (!ContentEditor.pluginsByPrefix[prefix]) return
 
-      $row.find(".field-region input").val(ContentEditor.currentRegion)
+      $row.find(".order-machine-region").val(ContentEditor.currentRegion)
       $row.find("h3 .inline_label").text(ContentEditor.messages.newItem)
       $row.attr("data-region", ContentEditor.currentRegion)
 
@@ -806,13 +818,6 @@
       collapseAllInput.attr("checked", LS.get("collapseAll")).trigger("change")
     }
 
-    /* Initialize targets */
-    for (const inline of qsa(".order-machine .inline-related")) {
-      const span = document.createElement("span")
-      span.className = "order-machine-insert-target"
-      inline.appendChild(span)
-    }
-
     $(document)
       .on("content-editor:deactivate", (_event, row) => {
         row.find("fieldset").addClass("content-editor-invisible")
@@ -889,7 +894,7 @@
         region: ContentEditor.currentRegion,
         scrollY: window.scrollY,
         collapsed: qsa(
-          ".order-machine .inline-related.collapsed:not(.empty-form) .field-ordering input",
+          ".order-machine .inline-related.collapsed:not(.empty-form) .order-machine-ordering",
         ).map((input) => input.value),
       })
     }
@@ -905,7 +910,7 @@
           ".order-machine .inline-related:not(.empty-form)",
         )) {
           const collapsed = state.collapsed.includes(
-            qs(".field-ordering input", inline).value,
+            qs(".order-machine-ordering", inline).value,
           )
           /* XXX handle sections */
           inline.classList.toggle(
