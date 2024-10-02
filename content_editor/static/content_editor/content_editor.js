@@ -515,22 +515,30 @@
         }
       }
 
-      if (regions.length < 2 && !/^_unknown_/.test($inline.data("region")))
-        return
+      const isCurrentUnknown = /^_unknown_/.test($inline.data("region"))
 
-      const select = buildDropdown(regions)
+      if (regions.length < 2 && !isCurrentUnknown) {
+        return
+      }
+
+      const select = buildDropdown(
+        regions,
+        isCurrentUnknown ? ContentEditor.messages.unknownRegion : "",
+      )
       const regionInput = $inline.find(".order-machine-region")
 
       select.className = "inline_move_to_region"
-      select.value = regionInput.val()
+      select.value = isCurrentUnknown ? "" : regionInput.val()
       $inline.find("> h3 .inline_label").after(select)
 
       select.addEventListener("change", () => {
-        $inline.attr("data-region", select.value)
-        regionInput.val(select.value)
-        hideInlinesFromOtherRegions()
-        setBiggestOrdering($inline)
-        reorderInlines()
+        if (select.value) {
+          $inline.attr("data-region", select.value)
+          regionInput.val(select.value)
+          hideInlinesFromOtherRegions()
+          setBiggestOrdering($inline)
+          reorderInlines()
+        }
       })
     }
 
