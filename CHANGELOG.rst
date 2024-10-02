@@ -16,6 +16,7 @@ Next version
   attribute; recommended values include 0 (the default), 1 (open one section)
   and -1 (close one section). Those sections are collapsed and moved as one
   unit during editing.
+- Added a red border to the region dropdown of plugins in unknown regions.
 
 
 7.0 (2024-05-31)

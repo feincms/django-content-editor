@@ -34,6 +34,7 @@
   const prepareContentEditorObject = () => {
     Object.assign(ContentEditor, JSON.parse(_contentEditorContext))
     Object.assign(ContentEditor, {
+      declaredRegions: [...ContentEditor.regions],
       pluginsByPrefix: Object.fromEntries(
         ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin]),
       ),
@@ -968,6 +969,9 @@
 .order-machine .inline-related.for-deletion .inline_label::after {
   opacity: 0.5;
   content: " (${ContentEditor.messages.forDeletion})";
+}
+.order-machine .inline-related:not(:where(${ContentEditor.declaredRegions.map((region) => `[data-region="${region.key}"]`).join(", ")})) .inline_move_to_region {
+  border-color: red;
 }
   `
     document.head.appendChild(style)
