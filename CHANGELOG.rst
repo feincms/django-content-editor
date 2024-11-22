@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+- Added Python 3.13. Removed Python 3.8 and 3.9.
+
+
 7.1 (2024-10-02)
 ================
 
