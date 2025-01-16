@@ -6,6 +6,7 @@ Next version
 ============
 
 - Added Python 3.13. Removed Python 3.8 and 3.9.
+- Added Django 5.2a1.
 
 
 7.1 (2024-10-02)
