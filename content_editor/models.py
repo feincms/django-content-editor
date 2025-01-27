@@ -22,6 +22,9 @@ class Type(dict):
         except KeyError as exc:
             raise AttributeError(f"Unknown attribute {attr!r}") from exc
 
+    def __hash__(self):
+        return hash(self.key)
+
 
 class Region(Type):
     _REQUIRED = {"key", "title", "inherited"}

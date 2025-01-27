@@ -249,3 +249,8 @@ class ContentEditorTest(TestCase):
             _read = c._blub
         with self.assertRaises(KeyError):
             c["_blub"]
+
+    def test_hashable_types(self):
+        _mapping = {
+            Region(key="hello", title="Hello"): Region(key="world", title="World")
+        }

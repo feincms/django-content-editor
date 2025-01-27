@@ -7,6 +7,9 @@ Next version
 
 - Added Python 3.13. Removed Python 3.8 and 3.9.
 - Added Django 5.2a1.
+- Changed ``Type`` and therefore also ``Region`` and ``Template`` to be
+  hashable. This is achieved by hashing the ``key`` field (which all existing
+  uses of ``Type`` have).
 
 
 7.1 (2024-10-02)
