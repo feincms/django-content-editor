@@ -6,7 +6,7 @@ __all__ = ("Type", "Region", "Template", "create_plugin_base")
 
 
 class Type(dict):
-    _REQUIRED = set()
+    _REQUIRED = {"key"}
 
     def __init__(self, **kwargs):
         missing = self._REQUIRED - set(kwargs)
