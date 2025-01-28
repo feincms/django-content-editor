@@ -1,3 +1,5 @@
+import warnings
+
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
@@ -42,6 +44,14 @@ class Region(Type):
 
 class Template(Type):
     _REQUIRED = {"key", "template_name", "title", "regions"}
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        warnings.warn(
+            "Template is deprecated, use feincms3's TemplateType instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
 
 def create_plugin_base(content_base):

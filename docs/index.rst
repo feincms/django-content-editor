@@ -381,26 +381,6 @@ You are free to define additional attributes -- simply pass them
 when instantiating a new region.
 
 
-Templates
-~~~~~~~~~
-
-Various classes will expect the main model to have a ``template``
-attribute or property which returns a ``Template`` instance.
-django-content-editor does not use the template class itself, but
-feincms3 includes a mixin which allows content managers to choose from a
-selection of templates per model instance.
-
-Templates have the following attributes:
-
-* ``title``: Something nice.
-* ``key``: The template key. Must contain a valid Python identifier.
-* ``template_name``: A template path.
-* ``regions``: A list of region instances.
-
-As with the regions above, you are free to define additional
-attributes.
-
-
 ``Contents`` class and helpers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
