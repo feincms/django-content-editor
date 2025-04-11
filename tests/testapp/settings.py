@@ -6,8 +6,6 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.sessions",
-    "django.contrib.sitemaps",
-    "django.contrib.sites",
     "django.contrib.staticfiles",
     "testapp",
     "content_editor",
@@ -33,7 +31,6 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
 )
-SILENCED_SYSTEM_CHECKS = ["1_10.W001"]
 USE_TZ = True
 LANGUAGES = (("en", "English"), ("de", "German"))
 TEMPLATES = [

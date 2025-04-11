@@ -25,9 +25,6 @@ class RichTextInline(ContentEditorInline):
     fieldsets = [(None, {"fields": ("text", "region", "ordering")})]
     regions = allow_regions({"main"})
 
-    class Media:
-        js = ("//cdn.ckeditor.com/4.5.6/standard/ckeditor.js", "app/plugin_ckeditor.js")
-
 
 class ThingInline(admin.TabularInline):
     model = Thing

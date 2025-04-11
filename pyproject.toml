@@ -40,7 +40,10 @@ dependencies = [
 optional-dependencies.tests = [
   "coverage",
   "pytest",
+  "pytest-asyncio",
+  "pytest-cov",
   "pytest-django",
+  "pytest-playwright",
 ]
 urls.Homepage = "https://github.com/matthiask/django-content-editor/"
 
@@ -116,4 +119,6 @@ lint.mccabe.max-complexity = 15
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "testapp.settings"
 python_files = [ "tests.py", "test_*.py" ]
-addopts = "--reuse-db"
+addopts = "--strict-markers"
+asyncio_mode = "strict"
+asyncio_default_fixture_loop_scope = "function"
