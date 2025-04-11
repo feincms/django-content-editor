@@ -8,6 +8,9 @@ Next version
 - Removed mentions of the ``Template`` type from the docs and deprecated the
   class. django-content-editor never used it, only FeinCMS did; feincms3 ships
   its own ``TemplateType`` type replacing it.
+- Prepared for the new object-based ``Script`` by moving from django-js-asset's
+  ``JS`` to a script without attributes, and moved the configuration into an
+  inline JSON blob.
 
 
 7.2 (2025-01-27)

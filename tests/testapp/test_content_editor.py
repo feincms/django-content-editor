@@ -78,8 +78,9 @@ def test_stuff(client):
 def test_admin(client):
     response = client.get(reverse("admin:testapp_article_add"))
 
-    assertContains(response, '_editor.js" data-context="{&quot;', 1)
-    assertContains(response, 'id="content-editor-context"></sc', 1)
+    assertContains(
+        response, '<script id="content-editor-context" type="application/json">'
+    )
     assertContains(response, 'class="richtext"', 1)
     assertContains(
         response,
@@ -177,8 +178,7 @@ def test_model_checks():
 
     assert ModelAdmin(Model, admin.AdminSite()).check() == [
         checks.Error(
-            "ContentEditor models require a non-empty 'regions'"
-            " attribute or property.",
+            "ContentEditor models require a non-empty 'regions' attribute or property.",
             obj=ModelAdmin,
             id="content_editor.E002",
         )

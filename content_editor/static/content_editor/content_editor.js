@@ -1,6 +1,8 @@
 /* global django,ContentEditor */
 ;(() => {
-  const _contentEditorContext = document.currentScript.dataset.context
+  const _contentEditorContext = document.getElementById(
+    "content-editor-context",
+  ).textContent
 
   function qs(sel, ctx = document) {
     return ctx.querySelector(sel)

@@ -8,7 +8,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset.js import JS
+from js_asset.js import JSON
 
 
 __all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
@@ -220,13 +220,11 @@ class ContentEditor(ModelAdmin):
                 "admin/js/jquery.init.js",
                 "content_editor/save_shortcut.js",
                 "content_editor/tabbed_fieldsets.js",
-                JS(
-                    "content_editor/content_editor.js",
-                    {
-                        "id": "content-editor-context",
-                        "data-context": self._content_editor_context(request, context),
-                    },
+                JSON(
+                    self._content_editor_context(request, context),
+                    id="content-editor-context",
                 ),
+                "content_editor/content_editor.js",
             ],
         )
 
