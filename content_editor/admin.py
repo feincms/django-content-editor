@@ -1,5 +1,4 @@
 import itertools
-import json
 
 from django import forms
 from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
@@ -185,28 +184,26 @@ class ContentEditor(ModelAdmin):
             for region in instance.regions
         ]
 
-        return json.dumps(
-            {
-                "plugins": plugins,
-                "regions": regions,
-                "allowChange": allow_change,
-                "messages": {
-                    "createNew": gettext("Add new item"),
-                    "empty": gettext("No items."),
-                    "emptyInherited": gettext("No items. Region may inherit content."),
-                    "noRegions": gettext("No regions available."),
-                    "noPlugins": gettext("No plugins allowed in this region."),
-                    "newItem": gettext("New item"),
-                    "unknownRegion": gettext("Unknown region"),
-                    "collapseAll": gettext("Collapse all items"),
-                    "uncollapseAll": gettext("Uncollapse all items"),
-                    "forDeletion": gettext("marked for deletion"),
-                    "selectMultiple": gettext(
-                        "Use Ctrl-Click to select and move multiple items."
-                    ),
-                },
-            }
-        )
+        return {
+            "plugins": plugins,
+            "regions": regions,
+            "allowChange": allow_change,
+            "messages": {
+                "createNew": gettext("Add new item"),
+                "empty": gettext("No items."),
+                "emptyInherited": gettext("No items. Region may inherit content."),
+                "noRegions": gettext("No regions available."),
+                "noPlugins": gettext("No plugins allowed in this region."),
+                "newItem": gettext("New item"),
+                "unknownRegion": gettext("Unknown region"),
+                "collapseAll": gettext("Collapse all items"),
+                "uncollapseAll": gettext("Uncollapse all items"),
+                "forDeletion": gettext("marked for deletion"),
+                "selectMultiple": gettext(
+                    "Use Ctrl-Click to select and move multiple items."
+                ),
+            },
+        }
 
     def _content_editor_media(self, request, context):
         return forms.Media(
