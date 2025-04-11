@@ -8,7 +8,7 @@ from content_editor.admin import (
     allow_regions,
     deny_regions,
 )
-from testapp.models import Article, Download, RichText, Thing
+from testapp.models import Article, CloseSection, Download, RichText, Section, Thing
 
 
 class RichTextarea(forms.Textarea):
@@ -30,6 +30,16 @@ class ThingInline(admin.TabularInline):
     model = Thing
 
 
+class SectionInline(ContentEditorInline):
+    model = Section
+    sections = 1
+
+
+class CloseSectionInline(ContentEditorInline):
+    model = CloseSection
+    sections = -1
+
+
 admin.site.register(
     Article,
     ContentEditor,
@@ -37,5 +47,7 @@ admin.site.register(
         RichTextInline,
         ContentEditorInline.create(model=Download, regions=deny_regions({"sidebar"})),
         ThingInline,
+        SectionInline,
+        CloseSectionInline,
     ],
 )

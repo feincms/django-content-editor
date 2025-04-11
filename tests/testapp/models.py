@@ -48,6 +48,14 @@ class Download(ArticlePlugin):
         return self.file.name
 
 
+class Section(ArticlePlugin):
+    pass
+
+
+class CloseSection(ArticlePlugin):
+    pass
+
+
 class Thing(models.Model):
     """Added as inline to article admin to check whether non-ContentEditor
     inlines still work"""
