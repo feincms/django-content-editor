@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+
+7.3 (2025-06-23)
+================
+
 - Removed mentions of the ``Template`` type from the docs and deprecated the
   class. django-content-editor never used it, only FeinCMS did; feincms3 ships
   its own ``TemplateType`` type replacing it.
