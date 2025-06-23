@@ -12,6 +12,9 @@ Next version
   ``JS`` to a script without attributes, and moved the configuration into an
   inline JSON blob.
 - Rewrote ``content_editor/save_shortcut.js`` without jQuery.
+- Added a safety check to ``save_shortcut.js`` which shows a confirmation
+  dialog when attempting to delete the whole object instead of deleting only
+  inlines.
 
 
 7.2 (2025-01-27)

@@ -9,3 +9,17 @@ window.addEventListener("keydown", (e) => {
     el.click()
   }
 })
+
+window.addEventListener("click", (e) => {
+  let el
+  if (
+    (el = e.target.closest(".deletelink")) &&
+    document.querySelectorAll("input[type=checkbox][name$=-DELETE]:checked")
+      .length &&
+    !confirm(
+      "You have marked inline objects for deletion but have clicked the link to delete the whole object. Are you sure that's what you want? Use a save button to delete inline objects.",
+    )
+  ) {
+    e.preventDefault()
+  }
+})
