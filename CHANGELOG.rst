@@ -11,6 +11,7 @@ Next version
 - Prepared for the new object-based ``Script`` by moving from django-js-asset's
   ``JS`` to a script without attributes, and moved the configuration into an
   inline JSON blob.
+- Rewrote ``content_editor/save_shortcut.js`` without jQuery.
 
 
 7.2 (2025-01-27)
