@@ -37,6 +37,10 @@ dependencies = [
   "django>=3.2",
   "django-js-asset>=3",
 ]
+optional-dependencies.docs = [
+  "sphinx",
+  "sphinx-rtd-theme",
+]
 optional-dependencies.tests = [
   "coverage",
   "pytest",
@@ -61,8 +65,6 @@ target-version = "py310"
 fix = true
 show-fixes = true
 lint.extend-select = [
-  # flake8-builtins
-  "A",
   # flake8-bugbear
   "B",
   # flake8-comprehensions

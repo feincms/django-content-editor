@@ -9,6 +9,8 @@ Next version
   admin enhancements (currently save shortcuts). The ``ContentEditor`` now
   inherits from this base class, and ``RefinedModelAdmin`` can be used
   independently for regular model admins that want these tweaks.
+- Reorganized the documentation and modified the quickstart section to no
+  longer mention or recommend CKEditor 4.
 
 
 7.3 (2025-06-23)
