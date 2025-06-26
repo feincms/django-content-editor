@@ -544,6 +544,36 @@ content blocks are Django models, you can do anything you want
 inside them.
 
 
+RefinedModelAdmin
+=================
+
+The ``RefinedModelAdmin`` class provides a lightweight base class that extends
+Django's ``ModelAdmin`` with commonly useful tweaks. It serves as the foundation
+for the ``ContentEditor`` class, but can also be used independently for regular
+Django admin classes that want to benefit from these enhancements.
+
+Currently, ``RefinedModelAdmin`` includes:
+
+- **Save shortcuts**: Keyboard shortcuts (Ctrl+S / Cmd+S) for quickly saving forms
+- **Deletion safety check**: Shows a confirmation dialog when attempting to delete
+  the whole object instead of saving changes (including marked inline deletions)
+
+To use ``RefinedModelAdmin`` for your own admin classes:
+
+.. code-block:: python
+
+    from content_editor.admin import RefinedModelAdmin
+
+    @admin.register(MyModel)
+    class MyModelAdmin(RefinedModelAdmin):
+        # Your admin configuration here
+        pass
+
+This gives you the save shortcut functionality without the full content editor
+interface, making it useful for any Django model admin where you want these
+convenience features.
+
+
 Glossary
 ========
 

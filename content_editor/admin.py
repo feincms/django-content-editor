@@ -122,7 +122,12 @@ def auto_icon_colors(content_editor):
     return content_editor
 
 
-class ContentEditor(ModelAdmin):
+class RefinedModelAdmin(ModelAdmin):
+    class Media:
+        js = ["content_editor/save_shortcut.js"]
+
+
+class ContentEditor(RefinedModelAdmin):
     """
     The ``ContentEditor`` is a drop-in replacement for ``ModelAdmin`` with the
     speciality of knowing how to work with content editor plugins (that is,
@@ -215,7 +220,6 @@ class ContentEditor(ModelAdmin):
             },
             js=[
                 "admin/js/jquery.init.js",
-                "content_editor/save_shortcut.js",
                 "content_editor/tabbed_fieldsets.js",
                 JSON(
                     self._content_editor_context(request, context),

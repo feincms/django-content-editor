@@ -5,6 +5,11 @@ Change log
 Next version
 ============
 
+- Introduced ``RefinedModelAdmin`` as a lightweight base class providing common
+  admin enhancements (currently save shortcuts). The ``ContentEditor`` now
+  inherits from this base class, and ``RefinedModelAdmin`` can be used
+  independently for regular model admins that want these tweaks.
+
 
 7.3 (2025-06-23)
 ================
