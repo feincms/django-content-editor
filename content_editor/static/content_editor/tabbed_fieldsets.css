@@ -1,0 +1,64 @@
+/* Tabbed fieldsets CSS - minimal styles for RefinedModelAdmin */
+
+.content-editor-invisible {
+  /* We can't simply use display: none. Some admin widgets need to know
+   * their dimensions, so we can't have that -- use an alternative way
+   * to hide the modules. */
+  visibility: hidden !important;
+  height: 0 !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Basic tabbed interface styles */
+#tabbed .tabs {
+  border-bottom: 1px solid #e8e8e8;
+}
+
+#tabbed .modules {
+  margin-bottom: 30px;
+}
+
+.tabs > .tab {
+  text-transform: none;
+  letter-spacing: 0;
+  float: left;
+  padding: 10px 15px;
+  margin: 0 4px 0 0;
+  cursor: pointer;
+  border: 1px solid #e8e8e8;
+  border-bottom: none;
+  background: #f8f8f8;
+  border-radius: 4px 4px 0 0;
+}
+
+.tabs > .tab:hover {
+  background: #f0f0f0;
+}
+
+.tabs > .tab.active {
+  background: white;
+  border-color: #e8e8e8;
+  border-bottom: 1px solid white;
+  margin-bottom: -1px;
+}
+
+.tabs > .has-error {
+  border-color: #ba2121;
+  color: #ba2121;
+  background: #f8f8f8;
+}
+
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+@media (max-width: 767px) {
+  .tabbed-modules .form-row {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

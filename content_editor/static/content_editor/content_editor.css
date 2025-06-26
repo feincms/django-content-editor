@@ -3,12 +3,6 @@ html {
   overflow-x: hidden;
 }
 
-.clearfix::after {
-  content: "";
-  display: table;
-  clear: both;
-}
-
 .tabs.regions {
   display: flex;
 }
@@ -49,13 +43,6 @@ html {
   border-color: var(--error-fg, #ba2121);
   color: var(--error-fg, #ba2121);
   background: var(--darkened-bg, #f8f8f8);
-}
-
-@media (max-width: 767px) {
-  .tabbed-modules .form-row {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 }
 
 .order-machine-wrapper {
@@ -263,36 +250,6 @@ h3[draggable] {
   height: 22px;
   margin: -2px 8px -2px auto;
   padding: 0px 1px;
-}
-
-/* tabbed_fieldsets.js support */
-#tabbed .tabs {
-  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
-}
-
-#tabbed .modules {
-  margin-bottom: 30px;
-}
-
-#tabbed .module {
-  border: 1px solid var(--hairline-color, #e8e8e8);
-  border-top: none;
-  margin-bottom: 0;
-}
-
-#tabbed .form-row:last-child {
-  border: none;
-}
-
-.content-editor-invisible {
-  /* We can't simply use display: none. Some admin widgets need to know
-     * their dimensions, so we can't have that -- use an alternative way
-     * to hide the modules. */
-  visibility: hidden !important;
-  height: 0 !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
 }
 
 .content-editor-hide {

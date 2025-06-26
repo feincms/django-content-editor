@@ -124,7 +124,13 @@ def auto_icon_colors(content_editor):
 
 class RefinedModelAdmin(ModelAdmin):
     class Media:
-        js = ["content_editor/save_shortcut.js"]
+        css = {
+            "all": ["content_editor/tabbed_fieldsets.css"],
+        }
+        js = [
+            "content_editor/save_shortcut.js",
+            "content_editor/tabbed_fieldsets.js",
+        ]
 
 
 class ContentEditor(RefinedModelAdmin):
@@ -220,7 +226,6 @@ class ContentEditor(RefinedModelAdmin):
             },
             js=[
                 "admin/js/jquery.init.js",
-                "content_editor/tabbed_fieldsets.js",
                 JSON(
                     self._content_editor_context(request, context),
                     id="content-editor-context",

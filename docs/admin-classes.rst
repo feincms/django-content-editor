@@ -94,6 +94,7 @@ Currently, ``RefinedModelAdmin`` includes:
 - **Save shortcuts**: Keyboard shortcuts (Ctrl+S / Cmd+S) for quickly saving forms
 - **Deletion safety check**: Shows a confirmation dialog when attempting to delete
   the whole object instead of saving changes (including marked inline deletions)
+- **Tabbed fieldsets**: Support for tabbed fieldsets using the ``tabbed`` CSS class
 
 To use ``RefinedModelAdmin`` for your own admin classes:
 
@@ -109,3 +110,19 @@ To use ``RefinedModelAdmin`` for your own admin classes:
 This gives you the save shortcut functionality without the full content editor
 interface, making it useful for any Django model admin where you want these
 convenience features.
+
+To use tabbed fieldsets, add the ``tabbed`` CSS class to your fieldsets:
+
+.. code-block:: python
+
+    class MyModelAdmin(RefinedModelAdmin):
+        fieldsets = [
+            ('Basic Information', {
+                'fields': ['title', 'description'],
+                'classes': ['tabbed'],
+            }),
+            ('Advanced Settings', {
+                'fields': ['status', 'priority'],
+                'classes': ['tabbed'],
+            }),
+        ]

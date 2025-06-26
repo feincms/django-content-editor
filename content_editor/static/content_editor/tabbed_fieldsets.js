@@ -1,64 +1,102 @@
-/* global django */
-django.jQuery(($) => {
-  const tabbed = $(".tabbed")
-  if (tabbed.length >= 1) {
-    let anchor = tabbed.eq(0)
-    /* Break out of the .inline-related containment, avoids ugly h3's */
-    if (anchor.parents(".inline-related").length) {
-      anchor = anchor.parents(".inline-related")
-    }
-    anchor.before(
-      '<div id="tabbed" class="clearfix">' +
-        '<div class="tabs clearfix"></div>' +
-        '<div class="modules tabbed-modules"></div>' +
-        "</div>",
-    )
+/* Tabbed fieldsets without jQuery dependency */
+;(() => {
+  function initializeTabbedFieldsets() {
+    const tabbedElements = document.querySelectorAll(".tabbed")
+    if (tabbedElements.length === 0) return
 
-    const $tabs = $("#tabbed > .tabs")
-    const $modules = $("#tabbed > .modules")
+    let anchor = tabbedElements[0]
+    // Break out of the .inline-related containment, avoids ugly h3's
+    const inlineRelated = anchor.closest(".inline-related")
+    if (inlineRelated) {
+      anchor = inlineRelated
+    }
+
+    // Create the tabbed container
+    const tabbedContainer = document.createElement("div")
+    tabbedContainer.id = "tabbed"
+    tabbedContainer.className = "clearfix"
+    tabbedContainer.innerHTML =
+      '<div class="tabs clearfix"></div>' +
+      '<div class="modules tabbed-modules"></div>'
+
+    anchor.parentNode.insertBefore(tabbedContainer, anchor)
+
+    const tabsContainer = document
+      .getElementById("tabbed")
+      .querySelector(".tabs")
+    const modulesContainer = document
+      .getElementById("tabbed")
+      .querySelector(".modules")
     let errorIndex = -1
     let uncollapseIndex = -1
 
-    tabbed.each(function createTabs(index) {
-      const $old = $(this)
-      const $title = $old.children("h2")
+    // Process each tabbed element
+    tabbedElements.forEach((element, index) => {
+      const title = element.querySelector("h2")
 
-      if ($old.find(".errorlist").length) {
-        $title.addClass("has-error")
+      if (element.querySelector(".errorlist")) {
+        title.classList.add("has-error")
         errorIndex = errorIndex < 0 ? index : errorIndex
       }
-      if ($old.is(".uncollapse")) {
+
+      if (element.classList.contains("uncollapse")) {
         uncollapseIndex = uncollapseIndex < 0 ? index : uncollapseIndex
       }
 
-      $title.attr("data-index", index)
-      $title.addClass("tab")
-      $tabs.append($title)
+      title.setAttribute("data-index", index)
+      title.classList.add("tab")
+      tabsContainer.appendChild(title)
 
-      $old.addClass("content-editor-invisible")
-
-      $modules.append($old)
+      element.classList.add("content-editor-invisible")
+      modulesContainer.appendChild(element)
     })
 
-    $tabs.on("click", "[data-index]", function () {
-      const $tab = $(this)
-      if ($tab.hasClass("active")) {
-        $tab.removeClass("active")
-        $modules.children().addClass("content-editor-invisible")
+    // Add click handler for tabs
+    tabsContainer.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-index]")
+      if (!target) return
+
+      const index = Number.parseInt(target.getAttribute("data-index"), 10)
+      const isActive = target.classList.contains("active")
+
+      if (isActive) {
+        target.classList.remove("active")
+        modulesContainer.querySelectorAll(".tabbed").forEach((module) => {
+          module.classList.add("content-editor-invisible")
+        })
       } else {
-        $tabs.find(".active").removeClass("active")
-        $tab.addClass("active")
-        $modules
-          .children()
-          .addClass("content-editor-invisible")
-          .eq($tab.data("index"))
-          .removeClass("content-editor-invisible")
+        // Remove active from all tabs
+        tabsContainer.querySelectorAll(".active").forEach((tab) => {
+          tab.classList.remove("active")
+        })
+        target.classList.add("active")
+
+        // Hide all modules and show the selected one
+        const modules = modulesContainer.querySelectorAll(".tabbed")
+        modules.forEach((module, moduleIndex) => {
+          if (moduleIndex === index) {
+            module.classList.remove("content-editor-invisible")
+          } else {
+            module.classList.add("content-editor-invisible")
+          }
+        })
       }
     })
 
+    // Auto-open tab with errors or marked for uncollapse
     if (errorIndex >= 0 || uncollapseIndex >= 0) {
       const index = errorIndex >= 0 ? errorIndex : uncollapseIndex
-      $tabs.find(`[data-index=${index}]`).click()
+      const targetTab = tabsContainer.querySelector(`[data-index="${index}"]`)
+      if (targetTab) {
+        targetTab.click()
+      }
     }
   }
-})
+
+  // Initialize when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeTabbedFieldsets)
+  } else {
+    initializeTabbedFieldsets()
+  }
+})()
