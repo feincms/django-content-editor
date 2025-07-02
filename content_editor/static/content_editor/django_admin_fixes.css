@@ -1,0 +1,4 @@
+.form-row {
+  /* Reset the value of overflow so that position: sticky works in widgets */
+  overflow: visible;
+}

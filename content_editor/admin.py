@@ -125,7 +125,10 @@ def auto_icon_colors(content_editor):
 class RefinedModelAdmin(ModelAdmin):
     class Media:
         css = {
-            "all": ["content_editor/tabbed_fieldsets.css"],
+            "all": [
+                "content_editor/django_admin_fixes.css",
+                "content_editor/tabbed_fieldsets.css",
+            ],
         }
         js = [
             "content_editor/save_shortcut.js",
