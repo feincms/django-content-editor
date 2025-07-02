@@ -57,8 +57,6 @@ html {
 
   display: flex;
   flex-flow: column nowrap;
-
-  overflow: hidden;
 }
 
 .order-machine-section {
@@ -133,7 +131,6 @@ h3[draggable] {
 
 .order-machine .inline-related fieldset {
   position: relative;
-  overflow: hidden;
 }
 
 .order-machine .inline-related.selected > h3 {
@@ -462,3 +459,8 @@ h3[draggable] {
 }
 
 /* JAZZMIN end */
+
+.form-row {
+  /* Reset the value of overflow so that position: sticky works in widgets */
+  overflow: visible;
+}

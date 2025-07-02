@@ -11,6 +11,8 @@ Next version
   independently for regular model admins that want these tweaks.
 - Reorganized the documentation and modified the quickstart section to no
   longer mention or recommend CKEditor 4.
+- Dropped some CSS rules which prevented usage of ``position: sticky`` in the
+  admin.
 
 
 7.3 (2025-06-23)
