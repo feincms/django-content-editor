@@ -20,6 +20,10 @@
   margin-bottom: 30px;
 }
 
+.tabs {
+  display: flex;
+}
+
 .tabs > .tab {
   text-transform: none;
   letter-spacing: 0;
@@ -27,27 +31,37 @@
   padding: 10px 15px;
   margin: 0 4px 0 0;
   cursor: pointer;
-  border: 1px solid #e8e8e8;
+  font-weight: bold;
+  font-size: 13px;
+  color: var(--body-quiet-color, #666);
+  background: var(--darkened-bg, #f8f8f8);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
-  background: #f8f8f8;
-  border-radius: 4px 4px 0 0;
+  user-select: none;
+  transition: 0.15s background, 0.15s color;
 }
 
 .tabs > .tab:hover {
   background: #f0f0f0;
 }
 
-.tabs > .tab.active {
-  background: white;
+.tabs > .active {
+  background: var(--button-bg, #79aec8);
+  color: white;
   border-color: #e8e8e8;
   border-bottom: 1px solid white;
   margin-bottom: -1px;
 }
 
+.tabs > .active:hover {
+  background: var(--button-hover-bg, #609ab6);
+}
+
+.tabs > [data-region^="_unknown_"],
 .tabs > .has-error {
-  border-color: #ba2121;
-  color: #ba2121;
-  background: #f8f8f8;
+  border-color: var(--error-fg, #ba2121);
+  color: var(--error-fg, #ba2121);
+  background: var(--darkened-bg, #f8f8f8);
 }
 
 .clearfix::after {

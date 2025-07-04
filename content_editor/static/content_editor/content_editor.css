@@ -3,46 +3,9 @@ html {
   overflow-x: hidden;
 }
 
-.tabs.regions {
-  display: flex;
-}
-
 .machine-collapse {
   order: 1;
   margin-left: auto;
-}
-
-.tabs > .tab {
-  text-transform: none;
-  letter-spacing: 0;
-  float: left;
-  padding: 10px 15px;
-  margin: 0 4px 0 0;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 13px;
-  color: var(--body-quiet-color, #666);
-  background: var(--darkened-bg, #f8f8f8);
-  border: 1px solid var(--hairline-color, #e8e8e8);
-  border-bottom: none;
-  user-select: none;
-  transition: 0.15s background, 0.15s color;
-}
-
-.tabs > .active {
-  background: var(--button-bg, #79aec8);
-  color: white;
-}
-
-.tabs > .active:hover {
-  background: var(--button-hover-bg, #609ab6);
-}
-
-.tabs > [data-region^="_unknown_"],
-.tabs > .has-error {
-  border-color: var(--error-fg, #ba2121);
-  color: var(--error-fg, #ba2121);
-  background: var(--darkened-bg, #f8f8f8);
 }
 
 .order-machine-wrapper {
