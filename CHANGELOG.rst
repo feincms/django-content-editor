@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+- Replaced the plugin expanding and collapsing animation with a version for
+  modern browsers.
+
 
 7.4 (2025-07-02)
 ================

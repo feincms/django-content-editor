@@ -85,11 +85,15 @@ h3[draggable] {
   content: "new";
 }
 
-.order-machine .inline-related {
-  transition: border 0.15s;
-  display: grid;
-  grid-template-rows: min-content 1fr;
-  transition: grid-template-rows 0.15s ease-out;
+.order-machine .inline-related > fieldset {
+  transition: display 0.15s allow-discrete, height 0.15s ease-out allow-discrete,
+    opacity 0.15s;
+  height: auto;
+  opacity: 1;
+
+  @starting-style {
+    height: 0;
+  }
 }
 
 .order-machine .inline-related fieldset {
@@ -107,14 +111,13 @@ h3[draggable] {
 
 .order-machine .inline-related.for-deletion,
 .order-machine .inline-related.collapsed {
-  grid-template-rows: min-content 0fr;
   border-bottom: 1px solid var(--hairline-color);
 }
 
-.order-machine .inline-related.for-deletion > fieldset:nth-child(n + 3),
-.order-machine .inline-related.collapsed > fieldset:nth-child(n + 3) {
-  /* grid-template-rows animates the first fieldset, all other fieldsets jump out of existence */
+.order-machine .inline-related:is(.collapsed, .for-deletion) > fieldset {
   display: none;
+  height: 0;
+  opacity: 0;
 }
 
 .order-machine .inline-related.for-deletion > h3::after {
@@ -351,6 +354,7 @@ h3[draggable] {
   .card-header
   > .card-title[draggable]::before {
   content: "drag_indicator";
+  /* biome-ignore lint/a11y/useGenericFontNames: no fallback */
   font-family: "Material Icons";
   font-size: 24px;
   position: relative;
