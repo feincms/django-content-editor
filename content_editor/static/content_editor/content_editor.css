@@ -3,6 +3,14 @@ html {
   overflow-x: hidden;
 }
 
+.tabs:has(.machine-collapse) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--body-bg);
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+}
+
 .machine-collapse {
   order: 1;
   margin-left: auto;
@@ -16,6 +24,7 @@ html {
 .order-machine {
   padding: 10px 10px 20px 30px;
   border: 1px solid var(--hairline-color, #e8e8e8);
+  border-top: none;
   position: relative;
 
   display: flex;
@@ -195,6 +204,14 @@ h3[draggable] {
 
 .collapse-items input {
   display: none;
+}
+
+.collapse-items .plugin-button {
+  padding: 0px 4px;
+}
+
+.collapse-items .plugin-button-icon {
+  margin-right: 0;
 }
 
 .collapse-items .uncollapse-all {

@@ -7,6 +7,8 @@ Next version
 
 - Replaced the plugin expanding and collapsing animation with a version for
   modern browsers.
+- Made the content editor region tabs stick to the top of the browser window
+  when scrolling down.
 
 
 7.4 (2025-07-02)
