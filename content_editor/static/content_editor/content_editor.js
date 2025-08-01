@@ -31,7 +31,6 @@
   }
 
   const LS = safeStorage(localStorage)
-  const SS = safeStorage(sessionStorage)
 
   const prepareContentEditorObject = () => {
     Object.assign(ContentEditor, JSON.parse(_contentEditorContext))
@@ -901,36 +900,43 @@
     })
 
     const saveEditorState = () => {
-      SS.set(location.pathname, {
-        region: ContentEditor.currentRegion,
-        scrollY: window.scrollY,
-        collapsed: qsa(
+      const u = new URLSearchParams()
+      u.append("region", ContentEditor.currentRegion)
+      u.append("scrollY", Math.floor(window.scrollY))
+      u.append(
+        "collapsed",
+        qsa(
           ".order-machine .inline-related.collapsed:not(.empty-form) .order-machine-ordering",
-        ).map((input) => input.value),
-      })
+        )
+          .map((input) => input.value)
+          .join(","),
+      )
+      return u.toString()
     }
 
     const restoreEditorState = () => {
       const tabs = $(".tabs.regions .tab")
 
-      const state = location.hash.includes("restore")
-        ? SS.get(location.pathname)
-        : null
-      if (state) {
+      const u = new URLSearchParams(location.hash.replace(/^#/, ""))
+      if (u.size) {
+        const region = u.get("region")
+        const scrollY = u.get("scrollY") || 0
+        const collapsed = (u.get("collapsed") || "").split(",")
+
         for (const inline of qsa(
           ".order-machine .inline-related:not(.empty-form)",
         )) {
-          const collapsed = state.collapsed.includes(
+          const wasCollapsed = collapsed.includes(
             qs(".order-machine-ordering", inline).value,
           )
           /* XXX handle sections */
           inline.classList.toggle(
             "collapsed",
-            collapsed && !inline.querySelector(".errorlist"),
+            wasCollapsed && !inline.querySelector(".errorlist"),
           )
         }
 
-        const tab = tabs.filter(`[data-region="${state.region}"]`)
+        const tab = tabs.filter(`[data-region="${region}"]`)
         if (tab.length) {
           tab.click()
         } else {
@@ -939,10 +945,11 @@
 
         initializeCollapseAll()
 
-        setTimeout(() => {
-          window.history.replaceState(null, "", ".")
-          window.scrollTo(0, state.scrollY)
-        }, 200)
+        if (scrollY) {
+          setTimeout(() => {
+            window.scrollTo(0, scrollY)
+          }, 200)
+        }
       } else {
         tabs.eq(0).click()
         initializeCollapseAll()
@@ -950,8 +957,8 @@
     }
 
     $("form").submit(function () {
-      this.action = `${this.action.split("#")[0]}#restore`
-      saveEditorState()
+      // Use the hash because it's still there after the save-and-continue redirect
+      this.action = `${this.action.split("#")[0]}#${saveEditorState()}`
     })
 
     setTimeout(restoreEditorState, 1)

@@ -9,6 +9,8 @@ Next version
   modern browsers.
 - Made the content editor region tabs stick to the top of the browser window
   when scrolling down.
+- Saved the editor state in the URL instead of using session storage because
+  this allows loading a specific region explicitly.
 
 
 7.4 (2025-07-02)
