@@ -38,7 +38,9 @@
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: none;
   user-select: none;
-  transition: 0.15s background, 0.15s color;
+  transition:
+    0.15s background,
+    0.15s color;
 }
 
 .tabs > .tab:hover {

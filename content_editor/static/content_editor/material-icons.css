@@ -12,6 +12,7 @@ Current version: v142
 }
 
 .material-icons {
+  /* biome-ignore lint/a11y/useGenericFontNames: No fallback */
   font-family: "Material Icons";
   font-weight: normal;
   font-style: normal;

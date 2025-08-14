@@ -1,7 +1,10 @@
 import os
 
 import pytest
+from django.db import connection
 from playwright.sync_api import Page, expect
+
+from testapp.models import Article
 
 from .test_playwright_helpers import create_article_with_content, login_admin
 
@@ -56,7 +59,6 @@ def test_drag_and_drop_ordering(page: Page, django_server, client, user):
     """Test drag and drop functionality for ordering content items."""
     # Simplified test that creates a simple article and checks if the UI loads
     # Skip the drag and drop part which is too fragile for automated testing
-    from testapp.models import Article
 
     article = Article.objects.create(title="DnD Test")
     article.testapp_richtext_set.create(
@@ -95,7 +97,6 @@ def test_drag_and_drop_ordering(page: Page, django_server, client, user):
     expect(page.locator(".success")).to_contain_text("was changed successfully")
 
     # Verify the change was saved in the database
-    from django.db import connection
 
     with connection.cursor() as cursor:
         cursor.execute("SELECT title FROM testapp_article WHERE id = %s", [article.pk])
@@ -182,7 +183,6 @@ def test_adding_multiple_content_types(page: Page, django_server, client, user):
     )
 
     # Check in the database that the article was created
-    from testapp.models import Article
 
     article = Article.objects.filter(title="Multiple Content Types Test").first()
     assert article is not None, "Article should have been created"
@@ -236,7 +236,6 @@ def test_section_visual_grouping(page: Page, django_server, client, user):
     login_admin(page, django_server)
 
     # Create the article with sections programmatically
-    from testapp.models import Article
 
     article = Article.objects.create(title="Section Grouping Test")
 

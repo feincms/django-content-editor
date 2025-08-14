@@ -4,6 +4,8 @@ Helper functions for Playwright integration tests.
 
 from playwright.sync_api import Page, expect
 
+from testapp.models import Article
+
 
 def login_admin(
     page: Page, django_server: str, username: str = "test", password: str = "test"
@@ -45,6 +47,4 @@ def create_article_with_content(page: Page, django_server: str, title: str):
     expect(page.locator(".success")).to_contain_text("was added successfully")
 
     # Return the created article from the database
-    from testapp.models import Article
-
     return Article.objects.get(title=title)

@@ -52,7 +52,9 @@ html {
   padding: 7px;
   margin: 0;
   background-color: var(--darkened-bg, #f8f8f8);
-  transition: 0.15s background, 0.15s color;
+  transition:
+    0.15s background,
+    0.15s color;
 
   white-space: nowrap;
   overflow: hidden;
@@ -95,7 +97,9 @@ h3[draggable] {
 }
 
 .order-machine .inline-related > fieldset {
-  transition: display 0.15s allow-discrete, height 0.15s ease-out allow-discrete,
+  transition:
+    display 0.15s allow-discrete,
+    height 0.15s ease-out allow-discrete,
     opacity 0.15s;
   height: auto;
   opacity: 1;
