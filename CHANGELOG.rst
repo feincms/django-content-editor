@@ -5,6 +5,7 @@ Change log
 Next version
 ============
 
+- Implemented cloning of plugins between regions.
 - Replaced the plugin expanding and collapsing animation with a version for
   modern browsers.
 - Made the content editor region tabs stick to the top of the browser window
