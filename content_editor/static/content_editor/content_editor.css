@@ -105,6 +105,7 @@ h3[draggable] {
   opacity: 1;
 
   @starting-style {
+    /* biome-ignore lint/suspicious/noDuplicateProperties: It's not a duplicate */
     height: 0;
   }
 }
