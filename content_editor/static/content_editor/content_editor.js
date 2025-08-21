@@ -522,7 +522,7 @@
     // Hide not allowed plugin buttons
     // If buttons only checks this buttons, else checks all
     function updatePluginButtonsVisibility() {
-      const buttons = qsa(".plugin-buttons .plugin-button")
+      const buttons = qsa(".plugin-buttons .plugin-button[data-plugin-prefix]")
       let visible = 0
 
       for (const button of buttons) {
@@ -569,7 +569,6 @@
           ret = plugin
         }
       }
-      console.debug({ id, ret })
       return ret
     }
 
@@ -1081,8 +1080,6 @@
             .toArray()
             .filter((inline) => inline.classList.contains("has_original"))
 
-          console.debug({ region, inlines })
-
           if (!inlines.length) {
             continue
           }
@@ -1112,7 +1109,6 @@
 
           for (const inline of inlines) {
             const { prefix, model } = getPluginTypeFromId(inline.id)
-            console.debug({ prefix, model })
             nextIndent = Math.max(
               0,
               indent + ContentEditor.pluginsByPrefix[prefix].sections,
@@ -1129,7 +1125,6 @@
                 "ul input[type=checkbox]",
                 e.target.closest("li"),
               )
-              console.debug("checkbox click handler", { e, checkboxes })
               for (const cb of checkboxes) {
                 cb.checked = e.target.checked
               }
