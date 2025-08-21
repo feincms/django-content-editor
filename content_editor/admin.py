@@ -216,6 +216,8 @@ class ContentEditor(RefinedModelAdmin):
                 "selectMultiple": gettext(
                     "Use Ctrl-Click to select and move multiple items."
                 ),
+                "clone": gettext("Clone plugins from another region"),
+                "selectAll": gettext("Select all"),
             },
         }
 

@@ -129,7 +129,11 @@
   window.ContentEditor = prepareContentEditorObject(django.jQuery)
 
   django.jQuery(($) => {
-    ContentEditor.addPluginButton = (prefix, iconHTML) => {
+    ContentEditor.addPluginButton = (
+      prefix,
+      iconHTML,
+      initializing = false,
+    ) => {
       const plugin = ContentEditor.pluginsByPrefix[prefix]
       if (!plugin) return
 
@@ -160,7 +164,9 @@
       const unit = qs(".plugin-buttons")
       unit.appendChild(button)
 
-      hideNotAllowedPluginButtons([button])
+      if (!initializing) {
+        updatePluginButtonsVisibility()
+      }
     }
 
     // Add basic structure. There is always at least one inline group if
@@ -487,11 +493,8 @@
 
     // Hide not allowed plugin buttons
     // If buttons only checks this buttons, else checks all
-    function hideNotAllowedPluginButtons(_buttons) {
-      const buttons = _buttons
-        ? _buttons
-        : qsa(".plugin-buttons .plugin-button")
-
+    function updatePluginButtonsVisibility() {
+      const buttons = qsa(".plugin-buttons .plugin-button")
       let visible = 0
 
       for (const button of buttons) {
@@ -838,9 +841,7 @@
           .filter(`[data-region="${ContentEditor.currentRegion}"]`)
           .addClass("active")
 
-        // Make sure only allowed plugins are in select
-        hideNotAllowedPluginButtons()
-
+        updatePluginButtonsVisibility()
         updateSections()
       })
     })()
@@ -1003,7 +1004,7 @@
     setTimeout(restoreEditorState, 1)
 
     for (const plugin of ContentEditor.plugins) {
-      ContentEditor.addPluginButton(plugin.prefix, plugin.button)
+      ContentEditor.addPluginButton(plugin.prefix, plugin.button, true)
     }
 
     if (!ContentEditor.allowChange) {
