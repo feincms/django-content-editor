@@ -77,7 +77,7 @@
     return ContentEditor
   }
 
-  function defineContentEditorStyles(ContentEditor) {
+  function defineContentEditorStyles() {
     const style = document.createElement("style")
     style.textContent = `
 .order-machine .inline-related .inline_label::after {
@@ -109,9 +109,9 @@
    * CONTENT EDITOR INITIALIZATION
    */
 
-  django.jQuery(($) => {
-    window.ContentEditor = prepareContentEditorObject($)
+  window.ContentEditor = prepareContentEditorObject(django.jQuery)
 
+  django.jQuery(($) => {
     ContentEditor.addPluginButton = (prefix, iconHTML) => {
       const plugin = ContentEditor.pluginsByPrefix[prefix]
       if (!plugin) return
@@ -1010,7 +1010,7 @@
       $(".order-machine-wrapper").addClass("order-machine-readonly")
     }
 
-    defineContentEditorStyles(ContentEditor)
+    defineContentEditorStyles()
 
     $(document).trigger("content-editor:ready")
   })
