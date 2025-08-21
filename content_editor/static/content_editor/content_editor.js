@@ -559,12 +559,18 @@
     }
 
     // Fetch the inline type from id
-    function getInlineType($inline) {
-      const match = /^([a-z0-9_]+)-\d+$/g.exec($inline.attr("id"))
-      if (match) {
-        return match[1]
+    function getPluginTypeFromId(id) {
+      let ret = null
+      for (const plugin of ContentEditor.plugins) {
+        if (
+          id.startsWith(plugin.prefix) &&
+          (!ret || plugin.prefix.length > ret.prefix.length)
+        ) {
+          ret = plugin
+        }
       }
-      return null
+      console.debug({ id, ret })
+      return ret
     }
 
     // Pre map plugin regions
@@ -573,7 +579,7 @@
     )
     function attachMoveToRegionDropdown($inline) {
       // Filter allowed regions
-      const inlineType = getInlineType($inline)
+      const inlineType = getPluginTypeFromId($inline.attr("id"))?.type
       const regions = []
       for (const region of ContentEditor.regions) {
         if (
@@ -1064,6 +1070,8 @@
           }),
         )
 
+        const fieldsets = []
+
         for (const region of ContentEditor.declaredRegions) {
           if (region.key === ContentEditor.currentRegion) {
             continue
@@ -1103,7 +1111,8 @@
             nextIndent
 
           for (const inline of inlines) {
-            const prefix = inline.id.replace(/-[0-9]+$/, "")
+            const { prefix, model } = getPluginTypeFromId(inline.id)
+            console.debug({ prefix, model })
             nextIndent = Math.max(
               0,
               indent + ContentEditor.pluginsByPrefix[prefix].sections,
@@ -1112,7 +1121,7 @@
             const checkbox = crel("input", {
               type: "checkbox",
               name: "_clone",
-              value: `${getInlineType($(inline))}:${qs("input[type=hidden][name$='-id']", inline).value}`,
+              value: `${model}:${qs("input[type=hidden][name$='-id']", inline).value}`,
             })
 
             checkbox.addEventListener("click", (e) => {
@@ -1149,10 +1158,35 @@
           }
 
           fieldset.append(stack[0])
-          dialog.append(fieldset)
+          fieldsets.push(fieldset)
         }
 
+        if (fieldsets.length === 1) {
+          fieldsets[0].open = true
+        }
+        dialog.append(...fieldsets)
+
         const saveButton = qs("input[name=_continue]").cloneNode(true)
+        saveButton.addEventListener("click", () => {
+          // At least one plugin to clone and insertion in the middle?
+          let checked
+          if (
+            ContentEditor._insertBefore &&
+            (checked = qsa("input[type=checkbox]:checked", dialog).length)
+          ) {
+            const inlines = findInlinesInOrder()
+
+            let order = 0
+
+            for (const inline of inlines) {
+              if (inline === ContentEditor._insertBefore) {
+                order += checked
+              }
+
+              qs(".order-machine-ordering", inline).value = 10 * ++order
+            }
+          }
+        })
 
         const cancelButton = crel("button", {
           className: "button",
@@ -1161,6 +1195,23 @@
         cancelButton.addEventListener("click", () => {
           dialog.close()
         })
+
+        dialog.append(
+          crel("input", {
+            type: "hidden",
+            name: "_clone_region",
+            value: ContentEditor.currentRegion,
+          }),
+        )
+        if (ContentEditor._insertBefore) {
+          dialog.append(
+            crel("input", {
+              type: "hidden",
+              name: "_clone_ordering",
+              value: ContentEditor._insertBefore.style.order,
+            }),
+          )
+        }
 
         dialog.append(
           crel("div", { className: "submit-row" }, [saveButton, cancelButton]),

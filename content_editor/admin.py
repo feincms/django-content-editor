@@ -1,6 +1,8 @@
 import itertools
+from collections import defaultdict
 
 from django import forms
+from django.apps import apps
 from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
@@ -186,6 +188,7 @@ class ContentEditor(RefinedModelAdmin):
                     "button": button,
                     "color": iaf.opts.color,
                     "sections": iaf.opts.sections,
+                    "model": iaf.opts.model._meta.label_lower,
                 }
             )
         regions = [
@@ -247,6 +250,57 @@ class ContentEditor(RefinedModelAdmin):
         ] + self._content_editor_media(request, response.context_data)
 
         return response
+
+    def save_related(self, request, form, formsets, change):
+        super().save_related(request, form, formsets, change)
+
+        clone_form = CloneForm(request.POST)
+        if clone_form.is_valid():
+            clone_form.process()
+        else:
+            self.message_user(
+                request, gettext("Cloning plugins failed: {}").format(form.errors)
+            )
+
+
+class CloneForm(forms.Form):
+    _clone = forms.CharField()
+    _clone_region = forms.CharField()
+    _clone_ordering = forms.IntegerField(required=False)
+
+    def clean(self):
+        data = super().clean()
+
+        plugins = self.data.getlist("_clone")
+
+        objects = defaultdict(set)
+        for plugin in plugins:
+            model, _sep, pk = plugin.partition(":")
+            objects[model].add(pk)
+
+        instances = {}
+        for model, pks in objects.items():
+            cls = apps.get_model(model)
+            instances |= {
+                f"{model}:{obj.pk}": obj for obj in cls._base_manager.filter(pk__in=pks)
+            }
+
+        data["_clone_instances"] = [
+            obj for obj in [instances.get(plugin) for plugin in plugins] if obj
+        ]
+
+        return data
+
+    def process(self):
+        ordering = self.cleaned_data.get("_clone_ordering") or 10
+        region = self.cleaned_data["_clone_region"]
+
+        for instance in self.cleaned_data["_clone_instances"]:
+            instance.pk = None
+            instance.ordering = ordering
+            instance.region = region
+            instance.save(force_insert=True)
+            ordering += 10
 
 
 def allow_regions(regions):
