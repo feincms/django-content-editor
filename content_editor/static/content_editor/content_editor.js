@@ -105,6 +105,23 @@
     document.head.append(style)
   }
 
+  function addPluginIconsToInlines() {
+    for (const plugin of ContentEditor.plugins) {
+      const fragment = document.createElement("template")
+      fragment.innerHTML =
+        plugin.button || '<span class="material-icons">extension</span>'
+      const button = fragment.content.firstElementChild
+      if (plugin.color) {
+        button.style.color = plugin.color
+      }
+      for (const title of qsa(
+        `.dynamic-${plugin.prefix} > h3, #${plugin.prefix}-empty > h3`,
+      )) {
+        title.insertAdjacentElement("afterbegin", button.cloneNode(true))
+      }
+    }
+  }
+
   /*
    * CONTENT EDITOR INITIALIZATION
    */
@@ -183,22 +200,6 @@
     `,
     )
 
-    const addPluginIconsToInlines = () => {
-      for (const plugin of ContentEditor.plugins) {
-        const fragment = document.createElement("template")
-        fragment.innerHTML =
-          plugin.button || '<span class="material-icons">extension</span>'
-        const button = fragment.content.firstElementChild
-        if (plugin.color) {
-          button.style.color = plugin.color
-        }
-        for (const title of qsa(
-          `.dynamic-${plugin.prefix} > h3, #${plugin.prefix}-empty > h3`,
-        )) {
-          title.insertAdjacentElement("afterbegin", button.cloneNode(true))
-        }
-      }
-    }
     addPluginIconsToInlines()
 
     const orderMachineWrapper = $(".order-machine-wrapper")
@@ -213,11 +214,6 @@
     const noPluginsMessage = $('<p class="hidden machine-message"/>')
       .text(ContentEditor.messages.noPlugins)
       .appendTo(orderMachine)
-
-    // Pre map plugin regions
-    const pluginRegions = Object.fromEntries(
-      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin.regions]),
-    )
 
     function shouldInsertAfter(inline, clientY) {
       const rect = inline.getBoundingClientRect()
@@ -540,6 +536,10 @@
       return null
     }
 
+    // Pre map plugin regions
+    const pluginRegions = Object.fromEntries(
+      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin.regions]),
+    )
     function attachMoveToRegionDropdown($inline) {
       // Filter allowed regions
       const inlineType = getInlineType($inline)
