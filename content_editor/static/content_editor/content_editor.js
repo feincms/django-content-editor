@@ -10,6 +10,18 @@
     return Array.from(ctx.querySelectorAll(sel))
   }
 
+  function crel(tagName, attributes = null, children = []) {
+    const dom = document.createElement(tagName)
+    dom.append(...children)
+    if (attributes) {
+      for (const [name, value] of Object.entries(attributes)) {
+        if (/^data-|^aria-|^role/.test(name)) dom.setAttribute(name, value)
+        else dom[name] = value
+      }
+    }
+    return dom
+  }
+
   function buildDropdown(contents, title) {
     const select = document.createElement("select")
     let idx = 0
@@ -75,6 +87,46 @@
     })
 
     return ContentEditor
+  }
+
+  function addOrderMachine($) {
+    // Add basic structure. There is always at least one inline group if
+    // we even have any plugins.
+    let $anchor = $(".inline-group:first")
+    if (ContentEditor.plugins.length) {
+      $anchor = $(`#${ContentEditor.plugins[0].prefix}-group`)
+    }
+    $anchor.before(
+      `
+    <div class="tabs regions">
+      <div class="machine-collapse">
+        <label class="collapse-items">
+          <input type="checkbox" />
+          <div class="plugin-button collapse-all">
+            <span class="plugin-button-icon">
+              <span class="material-icons">unfold_less</span>
+            </span>
+            ${ContentEditor.messages.collapseAll}
+          </div>
+          <div class="plugin-button uncollapse-all">
+            <span class="plugin-button-icon">
+              <span class="material-icons">unfold_more</span>
+            </span>
+            ${ContentEditor.messages.uncollapseAll}
+          </div>
+        </label>
+      </div>
+    </div>
+    <div class="module order-machine-wrapper">
+      <div class="order-machine">
+        <span class="order-machine-insert-target last"></span>
+      </div>
+      <div class="plugin-buttons">
+      </div>
+    </div>
+    <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
+    `,
+    )
   }
 
   function defineContentEditorStyles() {
@@ -169,43 +221,7 @@
       }
     }
 
-    // Add basic structure. There is always at least one inline group if
-    // we even have any plugins.
-    let $anchor = $(".inline-group:first")
-    if (ContentEditor.plugins.length) {
-      $anchor = $(`#${ContentEditor.plugins[0].prefix}-group`)
-    }
-    $anchor.before(
-      `
-    <div class="tabs regions">
-      <div class="machine-collapse">
-        <label class="collapse-items">
-          <input type="checkbox" />
-          <div class="plugin-button collapse-all">
-            <span class="plugin-button-icon">
-              <span class="material-icons">unfold_less</span>
-            </span>
-            ${ContentEditor.messages.collapseAll}
-          </div>
-          <div class="plugin-button uncollapse-all">
-            <span class="plugin-button-icon">
-              <span class="material-icons">unfold_more</span>
-            </span>
-            ${ContentEditor.messages.uncollapseAll}
-          </div>
-        </label>
-      </div>
-    </div>
-    <div class="module order-machine-wrapper">
-      <div class="order-machine">
-        <span class="order-machine-insert-target last"></span>
-      </div>
-      <div class="plugin-buttons"></div>
-    </div>
-    <p class="order-machine-help">${ContentEditor.messages.selectMultiple}</p>
-    `,
-    )
-
+    addOrderMachine($)
     addPluginIconsToInlines()
 
     const orderMachineWrapper = $(".order-machine-wrapper")
@@ -332,9 +348,10 @@
       arg.addClass("fs-draggable")
     }
 
-    function findInlinesInOrder() {
+    function findInlinesInOrder(region = null) {
+      region = region || ContentEditor.currentRegion
       const inlines = orderMachine.find(
-        `.inline-related:not(.empty-form)[data-region="${ContentEditor.currentRegion}`,
+        `.inline-related:not(.empty-form)[data-region="${region}`,
       )
       inlines.sort((a, b) => a.style.order - b.style.order)
       return inlines
@@ -1023,6 +1040,138 @@
     }
 
     defineContentEditorStyles()
+
+    /*
+     * CLONING
+     */
+    function addCloningButton() {
+      const button = document.createElement("a")
+      button.className = "plugin-button"
+      button.innerHTML = `
+        <span class="plugin-button-icon"><span class="material-icons">content_copy</span></span>
+        <span class="plugin-button-title">${ContentEditor.messages.clone}</span>
+      `
+
+      pluginButtons.append(button)
+
+      button.addEventListener("click", () => {
+        hidePluginButtons()
+
+        const dialog = crel("dialog")
+        dialog.append(
+          crel("h2", {
+            textContent: ContentEditor.messages.clone,
+          }),
+        )
+
+        for (const region of ContentEditor.declaredRegions) {
+          if (region.key === ContentEditor.currentRegion) {
+            continue
+          }
+
+          const inlines = findInlinesInOrder(region.key)
+            .toArray()
+            .filter((inline) => inline.classList.contains("has_original"))
+
+          console.debug({ region, inlines })
+
+          if (!inlines.length) {
+            continue
+          }
+
+          const fieldset = crel("details", {
+            className: "module",
+            name: "clone-region",
+          })
+          fieldset.append(crel("summary", { textContent: region.title }))
+
+          const checkbox = crel("input", {
+            type: "checkbox",
+          })
+          checkbox.addEventListener("click", (e) => {
+            for (const cb of qsa("ul input[type=checkbox]", fieldset)) {
+              cb.checked = e.target.checked
+            }
+          })
+
+          fieldset.append(
+            crel("label", {}, [checkbox, ContentEditor.messages.selectAll]),
+          )
+
+          const stack = [crel("ul")]
+          let indent = 0,
+            nextIndent
+
+          for (const inline of inlines) {
+            const prefix = inline.id.replace(/-[0-9]+$/, "")
+            nextIndent = Math.max(
+              0,
+              indent + ContentEditor.pluginsByPrefix[prefix].sections,
+            )
+
+            const checkbox = crel("input", {
+              type: "checkbox",
+              name: "_clone",
+              value: `${getInlineType($(inline))}:${qs("input[type=hidden][name$='-id']", inline).value}`,
+            })
+
+            checkbox.addEventListener("click", (e) => {
+              const checkboxes = qsa(
+                "ul input[type=checkbox]",
+                e.target.closest("li"),
+              )
+              console.debug("checkbox click handler", { e, checkboxes })
+              for (const cb of checkboxes) {
+                cb.checked = e.target.checked
+              }
+            })
+
+            const label = crel("label", {}, [
+              checkbox,
+              ...qsa("h3 .material-icons, h3 b, h3 .inline_label", inline).map(
+                (node) => node.cloneNode(true),
+              ),
+            ])
+
+            stack[indent].append(crel("li", {}, [label]))
+
+            while (indent < nextIndent) {
+              const list = crel("ul")
+              stack[indent].children[stack[indent].children.length - 1].append(
+                list,
+              )
+              // qs("li:last-child", stack[indent]).append(list)
+              stack[indent + 1] = list
+              ++indent
+            }
+
+            indent = nextIndent
+          }
+
+          fieldset.append(stack[0])
+          dialog.append(fieldset)
+        }
+
+        const saveButton = qs("input[name=_continue]").cloneNode(true)
+
+        const cancelButton = crel("button", {
+          className: "button",
+          textContent: "Cancel",
+        })
+        cancelButton.addEventListener("click", () => {
+          dialog.close()
+        })
+
+        dialog.append(
+          crel("div", { className: "submit-row" }, [saveButton, cancelButton]),
+        )
+
+        qs("#content-main form").append(dialog)
+        dialog.showModal()
+      })
+    }
+
+    addCloningButton()
 
     $(document).trigger("content-editor:ready")
   })
