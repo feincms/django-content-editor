@@ -1,14 +1,32 @@
 /* global django,ContentEditor */
 ;(() => {
-  const _contentEditorContext = document.getElementById(
-    "content-editor-context",
-  ).textContent
-
+  /*
+   * GENERAL UTILITIES
+   */
   function qs(sel, ctx = document) {
     return ctx.querySelector(sel)
   }
   function qsa(sel, ctx = document) {
     return Array.from(ctx.querySelectorAll(sel))
+  }
+
+  function buildDropdown(contents, title) {
+    const select = document.createElement("select")
+    let idx = 0
+
+    if (title) {
+      select.options[idx++] = new Option(title, "", true)
+    }
+
+    for (const content of contents) {
+      // Option _values_ may either be the prefix (for plugins) or keys (for
+      // regions)
+      select.options[idx++] = new Option(
+        content.title,
+        content.prefix || content.key,
+      )
+    }
+    return select
   }
 
   const safeStorage = (storage, prefix = "ContentEditor:") => {
@@ -32,8 +50,15 @@
 
   const LS = safeStorage(localStorage)
 
-  const prepareContentEditorObject = () => {
-    Object.assign(ContentEditor, JSON.parse(_contentEditorContext))
+  /*
+   * CONTENT EDITOR UTILITIES */
+
+  const prepareContentEditorObject = ($) => {
+    const _contentEditorContext = document.getElementById(
+      "content-editor-context",
+    ).textContent
+
+    const ContentEditor = JSON.parse(_contentEditorContext)
     Object.assign(ContentEditor, {
       declaredRegions: [...ContentEditor.regions],
       pluginsByPrefix: Object.fromEntries(
@@ -43,50 +68,83 @@
         ContentEditor.regions.map((region) => [region.key, region]),
       ),
       hasSections: ContentEditor.plugins.some((plugin) => plugin.sections),
-    })
-  }
 
-  django.jQuery(($) => {
-    window.ContentEditor = {
-      addContent: function addContent(prefix) {
+      addContent(prefix) {
         $(`#${prefix}-group .add-row a`).click()
       },
-      addPluginButton: function addPluginButton(prefix, iconHTML) {
-        const plugin = ContentEditor.pluginsByPrefix[prefix]
-        if (!plugin) return
+    })
 
-        const button = document.createElement("a")
-        button.dataset.pluginPrefix = plugin.prefix
-        button.className = "plugin-button"
-        button.title = plugin.title
-        button.addEventListener("click", (e) => {
-          e.preventDefault()
-          ContentEditor.addContent(plugin.prefix)
-          hidePluginButtons()
-        })
+    return ContentEditor
+  }
 
-        const icon = document.createElement("span")
-        icon.className = "plugin-button-icon"
-        icon.innerHTML =
-          iconHTML || '<span class="material-icons">extension</span>'
-        button.appendChild(icon)
-        if (plugin.color) {
-          icon.style.color = plugin.color
-        }
+  function defineContentEditorStyles(ContentEditor) {
+    const style = document.createElement("style")
+    style.textContent = `
+.order-machine .inline-related .inline_label::after {
+  content: "(${window.gettext("Hide")})";
+  opacity: 0.7;
+  margin-left: 0.5ch;
+  cursor: pointer;
+}
+.order-machine .inline-related .inline_label:hover::after {
+  text-decoration: underline;
+}
+.order-machine .inline-related.collapsed .inline_label::after {
+  content: "(${window.gettext("Show")})";
+  color: var(--link-fg, #447e9b);
+  opacity: 1;
+}
+.order-machine .inline-related.for-deletion .inline_label::after {
+  opacity: 0.5;
+  content: " (${ContentEditor.messages.forDeletion})";
+}
+.order-machine .inline-related:not(:where(${ContentEditor.declaredRegions.map((region) => `[data-region="${region.key}"]`).join(", ")})) .inline_move_to_region {
+  border-color: red;
+}
+  `
+    document.head.append(style)
+  }
 
-        const title = document.createElement("span")
-        title.className = "plugin-button-title"
-        title.textContent = plugin.title
-        button.appendChild(title)
+  /*
+   * CONTENT EDITOR INITIALIZATION
+   */
 
-        const unit = qs(".plugin-buttons")
-        unit.appendChild(button)
+  django.jQuery(($) => {
+    window.ContentEditor = prepareContentEditorObject($)
 
-        hideNotAllowedPluginButtons([button])
-      },
+    ContentEditor.addPluginButton = (prefix, iconHTML) => {
+      const plugin = ContentEditor.pluginsByPrefix[prefix]
+      if (!plugin) return
+
+      const button = document.createElement("a")
+      button.dataset.pluginPrefix = plugin.prefix
+      button.className = "plugin-button"
+      button.title = plugin.title
+      button.addEventListener("click", (e) => {
+        e.preventDefault()
+        ContentEditor.addContent(plugin.prefix)
+        hidePluginButtons()
+      })
+
+      const icon = document.createElement("span")
+      icon.className = "plugin-button-icon"
+      icon.innerHTML =
+        iconHTML || '<span class="material-icons">extension</span>'
+      button.appendChild(icon)
+      if (plugin.color) {
+        icon.style.color = plugin.color
+      }
+
+      const title = document.createElement("span")
+      title.className = "plugin-button-title"
+      title.textContent = plugin.title
+      button.appendChild(title)
+
+      const unit = qs(".plugin-buttons")
+      unit.appendChild(button)
+
+      hideNotAllowedPluginButtons([button])
     }
-
-    prepareContentEditorObject()
 
     // Add basic structure. There is always at least one inline group if
     // we even have any plugins.
@@ -421,25 +479,6 @@
       inlines.not(".empty-form").each(function () {
         $(document).trigger("content-editor:activate", [$(this)])
       })
-    }
-
-    function buildDropdown(contents, title) {
-      const select = document.createElement("select")
-      let idx = 0
-
-      if (title) {
-        select.options[idx++] = new Option(title, "", true)
-      }
-
-      for (const content of contents) {
-        // Option _values_ may either be the prefix (for plugins) or keys (for
-        // regions)
-        select.options[idx++] = new Option(
-          content.title,
-          content.prefix || content.key,
-        )
-      }
-      return select
     }
 
     function pluginInCurrentRegion(prefix) {
@@ -967,35 +1006,11 @@
       ContentEditor.addPluginButton(plugin.prefix, plugin.button)
     }
 
-    const style = document.createElement("style")
-    style.textContent = `
-.order-machine .inline-related .inline_label::after {
-  content: "(${window.gettext("Hide")})";
-  opacity: 0.7;
-  margin-left: 0.5ch;
-  cursor: pointer;
-}
-.order-machine .inline-related .inline_label:hover::after {
-  text-decoration: underline;
-}
-.order-machine .inline-related.collapsed .inline_label::after {
-  content: "(${window.gettext("Show")})";
-  color: var(--link-fg, #447e9b);
-  opacity: 1;
-}
-.order-machine .inline-related.for-deletion .inline_label::after {
-  opacity: 0.5;
-  content: " (${ContentEditor.messages.forDeletion})";
-}
-.order-machine .inline-related:not(:where(${ContentEditor.declaredRegions.map((region) => `[data-region="${region.key}"]`).join(", ")})) .inline_move_to_region {
-  border-color: red;
-}
-  `
-    document.head.appendChild(style)
-
     if (!ContentEditor.allowChange) {
       $(".order-machine-wrapper").addClass("order-machine-readonly")
     }
+
+    defineContentEditorStyles(ContentEditor)
 
     $(document).trigger("content-editor:ready")
   })
