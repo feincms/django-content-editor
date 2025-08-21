@@ -11,6 +11,9 @@ Next version
   when scrolling down.
 - Saved the editor state in the URL instead of using session storage because
   this allows loading a specific region explicitly.
+- Fixed a bug where the section highlighting was broken when the the last
+  plugin in a region wasn't visible at all.
+- Refactored the JavaScript a bit, it's still ugly though.
 
 
 7.4 (2025-07-02)
