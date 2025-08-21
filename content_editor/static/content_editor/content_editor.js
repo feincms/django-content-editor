@@ -413,8 +413,19 @@
         indent = nextIndent
       }
 
-      while (stack.length) {
-        closeSection(inlines[inlines.length - 1])
+      if (stack.length) {
+        // Cannot just use the last inline, it may be hidden. Find the last
+        // inline and use it for finding the place where all open sections
+        // should be closed visually.
+        let lastVisibleIndex = inlines.length - 1
+        while (
+          inlines[lastVisibleIndex].classList.contains("content-editor-hide")
+        ) {
+          --lastVisibleIndex
+        }
+        while (stack.length) {
+          closeSection(inlines[lastVisibleIndex])
+        }
       }
 
       for (const section of sectionsMap.values()) {
