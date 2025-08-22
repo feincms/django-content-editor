@@ -42,6 +42,7 @@ optional-dependencies.docs = [
   "sphinx-rtd-theme",
 ]
 optional-dependencies.tests = [
+  "beautifulsoup4",
   "coverage",
   "pytest",
   "pytest-asyncio",
