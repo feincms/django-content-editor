@@ -352,6 +352,7 @@ h3[draggable] {
   .submit-row {
     position: sticky;
     bottom: -20px;
+    z-index: 99;
   }
 }
 
@@ -360,6 +361,62 @@ h3[draggable] {
 .order-machine-readonly + .order-machine-help,
 .order-machine-readonly .inline-related > h3[draggable]::before {
   display: none;
+}
+
+/* CLONING start */
+dialog.clone {
+  position: fixed;
+  width: max(90vw, 400px);
+  height: max(90vh, 400px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+}
+
+dialog.clone h2 {
+  margin: 0 0 20px;
+}
+
+dialog.clone details {
+  border: 1px solid var(--hairline-color);
+  margin-bottom: 10px;
+}
+
+dialog.clone summary {
+  padding: 10px;
+  background: var(--darkened-bg, #f8f8f8);
+}
+
+dialog.clone details > div {
+  padding: 10px 10px 0;
+}
+
+dialog.clone ul[data-indent="0"] {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+dialog.clone ul {
+  margin-left: 1em;
+}
+
+dialog.clone ul > li {
+  list-style: none;
+}
+
+dialog.clone label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+dialog.clone .submit-row {
+  position: static;
+  margin-top: auto;
+  margin-bottom: 0;
+  overflow: visible;
 }
 
 /* =====| OVERRIDES |===== */
