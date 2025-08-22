@@ -471,23 +471,23 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
 
     # Create article with content programmatically for reliable setup
     article = Article.objects.create(title="Clone Test Article")
-    
+
     # Add a section
     article.testapp_section_set.create(region="main", ordering=10)
-    
+
     # Add rich text content inside section
     article.testapp_richtext_set.create(
         text="<p>First rich text in main</p>", region="main", ordering=20
     )
-    
+
     # Add another rich text
     article.testapp_richtext_set.create(
         text="<p>Second rich text in main</p>", region="main", ordering=30
     )
-    
+
     # Add close section
     article.testapp_closesection_set.create(region="main", ordering=40)
-    
+
     # Add download plugin
     article.testapp_download_set.create(
         file="test-file.pdf", region="main", ordering=50
@@ -505,7 +505,7 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
     # Switch to sidebar region tab
     page.click(".tabs.regions .tab:has-text('sidebar region')")
     page.wait_for_timeout(500)  # Wait for tab switch animation
-    
+
     # Verify we're now in the sidebar region
     expect(page.locator(".tabs.regions .tab.active")).to_contain_text("sidebar region")
 
@@ -532,65 +532,63 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
     checkboxes = page.locator("input[name='_clone']")
     checkbox_count = checkboxes.count()
     print(f"Found {checkbox_count} checkboxes for cloning")
-    
+
     # Find the section checkbox specifically
     section_checkbox = page.locator("input[name='_clone'][value*='section']")
     section_count = section_checkbox.count()
     print(f"Found {section_count} section checkboxes")
-    
+
     # Before clicking section, verify that rich text checkboxes are unchecked
     richtext_checkboxes = page.locator("input[name='_clone'][value*='richtext']")
     richtext_count = richtext_checkboxes.count()
     print(f"Found {richtext_count} rich text checkboxes")
-    
+
     # Check initial state of rich text checkboxes (should be unchecked)
     if richtext_count > 0:
         first_richtext_checked = richtext_checkboxes.first.is_checked()
         print(f"First rich text checkbox initially checked: {first_richtext_checked}")
-    
+
     if richtext_count > 1:
         second_richtext_checked = richtext_checkboxes.nth(1).is_checked()
         print(f"Second rich text checkbox initially checked: {second_richtext_checked}")
-    
+
     # Now click the section checkbox - this should auto-select all contained plugins
     if section_count > 0:
         section_checkbox.first.click(force=True)
         print("Clicked section checkbox")
-        
+
         # Wait a moment for the auto-selection to occur
         page.wait_for_timeout(500)
-        
+
         # Verify that clicking the section auto-selected the contained rich text items
         if richtext_count > 0:
             first_richtext_after = richtext_checkboxes.first.is_checked()
-            print(f"First rich text checkbox after section click: {first_richtext_after}")
-            
-            # This is the key test: section selection should auto-select contained plugins
-            # Note: This might need investigation if the auto-selection logic isn't working as expected
-            if first_richtext_after:
-                print("✓ Section auto-selection is working correctly")
-            else:
-                print("⚠ Section auto-selection may need investigation - manually selecting rich text items")
-                # Manually select the rich text items for the test to continue
-                richtext_checkboxes.first.click(force=True)
-        
+            print(
+                f"First rich text checkbox after section click: {first_richtext_after}"
+            )
+
+            # This is the key test: section selection MUST auto-select contained plugins
+            assert first_richtext_after, (
+                "Section selection should auto-select first rich text plugin, but it's still unchecked"
+            )
+            print("✓ First rich text auto-selected by section")
+
         if richtext_count > 1:
             second_richtext_after = richtext_checkboxes.nth(1).is_checked()
-            print(f"Second rich text checkbox after section click: {second_richtext_after}")
-            if not second_richtext_after:
-                print("⚠ Second rich text not auto-selected, selecting manually")
-                richtext_checkboxes.nth(1).click(force=True)
-        
-        print("✓ Section selection test completed")
+            print(
+                f"Second rich text checkbox after section click: {second_richtext_after}"
+            )
+            assert second_richtext_after, (
+                "Section selection should auto-select second rich text plugin, but it's still unchecked"
+            )
+            print("✓ Second rich text auto-selected by section")
+
+        print("✓ Section auto-selection working correctly")
     else:
-        # Fallback: if no section found, manually select rich text items
-        if richtext_count > 0:
-            richtext_checkboxes.first.click(force=True)
-            print("Clicked first rich text checkbox (fallback)")
-        
-        if richtext_count > 1:
-            richtext_checkboxes.nth(1).click(force=True)
-            print("Clicked second rich text checkbox (fallback)")
+        # No section found - this should not happen with our test setup
+        raise AssertionError(
+            f"Expected to find section checkbox but found {section_count}"
+        )
 
     # Click Save to execute the cloning - use the save-and-continue button
     page.click("dialog.clone input[name='_continue']")
@@ -602,10 +600,11 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
     # Verify cloned content appears in sidebar - check for textarea elements
     rich_text_textareas = page.locator("textarea.richtext")
     textarea_count = rich_text_textareas.count()
-    
-    # We started with 2 rich text items, cloning should add more
-    # Let's be more lenient and check that we have more than the original 2
-    assert textarea_count > 2, f"Expected more than 2 rich text areas after cloning, found {textarea_count}"
+
+    # We started with 2 rich text items, cloning should add at least 2 more to sidebar = 4 total minimum
+    assert textarea_count >= 4, (
+        f"Expected at least 4 rich text areas after cloning (2 original + 2 cloned), found {textarea_count}"
+    )
 
     # Save the article to persist changes
     page.click("input[name='_save']")
@@ -619,85 +618,127 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
     main_richtext_count = article.testapp_richtext_set.filter(region="main").count()
     main_section_count = article.testapp_section_set.filter(region="main").count()
     main_download_count = article.testapp_download_set.filter(region="main").count()
-    
+
     # Sidebar should now have cloned content
-    sidebar_richtext_count = article.testapp_richtext_set.filter(region="sidebar").count()
+    sidebar_richtext_count = article.testapp_richtext_set.filter(
+        region="sidebar"
+    ).count()
     sidebar_section_count = article.testapp_section_set.filter(region="sidebar").count()
-    sidebar_download_count = article.testapp_download_set.filter(region="sidebar").count()
-    
-    print(f"Main region: {main_richtext_count} rich texts, {main_section_count} sections, {main_download_count} downloads")
-    print(f"Sidebar region: {sidebar_richtext_count} rich texts, {sidebar_section_count} sections, {sidebar_download_count} downloads")
-    
+    sidebar_download_count = article.testapp_download_set.filter(
+        region="sidebar"
+    ).count()
+
+    print(
+        f"Main region: {main_richtext_count} rich texts, {main_section_count} sections, {main_download_count} downloads"
+    )
+    print(
+        f"Sidebar region: {sidebar_richtext_count} rich texts, {sidebar_section_count} sections, {sidebar_download_count} downloads"
+    )
+
     # Verify original content still exists
-    assert main_richtext_count == 2, f"Main region should have 2 rich text items, got {main_richtext_count}"
-    assert main_section_count == 1, f"Main region should have 1 section, got {main_section_count}"
-    
-    # Verify that something was cloned to sidebar
-    total_sidebar_items = sidebar_richtext_count + sidebar_section_count + sidebar_download_count
-    assert total_sidebar_items > 0, f"Expected some content to be cloned to sidebar, but found {total_sidebar_items} items"
-    
-    # If rich text items were cloned, verify their content AND ordering
-    if sidebar_richtext_count > 0:
-        sidebar_richtext = list(article.testapp_richtext_set.filter(region="sidebar").order_by("ordering"))
-        main_richtext = list(article.testapp_richtext_set.filter(region="main").order_by("ordering"))
-        
-        sidebar_texts = [rt.text for rt in sidebar_richtext]
-        main_texts = [rt.text for rt in main_richtext]
-        sidebar_orderings = [rt.ordering for rt in sidebar_richtext]
-        main_orderings = [rt.ordering for rt in main_richtext]
-        
-        print(f"Main texts with ordering: {list(zip(main_texts, main_orderings))}")
-        print(f"Sidebar texts with ordering: {list(zip(sidebar_texts, sidebar_orderings))}")
-        
-        # Verify at least one cloned text matches main content
-        assert any(text in main_texts for text in sidebar_texts), "Cloned content should match original content"
-        
-        # Verify ordering is sequential and consistent within sidebar region
-        if len(sidebar_orderings) > 1:
-            # Check that orderings are increasing
-            for i in range(1, len(sidebar_orderings)):
-                assert sidebar_orderings[i] > sidebar_orderings[i-1], f"Ordering should be sequential: {sidebar_orderings}"
-            print(f"✓ Verified ordering is sequential in sidebar: {sidebar_orderings}")
-    
-    # If sections were cloned, verify their ordering relative to other content
-    if sidebar_section_count > 0:
-        sidebar_sections = list(article.testapp_section_set.filter(region="sidebar").order_by("ordering"))
-        sidebar_section_orderings = [s.ordering for s in sidebar_sections]
-        print(f"Sidebar section orderings: {sidebar_section_orderings}")
-        
-        # If we have both sections and rich text in sidebar, verify their relative ordering
-        if sidebar_richtext_count > 0 and sidebar_section_count > 0:
-            all_sidebar_items = []
-            
-            # Collect all items with their orderings
-            for rt in sidebar_richtext:
-                all_sidebar_items.append(("richtext", rt.text[:30], rt.ordering))
-            for s in sidebar_sections:
-                all_sidebar_items.append(("section", "Section", s.ordering))
-            
-            # Sort by ordering
-            all_sidebar_items.sort(key=lambda x: x[2])
-            print(f"✓ All sidebar items in order: {all_sidebar_items}")
-            
-            # Verify the ordering makes sense (should reflect the original main region structure)
-            main_all_items = []
-            for rt in main_richtext:
-                main_all_items.append(("richtext", rt.text[:30], rt.ordering))
-            main_sections = list(article.testapp_section_set.filter(region="main").order_by("ordering"))
-            for s in main_sections:
-                main_all_items.append(("section", "Section", s.ordering))
-            
-            main_all_items.sort(key=lambda x: x[2])
-            print(f"Main items for comparison: {main_all_items}")
-            
-            # The relative order of item types should be preserved
-            sidebar_types = [item[0] for item in all_sidebar_items]
-            main_types = [item[0] for item in main_all_items]
-            
-            # If we cloned the same structure, the sequence of types should match
-            if len(sidebar_types) == len(main_types):
-                assert sidebar_types == main_types, f"Item type sequence should match: sidebar={sidebar_types}, main={main_types}"
-                print("✓ Verified: Cloned content maintains same structural order as original")
+    assert main_richtext_count == 2, (
+        f"Main region should have 2 rich text items, got {main_richtext_count}"
+    )
+    assert main_section_count == 1, (
+        f"Main region should have 1 section, got {main_section_count}"
+    )
+
+    # Strict verification: we MUST have cloned content in sidebar
+    assert sidebar_richtext_count >= 2, (
+        f"Expected at least 2 cloned rich text items in sidebar, got {sidebar_richtext_count}"
+    )
+    assert sidebar_section_count >= 1, (
+        f"Expected at least 1 cloned section in sidebar, got {sidebar_section_count}"
+    )
+
+    total_sidebar_items = (
+        sidebar_richtext_count + sidebar_section_count + sidebar_download_count
+    )
+    assert total_sidebar_items >= 3, (
+        f"Expected at least 3 cloned items in sidebar, but found {total_sidebar_items} items"
+    )
+
+    # Verify cloned content and ordering (no conditional - this MUST work)
+    sidebar_richtext = list(
+        article.testapp_richtext_set.filter(region="sidebar").order_by("ordering")
+    )
+    main_richtext = list(
+        article.testapp_richtext_set.filter(region="main").order_by("ordering")
+    )
+
+    sidebar_texts = [rt.text for rt in sidebar_richtext]
+    main_texts = [rt.text for rt in main_richtext]
+    sidebar_orderings = [rt.ordering for rt in sidebar_richtext]
+    main_orderings = [rt.ordering for rt in main_richtext]
+
+    print(f"Main texts with ordering: {list(zip(main_texts, main_orderings))}")
+    print(f"Sidebar texts with ordering: {list(zip(sidebar_texts, sidebar_orderings))}")
+
+    # Verify cloned content matches main content exactly
+    expected_texts = [
+        "<p>First rich text in main</p>",
+        "<p>Second rich text in main</p>",
+    ]
+    for expected_text in expected_texts:
+        assert expected_text in sidebar_texts, (
+            f"Expected cloned text '{expected_text}' not found in sidebar: {sidebar_texts}"
+        )
+
+    # Verify ordering is sequential and consistent within sidebar region
+    assert len(sidebar_orderings) >= 2, (
+        f"Should have at least 2 cloned items to verify ordering: {sidebar_orderings}"
+    )
+    # Check that orderings are increasing
+    for i in range(1, len(sidebar_orderings)):
+        assert sidebar_orderings[i] > sidebar_orderings[i - 1], (
+            f"Ordering should be sequential: {sidebar_orderings}"
+        )
+    print(f"✓ Verified ordering is sequential in sidebar: {sidebar_orderings}")
+
+    # Verify sections were cloned and their ordering relative to other content
+    sidebar_sections = list(
+        article.testapp_section_set.filter(region="sidebar").order_by("ordering")
+    )
+    sidebar_section_orderings = [s.ordering for s in sidebar_sections]
+    print(f"Sidebar section orderings: {sidebar_section_orderings}")
+
+    # Verify structural ordering between sections and rich text
+    all_sidebar_items = []
+
+    # Collect all items with their orderings
+    for rt in sidebar_richtext:
+        all_sidebar_items.append(("richtext", rt.text[:30], rt.ordering))
+    for s in sidebar_sections:
+        all_sidebar_items.append(("section", "Section", s.ordering))
+
+    # Sort by ordering
+    all_sidebar_items.sort(key=lambda x: x[2])
+    print(f"All sidebar items in order: {all_sidebar_items}")
+
+    # Verify the ordering matches the original main region structure
+    main_all_items = []
+    for rt in main_richtext:
+        main_all_items.append(("richtext", rt.text[:30], rt.ordering))
+    main_sections = list(
+        article.testapp_section_set.filter(region="main").order_by("ordering")
+    )
+    for s in main_sections:
+        main_all_items.append(("section", "Section", s.ordering))
+
+    main_all_items.sort(key=lambda x: x[2])
+    print(f"Main items for comparison: {main_all_items}")
+
+    # The sequence of item types MUST match (strict verification)
+    sidebar_types = [item[0] for item in all_sidebar_items]
+    main_types = [item[0] for item in main_all_items]
+
+    assert len(sidebar_types) == len(main_types), (
+        f"Cloned structure should have same number of items: sidebar={len(sidebar_types)}, main={len(main_types)}"
+    )
+    assert sidebar_types == main_types, (
+        f"Item type sequence must match exactly: sidebar={sidebar_types}, main={main_types}"
+    )
+    print("✓ Verified: Cloned content maintains same structural order as original")
 
     print("Clone functionality test completed successfully")
 
@@ -710,7 +751,7 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
 
     # Create article with content in both main and sidebar regions
     article = Article.objects.create(title="Clone Insert Test Article")
-    
+
     # Add content to main region
     article.testapp_richtext_set.create(
         text="<p>Main content 1</p>", region="main", ordering=10
@@ -718,7 +759,7 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     article.testapp_richtext_set.create(
         text="<p>Main content 2</p>", region="main", ordering=20
     )
-    
+
     # Add existing content to sidebar region with gaps for insertion
     article.testapp_richtext_set.create(
         text="<p>Sidebar BEFORE cloned content</p>", region="sidebar", ordering=100
@@ -742,15 +783,19 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     insert_targets = page.locator(".order-machine-insert-target")
     insert_target_count = insert_targets.count()
     print(f"Found {insert_target_count} insert targets")
-    
+
     # Click on the middle insert target (between existing content)
     # With 9 insert targets, we want to click somewhere in the middle to position between existing sidebar items
     if insert_target_count >= 2:
         # Try to click on a middle insert target, using force to handle visibility issues
-        target_index = min(insert_target_count // 2, insert_target_count - 2)  # Safe middle position
+        target_index = min(
+            insert_target_count // 2, insert_target_count - 2
+        )  # Safe middle position
         middle_target = insert_targets.nth(target_index)
         middle_target.click(force=True)
-        print(f"Clicked insert target {target_index + 1} out of {insert_target_count} to position between existing content")
+        print(
+            f"Clicked insert target {target_index + 1} out of {insert_target_count} to position between existing content"
+        )
     else:
         # Fallback: click the first available insert target
         insert_targets.first.click(force=True)
@@ -769,7 +814,7 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     richtext_checkboxes = page.locator("input[name='_clone'][value*='richtext']")
     richtext_count = richtext_checkboxes.count()
     print(f"Found {richtext_count} rich text checkboxes in main region")
-    
+
     if richtext_count > 0:
         # Select the first rich text item to clone
         richtext_checkboxes.first.click(force=True)
@@ -785,56 +830,90 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     page.wait_for_selector(".success", timeout=10000)
 
     # Verify the ordering in the database
-    sidebar_items = list(article.testapp_richtext_set.filter(region="sidebar").order_by("ordering"))
-    
+    sidebar_items = list(
+        article.testapp_richtext_set.filter(region="sidebar").order_by("ordering")
+    )
+
     sidebar_texts_with_ordering = [(item.text, item.ordering) for item in sidebar_items]
     print(f"Sidebar content after cloning: {sidebar_texts_with_ordering}")
-    
+
     # Expected structure: BEFORE item (100), cloned item(s) (~200), AFTER item (300)
-    assert len(sidebar_items) >= 3, f"Expected at least 3 items in sidebar after cloning, got {len(sidebar_items)}"
-    
+    assert len(sidebar_items) == 3, (
+        f"Expected exactly 3 items in sidebar after cloning (2 existing + 1 cloned), got {len(sidebar_items)}"
+    )
+
     # Find items by their distinctive text content
     before_item = next((item for item in sidebar_items if "BEFORE" in item.text), None)
     after_item = next((item for item in sidebar_items if "AFTER" in item.text), None)
     cloned_items = [item for item in sidebar_items if "Main content" in item.text]
-    
+
     assert before_item, "Should have 'BEFORE' item in sidebar"
     assert after_item, "Should have 'AFTER' item in sidebar"
-    assert len(cloned_items) > 0, "Should have cloned content from main region"
-    
+    assert len(cloned_items) == 1, (
+        f"Should have exactly 1 cloned item from main region, got {len(cloned_items)}"
+    )
+
+    # Verify the cloned content matches what we expected
+    cloned_item = cloned_items[0]
+    assert cloned_item.text == "<p>Main content 1</p>", (
+        f"Cloned content should be 'Main content 1', got '{cloned_item.text}'"
+    )
+
     print(f"BEFORE item ordering: {before_item.ordering}")
     print(f"Cloned items ordering: {[item.ordering for item in cloned_items]}")
     print(f"AFTER item ordering: {after_item.ordering}")
-    
+
     # Verify ordering relationships
     for cloned_item in cloned_items:
-        assert before_item.ordering < cloned_item.ordering, f"Cloned item ({cloned_item.ordering}) should come after BEFORE item ({before_item.ordering})"
-        assert cloned_item.ordering < after_item.ordering, f"Cloned item ({cloned_item.ordering}) should come before AFTER item ({after_item.ordering})"
-    
+        assert before_item.ordering < cloned_item.ordering, (
+            f"Cloned item ({cloned_item.ordering}) should come after BEFORE item ({before_item.ordering})"
+        )
+        assert cloned_item.ordering < after_item.ordering, (
+            f"Cloned item ({cloned_item.ordering}) should come before AFTER item ({after_item.ordering})"
+        )
+
     # Verify cloned items are kept together (gap between them should be small)
     if len(cloned_items) > 1:
         cloned_orderings = sorted([item.ordering for item in cloned_items])
-        max_gap_between_cloned = max(cloned_orderings[i+1] - cloned_orderings[i] for i in range(len(cloned_orderings)-1))
-        
+        max_gap_between_cloned = max(
+            cloned_orderings[i + 1] - cloned_orderings[i]
+            for i in range(len(cloned_orderings) - 1)
+        )
+
         # Gap between existing items
-        gap_before_cloned = min(item.ordering for item in cloned_items) - before_item.ordering
-        gap_after_cloned = after_item.ordering - max(item.ordering for item in cloned_items)
-        
+        gap_before_cloned = (
+            min(item.ordering for item in cloned_items) - before_item.ordering
+        )
+        gap_after_cloned = after_item.ordering - max(
+            item.ordering for item in cloned_items
+        )
+
         print(f"Gap before cloned content: {gap_before_cloned}")
         print(f"Maximum gap between cloned items: {max_gap_between_cloned}")
         print(f"Gap after cloned content: {gap_after_cloned}")
-        
+
         # Cloned items should be closer to each other than to existing content
-        assert max_gap_between_cloned < min(gap_before_cloned, gap_after_cloned), \
+        assert max_gap_between_cloned < min(gap_before_cloned, gap_after_cloned), (
             f"Cloned items should be grouped together: max internal gap ({max_gap_between_cloned}) should be less than external gaps ({gap_before_cloned}, {gap_after_cloned})"
-        
-        print("✓ Verified: Cloned content is properly grouped together between existing items")
-    
+        )
+
+        print(
+            "✓ Verified: Cloned content is properly grouped together between existing items"
+        )
+
     # Verify the original content in main region is unchanged
-    main_items = list(article.testapp_richtext_set.filter(region="main").order_by("ordering"))
-    assert len(main_items) == 2, f"Main region should still have 2 items, got {len(main_items)}"
-    assert main_items[0].text == "<p>Main content 1</p>", "First main item should be unchanged"
-    assert main_items[1].text == "<p>Main content 2</p>", "Second main item should be unchanged"
-    
+    main_items = list(
+        article.testapp_richtext_set.filter(region="main").order_by("ordering")
+    )
+    assert len(main_items) == 2, (
+        f"Main region should still have 2 items, got {len(main_items)}"
+    )
+    assert main_items[0].text == "<p>Main content 1</p>", (
+        "First main item should be unchanged"
+    )
+    assert main_items[1].text == "<p>Main content 2</p>", (
+        "Second main item should be unchanged"
+    )
+
     print("✓ Verified: Original main content unchanged")
     print("✓ Clone insert between existing content test completed successfully")
