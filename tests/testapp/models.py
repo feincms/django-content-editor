@@ -45,7 +45,7 @@ class Download(ArticlePlugin):
         verbose_name_plural = "downloads"
 
     def __str__(self):
-        return self.file.name
+        return self.file
 
 
 class Section(ArticlePlugin):
