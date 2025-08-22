@@ -219,7 +219,7 @@ class ContentEditor(RefinedModelAdmin):
                 "selectMultiple": gettext(
                     "Use Ctrl-Click to select and move multiple items."
                 ),
-                "clone": gettext("Clone plugins from another region"),
+                "clone": gettext("Clone from region"),
                 "selectAll": gettext("Select all"),
             },
         }
@@ -256,7 +256,10 @@ class ContentEditor(RefinedModelAdmin):
 
         clone_form = CloneForm(request.POST)
         if clone_form.is_valid():
-            clone_form.process()
+            count = clone_form.process()
+            self.message_user(
+                request, gettext("Cloning {} plugins succeeded.").format(count)
+            )
         else:
             self.message_user(
                 request, gettext("Cloning plugins failed: {}").format(form.errors)
@@ -295,12 +298,18 @@ class CloneForm(forms.Form):
         ordering = self.cleaned_data.get("_clone_ordering") or 10
         region = self.cleaned_data["_clone_region"]
 
+        count = 0
+
         for instance in self.cleaned_data["_clone_instances"]:
             instance.pk = None
             instance.ordering = ordering
             instance.region = region
             instance.save(force_insert=True)
             ordering += 10
+
+            count += 1
+
+        return count
 
 
 def allow_regions(regions):

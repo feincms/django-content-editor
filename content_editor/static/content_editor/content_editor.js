@@ -522,14 +522,15 @@
     // Hide not allowed plugin buttons
     // If buttons only checks this buttons, else checks all
     function updatePluginButtonsVisibility() {
-      const buttons = qsa(".plugin-buttons .plugin-button[data-plugin-prefix]")
+      const buttons = qsa(".plugin-buttons .plugin-button")
       let visible = 0
 
       for (const button of buttons) {
         const plugin = button.dataset.pluginPrefix
         const isVisible =
-          pluginInCurrentRegion(plugin) &&
-          !/^_unknown_/.test(ContentEditor.currentRegion)
+          !plugin ||
+          (pluginInCurrentRegion(plugin) &&
+            !/^_unknown_/.test(ContentEditor.currentRegion))
         button.classList.toggle("content-editor-hide", !isVisible)
         visible += isVisible ? 1 : 0
       }
@@ -1062,7 +1063,7 @@
       button.addEventListener("click", () => {
         hidePluginButtons()
 
-        const dialog = crel("dialog")
+        const dialog = crel("dialog", { className: "clone" })
         dialog.append(
           crel("h2", {
             textContent: ContentEditor.messages.clone,
@@ -1084,11 +1085,15 @@
             continue
           }
 
-          const fieldset = crel("details", {
-            className: "module",
-            name: "clone-region",
-          })
-          fieldset.append(crel("summary", { textContent: region.title }))
+          const contents = crel("div")
+          const fieldset = crel(
+            "details",
+            {
+              className: "module",
+              name: "clone-region",
+            },
+            [crel("summary", { textContent: region.title }), contents],
+          )
 
           const checkbox = crel("input", {
             type: "checkbox",
@@ -1099,11 +1104,11 @@
             }
           })
 
-          fieldset.append(
+          contents.append(
             crel("label", {}, [checkbox, ContentEditor.messages.selectAll]),
           )
 
-          const stack = [crel("ul")]
+          const stack = [crel("ul", { "data-indent": 0 })]
           let indent = 0,
             nextIndent
 
@@ -1140,7 +1145,7 @@
             stack[indent].append(crel("li", {}, [label]))
 
             while (indent < nextIndent) {
-              const list = crel("ul")
+              const list = crel("ul", { "data-indent": indent + 1 })
               stack[indent].children[stack[indent].children.length - 1].append(
                 list,
               )
@@ -1152,7 +1157,7 @@
             indent = nextIndent
           }
 
-          fieldset.append(stack[0])
+          contents.append(stack[0])
           fieldsets.push(fieldset)
         }
 
@@ -1185,7 +1190,7 @@
 
         const cancelButton = crel("button", {
           className: "button",
-          textContent: "Cancel",
+          textContent: window.gettext("Cancel"),
         })
         cancelButton.addEventListener("click", () => {
           dialog.close()

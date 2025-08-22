@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-09 16:07+0200\n"
+"POT-Creation-Date: 2025-08-22 10:14+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/feincms/language/"
@@ -18,64 +18,68 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:151
+#: admin.py:209
 msgid "Add new item"
 msgstr "Ajouter un autre"
 
-#: admin.py:152
+#: admin.py:210
 #, fuzzy
 #| msgid "max. items"
 msgid "No items."
 msgstr "max. éléments"
 
-#: admin.py:153
+#: admin.py:211
 msgid "No items. Region may inherit content."
 msgstr ""
 
-#: admin.py:154
+#: admin.py:212
 msgid "No regions available."
 msgstr ""
 
-#: admin.py:155
+#: admin.py:213
 msgid "No plugins allowed in this region."
 msgstr ""
 
-#: admin.py:156
+#: admin.py:214
 #, fuzzy
 #| msgid "max. items"
 msgid "New item"
 msgstr "max. éléments"
 
-#: admin.py:157
+#: admin.py:215
 msgid "Unknown region"
 msgstr ""
 
-#: admin.py:158
+#: admin.py:216
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Collapse all items"
 msgstr "Réduire l'arbre"
 
-#: admin.py:159
+#: admin.py:217
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Uncollapse all items"
 msgstr "Réduire l'arbre"
 
-#: admin.py:160
-msgid "Toggle sidebar"
-msgstr ""
-
-#: admin.py:161
+#: admin.py:218
 msgid "marked for deletion"
 msgstr ""
 
-#: admin.py:163
+#: admin.py:220
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr ""
 
-#: admin.py:166
-msgid "Doubleclicking inserts an item at the end."
+#: admin.py:222
+msgid "Clone from region"
+msgstr ""
+
+#: admin.py:223
+msgid "Select all"
+msgstr ""
+
+#: admin.py:262
+msgid "Cloning plugins failed: {}"
 msgstr ""
 
 #, fuzzy
@@ -200,8 +204,8 @@ msgstr ""
 #~ msgstr "lien du vidéo"
 
 #~ msgid ""
-#~ "This should be a link to a youtube or vimeo video, i.e.: http://www."
-#~ "youtube.com/watch?v=zmj1rpzDRZ0"
+#~ "This should be a link to a youtube or vimeo video, i.e.: http://"
+#~ "www.youtube.com/watch?v=zmj1rpzDRZ0"
 #~ msgstr ""
 #~ "Cela devrait être un lien vers une vidéo YouTube ou Vimeo, à savoir: "
 #~ "http://www.youtube.com/watch?v=zmj1rpzDRZ0"
