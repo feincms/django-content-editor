@@ -1167,26 +1167,6 @@
         dialog.append(...fieldsets)
 
         const saveButton = qs("input[name=_continue]").cloneNode(true)
-        saveButton.addEventListener("click", () => {
-          // At least one plugin to clone and insertion in the middle?
-          let checked
-          if (
-            ContentEditor._insertBefore &&
-            (checked = qsa("input[type=checkbox]:checked", dialog).length)
-          ) {
-            const inlines = findInlinesInOrder()
-
-            let order = 0
-
-            for (const inline of inlines) {
-              if (inline === ContentEditor._insertBefore) {
-                order += checked
-              }
-
-              qs(".order-machine-ordering", inline).value = 10 * ++order
-            }
-          }
-        })
 
         const cancelButton = crel("button", {
           className: "button",
@@ -1217,7 +1197,29 @@
           crel("div", { className: "submit-row" }, [saveButton, cancelButton]),
         )
 
-        qs("#content-main form").append(dialog)
+        const bumpOrdering = () => {
+          if (!ContentEditor._insertBefore) return
+
+          const checked = qsa("input[type=checkbox]:checked", dialog).length
+          const inlines = findInlinesInOrder()
+          let order = 0
+
+          for (const inline of inlines) {
+            if (inline === ContentEditor._insertBefore) {
+              order += checked
+            }
+
+            qs(".order-machine-ordering", inline).value = 10 * ++order
+          }
+        }
+
+        const form = qs("#content-main form")
+        form.addEventListener("submit", bumpOrdering)
+        dialog.addEventListener("close", () => {
+          form.removeEventListener("submit", bumpOrdering)
+        })
+
+        form.append(dialog)
         dialog.showModal()
       })
     }
