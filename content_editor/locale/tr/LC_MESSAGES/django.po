@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-22 10:14+0200\n"
+"POT-Creation-Date: 2025-08-22 10:49+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/feincms/language/"
@@ -80,7 +80,11 @@ msgstr ""
 msgid "Select all"
 msgstr ""
 
-#: admin.py:262
+#: admin.py:261
+msgid "Cloning {} plugins succeeded."
+msgstr ""
+
+#: admin.py:265
 msgid "Cloning plugins failed: {}"
 msgstr ""
 
