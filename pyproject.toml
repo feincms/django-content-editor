@@ -69,8 +69,6 @@ lint.extend-select = [
   "B",
   # flake8-comprehensions
   "C4",
-  # mmcabe
-  "C90",
   # flake8-django
   "DJ",
   "E",
