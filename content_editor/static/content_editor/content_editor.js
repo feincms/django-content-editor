@@ -1224,7 +1224,9 @@
       })
     }
 
-    addCloningButton()
+    if (ContentEditor.declaredRegions.length > 1) {
+      addCloningButton()
+    }
 
     $(document).trigger("content-editor:ready")
   })
