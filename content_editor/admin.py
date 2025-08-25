@@ -255,16 +255,17 @@ class ContentEditor(RefinedModelAdmin):
     def save_related(self, request, form, formsets, change):
         super().save_related(request, form, formsets, change)
 
-        clone_form = CloneForm(request.POST)
-        if clone_form.is_valid():
-            count = clone_form.process()
-            self.message_user(
-                request, gettext("Cloning {} plugins succeeded.").format(count)
-            )
-        else:
-            self.message_user(
-                request, gettext("Cloning plugins failed: {}").format(form.errors)
-            )
+        if request.POST.getlist("_clone"):
+            clone_form = CloneForm(request.POST)
+            if clone_form.is_valid():
+                count = clone_form.process()
+                self.message_user(
+                    request, gettext("Cloning {} plugins succeeded.").format(count)
+                )
+            else:
+                self.message_user(
+                    request, gettext("Cloning plugins failed: {}").format(form.errors)
+                )
 
 
 class CloneForm(forms.Form):
