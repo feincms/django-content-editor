@@ -266,7 +266,7 @@ class ContentEditor(RefinedModelAdmin):
             else:
                 self.message_user(
                     request,
-                    gettext("Cloning plugins failed: {}").format(form.errors),
+                    gettext("Cloning plugins failed: {}").format(clone_form.errors),
                     level=messages.ERROR,
                 )
 

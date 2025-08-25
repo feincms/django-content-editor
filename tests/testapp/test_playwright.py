@@ -1548,3 +1548,158 @@ def test_clone_backend_logic():
 
     print("✓ Backend cloning test completed successfully")
     print(f"✓ Cloned content with orderings: {sidebar_orderings}")
+
+
+@pytest.mark.django_db
+def test_clone_backend_validation_error():
+    """Test that validation errors in the CloneForm are properly displayed to the user."""
+    # Create test user and login
+    User.objects.create_superuser("admin", "admin@test.com", "password")
+    client = Client()
+    client.login(username="admin", password="password")
+
+    # Create article with content in main region
+    article = Article.objects.create(title="Clone Validation Test Article")
+
+    # Add some content to clone
+    richtext1 = article.testapp_richtext_set.create(
+        text="<p>Test content to clone</p>", region="main", ordering=10
+    )
+
+    # Get the admin change URL
+    admin_url = reverse("admin:testapp_article_change", args=[article.pk])
+
+    # First, GET the form to get proper formset data
+    response = client.get(admin_url)
+    assert response.status_code == 200
+
+    # Extract formset management data from the form
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Find all the formset management form fields
+    management_fields = {}
+    for input_field in soup.find_all("input"):
+        name = input_field.get("name", "")
+        value = input_field.get("value", "")
+        if name and (
+            "TOTAL_FORMS" in name
+            or "INITIAL_FORMS" in name
+            or "MIN_NUM_FORMS" in name
+            or "MAX_NUM_FORMS" in name
+        ):
+            management_fields[name] = value
+        elif name == "csrfmiddlewaretoken":
+            csrf_token = value
+
+    # Add existing inline data (to preserve existing content)
+    inline_data = {}
+    for input_field in soup.find_all("input"):
+        name = input_field.get("name", "")
+        value = input_field.get("value", "")
+        if name and (
+            name.startswith("testapp_")
+            and (
+                "-id" in name
+                or "-DELETE" in name
+                or any(
+                    field in name for field in ["text", "file", "ordering", "region"]
+                )
+            )
+        ):
+            inline_data[name] = value
+
+    # Create invalid clone form data - missing required _clone_region field
+    # This should trigger a validation error
+    invalid_form_data = QueryDict(mutable=True)
+    invalid_form_data["title"] = article.title
+    invalid_form_data["csrfmiddlewaretoken"] = csrf_token
+    invalid_form_data["_continue"] = "Save and continue editing"
+
+    # Add management form data
+    for key, value in management_fields.items():
+        invalid_form_data[key] = value
+
+    # Add existing inline data
+    for key, value in inline_data.items():
+        invalid_form_data[key] = value
+
+    # Add clone data but with missing _clone_region (required field)
+    # This should cause CloneForm.is_valid() to return False
+    invalid_form_data.appendlist("_clone", f"testapp.richtext:{richtext1.pk}")
+    # Intentionally omit _clone_region to trigger validation error
+
+    print("Submitting invalid clone form data (missing _clone_region)...")
+
+    # Submit the form with invalid clone data
+    response = client.post(admin_url, invalid_form_data)
+
+    print(f"POST response status: {response.status_code}")
+
+    # Check if we got a redirect (success) or stayed on the same page (error)
+    if response.status_code == 302:
+        print(f"Redirected to: {response['Location']}")
+        # Follow the redirect to check for error messages
+        response = client.get(response["Location"])
+
+    # Parse the response content to look for error messages
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Look for Django messages (both error and success messages)
+    messages_divs = soup.find_all("div", class_="messagelist")
+    error_messages = []
+    success_messages = []
+
+    for messages_div in messages_divs:
+        # Look for error messages specifically
+        error_li = messages_div.find_all("li", class_="error")
+        success_li = messages_div.find_all("li", class_="success")
+
+        for li in error_li:
+            error_messages.append(li.get_text().strip())
+        for li in success_li:
+            success_messages.append(li.get_text().strip())
+
+    # Also look for general message containers that might contain errors
+    if not error_messages:
+        # Try alternative selectors for error messages
+        alt_errors = soup.find_all("li", class_="error")
+        for li in alt_errors:
+            error_messages.append(li.get_text().strip())
+
+    print(f"Error messages found: {error_messages}")
+    print(f"Success messages found: {success_messages}")
+
+    # Verify that we got a cloning validation error message with specific field error details
+    # The error should mention "Cloning plugins failed" and include the missing field error
+    cloning_error_found = False
+    field_error_found = False
+
+    for msg in error_messages:
+        if "Cloning plugins failed" in msg:
+            cloning_error_found = True
+            print(f"✓ Found cloning error message: {msg}")
+
+            # Check if the error message contains details about the missing field
+            if "_clone_region" in msg or "This field is required" in msg:
+                field_error_found = True
+                print(f"✓ Error message includes field validation details: {msg}")
+            break
+
+    # Both conditions must be met for the test to pass
+    assert cloning_error_found, (
+        f"Expected 'Cloning plugins failed' message not found in: {error_messages}"
+    )
+    assert field_error_found, (
+        "Expected field error details (_clone_region or 'This field is required') not found in error message"
+    )
+
+    # Verify that cloning actually failed (no content should be cloned to sidebar)
+    article.refresh_from_db()
+    sidebar_count = article.testapp_richtext_set.filter(region="sidebar").count()
+    assert sidebar_count == 0, (
+        f"Cloning should have failed, but found {sidebar_count} items in sidebar"
+    )
+
+    print("✓ Validation correctly prevented cloning and showed detailed error message")
+
+    print("✓ Clone form validation error test completed")
