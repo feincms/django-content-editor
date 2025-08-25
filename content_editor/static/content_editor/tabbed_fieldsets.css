@@ -4,11 +4,11 @@
   /* We can't simply use display: none. Some admin widgets need to know
    * their dimensions, so we can't have that -- use an alternative way
    * to hide the modules. */
-  visibility: hidden !important;
-  height: 0 !important;
-  border: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
+  visibility: hidden;
+  height: 0;
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* Basic tabbed interface styles */

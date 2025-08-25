@@ -238,7 +238,7 @@ h3[draggable] {
 }
 
 .content-editor-hide {
-  display: none !important;
+  display: none;
 }
 
 /* Used when dragging */
@@ -483,7 +483,7 @@ dialog.clone .submit-row {
   .card-body
   div[id*="cke_id_"] {
   margin-left: 0;
-  width: 100% !important;
+  width: 100%;
 }
 
 #jazzy-navbar ~ .content-wrapper .order-machine-wrapper .card-header {
