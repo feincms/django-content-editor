@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+
+8.0 (2025-08-25)
+================
+
 - Implemented cloning of plugins between regions.
 - Replaced the plugin expanding and collapsing animation with a version for
   modern browsers.
