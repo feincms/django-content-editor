@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from django import forms
 from django.apps import apps
+from django.contrib import messages
 from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
@@ -264,7 +265,9 @@ class ContentEditor(RefinedModelAdmin):
                 )
             else:
                 self.message_user(
-                    request, gettext("Cloning plugins failed: {}").format(form.errors)
+                    request,
+                    gettext("Cloning plugins failed: {}").format(form.errors),
+                    level=messages.ERROR,
                 )
 
 
