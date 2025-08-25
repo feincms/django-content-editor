@@ -1161,7 +1161,11 @@
           fieldsets.push(fieldset)
         }
 
-        if (fieldsets.length === 1) {
+        if (!fieldsets.length) {
+          dialog.append(
+            crel("p", { textContent: ContentEditor.messages.noClone }),
+          )
+        } else if (fieldsets.length === 1) {
           fieldsets[0].open = true
         }
         dialog.append(...fieldsets)

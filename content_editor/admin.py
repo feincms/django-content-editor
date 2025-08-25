@@ -220,6 +220,7 @@ class ContentEditor(RefinedModelAdmin):
                     "Use Ctrl-Click to select and move multiple items."
                 ),
                 "clone": gettext("Clone from region"),
+                "noClone": gettext("Didn't find anything to clone"),
                 "selectAll": gettext("Select all"),
             },
         }

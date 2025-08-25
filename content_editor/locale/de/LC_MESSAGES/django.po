@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-22 10:49+0200\n"
+"POT-Creation-Date: 2025-08-25 09:56+0200\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/feincms/language/"
@@ -70,14 +70,18 @@ msgid "Clone from region"
 msgstr "Von Region klonen"
 
 #: admin.py:223
+msgid "Didn't find anything to clone"
+msgstr "Konnte nichts finden zum Klonen"
+
+#: admin.py:224
 msgid "Select all"
 msgstr "Alle auswählen"
 
-#: admin.py:261
+#: admin.py:262
 msgid "Cloning {} plugins succeeded."
 msgstr "{} Elemente erfolgreich geklont."
 
-#: admin.py:265
+#: admin.py:266
 msgid "Cloning plugins failed: {}"
 msgstr "Fehler beim klonen: {}"
 
