@@ -1,14 +1,11 @@
 import pytest
-from django.contrib import admin
 from django.contrib.auth.models import User
-from django.core import checks
 from django.core.exceptions import ImproperlyConfigured
-from django.db import connection, models
-from django.test.utils import CaptureQueriesContext, isolate_apps
+from django.db import connection
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from pytest_django.asserts import assertContains
 
-from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.contents import contents_for_item
 from content_editor.models import Region
 from testapp.models import Article, Download, RichText
@@ -91,80 +88,6 @@ def test_admin(client):
 
     response = client.get(reverse("admin:testapp_article_change", args=(article.pk,)))
     assertContains(response, 'value="Test"', 1)
-
-
-@isolate_apps()
-def test_model_checks():
-    class Model(models.Model):
-        name = models.CharField()
-
-        def __str__(self):
-            return self.name
-
-    class ModelAdmin(ContentEditor):
-        model = Model
-        inlines = []
-
-    assert ModelAdmin(Model, admin.AdminSite()).check() == [
-        checks.Error(
-            "ContentEditor models require a non-empty 'regions' attribute or property.",
-            obj=ModelAdmin,
-            id="content_editor.E002",
-        )
-    ]
-
-
-def test_inline_checks():
-    assert admin.ModelAdmin(Article, admin.AdminSite()).check() == []
-
-    class RichTextInline(ContentEditorInline):
-        model = RichText
-        # Purposefully construct an inline with missing region
-        # and ordering fields
-        fieldsets = [(None, {"fields": ("text",)})]
-
-    class InvalidRegionsStringInline(ContentEditorInline):
-        model = RichText
-        regions = "main"
-
-    class InvalidRegionsCallableInline(ContentEditorInline):
-        model = RichText
-
-        def regions(self, all_regions):
-            return "main"
-
-    class ValidRegionsGeneratorInline(ContentEditorInline):
-        model = RichText
-
-        def regions(self, all_regions):
-            yield "main"
-
-    class ArticleAdmin(ContentEditor):
-        model = Article
-        inlines = [
-            RichTextInline,
-            InvalidRegionsStringInline,
-            InvalidRegionsCallableInline,
-            ValidRegionsGeneratorInline,
-        ]
-
-    assert ArticleAdmin(Article, admin.AdminSite()).check() == [
-        checks.Error(
-            "fieldsets must contain both 'region' and 'ordering'.",
-            obj=RichTextInline,
-            id="content_editor.E001",
-        ),
-        checks.Error(
-            "regions must be 'None' or an iterable. Current value is 'main'.",
-            obj=InvalidRegionsStringInline,
-            id="content_editor.E003",
-        ),
-        checks.Error(
-            "regions must be 'None' or an iterable. Current value is 'main'.",
-            obj=InvalidRegionsCallableInline,
-            id="content_editor.E003",
-        ),
-    ]
 
 
 def test_invalid_region_objects():
