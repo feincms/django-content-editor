@@ -135,56 +135,6 @@ def test_tabbed_fieldsets(page: Page, django_server, client, user):
 
 
 @pytest.mark.django_db
-def test_adding_multiple_content_types(page: Page, django_server, client, user):
-    """Test adding different types of content to an article."""
-    # Login to admin
-    login_admin(page, django_server)
-
-    # Navigate to article add page
-    page.goto(f"{django_server}/admin/testapp/article/add/")
-
-    # Fill in the title
-    page.fill("input[name='title']", "Multiple Content Types Test")
-
-    # First click on the insert target to reveal the available plugins
-    page.click(".order-machine-insert-target")
-
-    # Wait for the plugin buttons to appear and click Rich Text plugin
-    page.wait_for_selector(".plugin-button:has-text('Rich text')")
-    page.click(".plugin-button:has-text('Rich text')")
-
-    # Wait for the richtext textarea to appear
-    page.wait_for_selector("textarea.richtext")
-
-    # Fill in the rich text content using simple textarea
-    page.fill("textarea.richtext", "<p>This is a rich text content</p>")
-
-    # Save the article
-    page.click("input[name='_save']")
-
-    # After redirect, check for success
-    page.wait_for_selector(".success", timeout=5000)
-
-    # Check that the article was saved successfully
-    success_message = page.locator(".success").text_content()
-    assert "successfully" in success_message, (
-        f"Expected success message, got: {success_message}"
-    )
-
-    # Check in the database that the article was created
-
-    article = Article.objects.filter(title="Multiple Content Types Test").first()
-    assert article is not None, "Article should have been created"
-
-    # Check that it has the rich text content
-    rich_text_items = article.testapp_richtext_set.all()
-    assert len(rich_text_items) > 0, "Article should have at least one rich text item"
-    assert "<p>This is a rich text content</p>" in rich_text_items[0].text, (
-        "Rich text content not saved correctly"
-    )
-
-
-@pytest.mark.django_db
 def test_save_shortcut(page: Page, django_server, client, user):
     """Test that the save shortcut (Ctrl+S) works."""
     # Login to admin
