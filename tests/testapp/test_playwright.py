@@ -915,7 +915,7 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
         text="<p>Sidebar BEFORE cloned content</p>", region="sidebar", ordering=10
     )
     article.testapp_richtext_set.create(
-        text="<p>Sidebar AFTER cloned content</p>", region="sidebar", ordering=200
+        text="<p>Sidebar AFTER cloned content</p>", region="sidebar", ordering=20
     )
 
     # Navigate to the admin change page
@@ -947,40 +947,14 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
             f"Found {sidebar_target_count} insert targets using alternative sidebar selector"
         )
 
-    # Click on the insert target that positions between existing content
-    if sidebar_target_count >= 3:
-        # With 2 sidebar items, there should be 3 insert targets: before, between, after
-        # Click the second insert target (index 1) to position between existing items
-        target_index = 1  # Second target = between existing items
-        between_target = sidebar_insert_targets.nth(target_index)
-        between_target.click(force=True)
-        print(
-            f"Clicked sidebar insert target {target_index + 1} (between target) out of {sidebar_target_count} to position between existing content"
-        )
-    elif sidebar_target_count == 2:
-        # With only 2 targets, we need the second one (index 1) to position between items
-        # The first target (index 0) positions before the first item
-        # The second target (index 1) positions between/after items
-        target_index = 1  # Second target = between or after items
-        between_target = sidebar_insert_targets.nth(target_index)
-        between_target.click(force=True)
-        print(
-            f"Clicked sidebar insert target {target_index + 1} out of {sidebar_target_count} to position between existing content"
-        )
-    elif sidebar_target_count == 1:
-        # Only one insert target in sidebar - use it
-        sidebar_insert_targets.first.click(force=True)
-        print("Clicked the only sidebar insert target")
-    else:
-        # Fallback: use generic selector and hope for the best
-        generic_targets = page.locator(".order-machine-insert-target")
-        if generic_targets.count() > 0:
-            generic_targets.first.click(force=True)
-            print(
-                f"Fallback: clicked first of {generic_targets.count()} generic insert targets"
-            )
-        else:
-            print("No insert targets found - this may cause positioning issues")
+    # With 2 sidebar items, there should be 3 insert targets: before, between, after
+    # Click the second insert target (index 1) to position between existing items
+    target_index = 1  # Second target = between existing items
+    between_target = sidebar_insert_targets.nth(target_index)
+    between_target.click(force=True)
+    print(
+        f"Clicked sidebar insert target {target_index + 1} (between target) out of {sidebar_target_count} to position between existing content"
+    )
 
     # Wait for plugin buttons to appear and click Clone
     page.wait_for_selector(".plugin-button:has-text('Clone')")
@@ -1015,35 +989,7 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     else:
         print("No _clone_ordering field found - will use default ordering of 10")
 
-    page.click("details[name='clone-region'] summary:has-text('main region')")
-    page.wait_for_timeout(1000)
-
-    # Use JavaScript to properly select checkboxes (applying what we learned)
-    print("Using JavaScript to select rich text checkbox for cloning...")
-    selection_result = page.evaluate("""() => {
-        const richtext_checkboxes = document.querySelectorAll('input[name="_clone"][value*="richtext"]');
-        console.log('Found rich text checkboxes:', richtext_checkboxes.length);
-
-        if (richtext_checkboxes.length > 0) {
-            // Select the first rich text checkbox
-            richtext_checkboxes[0].checked = true;
-            console.log('Selected first rich text checkbox:', richtext_checkboxes[0].value);
-
-            // Trigger change event
-            richtext_checkboxes[0].dispatchEvent(new Event('change', { bubbles: true }));
-
-            return {
-                found: richtext_checkboxes.length,
-                selected: richtext_checkboxes[0].value,
-                success: true
-            };
-        }
-
-        return { found: 0, success: false };
-    }""")
-
-    print(f"Checkbox selection result: {selection_result}")
-    assert selection_result["success"], f"Failed to select checkbox: {selection_result}"
+    page.get_by_text("Select all").click()
 
     # Verify selection worked
     final_selection = page.evaluate("""() => {
@@ -1064,7 +1010,6 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     page.wait_for_timeout(1000)
 
     # Save the article
-    page.click("input[name='_save']")
     page.wait_for_selector(".success", timeout=10000)
 
     # Verify the ordering in the database
@@ -1076,101 +1021,15 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     print(f"Sidebar content after cloning: {sidebar_texts_with_ordering}")
 
     # Verify we have the expected number of items after cloning
-    assert len(sidebar_items) == 3, (
-        f"Expected exactly 3 items in sidebar after cloning (2 existing + 1 cloned), got {len(sidebar_items)}"
+    assert len(sidebar_items) == 4, (
+        f"Expected exactly 4 items in sidebar after cloning (2 existing + 2 cloned), got {len(sidebar_items)}"
     )
 
-    # Find items by their distinctive text content
-    before_item = next((item for item in sidebar_items if "BEFORE" in item.text), None)
-    after_item = next((item for item in sidebar_items if "AFTER" in item.text), None)
-    cloned_items = [item for item in sidebar_items if "Main content" in item.text]
-
-    assert before_item, "Should have 'BEFORE' item in sidebar"
-    assert after_item, "Should have 'AFTER' item in sidebar"
-    assert len(cloned_items) == 1, (
-        f"Should have exactly 1 cloned item from main region, got {len(cloned_items)}"
-    )
-
-    # Verify the cloned content matches what we expected
-    cloned_item = cloned_items[0]
-    assert cloned_item.text == "<p>Main content 1</p>", (
-        f"Cloned content should be 'Main content 1', got '{cloned_item.text}'"
-    )
-
-    print(f"BEFORE item ordering: {before_item.ordering}")
-    print(f"Cloned items ordering: {[item.ordering for item in cloned_items]}")
-    print(f"AFTER item ordering: {after_item.ordering}")
-
-    # Verify the cloning worked correctly:
-    # - We should have successfully cloned content from main to sidebar region
-    # - The cloned item should have the ordering value it was assigned during clone operation
-    # Note: After form save, existing items may be renormalized, but cloned items keep their assigned ordering
-
-    ordered_items = sorted(sidebar_items, key=lambda x: x.ordering)
-    ordered_texts = [item.text for item in ordered_items]
-
-    print(
-        f"Final ordering by position: {[(item.text[:20] + '...', item.ordering) for item in ordered_items]}"
-    )
-
-    # The key verification is that cloning worked and content was successfully transferred
-    # The exact positioning depends on how Django's content-editor normalizes ordering during save
-    before_pos = next(i for i, text in enumerate(ordered_texts) if "BEFORE" in text)
-    after_pos = next(i for i, text in enumerate(ordered_texts) if "AFTER" in text)
-    cloned_pos = next(
-        i for i, text in enumerate(ordered_texts) if "Main content" in text
-    )
-
-    print(f"Positions - BEFORE: {before_pos}, CLONED: {cloned_pos}, AFTER: {after_pos}")
-
-    # Verify that cloning succeeded - the exact ordering depends on save-time normalization
-    # The test has successfully demonstrated that:
-    # 1. Content was cloned from main region to sidebar region
-    # 2. The clone operation respects the insert target ordering (ordering=200 as intended)
-    # 3. Existing content gets renormalized during save (BEFORE=10, AFTER=30)
-    # 4. The cloned content retains its target ordering value (200)
-
-    # This behavior is correct: cloned content gets the ordering of its insert position,
-    # while existing content gets renormalized during the form save process.
-    assert cloned_item.ordering == 200, (
-        f"Cloned item should have the target ordering value 200, got {cloned_item.ordering}"
-    )
-
-    # Verify that BEFORE item comes first in the normalized sequence
-    assert before_item.ordering < after_item.ordering, (
-        f"BEFORE item should have lower ordering than AFTER item: {before_item.ordering} vs {after_item.ordering}"
-    )
-
-    print("✓ Verified: Cloned item properly positioned between existing items")
-
-    # Verify cloned items are kept together (gap between them should be small)
-    if len(cloned_items) > 1:
-        cloned_orderings = sorted([item.ordering for item in cloned_items])
-        max_gap_between_cloned = max(
-            cloned_orderings[i + 1] - cloned_orderings[i]
-            for i in range(len(cloned_orderings) - 1)
-        )
-
-        # Gap between existing items
-        gap_before_cloned = (
-            min(item.ordering for item in cloned_items) - before_item.ordering
-        )
-        gap_after_cloned = after_item.ordering - max(
-            item.ordering for item in cloned_items
-        )
-
-        print(f"Gap before cloned content: {gap_before_cloned}")
-        print(f"Maximum gap between cloned items: {max_gap_between_cloned}")
-        print(f"Gap after cloned content: {gap_after_cloned}")
-
-        # Cloned items should be closer to each other than to existing content
-        assert max_gap_between_cloned < min(gap_before_cloned, gap_after_cloned), (
-            f"Cloned items should be grouped together: max internal gap ({max_gap_between_cloned}) should be less than external gaps ({gap_before_cloned}, {gap_after_cloned})"
-        )
-
-        print(
-            "✓ Verified: Cloned content is properly grouped together between existing items"
-        )
+    assert "BEFORE" in sidebar_items[0].text
+    assert "Main content 1" in sidebar_items[1].text
+    assert "Main content 2" in sidebar_items[2].text
+    assert "AFTER" in sidebar_items[3].text
+    assert [item.ordering for item in sidebar_items] == [10, 20, 30, 40]
 
     # Verify the original content in main region is unchanged
     main_items = list(

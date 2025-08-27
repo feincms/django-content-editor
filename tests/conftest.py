@@ -29,20 +29,6 @@ def client(client, user):
     return client
 
 
-@pytest.fixture(scope="session")
-def browser_type_launch_args():
-    """Configure browser launch arguments."""
-    return {
-        "headless": True,
-        "args": [
-            "--no-sandbox",
-            "--disable-gpu",
-            "--disable-dev-shm-usage",
-            "--disable-setuid-sandbox",
-        ],
-    }
-
-
 @pytest.fixture(scope="function")
 def browser_context_args(browser_context_args):
     """Modify browser context arguments for tracing."""
@@ -50,8 +36,6 @@ def browser_context_args(browser_context_args):
         **browser_context_args,
         "record_video_dir": os.path.join(os.getcwd(), "test-results/videos/"),
         "record_har_path": os.path.join(os.getcwd(), "test-results/har/", "test.har"),
-        "ignore_https_errors": True,
-        "java_script_enabled": True,
     }
 
 

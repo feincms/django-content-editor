@@ -1204,13 +1204,13 @@
         const bumpOrdering = () => {
           if (!ContentEditor._insertBefore) return
 
-          const checked = qsa("input[type=checkbox]:checked", dialog).length
+          const gap = qsa("input[type=checkbox]:checked", dialog).length - 1
           const inlines = findInlinesInOrder()
           let order = 0
 
           for (const inline of inlines) {
             if (inline === ContentEditor._insertBefore) {
-              order += checked
+              order += gap
             }
 
             qs(".order-machine-ordering", inline).value = 10 * ++order
