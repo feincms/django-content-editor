@@ -1187,15 +1187,6 @@
             value: ContentEditor.currentRegion,
           }),
         )
-        if (ContentEditor._insertBefore) {
-          dialog.append(
-            crel("input", {
-              type: "hidden",
-              name: "_clone_ordering",
-              value: ContentEditor._insertBefore.style.order,
-            }),
-          )
-        }
 
         dialog.append(
           crel("div", { className: "submit-row" }, [saveButton, cancelButton]),
@@ -1204,16 +1195,27 @@
         const bumpOrdering = () => {
           if (!ContentEditor._insertBefore) return
 
-          const gap = qsa("input[type=checkbox]:checked", dialog).length - 1
+          const checked = qsa("input[type=checkbox]:checked", dialog).length
           const inlines = findInlinesInOrder()
-          let order = 0
+          let order = 10
 
           for (const inline of inlines) {
             if (inline === ContentEditor._insertBefore) {
-              order += gap
+              dialog.append(
+                crel("input", {
+                  type: "hidden",
+                  name: "_clone_ordering",
+                  value: order,
+                }),
+              )
+
+              // Next order is checked-1 since we already have incremented by
+              // 10 after the last item
+              order += (checked - 1) * 10
             }
 
-            qs(".order-machine-ordering", inline).value = 10 * ++order
+            qs(".order-machine-ordering", inline).value = order
+            order += 10
           }
         }
 

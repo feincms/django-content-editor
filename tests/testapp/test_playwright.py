@@ -909,13 +909,13 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
         text="<p>Main content 2</p>", region="main", ordering=20
     )
 
-    # Add existing content to sidebar region with gaps for insertion
-    # Use ordering values that won't be normalized during save
+    # Use ridiculous ordering values which, if not handled properly, will cause
+    # the cloned content to be inserted in an incorrect place.
     article.testapp_richtext_set.create(
-        text="<p>Sidebar BEFORE cloned content</p>", region="sidebar", ordering=10
+        text="<p>Sidebar BEFORE cloned content</p>", region="sidebar", ordering=110
     )
     article.testapp_richtext_set.create(
-        text="<p>Sidebar AFTER cloned content</p>", region="sidebar", ordering=20
+        text="<p>Sidebar AFTER cloned content</p>", region="sidebar", ordering=120
     )
 
     # Navigate to the admin change page
