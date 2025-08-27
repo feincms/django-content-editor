@@ -8,7 +8,16 @@ from content_editor.admin import (
     allow_regions,
     deny_regions,
 )
-from testapp.models import Article, CloseSection, Download, RichText, Section, Thing
+from testapp.models import (
+    Article,
+    CloseSection,
+    Download,
+    Page,
+    PageText,
+    RichText,
+    Section,
+    Thing,
+)
 
 
 class RichTextarea(forms.Textarea):
@@ -51,3 +60,12 @@ admin.site.register(
         CloseSectionInline,
     ],
 )
+
+
+@admin.register(Page)
+class PageAdmin(ContentEditor):
+    fieldsets = [
+        (None, {"fields": ["title"]}),
+        ("Structure", {"fields": ["parent"], "classes": ["tabbed"]}),
+    ]
+    inlines = [ContentEditorInline.create(model=PageText)]

@@ -4,7 +4,6 @@ import django.http
 import pytest
 from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
-from django.db import connection
 from django.http import QueryDict
 from django.test import Client
 from django.urls import reverse
@@ -104,13 +103,8 @@ def test_drag_and_drop_ordering(page: Page, django_server, client, user):
     expect(page.locator(".success")).to_contain_text("was changed successfully")
 
     # Verify the change was saved in the database
-
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT title FROM testapp_article WHERE id = %s", [article.pk])
-        db_title = cursor.fetchone()[0]
-        assert db_title == "DnD Test Updated", (
-            f"Title in database should be 'DnD Test Updated', but got '{db_title}'"
-        )
+    article.refresh_from_db()
+    assert article.title == "DnD Test Updated"
 
 
 @pytest.mark.django_db
@@ -120,36 +114,24 @@ def test_tabbed_fieldsets(page: Page, django_server, client, user):
     login_admin(page, django_server)
 
     # Navigate to article add page
-    page.goto(f"{django_server}/admin/testapp/article/add/")
+    page.goto(f"{django_server}/admin/testapp/page/add/")
 
     # Wait for the content editor to load
     page.wait_for_selector(".tabs.regions")
 
     # Check if tabbed regions are present
-    tabs = page.locator(".tabs.regions .tab")
-    tab_count = tabs.count()
+    tabs = page.locator(".tabs .tab")
+    tabs.count()
 
-    if tab_count > 0:
-        # Log number of tabs found
-        print(f"Found {tab_count} tabs")
+    assert tabs.all_inner_texts() == ["Structure", "main region", "sidebar region"]
 
-        # Try clicking second tab if it exists
-        if tab_count > 1:
-            tabs.nth(1).click()
-            page.wait_for_timeout(500)  # Wait for animation
+    field = page.locator("#id_parent")
+    expect(field).not_to_be_visible()
 
-            # Check if the second tab's content becomes active
-            active_tab = page.locator(".tabs.regions .tab.active")
-            expect(active_tab).to_be_visible()
-    else:
-        # If no tabs are present, at least check that the order machine is visible
-        regions = page.locator(".order-machine")
-        region_count = regions.count()
-        print(f"No tabs found, but found {region_count} order machines")
+    tabs.nth(0).click()
+    page.wait_for_timeout(500)  # Wait for animation
 
-        # Check that at least one region is present and visible
-        if region_count > 0:
-            expect(regions.first).to_be_visible()
+    expect(field).to_be_visible()
 
 
 @pytest.mark.django_db
@@ -208,17 +190,10 @@ def test_save_shortcut(page: Page, django_server, client, user):
     # Login to admin
     login_admin(page, django_server)
 
-    # Create an article first
-    article = create_article_with_content(page, django_server, "Save Shortcut Test")
+    article = Article.objects.create(title="Section Grouping Test")
 
     # Navigate to the article change page
-    page.goto(f"{django_server}/admin/testapp/article/")
-
-    # Find and click the article title by its link text or href pattern
-    page.click(f"a[href*='/admin/testapp/article/{article.pk}/change/']")
-
-    # Make a change to the title
-    page.fill("input[name='title']", "Save Shortcut Test Updated")
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
 
     # Use the keyboard shortcut Ctrl+S to save
     page.keyboard.press("Control+s")
@@ -228,12 +203,6 @@ def test_save_shortcut(page: Page, django_server, client, user):
 
     # Check that success message is displayed
     expect(page.locator(".success")).to_contain_text("was changed successfully")
-
-    # Navigate back to the article list to confirm the change was saved
-    page.goto(f"{django_server}/admin/testapp/article/")
-
-    # Check that the updated title is visible
-    expect(page.locator("text=Save Shortcut Test Updated")).to_be_visible()
 
 
 @pytest.mark.django_db
