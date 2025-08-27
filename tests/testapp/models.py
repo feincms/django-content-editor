@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 
-from content_editor.models import Region, Template, create_plugin_base
+from content_editor.models import Region, create_plugin_base
 
 
 class AbstractRichText(models.Model):
@@ -72,15 +72,10 @@ class Page(models.Model):
         "self", related_name="children", blank=True, null=True, on_delete=models.CASCADE
     )
 
-    template = Template(
-        key="test",
-        title="test",
-        template_name="test.html",
-        regions=[
-            Region(key="main", title="main region"),
-            Region(key="sidebar", title="sidebar region", inherited=True),
-        ],
-    )
+    regions = [
+        Region(key="main", title="main region"),
+        Region(key="sidebar", title="sidebar region", inherited=True),
+    ]
 
     class Meta:
         verbose_name = "page"
@@ -91,10 +86,6 @@ class Page(models.Model):
 
     def get_absolute_url(self):
         return reverse("page_detail", kwargs={"pk": self.pk})
-
-    @property
-    def regions(self):
-        return self.template.regions
 
 
 PagePlugin = create_plugin_base(Page)
