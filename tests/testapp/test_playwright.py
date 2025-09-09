@@ -1029,7 +1029,11 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
     assert "Main content 1" in sidebar_items[1].text
     assert "Main content 2" in sidebar_items[2].text
     assert "AFTER" in sidebar_items[3].text
-    assert [item.ordering for item in sidebar_items] == [10, 20, 30, 40]
+
+    # We don't care about the exact values. Values have to be truthy and distinct though.
+    orderings = [item.ordering for item in sidebar_items]
+    assert all(orderings)
+    assert sorted(set(orderings)) == orderings
 
     # Verify the original content in main region is unchanged
     main_items = list(
@@ -1112,6 +1116,7 @@ def test_clone_backend_logic():
         "_clone_region": "sidebar",  # This specifies which region to clone TO
         # We also need to simulate the existing formset data to avoid losing it
         # This is complex because Django admin uses formsets...
+        "_clone_ordering": 100000,
     }
 
     print("Submitting clone form data...")
@@ -1192,13 +1197,6 @@ def test_clone_backend_logic():
     print(f"Clone region: {form_data.get('_clone_region', 'NOT SET')}")
 
     # Debug: Let's try a simpler form data structure to test the clone form directly
-    simple_form_data = {
-        "csrfmiddlewaretoken": form_data["csrfmiddlewaretoken"],
-        "_continue": "Save and continue editing",
-        "_clone_region": "sidebar",
-        # Note: When sending multiple values with same name, we need to ensure proper format
-    }
-
     # Add the clone items as separate entries (Django handles multiple values this way)
     clone_items = [
         f"testapp.section:{section.pk}",
@@ -1207,13 +1205,13 @@ def test_clone_backend_logic():
         f"testapp.closesection:{closesection.pk}",
     ]
 
-    print(f"Testing CloneForm directly with data: {simple_form_data}")
     print(f"Clone items: {clone_items}")
 
     # Test the CloneForm directly first
     # Create a mock request POST data
     mock_post = django.http.QueryDict(mutable=True)
     mock_post["_clone_region"] = "sidebar"
+    mock_post["_clone_ordering"] = 10000
     for item in clone_items:
         mock_post.appendlist("_clone", item)
 

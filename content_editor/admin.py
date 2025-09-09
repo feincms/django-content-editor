@@ -274,7 +274,7 @@ class ContentEditor(RefinedModelAdmin):
 class CloneForm(forms.Form):
     _clone = forms.CharField()
     _clone_region = forms.CharField()
-    _clone_ordering = forms.IntegerField(required=False)
+    _clone_ordering = forms.IntegerField()
 
     def clean(self):
         data = super().clean()
@@ -300,7 +300,7 @@ class CloneForm(forms.Form):
         return data
 
     def process(self):
-        ordering = self.cleaned_data.get("_clone_ordering") or 10
+        ordering = self.cleaned_data["_clone_ordering"]
         region = self.cleaned_data["_clone_region"]
 
         count = 0

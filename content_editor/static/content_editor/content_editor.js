@@ -1180,12 +1180,18 @@
           dialog.close()
         })
 
+        const orderingField = crel("input", {
+          type: "hidden",
+          name: "_clone_ordering",
+        })
+
         dialog.append(
           crel("input", {
             type: "hidden",
             name: "_clone_region",
             value: ContentEditor.currentRegion,
           }),
+          orderingField,
         )
 
         dialog.append(
@@ -1193,29 +1199,27 @@
         )
 
         const bumpOrdering = () => {
-          if (!ContentEditor._insertBefore) return
-
           const checked = qsa("input[type=checkbox]:checked", dialog).length
           const inlines = findInlinesInOrder()
           let order = 10
+          let orderingFieldSet = false
 
           for (const inline of inlines) {
             if (inline === ContentEditor._insertBefore) {
-              dialog.append(
-                crel("input", {
-                  type: "hidden",
-                  name: "_clone_ordering",
-                  value: order,
-                }),
-              )
+              orderingField.value = order
+              orderingFieldSet = true
 
               // Next order is checked-1 since we already have incremented by
               // 10 after the last item
-              order += (checked - 1) * 10
+              order += checked * 10
             }
 
             qs(".order-machine-ordering", inline).value = order
             order += 10
+          }
+
+          if (!orderingFieldSet) {
+            orderingField.value = order
           }
         }
 
