@@ -193,6 +193,7 @@
       button.dataset.pluginPrefix = plugin.prefix
       button.className = "plugin-button"
       button.title = plugin.title
+      button.role = "button"
       button.addEventListener("click", (e) => {
         e.preventDefault()
         ContentEditor.addContent(plugin.prefix)

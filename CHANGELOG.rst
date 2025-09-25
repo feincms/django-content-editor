@@ -9,6 +9,7 @@ Next version
   cloned content already had the correct size, but the base ordering value was
   incorrect.
 - Fixed the ordering calculation again.
+- Added ``role="button"`` to plugin buttons to avoid link styles.
 
 
 8.0 (2025-08-25)
