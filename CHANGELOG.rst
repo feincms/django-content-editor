@@ -10,6 +10,7 @@ Next version
   incorrect.
 - Fixed the ordering calculation again.
 - Added ``role="button"`` to plugin buttons to avoid link styles.
+- Added testing using Django 6.0 and Python 3.14.
 
 
 8.0 (2025-08-25)
