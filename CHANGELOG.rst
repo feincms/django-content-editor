@@ -11,6 +11,9 @@ Next version
 - Fixed the ordering calculation again.
 - Added ``role="button"`` to plugin buttons to avoid link styles.
 - Added testing using Django 6.0 and Python 3.14.
+- Added a Django system check (with INFO severity) to detect non-abstract base
+  classes when creating plugins. The check does not warn about proxy models
+  since they are expected to inherit from non-abstract base classes.
 
 
 8.0 (2025-08-25)

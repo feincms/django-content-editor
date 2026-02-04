@@ -4,6 +4,7 @@ from django.db import models
 from django.test.utils import isolate_apps
 
 from content_editor.admin import ContentEditor, ContentEditorInline
+from content_editor.checks import check_plugin_bases
 from testapp.models import Article, RichText
 
 
@@ -79,3 +80,21 @@ def test_inline_checks():
             id="content_editor.E003",
         ),
     ]
+
+
+def test_plugin_base_checks():
+    """Test that the check runs and doesn't error on existing models."""
+    # Run the check on all existing models - should not raise an error
+    # and should not produce any infos (all our test models are correctly structured)
+    infos = check_plugin_bases(app_configs=None)
+
+    # None of the existing testapp models should trigger the check
+    # because they all properly use abstract base classes
+    testapp_infos = [
+        info
+        for info in infos
+        if hasattr(info.obj, "_meta") and info.obj._meta.app_label == "testapp"
+    ]
+    assert len(testapp_infos) == 0, (
+        f"Unexpected infos for testapp models: {testapp_infos}"
+    )

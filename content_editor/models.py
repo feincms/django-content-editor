@@ -54,6 +54,25 @@ class Template(Type):
         )
 
 
+class PluginBase(models.Model):
+    """
+    Abstract base class for content editor plugins.
+
+    This class is used by create_plugin_base() to create plugin base classes.
+    It serves as a marker to identify plugin models in system checks.
+    """
+
+    class Meta:
+        abstract = True
+
+    def __str__(self):
+        return f"{self._meta.label}<region={self.region} ordering={self.ordering} pk={self.pk}>"  # pragma: no cover
+
+    @classmethod
+    def get_queryset(cls):
+        return cls.objects.all()
+
+
 def create_plugin_base(content_base):
     """
     Create and return a base class for plugins
@@ -62,7 +81,7 @@ def create_plugin_base(content_base):
     ``region`` and ``ordering`` fields.
     """
 
-    class PluginBase(models.Model):
+    class PluginBaseImpl(PluginBase):
         parent = models.ForeignKey(
             content_base,
             related_name="%(app_label)s_%(class)s_set",
@@ -76,11 +95,4 @@ def create_plugin_base(content_base):
             app_label = content_base._meta.app_label
             ordering = ["ordering"]
 
-        def __str__(self):
-            return f"{self._meta.label}<region={self.region} ordering={self.ordering} pk={self.pk}>"  # pragma: no cover
-
-        @classmethod
-        def get_queryset(cls):
-            return cls.objects.all()
-
-    return PluginBase
+    return PluginBaseImpl
