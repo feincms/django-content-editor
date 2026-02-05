@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+
+8.1 (2026-02-05)
+================
+
 - Fixed the ordering calculation when cloning content: The gap for the new
   cloned content already had the correct size, but the base ordering value was
   incorrect.
