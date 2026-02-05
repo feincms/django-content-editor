@@ -42,6 +42,7 @@ So, ``django-content-editor``.
    quickstart
    admin-classes
    contents
+   checks
    design-decisions
    changelog
 
