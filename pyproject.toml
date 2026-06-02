@@ -54,10 +54,10 @@ optional-dependencies.tests = [
 urls.Homepage = "https://github.com/matthiask/django-content-editor/"
 
 [tool.hatch]
+version.path = "content_editor/__init__.py"
 build.include = [
   "content_editor/",
 ]
-version.path = "content_editor/__init__.py"
 
 [tool.ruff]
 target-version = "py310"
@@ -116,8 +116,8 @@ lint.isort.lines-after-imports = 2
 lint.mccabe.max-complexity = 15
 
 [tool.pytest]
-ini_options.DJANGO_SETTINGS_MODULE = "testapp.settings"
-ini_options.python_files = [ "tests.py", "test_*.py" ]
+ini_options.python_files = [ "test_*.py", "tests.py" ]
 ini_options.addopts = "--strict-markers"
-ini_options.asyncio_mode = "strict"
 ini_options.asyncio_default_fixture_loop_scope = "function"
+ini_options.asyncio_mode = "strict"
+ini_options.DJANGO_SETTINGS_MODULE = "testapp.settings"
