@@ -3,7 +3,7 @@ django-ckeditor
 django-content-editor
 django-cte-forest
 django-versatileimagefield
-html-sanitizer>=1.1.1
+html-sanitizer>=2.6.0
 requests
 psycopg2
 pytz
