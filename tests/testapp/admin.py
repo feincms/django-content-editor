@@ -12,6 +12,8 @@ from testapp.models import (
     Article,
     CloseSection,
     Download,
+    NoRegionArticle,
+    NoRegionText,
     Page,
     PageText,
     RichText,
@@ -69,3 +71,10 @@ class PageAdmin(ContentEditor):
         ("Structure", {"fields": ["parent"], "classes": ["tabbed"]}),
     ]
     inlines = [ContentEditorInline.create(model=PageText)]
+
+
+admin.site.register(
+    NoRegionArticle,
+    ContentEditor,
+    inlines=[ContentEditorInline.create(model=NoRegionText)],
+)

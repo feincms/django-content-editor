@@ -93,3 +93,28 @@ PagePlugin = create_plugin_base(Page)
 
 class PageText(AbstractRichText, PagePlugin):
     pass
+
+
+class NoRegionArticle(models.Model):
+    """Article whose ``regions`` are empty at runtime.
+
+    ``regions`` is a property (not a static attribute) so that the
+    ``content_editor.E002`` check passes (the class-level ``getattr`` returns the
+    truthy property descriptor) while ``instance.regions`` is empty — exercising
+    the code path where no region is available."""
+
+    title = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def regions(self):
+        return []
+
+
+NoRegionArticlePlugin = create_plugin_base(NoRegionArticle)
+
+
+class NoRegionText(AbstractRichText, NoRegionArticlePlugin):
+    pass

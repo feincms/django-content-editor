@@ -107,11 +107,41 @@ The example above uses `django-prose-editor`_ for rich text editing. This editor
 integrates seamlessly with the content editor without requiring any additional
 JavaScript configuration, as it uses Django's built-in ``formset:added`` event.
 
-The content editor also emits two signals: ``content-editor:activate`` and
+The content editor also emits two events: ``content-editor:activate`` and
 ``content-editor:deactivate``. These are useful if you need to integrate
 JavaScript widgets that don't work well with Django's standard formset events.
 Since content blocks can be dynamically added and reordered using drag-and-drop,
 some widgets may need special handling when moved.
+
+These are native ``CustomEvent`` instances dispatched on ``document``. The
+affected row is available as ``event.detail.row`` (a DOM element):
+
+.. code-block:: javascript
+
+    document.addEventListener("content-editor:activate", (event) => {
+        const row = event.detail.row
+        // ... initialize widgets inside `row` ...
+    })
+
+.. note::
+
+   Older versions of django-content-editor triggered these as jQuery events and
+   passed the row as a jQuery-wrapped second handler argument. Because jQuery's
+   ``.on()`` also catches native events, a widget that must support both the old
+   and the new behavior can register with jQuery and branch on
+   ``event.detail``::
+
+       function handleActivate(row) {
+           // `row` is a DOM element
+       }
+
+       django.jQuery(document).on("content-editor:activate", (event, $row) => {
+           if (event.detail && event.detail.row) {
+               handleActivate(event.detail.row)  // new: native event
+           } else {
+               handleActivate($row.get(0))  // old: jQuery event
+           }
+       })
 
 .. note::
 

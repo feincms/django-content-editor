@@ -6,9 +6,23 @@ Next version
 ============
 
 - Dropped support for Django versions older than 4.2. This is a prerequisite
-  for removing the jQuery dependency from the content editor JavaScript, since
-  Django only switched the ``formset:added`` / ``formset:removed`` events to
-  native ``CustomEvent`` instances in Django 4.1.
+  for modernizing the content editor JavaScript, since Django only switched the
+  ``formset:added`` / ``formset:removed`` events to native ``CustomEvent``
+  instances in Django 4.1.
+- Restructured the content editor JavaScript into native ES modules, split by
+  concern (context, regions/rights, order machine, drag and drop, sections,
+  cloning) with a single central initialization. The modules are loaded through
+  an import map so that hashed static file storage keeps working.
+- Removed the jQuery dependency from the content editor JavaScript; it is now
+  vanilla JavaScript. jQuery is only still used as the DOM-ready hook so that
+  initialization runs after Django's admin inline setup.
+- **Backwards incompatible:** the ``content-editor:activate`` and
+  ``content-editor:deactivate`` events are now native ``CustomEvent`` instances.
+  The affected row is passed as ``event.detail.row`` (a DOM element) instead of
+  as a second, jQuery-wrapped handler argument. See the quickstart guide for how
+  to write listeners that support both the old and the new behavior.
+- Fixed a rights handling bug: it was possible to add plugins to an instance
+  that has no regions at all. Adding now requires a valid, non-unknown region.
 
 
 8.1 (2026-02-05)

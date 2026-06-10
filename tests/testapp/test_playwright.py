@@ -1,4 +1,5 @@
 import os
+import re
 
 import django.http
 import pytest
@@ -58,6 +59,37 @@ def test_add_content_to_article(page: Page, django_server, client, user):
 
     # Check that success message is displayed
     expect(page.locator(".success")).to_contain_text("was added successfully")
+
+
+@pytest.mark.django_db
+def test_no_regions_blocks_adding(page: Page, django_server, client, user):
+    """Without any region, plugins must not be addable.
+
+    Regression test: the visibility pass that disables the insert targets used to
+    be gated behind a region tab click, which never happens when there are no
+    regions, so plugins could be added with an undefined region.
+    """
+    login_admin(page, django_server)
+    page.goto(f"{django_server}/admin/testapp/noregionarticle/add/")
+    page.wait_for_selector(".order-machine")
+
+    # No region tabs are rendered.
+    assert page.locator(".tabs.regions h2").count() == 0
+
+    # The insert targets are non-interactive and the "no regions" message shows.
+    expect(page.locator(".order-machine-wrapper")).to_have_class(
+        re.compile(r"\border-machine-hide-insert-targets\b")
+    )
+    expect(
+        page.locator(".machine-message", has_text="No regions available.")
+    ).to_be_visible()
+
+    # Even calling the public addContent API must not add a plugin.
+    total_field = "#id_testapp_noregiontext_set-TOTAL_FORMS"
+    assert page.input_value(total_field) == "0"
+    page.evaluate("() => window.ContentEditor.addContent('testapp_noregiontext_set')")
+    page.wait_for_timeout(200)
+    assert page.input_value(total_field) == "0"
 
 
 @pytest.mark.django_db

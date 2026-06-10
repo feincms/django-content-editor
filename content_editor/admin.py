@@ -10,13 +10,37 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset.js import JSON
+from js_asset.js import JS, JSON, ImportMap, static_lazy
 
 
 __all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
 
 
 _inline_index = itertools.count()
+
+
+# The content editor JavaScript ships as native ES modules. Modules import each
+# other via bare specifiers (``content-editor/…``) which are resolved through an
+# import map to the (possibly hashed) static URLs. This keeps working with
+# ``ManifestStaticFilesStorage``, which does not rewrite ``import`` specifiers
+# inside JavaScript. ``index.js`` is the entry point loaded as ``type=module``.
+_CONTENT_EDITOR_MODULES = (
+    "context",
+    "utils",
+    "regions",
+    "machine",
+    "dragdrop",
+    "sections",
+    "cloning",
+)
+_content_editor_importmap = ImportMap(
+    {
+        "imports": {
+            f"content-editor/{name}": static_lazy(f"content_editor/{name}.js")
+            for name in _CONTENT_EDITOR_MODULES
+        }
+    }
+)
 
 
 class ContentEditorChecks(ModelAdminChecks):
@@ -235,12 +259,17 @@ class ContentEditor(RefinedModelAdmin):
                 ]
             },
             js=[
+                # index.js uses django.jQuery solely as its DOM-ready hook, so
+                # that our initialization runs after Django's admin inline setup
+                # (which also runs on the jQuery ready queue). Declare the
+                # dependency explicitly.
                 "admin/js/jquery.init.js",
+                _content_editor_importmap,
                 JSON(
                     self._content_editor_context(request, context),
                     id="content-editor-context",
                 ),
-                "content_editor/content_editor.js",
+                JS("content_editor/index.js", {"type": "module"}),
             ],
         )
 
