@@ -58,8 +58,8 @@ export function debounce(func, timeout = 300) {
  *
  * The content editor emits ``content-editor:ready``,
  * ``content-editor:activate`` and ``content-editor:deactivate`` as native
- * custom events. ``activate``/``deactivate`` carry the affected row (a DOM
- * element) in ``event.detail.row``.
+ * custom events. ``activate``/``deactivate`` carry the affected inline (a DOM
+ * element) in ``event.detail.inline`` and its plugin ``prefix``.
  */
 export function emit(name, detail = {}) {
   document.dispatchEvent(new CustomEvent(name, { detail, bubbles: true }))

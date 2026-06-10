@@ -163,7 +163,7 @@ export class Machine {
 
     for (const inline of inlines) {
       if (!inline.classList.contains("empty-form")) {
-        emit("content-editor:deactivate", { row: inline })
+        this.emitInline("content-editor:deactivate", inline)
         this.dragdrop.ensureDraggable(inline)
       }
     }
@@ -192,7 +192,7 @@ export class Machine {
 
     for (const inline of inlines) {
       if (!inline.classList.contains("empty-form")) {
-        emit("content-editor:activate", { row: inline })
+        this.emitInline("content-editor:activate", inline)
       }
     }
   }
@@ -223,7 +223,7 @@ export class Machine {
       CE._insertBefore = null
     }
 
-    emit("content-editor:activate", { row })
+    this.emitInline("content-editor:activate", row)
 
     const field = qs("input, select, textarea", row)
     if (field) field.focus()
@@ -248,7 +248,7 @@ export class Machine {
       ".inline-related.last-related:not(.empty-form)",
       this.orderMachine,
     )) {
-      emit("content-editor:deactivate", { row: el })
+      this.emitInline("content-editor:deactivate", el)
     }
 
     // As soon as possible, but not sooner (let the inline.js code run to the end first)
@@ -257,7 +257,7 @@ export class Machine {
         ".inline-related.last-related:not(.empty-form)",
         this.orderMachine,
       )) {
-        emit("content-editor:activate", { row: el })
+        this.emitInline("content-editor:activate", el)
       }
       this.updateSections()
     }, 0)
@@ -272,12 +272,12 @@ export class Machine {
     })
 
     document.addEventListener("content-editor:deactivate", (e) => {
-      for (const fieldset of e.detail.row.querySelectorAll("fieldset")) {
+      for (const fieldset of e.detail.inline.querySelectorAll("fieldset")) {
         fieldset.classList.add("content-editor-invisible")
       }
     })
     document.addEventListener("content-editor:activate", (e) => {
-      for (const fieldset of e.detail.row.querySelectorAll("fieldset")) {
+      for (const fieldset of e.detail.inline.querySelectorAll("fieldset")) {
         fieldset.classList.remove("content-editor-invisible")
       }
     })
@@ -364,5 +364,14 @@ export class Machine {
 
   updateSections() {
     this.sections.update()
+  }
+
+  // Dispatch a public ``content-editor:activate``/``deactivate`` event for an
+  // inline. The detail carries the inline element and its plugin ``prefix`` (the
+  // formset prefix, e.g. ``testapp_richtext_set``); look up the full plugin
+  // config via ``ContentEditor.pluginsByPrefix[prefix]``.
+  emitInline(name, inline) {
+    const plugin = this.regions.getPluginTypeFromId(inline.id)
+    emit(name, { inline, prefix: plugin?.prefix })
   }
 }

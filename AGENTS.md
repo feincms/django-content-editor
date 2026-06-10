@@ -248,8 +248,9 @@ Requires Django >= 4.1 (the project targets >= 4.2), since formset events are
 native `CustomEvent`s only from 4.1 on.
 
 **Events:** `content-editor:ready`, `content-editor:activate`,
-`content-editor:deactivate` are native `CustomEvent`s on `document`; the row is
-passed as `event.detail.row` (a DOM element, not jQuery).
+`content-editor:deactivate` are native `CustomEvent`s on `document`. For
+activate/deactivate, `event.detail.inline` is the inline DOM element and
+`event.detail.prefix` is the plugin's formset prefix.
 
 **Context object:**
 - JavaScript receives configuration via the `#content-editor-context` JSON

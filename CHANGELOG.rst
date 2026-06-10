@@ -18,9 +18,10 @@ Next version
   initialization runs after Django's admin inline setup.
 - **Backwards incompatible:** the ``content-editor:activate`` and
   ``content-editor:deactivate`` events are now native ``CustomEvent`` instances.
-  The affected row is passed as ``event.detail.row`` (a DOM element) instead of
-  as a second, jQuery-wrapped handler argument. See the quickstart guide for how
-  to write listeners that support both the old and the new behavior.
+  The affected inline is passed as ``event.detail.inline`` (a DOM element) and
+  the plugin's formset prefix as ``event.detail.prefix``, instead of the inline
+  being a second, jQuery-wrapped handler argument. See the quickstart guide for
+  how to write listeners that support both the old and the new behavior.
 - Fixed a rights handling bug: it was possible to add plugins to an instance
   that has no regions at all. Adding now requires a valid, non-unknown region.
 

@@ -588,20 +588,22 @@ def test_clone_backend_validation_error():
 
 @pytest.mark.django_db
 def test_native_custom_events(page: Page, django_server, client, user):
-    """``content-editor:ready``/``activate`` are native events; the row is a DOM
-    element passed via ``event.detail.row``."""
+    """``content-editor:ready``/``activate`` are native events; the inline is a
+    DOM element in ``event.detail.inline`` and ``event.detail.prefix`` is the
+    plugin's formset prefix."""
     login_admin(page, django_server)
 
     # Register listeners before the editor initializes.
     page.add_init_script("""
-        window.__ce = { ready: 0, activateRowsAreElements: [] }
+        window.__ce = { ready: 0, activate: [] }
         document.addEventListener("content-editor:ready", () => {
             window.__ce.ready += 1
         })
         document.addEventListener("content-editor:activate", (event) => {
-            window.__ce.activateRowsAreElements.push(
-                event.detail.row instanceof HTMLElement
-            )
+            window.__ce.activate.push({
+                isElement: event.detail.inline instanceof HTMLElement,
+                prefix: event.detail.prefix,
+            })
         })
     """)
 
@@ -613,8 +615,9 @@ def test_native_custom_events(page: Page, django_server, client, user):
 
     result = page.evaluate("() => window.__ce")
     assert result["ready"] >= 1, "content-editor:ready should fire once"
-    assert result["activateRowsAreElements"], "activate should fire for the inline"
-    assert all(result["activateRowsAreElements"]), "row must be a DOM element"
+    assert result["activate"], "activate should fire for the inline"
+    assert all(item["isElement"] for item in result["activate"])
+    assert any(item["prefix"] == "testapp_richtext_set" for item in result["activate"])
 
 
 @pytest.mark.django_db
