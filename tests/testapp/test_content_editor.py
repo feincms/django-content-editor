@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
-from pytest_django.asserts import assertContains
+from pytest_django.asserts import assertContains, assertNotContains
 
 from content_editor.contents import contents_for_item
 from content_editor.models import Region
@@ -83,6 +83,14 @@ def test_admin(client):
         response,
         "&quot;prefix&quot;: &quot;testapp_richtext_set&quot;",
     )
+
+    # The editor loads as ES modules through an import map.
+    assertContains(response, 'type="importmap"')
+    assertContains(response, "content-editor/context")
+    assertContains(response, 'src="/static/content_editor/index.js" type="module"')
+
+    # The pre-refactor monolith is no longer referenced.
+    assertNotContains(response, "content_editor/content_editor.js")
 
     article = Article.objects.create(title="Test")
 

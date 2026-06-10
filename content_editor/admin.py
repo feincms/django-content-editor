@@ -10,7 +10,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset.js import JS, JSON, ImportMap, static_lazy
+from js_asset.js import JS, JSON, importmap, static_lazy
 
 
 __all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
@@ -33,7 +33,7 @@ _CONTENT_EDITOR_MODULES = (
     "sections",
     "cloning",
 )
-_content_editor_importmap = ImportMap(
+importmap.update(
     {
         "imports": {
             f"content-editor/{name}": static_lazy(f"content_editor/{name}.js")
@@ -264,7 +264,7 @@ class ContentEditor(RefinedModelAdmin):
                 # (which also runs on the jQuery ready queue). Declare the
                 # dependency explicitly.
                 "admin/js/jquery.init.js",
-                _content_editor_importmap,
+                importmap,
                 JSON(
                     self._content_editor_context(request, context),
                     id="content-editor-context",

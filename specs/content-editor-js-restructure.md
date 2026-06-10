@@ -1,6 +1,10 @@
 # Spec: Restructuring & modernizing the content editor frontend
 
-Status: **draft / research** — updated as analysis and planning proceed.
+Status: **implemented** — the JS was restructured into ES modules
+(`index.js` + `context`/`utils`/`regions`/`machine`/`dragdrop`/`sections`/
+`cloning`), jQuery removed from all logic (kept only as the ready hook, §7.4),
+the rights bug fixed (§3), and the Playwright suite is green. Remaining notes
+below are kept for context; deviations from the plan are called out inline.
 
 ## 1. Goals
 
@@ -19,9 +23,12 @@ Status: **draft / research** — updated as analysis and planning proceed.
    welcome *for code structure*, and they become trivially unit-testable as a
    side benefit, but integration coverage stays the primary safety net.
 
-5. **Remove the jQuery dependency entirely**, using vanilla DOM. Unblocked by
-   the decision to require Django ≥ 4.2 (see §7); `admin/js/jquery.init.js` is
-   dropped from `Media` and the public custom events go native. See §7.
+5. **Remove jQuery from all editor logic**, using vanilla DOM, and make the
+   public custom events native. Unblocked by requiring Django ≥ 4.2 (see §7).
+   One jQuery touch remains by necessity: `django.jQuery(init)` as the DOM-ready
+   hook, so our init runs after Django's admin inline setup (which also runs on
+   the jQuery ready queue). `admin/js/jquery.init.js` therefore stays declared
+   in `Media`. See §7.
 
 Non-goals: redesigning the UX, changing the Python/admin API, introducing a
 bundler or npm build step.
@@ -198,9 +205,15 @@ low-risk path rather than a new experiment.
 pattern, noted here so we don't regress):
 
 - A document may contain only one effective import map and it must appear
-  **before** the first module script. `js_asset`'s shared `importmap` registry
-  is designed to merge entries from multiple apps into a single block — reuse
-  it rather than emitting an ad-hoc `<script type="importmap">`.
+  **before** the first module script. **Implemented this way:** we update the
+  shared `js_asset.importmap` singleton at import time and include that same
+  singleton object in the `Media` `js` list, so all apps' entries merge into one
+  `<script type="importmap">` (and `Media` dedupes the repeated singleton by
+  identity). Do **not** construct a per-`Media` `ImportMap` instance — `Media`
+  treats two instances as distinct assets and would emit two import maps, only
+  the first of which the browser honors. (A nicer fix would be for `forms.Media`
+  to merge `ImportMap` entries automatically, but that needs a
+  `django-js-asset`/Django change and is out of scope here.)
 - Import-map entries must stay in sync with the set of module files. Generate
   them from a single list in `admin.py` (one `static()` call per module) so
   adding a module is a one-line change.
@@ -520,20 +533,30 @@ already consumed with `.sort`, `.toArray`, `.filter`, iteration). A small
 delegation helper (`on(root, type, selector, handler)`) can absorb the repeated
 `closest`-based pattern.
 
-### 7.4 Outcome
+### 7.4 Outcome (as implemented)
 
-Both gating decisions are resolved (min Django ≥ 4.2; native custom events), so
-the target is **complete jQuery removal**:
+jQuery is removed from all editor logic. The one remaining use is the DOM-ready
+hook:
 
-- `admin/js/jquery.init.js` dropped from `ContentEditor._content_editor_media`.
-- Formset events consumed via
+- **`django.jQuery(init)` is kept as the ready hook** (in `index.js`). This is
+  required for correct ordering: Django's `inlines.js` initializes the formsets
+  (and creates each group's "Add another" link) on the jQuery ready queue, and
+  we must run *after* it because we move the inlines out of their groups. Django
+  loads jQuery with `defer`, so jQuery schedules its ready callbacks via
+  `setTimeout`; a native `DOMContentLoaded` listener (or our own `setTimeout`)
+  fires *before* those callbacks, which breaks add-row placement. Registering on
+  the same jQuery ready queue — after `inlines.js`, since our module executes
+  after it — is the reliable fix. This was discovered during implementation; the
+  earlier assumption that a deferred module needs no ready wrapper was wrong.
+- `admin/js/jquery.init.js` is therefore **kept** in
+  `ContentEditor._content_editor_media`, declared explicitly as our dependency
+  (the admin change form already loads it, but we depend on `django.jQuery`).
+- Formset events are consumed natively:
   `document.addEventListener("formset:added"|"formset:removed", e => e.detail.…)`;
-  the legacy `else` branch handling pre-4.1 jQuery-triggered args is deleted.
-- Public custom events dispatched/observed natively via the `events.js` helper.
-- All other ~40 jQuery call sites converted per the §7.3 table.
-- Verify nothing else on the admin page relied on us pulling in jQuery (we only
-  ever used `django.jQuery`, which Django still ships for its own admin JS, so
-  dropping it from *our* Media does not remove it globally).
+  the pre-4.1 jQuery-triggered fallback is gone.
+- Public custom events are dispatched natively (`emit()` in `utils.js`) with the
+  row in `event.detail.row`, and observed via `document.addEventListener`.
+- All other jQuery call sites are converted to vanilla per the §7.3 table.
 
 ## 8. Migration plan (incremental, test-gated)
 

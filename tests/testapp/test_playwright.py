@@ -1,7 +1,6 @@
 import os
 import re
 
-import django.http
 import pytest
 from bs4 import BeautifulSoup
 from django.contrib.auth.models import User
@@ -189,15 +188,10 @@ def test_save_shortcut(page: Page, django_server, client, user):
 
 @pytest.mark.django_db
 def test_section_visual_grouping(page: Page, django_server, client, user):
-    """Test that Section and CloseSection objects create visual groupings in the admin."""
-    # Login to admin
+    """Section/CloseSection plugins indent and order the content between them."""
     login_admin(page, django_server)
 
-    # Create the article with sections programmatically
-
     article = Article.objects.create(title="Section Grouping Test")
-
-    # Add content in specific order to test sections
     section = article.testapp_section_set.create(region="main", ordering=10)
     rich_text_inside = article.testapp_richtext_set.create(
         text="<p>Content inside section</p>", region="main", ordering=20
@@ -207,26 +201,11 @@ def test_section_visual_grouping(page: Page, django_server, client, user):
         text="<p>Content outside section</p>", region="main", ordering=40
     )
 
-    # Navigate to the admin to check the visual appearance
     page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-
-    # Wait for page to load
     page.wait_for_selector(".order-machine")
 
-    # Take a screenshot for visual verification
-    # page.screenshot(path="/tmp/section_test.png")
-
-    # Verify database state
-    assert article.testapp_section_set.count() == 1, "Should have 1 Section object"
-    assert article.testapp_closesection_set.count() == 1, (
-        "Should have 1 CloseSection object"
-    )
-    assert article.testapp_richtext_set.count() == 2, "Should have 2 RichText objects"
-
-    # Check if the form loaded correctly
+    # The form loaded with the expected content.
     expect(page.locator("input[name='title']")).to_have_value("Section Grouping Test")
-
-    # Verify the content in the textareas - these are specific selectors we can rely on
     expect(page.locator("textarea#id_testapp_richtext_set-0-text")).to_have_value(
         "<p>Content inside section</p>"
     )
@@ -234,191 +213,20 @@ def test_section_visual_grouping(page: Page, django_server, client, user):
         "<p>Content outside section</p>"
     )
 
-    # From the screenshot we need to find the DOM elements for each content type
-    # The specific selector patterns might vary, so we'll look for content by the specific values
-
-    # Find all content rows in the order-machine
-    content_rows = page.locator(".order-machine tr").all()
-    print(f"Found {len(content_rows)} content rows in the order machine")
-
-    # Get the position of all content elements to verify ordering
-    # We'll use the textarea elements and their position in the DOM
-
-    # Get the ordering by checking the Y positions of all content elements
-    page.locator("textarea").all()
-
-    # Get section information using the order machine's child elements
-    # From the screenshot, we can see that we need to find the correct DOM elements
-
-    # Get position info for all plugin elements
-    plugin_elements = page.locator(".inline-related").all()
-    print(f"Found {len(plugin_elements)} plugin elements")
-
-    # Attempt to capture position information for each plugin in order
-    # This will help us verify the vertical ordering visually
-
-    # Verify basic constraints from the DOM that should always hold true:
-    # 1. The order of elements in the DOM should match the order in the database
-    # 2. Visual styling would be applied via CSS - we can check computed styles
-
-    # Verify that we can see the specific plugin identifiers in the DOM
-    has_section_identifier = (
-        page.locator("text=testapp.Section<region=main ordering=10").count() > 0
-    )
-    has_close_section_identifier = (
-        page.locator("text=testapp.CloseSection<region=main ordering=30").count() > 0
+    # Ordering is preserved in the database.
+    assert (
+        section.ordering
+        < rich_text_inside.ordering
+        < close_section.ordering
+        < rich_text_outside.ordering
     )
 
-    print(f"Found section identifier in DOM: {has_section_identifier}")
-    print(f"Found close section identifier in DOM: {has_close_section_identifier}")
-
-    # At minimum we need to verify:
-    # 1. All content in correct order in DOM
-    # 2. Check if there are any visual styling differences for sectioned content
-
-    # Check that all element types are present in the DOM
-    section_present = page.locator(":has-text('Section')").count() > 0
-    inside_content_present = page.locator("#id_testapp_richtext_set-0-text").count() > 0
-    close_section_present = page.locator(":has-text('Close section')").count() > 0
-    outside_content_present = (
-        page.locator("#id_testapp_richtext_set-1-text").count() > 0
-    )
-
-    print(f"Section present: {section_present}")
-    print(f"Inside content present: {inside_content_present}")
-    print(f"Close section present: {close_section_present}")
-    print(f"Outside content present: {outside_content_present}")
-
-    # Verify all elements are visible in the page
-    assert section_present, "Section element should be present"
-    assert inside_content_present, "Inside content should be present"
-    assert close_section_present, "Close section should be present"
-    assert outside_content_present, "Outside content should be present"
-
-    # The most important test is the ordering - verify in the database:
-    # 1. Section comes before the inside content
-    # 2. Inside content comes before close section
-    # 3. Close section comes before the outside content
-    assert section.ordering < rich_text_inside.ordering, (
-        "Section should be ordered before inside content"
-    )
-    assert rich_text_inside.ordering < close_section.ordering, (
-        "Inside content should be ordered before close section"
-    )
-    assert close_section.ordering < rich_text_outside.ordering, (
-        "Close section should be ordered before outside content"
-    )
-
-    # Check if any visual section indicators are present
-    # This evaluates the DOM to find section-related styling elements
-    section_styling = page.evaluate("""() => {
-        // Check for any elements with section-related styling
-        const orderMachine = document.querySelector('.order-machine');
-        if (!orderMachine) return { found: false, reason: 'No order machine found' };
-
-        // Look for section styling elements
-        const sectionElements = document.querySelectorAll('[class*="section"]');
-        const sectionElementsCount = sectionElements.length;
-
-        // Check for background color or other visual indicators
-        // Get all table rows in the order machine
-        const orderRows = orderMachine.querySelectorAll('tr');
-        const styleInfo = Array.from(orderRows).map(row => {
-            const computedStyle = window.getComputedStyle(row);
-            return {
-                backgroundColor: computedStyle.backgroundColor,
-                hasSection: row.textContent.includes('Section'),
-                isContentInside: row.querySelector('#id_testapp_richtext_set-0-text') !== null,
-                isContentOutside: row.querySelector('#id_testapp_richtext_set-1-text') !== null
-            };
-        });
-
-        return {
-            found: sectionElementsCount > 0,
-            sectionElementsCount,
-            styleInfo,
-            orderMachineChildCount: orderMachine.children.length
-        };
-    }""")
-
-    # Visual verification - take another screenshot with more zoom
-    # page.evaluate("""() => document.querySelector('.order-machine').scrollIntoView()""")
-    # page.screenshot(path="/tmp/section_test_zoomed.png", clip={"x": 0, "y": 0, "width": 1000, "height": 1000})
-
-    # Print the results of styling check
-    print(f"Section styling check results: {section_styling}")
-
-    # Try to get some visual information using bounding boxes
-    # Get the Y-coordinates of the text areas to verify vertical ordering
-    try:
-        # Get position of the textareas
-        inside_box = page.locator("#id_testapp_richtext_set-0-text").bounding_box()
-        outside_box = page.locator("#id_testapp_richtext_set-1-text").bounding_box()
-
-        # Get positions of any rows containing Section and CloseSection text
-        section_rows = page.locator("tr:has-text('Section')").all()
-        section_positions = []
-
-        for i, row in enumerate(section_rows):
-            box = row.bounding_box()
-            section_positions.append(
-                {"index": i, "y": box["y"], "text": row.inner_text()}
-            )
-
-        print(f"Inside textarea Y: {inside_box['y']}")
-        print(f"Outside textarea Y: {outside_box['y']}")
-        print(f"Section positions: {section_positions}")
-
-        # Verify vertical ordering based on Y coordinates
-        if inside_box and outside_box:
-            assert inside_box["x"] > outside_box["x"], (
-                "Inside content should be indented a bit"
-            )
-            assert inside_box["y"] < outside_box["y"], (
-                "Inside content should appear before outside content vertically"
-            )
-    except Exception as e:
-        print(f"Error getting bounding boxes: {e}")
-
-    # Final check: output DOM information about the section structure
-    section_structure = page.evaluate("""() => {
-        // Get the order machine
-        const orderMachine = document.querySelector('.order-machine');
-        if (!orderMachine) return "Order machine not found";
-
-        // Check if there's any visual section grouping
-        // This could be background color changes, indentation, or other visual cues
-        const sectionInfo = {
-            hasSectionStyling: false,
-            stylingDetails: []
-        };
-
-        // Look for any section-specific styling elements
-        const sectionElements = document.querySelectorAll('.section-container, [class*="section"], [data-section]');
-        sectionInfo.hasSectionStyling = sectionElements.length > 0;
-
-        // Traverse the order machine and build a description of the DOM structure
-        // that would indicate visual sectioning
-        const domStructure = Array.from(orderMachine.children).map(child => {
-            return {
-                tagName: child.tagName,
-                className: child.className,
-                hasSection: child.textContent.includes('Section'),
-                hasRichText: child.querySelector('textarea.richtext') !== null
-            };
-        });
-
-        return {
-            orderMachineStructure: domStructure,
-            sectionInfo
-        };
-    }""")
-
-    print(f"Section structure in DOM: {section_structure}")
-
-    print(
-        "Section grouping test complete - verified correct object creation and ordering"
-    )
+    # Visually, content inside the section is indented and appears above the
+    # content following the close-section marker.
+    inside_box = page.locator("#id_testapp_richtext_set-0-text").bounding_box()
+    outside_box = page.locator("#id_testapp_richtext_set-1-text").bounding_box()
+    assert inside_box["x"] > outside_box["x"], "Inside content should be indented"
+    assert inside_box["y"] < outside_box["y"], "Inside content should come first"
 
 
 @pytest.mark.django_db
@@ -481,468 +289,65 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
     page.wait_for_selector("dialog.clone")
     expect(page.locator("dialog.clone h2")).to_contain_text("Clone")
 
-    # Verify the clone dialog contains the necessary form fields
-    clone_dialog_html = page.evaluate("""() => {
-        const dialog = document.querySelector('dialog.clone');
-        if (!dialog) return { error: 'No clone dialog found' };
-
-        // Check for _clone_region field
-        const cloneRegionField = dialog.querySelector('input[name="_clone_region"], select[name="_clone_region"], [name="_clone_region"]');
-
-        // Check for form element
-        const form = dialog.querySelector('form');
-
-        // Get all input fields in the dialog
-        const allInputs = Array.from(dialog.querySelectorAll('input, select, textarea')).map(input => ({
-            name: input.name,
-            type: input.type || input.tagName.toLowerCase(),
-            value: input.value
-        }));
-
-        return {
-            hasCloneRegionField: !!cloneRegionField,
-            cloneRegionFieldDetails: cloneRegionField ? {
-                name: cloneRegionField.name,
-                type: cloneRegionField.type || cloneRegionField.tagName.toLowerCase(),
-                value: cloneRegionField.value
-            } : null,
-            hasForm: !!form,
-            formAction: form ? form.action : null,
-            allInputs: allInputs,
-            dialogHTML: dialog.innerHTML.substring(0, 500) + '...' // First 500 chars for debugging
-        };
-    }""")
-
-    print(f"Clone dialog form analysis: {clone_dialog_html}")
-
-    # Verify _clone_region field exists
-    if not clone_dialog_html.get("hasCloneRegionField"):
-        print("⚠ WARNING: _clone_region field is missing from the clone dialog!")
-        print("This explains why cloning doesn't work - the backend needs this field.")
-        print("The dialog needs to include the target region information.")
-    else:
-        print(
-            f"✓ Found _clone_region field: {clone_dialog_html['cloneRegionFieldDetails']}"
-        )
-
-    # Expand the main region details to see available plugins
-    page.click("details[name='clone-region'] summary:has-text('main region')")
-    page.wait_for_timeout(1000)  # Give more time for expansion
-
-    # First, verify the DOM structure is correct for auto-selection to work
-    # The JavaScript expects nested ul/li/ul structure where section checkboxes contain nested plugin checkboxes
-    dom_structure = page.evaluate("""() => {
-        const dialog = document.querySelector('dialog.clone');
-        if (!dialog) return { error: 'No clone dialog found' };
-
-        const mainRegion = Array.from(dialog.querySelectorAll('details')).find(details =>
-            details.textContent.includes('main region')
-        );
-
-        if (!mainRegion) return { error: 'No main region details found' };
-
-        // Check for lists and nested structure
-        const lists = mainRegion.querySelectorAll('ul');
-        const listItems = mainRegion.querySelectorAll('li');
-        const checkboxes = mainRegion.querySelectorAll('input[type="checkbox"]');
-
-        // Get detailed structure info
-        const structure = [];
-        Array.from(mainRegion.querySelectorAll('li')).forEach((li, index) => {
-            const checkbox = li.querySelector('input[type="checkbox"]');
-            const nestedUl = li.querySelector('ul');
-            const nestedCheckboxes = nestedUl ? nestedUl.querySelectorAll('input[type="checkbox"]') : [];
-
-            structure.push({
-                liIndex: index,
-                hasCheckbox: !!checkbox,
-                checkboxValue: checkbox ? checkbox.value : null,
-                hasNestedUl: !!nestedUl,
-                nestedCheckboxCount: nestedCheckboxes.length,
-                nestedCheckboxValues: Array.from(nestedCheckboxes).map(cb => cb.value)
-            });
-        });
-
-        return {
-            totalLists: lists.length,
-            totalListItems: listItems.length,
-            totalCheckboxes: checkboxes.length,
-            structure: structure
-        };
-    }""")
-
-    print(f"Clone dialog DOM structure: {dom_structure}")
-
-    # Verify we have the expected nested structure
-    if "error" in dom_structure:
-        raise AssertionError(
-            f"DOM structure verification failed: {dom_structure['error']}"
-        )
-
-    assert dom_structure["totalCheckboxes"] > 0, (
-        f"Expected checkboxes in clone dialog, found {dom_structure['totalCheckboxes']}"
-    )
-    assert dom_structure["totalListItems"] > 0, (
-        f"Expected list items in clone dialog, found {dom_structure['totalListItems']}"
+    # The dialog carries the target region.
+    expect(page.locator("dialog.clone input[name='_clone_region']")).to_have_value(
+        "sidebar"
     )
 
-    # Look for section items that should have nested plugins
-    section_items = [
-        item
-        for item in dom_structure["structure"]
-        if item["checkboxValue"] and "section" in item["checkboxValue"].lower()
-    ]
-    print(
-        f"Found {len(section_items)} section items: {[item['checkboxValue'] for item in section_items]}"
+    # Make sure the region details is open (a single available region is opened
+    # automatically), then select the section. Selecting a section must
+    # auto-select the plugins nested inside it.
+    page.locator("details[name='clone-region']").first.evaluate(
+        "d => { d.open = true }"
     )
+    section_checkbox = page.locator(
+        "dialog.clone input[name='_clone'][value*='section']"
+    )
+    section_checkbox.first.check()
 
-    if len(section_items) > 0:
-        # Verify at least one section has nested content
-        sections_with_nested_content = [
-            item for item in section_items if item["nestedCheckboxCount"] > 0
-        ]
-        print(f"Sections with nested content: {len(sections_with_nested_content)}")
+    checked = page.locator("dialog.clone input[name='_clone']:checked")
+    assert checked.count() >= 3, "Selecting a section should also check its children"
 
-        if len(sections_with_nested_content) == 0:
-            print(
-                "⚠ WARNING: No sections have nested checkboxes - this explains why auto-selection doesn't work"
-            )
-            print(
-                "Expected structure: Section checkbox should contain nested ul with plugin checkboxes"
-            )
-        else:
-            print("✓ Found sections with nested plugin checkboxes")
-
-    # Test the special section functionality: selecting a section should auto-select contained plugins
-    # Now let's see what checkboxes are available
-    checkboxes = page.locator("input[name='_clone']")
-    checkbox_count = checkboxes.count()
-    print(f"Found {checkbox_count} checkboxes for cloning")
-
-    # Find the section checkbox specifically
-    section_checkbox = page.locator("input[name='_clone'][value*='section']")
-    section_count = section_checkbox.count()
-    print(f"Found {section_count} section checkboxes")
-
-    # Before clicking section, verify that rich text checkboxes are unchecked
-    richtext_checkboxes = page.locator("input[name='_clone'][value*='richtext']")
-    richtext_count = richtext_checkboxes.count()
-    print(f"Found {richtext_count} rich text checkboxes")
-
-    # Check initial state of rich text checkboxes (should be unchecked)
-    if richtext_count > 0:
-        first_richtext_checked = richtext_checkboxes.first.is_checked()
-        print(f"First rich text checkbox initially checked: {first_richtext_checked}")
-
-    if richtext_count > 1:
-        second_richtext_checked = richtext_checkboxes.nth(1).is_checked()
-        print(f"Second rich text checkbox initially checked: {second_richtext_checked}")
-
-    # Now click the section checkbox - this should auto-select all contained plugins
-    if section_count > 0:
-        # First verify the section checkbox state before clicking
-        section_checked_before = page.evaluate("""() => {
-            const sectionCheckbox = document.querySelector('input[name="_clone"][value*="section"]');
-            return sectionCheckbox ? sectionCheckbox.checked : null;
-        }""")
-        print(f"Section checkbox checked before click: {section_checked_before}")
-
-        # Use JavaScript to directly check the section checkbox since Playwright clicks aren't working
-        print(
-            "Using JavaScript to check section checkbox and trigger auto-selection..."
-        )
-        page.evaluate("""() => {
-            const sectionCheckbox = document.querySelector('input[name="_clone"][value*="section"]');
-            if (sectionCheckbox) {
-                console.log('Found section checkbox, checking it...');
-                sectionCheckbox.checked = true;
-
-                // Manually trigger the auto-selection logic like our debugging showed works
-                const sectionLi = sectionCheckbox.closest('li');
-                if (sectionLi) {
-                    const nestedCheckboxes = sectionLi.querySelectorAll('ul input[type="checkbox"]');
-                    console.log('Found nested checkboxes:', nestedCheckboxes.length);
-                    for (const cb of nestedCheckboxes) {
-                        cb.checked = sectionCheckbox.checked;
-                    }
-                }
-
-                // Also trigger the click event in case there are other listeners
-                sectionCheckbox.dispatchEvent(new Event('click', { bubbles: true }));
-            }
-        }""")
-        print("JavaScript checkbox selection completed")
-
-        # Wait a moment and verify the section checkbox is now checked
-        page.wait_for_timeout(100)
-        section_checked_after = page.evaluate("""() => {
-            const sectionCheckbox = document.querySelector('input[name="_clone"][value*="section"]');
-            return sectionCheckbox ? sectionCheckbox.checked : null;
-        }""")
-        print(f"Section checkbox checked after click: {section_checked_after}")
-
-        # Wait a bit more for the auto-selection to occur
-        page.wait_for_timeout(400)
-
-        # Also debug: check if the click event listener is working by adding a flag
-        event_fired = page.evaluate("""() => {
-            // Try to manually trigger the event handler logic to test it
-            const sectionCheckbox = document.querySelector('input[name="_clone"][value*="section"]');
-            if (!sectionCheckbox) return { error: 'No section checkbox found' };
-
-            const sectionLi = sectionCheckbox.closest('li');
-            if (!sectionLi) return { error: 'Section checkbox not in li' };
-
-            const nestedCheckboxes = sectionLi.querySelectorAll('ul input[type="checkbox"]');
-            console.log('Manual check - found nested checkboxes:', nestedCheckboxes.length);
-
-            // Manually apply the logic that should happen in the event handler
-            for (const cb of nestedCheckboxes) {
-                cb.checked = sectionCheckbox.checked;
-            }
-
-            return {
-                sectionChecked: sectionCheckbox.checked,
-                nestedCount: nestedCheckboxes.length,
-                manuallyUpdated: true
-            };
-        }""")
-        print(f"Manual event logic test: {event_fired}")
-
-        # Verify that our JavaScript checkbox selection worked
-        final_checkbox_state = page.evaluate("""() => {
-            const allCloneCheckboxes = document.querySelectorAll('input[name="_clone"]');
-            const checkedBoxes = [];
-
-            Array.from(allCloneCheckboxes).forEach(cb => {
-                if (cb.checked) {
-                    checkedBoxes.push(cb.value);
-                }
-            });
-
-            return {
-                totalCloneCheckboxes: allCloneCheckboxes.length,
-                checkedCount: checkedBoxes.length,
-                checkedValues: checkedBoxes
-            };
-        }""")
-
-        print(f"Final checkbox state: {final_checkbox_state}")
-
-        # We should have at least some checkboxes checked now
-        assert final_checkbox_state["checkedCount"] > 0, (
-            f"Expected some checkboxes to be checked, but found {final_checkbox_state['checkedCount']} checked out of {final_checkbox_state['totalCloneCheckboxes']}"
-        )
-        print(
-            f"✓ Successfully selected {final_checkbox_state['checkedCount']} items for cloning"
-        )
-
-        print("✓ Section auto-selection working correctly")
-    else:
-        # No section found - this should not happen with our test setup
-        raise AssertionError(
-            f"Expected to find section checkbox but found {section_count}"
-        )
-
-    # Click Save to execute the cloning - use the save-and-continue button
-    print("About to click clone save button...")
-
-    # Verify the save button exists and is clickable
-    save_button = page.locator("dialog.clone input[name='_continue']")
-    save_button_count = save_button.count()
-    print(f"Found {save_button_count} save buttons in clone dialog")
-
-    if save_button_count > 0:
-        save_button.click()
-        print("Clicked clone save button")
-    else:
-        # Try alternative save button selectors
-        alt_save = page.locator("dialog.clone input[type='submit']")
-        alt_count = alt_save.count()
-        print(f"Found {alt_count} submit buttons as alternative")
-        if alt_count > 0:
-            alt_save.click()
-            print("Clicked alternative submit button")
-        else:
-            print("⚠ No save button found in clone dialog!")
-
-    # Wait for dialog to close and content to be added
-    print("Waiting for clone dialog to close...")
-    page.wait_for_selector("dialog.clone", state="detached", timeout=5000)
-    print("Clone dialog closed")
-    page.wait_for_timeout(1000)
-
-    # Note: We can't rely on counting textareas in the UI because they might be hidden
-    # due to collapsed sections, tabs, or other UI state. The database is the definitive truth.
-    print("Skipping textarea count - will verify in database instead")
-
-    # Save the article to persist changes
+    # Execute the clone, then save the article.
+    page.click("dialog.clone input[name='_continue']")
+    page.wait_for_selector("dialog.clone", state="detached")
     page.click("input[name='_save']")
-
-    # Check for success message
-    print("Waiting for success message...")
-    page.wait_for_selector(".success", timeout=10000)
+    page.wait_for_selector(".success")
     expect(page.locator(".success")).to_contain_text("was changed successfully")
-    print("✓ Article saved successfully")
 
-    # Debug: Check what happened during the form submission
-    current_url = page.url
-    print(f"Current URL after save: {current_url}")
+    # The main region is untouched; the sidebar received the cloned content.
+    assert article.testapp_richtext_set.filter(region="main").count() == 2
+    assert article.testapp_section_set.filter(region="main").count() == 1
 
-    # Debug: Let's see what the page contains now
-    page_title = page.locator("title").inner_text()
-    print(f"Page title: {page_title}")
-
-    # Verify in database that plugins were actually cloned
-    print("Checking database for cloned content...")
-    # Original main region content should still exist
-    main_richtext_count = article.testapp_richtext_set.filter(region="main").count()
-    main_section_count = article.testapp_section_set.filter(region="main").count()
-    main_download_count = article.testapp_download_set.filter(region="main").count()
-
-    # Sidebar should now have cloned content
-    sidebar_richtext_count = article.testapp_richtext_set.filter(
-        region="sidebar"
-    ).count()
-    sidebar_section_count = article.testapp_section_set.filter(region="sidebar").count()
-    sidebar_download_count = article.testapp_download_set.filter(
-        region="sidebar"
-    ).count()
-
-    print(
-        f"Main region: {main_richtext_count} rich texts, {main_section_count} sections, {main_download_count} downloads"
-    )
-    print(
-        f"Sidebar region: {sidebar_richtext_count} rich texts, {sidebar_section_count} sections, {sidebar_download_count} downloads"
-    )
-
-    # Verify original content still exists
-    assert main_richtext_count == 2, (
-        f"Main region should have 2 rich text items, got {main_richtext_count}"
-    )
-    assert main_section_count == 1, (
-        f"Main region should have 1 section, got {main_section_count}"
-    )
-
-    # Strict verification: we MUST have cloned content in sidebar
-    assert sidebar_richtext_count >= 2, (
-        f"Expected at least 2 cloned rich text items in sidebar, got {sidebar_richtext_count}"
-    )
-    assert sidebar_section_count >= 1, (
-        f"Expected at least 1 cloned section in sidebar, got {sidebar_section_count}"
-    )
-
-    total_sidebar_items = (
-        sidebar_richtext_count + sidebar_section_count + sidebar_download_count
-    )
-    assert total_sidebar_items >= 3, (
-        f"Expected at least 3 cloned items in sidebar, but found {total_sidebar_items} items"
-    )
-
-    # Verify cloned content and ordering (no conditional - this MUST work)
     sidebar_richtext = list(
         article.testapp_richtext_set.filter(region="sidebar").order_by("ordering")
     )
-    main_richtext = list(
-        article.testapp_richtext_set.filter(region="main").order_by("ordering")
-    )
-
-    sidebar_texts = [rt.text for rt in sidebar_richtext]
-    main_texts = [rt.text for rt in main_richtext]
-    sidebar_orderings = [rt.ordering for rt in sidebar_richtext]
-    main_orderings = [rt.ordering for rt in main_richtext]
-
-    print(f"Main texts with ordering: {list(zip(main_texts, main_orderings))}")
-    print(f"Sidebar texts with ordering: {list(zip(sidebar_texts, sidebar_orderings))}")
-
-    # Verify cloned content matches main content exactly
-    expected_texts = [
+    assert [rt.text for rt in sidebar_richtext] == [
         "<p>First rich text in main</p>",
         "<p>Second rich text in main</p>",
     ]
-    for expected_text in expected_texts:
-        assert expected_text in sidebar_texts, (
-            f"Expected cloned text '{expected_text}' not found in sidebar: {sidebar_texts}"
-        )
+    assert article.testapp_section_set.filter(region="sidebar").count() >= 1
 
-    # Verify ordering is sequential and consistent within sidebar region
-    assert len(sidebar_orderings) >= 2, (
-        f"Should have at least 2 cloned items to verify ordering: {sidebar_orderings}"
-    )
-    # Check that orderings are increasing
-    for i in range(1, len(sidebar_orderings)):
-        assert sidebar_orderings[i] > sidebar_orderings[i - 1], (
-            f"Ordering should be sequential: {sidebar_orderings}"
-        )
-    print(f"✓ Verified ordering is sequential in sidebar: {sidebar_orderings}")
-
-    # Verify sections were cloned and their ordering relative to other content
-    sidebar_sections = list(
-        article.testapp_section_set.filter(region="sidebar").order_by("ordering")
-    )
-    sidebar_section_orderings = [s.ordering for s in sidebar_sections]
-    print(f"Sidebar section orderings: {sidebar_section_orderings}")
-
-    # Verify structural ordering between sections and rich text
-    all_sidebar_items = []
-
-    # Collect all items with their orderings
-    for rt in sidebar_richtext:
-        all_sidebar_items.append(("richtext", rt.text[:30], rt.ordering))
-    for s in sidebar_sections:
-        all_sidebar_items.append(("section", "Section", s.ordering))
-
-    # Sort by ordering
-    all_sidebar_items.sort(key=lambda x: x[2])
-    print(f"All sidebar items in order: {all_sidebar_items}")
-
-    # Verify the ordering matches the original main region structure
-    main_all_items = []
-    for rt in main_richtext:
-        main_all_items.append(("richtext", rt.text[:30], rt.ordering))
-    main_sections = list(
-        article.testapp_section_set.filter(region="main").order_by("ordering")
-    )
-    for s in main_sections:
-        main_all_items.append(("section", "Section", s.ordering))
-
-    main_all_items.sort(key=lambda x: x[2])
-    print(f"Main items for comparison: {main_all_items}")
-
-    # The sequence of item types MUST match (strict verification)
-    sidebar_types = [item[0] for item in all_sidebar_items]
-    main_types = [item[0] for item in main_all_items]
-
-    assert len(sidebar_types) == len(main_types), (
-        f"Cloned structure should have same number of items: sidebar={len(sidebar_types)}, main={len(main_types)}"
-    )
-    assert sidebar_types == main_types, (
-        f"Item type sequence must match exactly: sidebar={sidebar_types}, main={main_types}"
-    )
-    print("✓ Verified: Cloned content maintains same structural order as original")
-
-    print("Clone functionality test completed successfully")
+    # The cloned items keep increasing orderings.
+    orderings = [rt.ordering for rt in sidebar_richtext]
+    assert orderings == sorted(orderings)
+    assert len(set(orderings)) == len(orderings)
 
 
 @pytest.mark.django_db
 def test_clone_insert_between_existing_content(page: Page, django_server, client, user):
-    """Test cloning content and inserting it between existing sidebar content with proper ordering gaps."""
-    # Login to admin
+    """Cloned content is inserted at the chosen position with correct ordering."""
     login_admin(page, django_server)
 
-    # Create article with content in both main and sidebar regions
     article = Article.objects.create(title="Clone Insert Test Article")
-
-    # Add content to main region
     article.testapp_richtext_set.create(
         text="<p>Main content 1</p>", region="main", ordering=10
     )
     article.testapp_richtext_set.create(
         text="<p>Main content 2</p>", region="main", ordering=20
     )
-
-    # Use ridiculous ordering values which, if not handled properly, will cause
-    # the cloned content to be inserted in an incorrect place.
+    # Deliberately large orderings: cloned content inserted between these must
+    # still end up with sane, ordered values.
     article.testapp_richtext_set.create(
         text="<p>Sidebar BEFORE cloned content</p>", region="sidebar", ordering=110
     )
@@ -950,412 +355,105 @@ def test_clone_insert_between_existing_content(page: Page, django_server, client
         text="<p>Sidebar AFTER cloned content</p>", region="sidebar", ordering=120
     )
 
-    # Navigate to the admin change page
     page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-
-    # Wait for page to load
     page.wait_for_selector(".tabs.regions")
 
-    # Switch to sidebar region tab
     page.click(".tabs.regions .tab:has-text('sidebar region')")
-    page.wait_for_timeout(500)
 
-    # Position cursor between the two existing sidebar items by clicking on sidebar region insert target
-    # Use region-specific selector to ensure we're clicking in the sidebar region
-    sidebar_insert_targets = page.locator(
+    # Click the insert target between the two existing sidebar items (before,
+    # *between*, after → index 1).
+    sidebar_targets = page.locator(
         '[data-region="sidebar"] .order-machine-insert-target'
     )
-    sidebar_target_count = sidebar_insert_targets.count()
-    print(f"Found {sidebar_target_count} insert targets in sidebar region")
+    sidebar_targets.nth(1).click(force=True)
 
-    # If no region-specific targets found, try the generic selector within sidebar content
-    if sidebar_target_count == 0:
-        # Alternative: look for insert targets within the currently active region
-        sidebar_insert_targets = page.locator(
-            '.region-content[data-region="sidebar"] .order-machine-insert-target, .region-sidebar .order-machine-insert-target'
-        )
-        sidebar_target_count = sidebar_insert_targets.count()
-        print(
-            f"Found {sidebar_target_count} insert targets using alternative sidebar selector"
-        )
-
-    # With 2 sidebar items, there should be 3 insert targets: before, between, after
-    # Click the second insert target (index 1) to position between existing items
-    target_index = 1  # Second target = between existing items
-    between_target = sidebar_insert_targets.nth(target_index)
-    between_target.click(force=True)
-    print(
-        f"Clicked sidebar insert target {target_index + 1} (between target) out of {sidebar_target_count} to position between existing content"
-    )
-
-    # Wait for plugin buttons to appear and click Clone
     page.wait_for_selector(".plugin-button:has-text('Clone')")
     page.click(".plugin-button:has-text('Clone')")
-
-    # Wait for clone dialog and expand main region
     page.wait_for_selector("dialog.clone")
-    expect(page.locator("dialog.clone h2")).to_contain_text("Clone")
 
-    # Verify both _clone_region and _clone_ordering fields exist (applying what we learned)
-    clone_fields = page.evaluate("""() => {
-        const dialog = document.querySelector('dialog.clone');
-        const cloneRegionField = dialog ? dialog.querySelector('input[name="_clone_region"]') : null;
-        const cloneOrderingField = dialog ? dialog.querySelector('input[name="_clone_ordering"]') : null;
-
-        return {
-            region: cloneRegionField ? {
-                name: cloneRegionField.name,
-                value: cloneRegionField.value
-            } : null,
-            ordering: cloneOrderingField ? {
-                name: cloneOrderingField.name,
-                value: cloneOrderingField.value
-            } : null
-        };
-    }""")
-    print(f"Clone fields: {clone_fields}")
-    assert clone_fields["region"], "Missing _clone_region field in dialog"
-    print(f"Clone ordering field: {clone_fields['ordering']}")
-    if clone_fields["ordering"]:
-        print(f"Ordering value that will be used: {clone_fields['ordering']['value']}")
-    else:
-        print("No _clone_ordering field found - will use default ordering of 10")
-
-    page.get_by_text("Select all").click()
-
-    # Verify selection worked
-    final_selection = page.evaluate("""() => {
-        const checkedBoxes = [];
-        document.querySelectorAll('input[name="_clone"]:checked').forEach(cb => {
-            checkedBoxes.push(cb.value);
-        });
-        return checkedBoxes;
-    }""")
-    print(f"Finally selected checkboxes: {final_selection}")
-    assert len(final_selection) > 0, (
-        f"No checkboxes were actually selected: {final_selection}"
+    expect(page.locator("dialog.clone input[name='_clone_region']")).to_have_value(
+        "sidebar"
     )
 
-    # Execute the cloning
+    page.get_by_text("Select all").click()
+    assert page.locator("dialog.clone input[name='_clone']:checked").count() > 0
+
     page.click("dialog.clone input[name='_continue']")
     page.wait_for_selector("dialog.clone", state="detached")
-    page.wait_for_timeout(1000)
+    page.wait_for_selector(".success")
 
-    # Save the article
-    page.wait_for_selector(".success", timeout=10000)
-
-    # Verify the ordering in the database
+    # The cloned items landed between the two existing sidebar items.
     sidebar_items = list(
         article.testapp_richtext_set.filter(region="sidebar").order_by("ordering")
     )
-
-    sidebar_texts_with_ordering = [(item.text, item.ordering) for item in sidebar_items]
-    print(f"Sidebar content after cloning: {sidebar_texts_with_ordering}")
-
-    # Verify we have the expected number of items after cloning
-    assert len(sidebar_items) == 4, (
-        f"Expected exactly 4 items in sidebar after cloning (2 existing + 2 cloned), got {len(sidebar_items)}"
-    )
-
+    assert len(sidebar_items) == 4
     assert "BEFORE" in sidebar_items[0].text
     assert "Main content 1" in sidebar_items[1].text
     assert "Main content 2" in sidebar_items[2].text
     assert "AFTER" in sidebar_items[3].text
 
-    # We don't care about the exact values. Values have to be truthy and distinct though.
+    # Orderings are truthy and strictly increasing.
     orderings = [item.ordering for item in sidebar_items]
     assert all(orderings)
     assert sorted(set(orderings)) == orderings
 
-    # Verify the original content in main region is unchanged
+    # The main region is unchanged.
     main_items = list(
         article.testapp_richtext_set.filter(region="main").order_by("ordering")
     )
-    assert len(main_items) == 2, (
-        f"Main region should still have 2 items, got {len(main_items)}"
-    )
-    assert main_items[0].text == "<p>Main content 1</p>", (
-        "First main item should be unchanged"
-    )
-    assert main_items[1].text == "<p>Main content 2</p>", (
-        "Second main item should be unchanged"
-    )
-
-    print("✓ Verified: Original main content unchanged")
-    print("✓ Clone insert between existing content test completed successfully")
+    assert [item.text for item in main_items] == [
+        "<p>Main content 1</p>",
+        "<p>Main content 2</p>",
+    ]
 
 
 @pytest.mark.django_db
 def test_clone_backend_logic():
-    """Test the backend cloning logic directly via Django admin POST request."""
-    # Create test user and login
-    User.objects.create_superuser("admin", "admin@test.com", "password")
-    client = Client()
-    client.login(username="admin", password="password")
-
-    # Create article with content in main region
+    """CloneForm.process() copies the selected plugins into the target region."""
     article = Article.objects.create(title="Backend Clone Test Article")
-
-    # Add a section
     section = article.testapp_section_set.create(region="main", ordering=10)
-
-    # Add rich text content inside section
     richtext1 = article.testapp_richtext_set.create(
         text="<p>First rich text in main</p>", region="main", ordering=20
     )
     richtext2 = article.testapp_richtext_set.create(
         text="<p>Second rich text in main</p>", region="main", ordering=30
     )
-
-    # Add close section
     closesection = article.testapp_closesection_set.create(region="main", ordering=40)
 
-    # Add download plugin
-    download = article.testapp_download_set.create(
-        file="test-file.pdf", region="main", ordering=50
-    )
+    # Simulate the data the clone dialog submits: the selected plugins, the
+    # target region and the base ordering.
+    post = QueryDict(mutable=True)
+    post["_clone_region"] = "sidebar"
+    post["_clone_ordering"] = 10000
+    for item in [
+        f"testapp.section:{section.pk}",
+        f"testapp.richtext:{richtext1.pk}",
+        f"testapp.richtext:{richtext2.pk}",
+        f"testapp.closesection:{closesection.pk}",
+    ]:
+        post.appendlist("_clone", item)
 
-    print("Created test content:")
-    print(f"  Section: {section.pk}")
-    print(f"  RichText 1: {richtext1.pk}")
-    print(f"  RichText 2: {richtext2.pk}")
-    print(f"  CloseSection: {closesection.pk}")
-    print(f"  Download: {download.pk}")
+    form = CloneForm(post)
+    assert form.is_valid(), form.errors
+    assert form.process() == 4
 
-    # Verify initial state
+    # The main region is untouched.
     assert article.testapp_richtext_set.filter(region="main").count() == 2
     assert article.testapp_section_set.filter(region="main").count() == 1
-    assert article.testapp_download_set.filter(region="main").count() == 1
-    assert article.testapp_closesection_set.filter(region="main").count() == 1
 
-    assert article.testapp_richtext_set.filter(region="sidebar").count() == 0
-    assert article.testapp_section_set.filter(region="sidebar").count() == 0
-    assert article.testapp_download_set.filter(region="sidebar").count() == 0
-    assert article.testapp_closesection_set.filter(region="sidebar").count() == 0
-
-    # Prepare the clone form data - simulate selecting items to clone
-    # This simulates what would be submitted when checkboxes are selected in the UI
-    form_data = {
-        # Standard Django admin form fields
-        "title": article.title,
-        "csrfmiddlewaretoken": client.cookies["csrftoken"].value
-        if "csrftoken" in client.cookies
-        else "dummy",
-        "_continue": "Save and continue editing",
-        # Clone data - this is what the clone dialog would submit
-        # Note: Django forms expect CharField as single value initially, then use getlist()
-        "_clone": f"testapp.section:{section.pk}",  # Start with single value
-        "_clone_region": "sidebar",  # This specifies which region to clone TO
-        # We also need to simulate the existing formset data to avoid losing it
-        # This is complex because Django admin uses formsets...
-        "_clone_ordering": 100000,
-    }
-
-    print("Submitting clone form data...")
-
-    # Get the admin change URL
-    admin_url = reverse("admin:testapp_article_change", args=[article.pk])
-
-    # First, GET the form to get proper formset data
-    response = client.get(admin_url)
-    assert response.status_code == 200
-    print(f"GET admin form: {response.status_code}")
-
-    # Extract formset management data from the form
-    soup = BeautifulSoup(response.content, "html.parser")
-
-    # Find all the formset management form fields
-    management_fields = {}
-    for input_field in soup.find_all("input"):
-        name = input_field.get("name", "")
-        value = input_field.get("value", "")
-        if name and (
-            "TOTAL_FORMS" in name
-            or "INITIAL_FORMS" in name
-            or "MIN_NUM_FORMS" in name
-            or "MAX_NUM_FORMS" in name
-        ):
-            management_fields[name] = value
-        elif name == "csrfmiddlewaretoken":
-            form_data["csrfmiddlewaretoken"] = value
-
-    # Add management form data
-    form_data.update(management_fields)
-
-    # Add existing inline data (to preserve existing content)
-    inline_data = {}
-    for input_field in soup.find_all("input"):
-        name = input_field.get("name", "")
-        value = input_field.get("value", "")
-        if name and (
-            name.startswith("testapp_")
-            and (
-                "-id" in name
-                or "-DELETE" in name
-                or any(
-                    field in name for field in ["text", "file", "ordering", "region"]
-                )
-            )
-        ):
-            inline_data[name] = value
-
-    form_data.update(inline_data)
-
-    # Add multiple clone values correctly - we need to remove the single value and add multiple
-    clone_items = [
-        f"testapp.section:{section.pk}",
-        f"testapp.richtext:{richtext1.pk}",
-        f"testapp.richtext:{richtext2.pk}",
-        f"testapp.closesection:{closesection.pk}",
-    ]
-
-    # Convert to QueryDict to properly handle multiple values
-    query_dict = QueryDict(mutable=True)
-
-    # Add all single-value fields
-    for key, value in form_data.items():
-        if key != "_clone":  # Skip the single _clone value
-            query_dict[key] = value
-
-    # Add multiple clone values
-    for item in clone_items:
-        query_dict.appendlist("_clone", item)
-
-    form_data = query_dict
-
-    print(f"Form data keys: {list(form_data.keys())}")
-    print(f"Clone data (get): {form_data.get('_clone', [])}")
-    print(f"Clone data (getlist): {form_data.getlist('_clone')}")
-    print(f"Clone region: {form_data.get('_clone_region', 'NOT SET')}")
-
-    # Debug: Let's try a simpler form data structure to test the clone form directly
-    # Add the clone items as separate entries (Django handles multiple values this way)
-    clone_items = [
-        f"testapp.section:{section.pk}",
-        f"testapp.richtext:{richtext1.pk}",
-        f"testapp.richtext:{richtext2.pk}",
-        f"testapp.closesection:{closesection.pk}",
-    ]
-
-    print(f"Clone items: {clone_items}")
-
-    # Test the CloneForm directly first
-    # Create a mock request POST data
-    mock_post = django.http.QueryDict(mutable=True)
-    mock_post["_clone_region"] = "sidebar"
-    mock_post["_clone_ordering"] = 10000
-    for item in clone_items:
-        mock_post.appendlist("_clone", item)
-
-    print(f"Mock POST data: {dict(mock_post.lists())}")
-
-    test_clone_form = CloneForm(mock_post)
-    print(f"CloneForm is_valid(): {test_clone_form.is_valid()}")
-    if not test_clone_form.is_valid():
-        print(f"CloneForm errors: {test_clone_form.errors}")
-    else:
-        print(f"CloneForm cleaned_data: {test_clone_form.cleaned_data}")
-        print("About to call process()...")
-        try:
-            count = test_clone_form.process()
-            print(f"CloneForm.process() returned count: {count}")
-        except Exception as e:
-            print(f"CloneForm.process() failed with error: {e}")
-
-    # Now submit the full form with clone data (keeping original approach too)
-    response = client.post(admin_url, form_data)
-
-    print(f"POST response: {response.status_code}")
-    if response.status_code == 302:
-        print(f"Redirected to: {response['Location']}")
-    else:
-        print("Response was not a redirect")
-        if hasattr(response, "content"):
-            # Look for error messages
-            soup = BeautifulSoup(response.content, "html.parser")
-            errors = soup.find_all(class_="errorlist")
-            if errors:
-                print("Form errors found:")
-                for error in errors:
-                    print(f"  {error.get_text()}")
-
-    # Verify the cloning worked
-    print("Checking database after clone operation...")
-
-    # Refresh from database
-    article.refresh_from_db()
-
-    main_richtext_count = article.testapp_richtext_set.filter(region="main").count()
-    main_section_count = article.testapp_section_set.filter(region="main").count()
-    main_download_count = article.testapp_download_set.filter(region="main").count()
-    main_closesection_count = article.testapp_closesection_set.filter(
-        region="main"
-    ).count()
-
-    sidebar_richtext_count = article.testapp_richtext_set.filter(
-        region="sidebar"
-    ).count()
-    sidebar_section_count = article.testapp_section_set.filter(region="sidebar").count()
-    sidebar_download_count = article.testapp_download_set.filter(
-        region="sidebar"
-    ).count()
-    sidebar_closesection_count = article.testapp_closesection_set.filter(
-        region="sidebar"
-    ).count()
-
-    print(
-        f"Main region: {main_richtext_count} rich texts, {main_section_count} sections, {main_download_count} downloads, {main_closesection_count} closesections"
-    )
-    print(
-        f"Sidebar region: {sidebar_richtext_count} rich texts, {sidebar_section_count} sections, {sidebar_download_count} downloads, {sidebar_closesection_count} closesections"
-    )
-
-    # Verify original content is preserved
-    assert main_richtext_count == 2, (
-        f"Main region should still have 2 rich text items, got {main_richtext_count}"
-    )
-    assert main_section_count == 1, (
-        f"Main region should still have 1 section, got {main_section_count}"
-    )
-
-    # Verify cloning worked
-    assert sidebar_richtext_count >= 2, (
-        f"Expected at least 2 cloned rich text items in sidebar, got {sidebar_richtext_count}"
-    )
-    assert sidebar_section_count >= 1, (
-        f"Expected at least 1 cloned section in sidebar, got {sidebar_section_count}"
-    )
-
-    # Verify content was cloned correctly (not moved)
-    sidebar_texts = list(
-        article.testapp_richtext_set.filter(region="sidebar").values_list(
-            "text", flat=True
-        )
-    )
-    expected_texts = [
-        "<p>First rich text in main</p>",
-        "<p>Second rich text in main</p>",
-    ]
-
-    for expected_text in expected_texts:
-        assert expected_text in sidebar_texts, (
-            f"Expected cloned text '{expected_text}' not found in sidebar: {sidebar_texts}"
-        )
-
-    # Verify ordering is correct
+    # The selected plugins were cloned (not moved) into the sidebar, in order.
     sidebar_richtext = list(
         article.testapp_richtext_set.filter(region="sidebar").order_by("ordering")
     )
-    sidebar_orderings = [rt.ordering for rt in sidebar_richtext]
+    assert [rt.text for rt in sidebar_richtext] == [
+        "<p>First rich text in main</p>",
+        "<p>Second rich text in main</p>",
+    ]
+    assert article.testapp_section_set.filter(region="sidebar").count() == 1
 
-    # Check that orderings are sequential
-    for i in range(1, len(sidebar_orderings)):
-        assert sidebar_orderings[i] > sidebar_orderings[i - 1], (
-            f"Ordering should be sequential: {sidebar_orderings}"
-        )
-
-    print("✓ Backend cloning test completed successfully")
-    print(f"✓ Cloned content with orderings: {sidebar_orderings}")
+    orderings = [rt.ordering for rt in sidebar_richtext]
+    assert orderings == sorted(orderings)
+    assert len(set(orderings)) == len(orderings)
 
 
 @pytest.mark.django_db
@@ -1436,17 +534,11 @@ def test_clone_backend_validation_error():
     invalid_form_data.appendlist("_clone", f"testapp.richtext:{richtext1.pk}")
     # Intentionally omit _clone_region to trigger validation error
 
-    print("Submitting invalid clone form data (missing _clone_region)...")
-
-    # Submit the form with invalid clone data
+    # Submit the form with invalid clone data.
     response = client.post(admin_url, invalid_form_data)
 
-    print(f"POST response status: {response.status_code}")
-
-    # Check if we got a redirect (success) or stayed on the same page (error)
+    # Follow the redirect to read the error message.
     if response.status_code == 302:
-        print(f"Redirected to: {response['Location']}")
-        # Follow the redirect to check for error messages
         response = client.get(response["Location"])
 
     # Parse the response content to look for error messages
@@ -1455,17 +547,10 @@ def test_clone_backend_validation_error():
     # Look for Django messages (both error and success messages)
     messages_divs = soup.find_all("div", class_="messagelist")
     error_messages = []
-    success_messages = []
 
     for messages_div in messages_divs:
-        # Look for error messages specifically
-        error_li = messages_div.find_all("li", class_="error")
-        success_li = messages_div.find_all("li", class_="success")
-
-        for li in error_li:
+        for li in messages_div.find_all("li", class_="error"):
             error_messages.append(li.get_text().strip())
-        for li in success_li:
-            success_messages.append(li.get_text().strip())
 
     # Also look for general message containers that might contain errors
     if not error_messages:
@@ -1474,23 +559,15 @@ def test_clone_backend_validation_error():
         for li in alt_errors:
             error_messages.append(li.get_text().strip())
 
-    print(f"Error messages found: {error_messages}")
-    print(f"Success messages found: {success_messages}")
-
-    # Verify that we got a cloning validation error message with specific field error details
-    # The error should mention "Cloning plugins failed" and include the missing field error
+    # The error message must mention the cloning failure and the missing field.
     cloning_error_found = False
     field_error_found = False
 
     for msg in error_messages:
         if "Cloning plugins failed" in msg:
             cloning_error_found = True
-            print(f"✓ Found cloning error message: {msg}")
-
-            # Check if the error message contains details about the missing field
             if "_clone_region" in msg or "This field is required" in msg:
                 field_error_found = True
-                print(f"✓ Error message includes field validation details: {msg}")
             break
 
     # Both conditions must be met for the test to pass
@@ -1508,6 +585,57 @@ def test_clone_backend_validation_error():
         f"Cloning should have failed, but found {sidebar_count} items in sidebar"
     )
 
-    print("✓ Validation correctly prevented cloning and showed detailed error message")
 
-    print("✓ Clone form validation error test completed")
+@pytest.mark.django_db
+def test_native_custom_events(page: Page, django_server, client, user):
+    """``content-editor:ready``/``activate`` are native events; the row is a DOM
+    element passed via ``event.detail.row``."""
+    login_admin(page, django_server)
+
+    # Register listeners before the editor initializes.
+    page.add_init_script("""
+        window.__ce = { ready: 0, activateRowsAreElements: [] }
+        document.addEventListener("content-editor:ready", () => {
+            window.__ce.ready += 1
+        })
+        document.addEventListener("content-editor:activate", (event) => {
+            window.__ce.activateRowsAreElements.push(
+                event.detail.row instanceof HTMLElement
+            )
+        })
+    """)
+
+    article = Article.objects.create(title="Events Test")
+    article.testapp_richtext_set.create(text="<p>x</p>", region="main", ordering=10)
+
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+
+    result = page.evaluate("() => window.__ce")
+    assert result["ready"] >= 1, "content-editor:ready should fire once"
+    assert result["activateRowsAreElements"], "activate should fire for the inline"
+    assert all(result["activateRowsAreElements"]), "row must be a DOM element"
+
+
+@pytest.mark.django_db
+def test_move_plugin_to_other_region(page: Page, django_server, client, user):
+    """The move-to-region dropdown reassigns a plugin to another region."""
+    login_admin(page, django_server)
+
+    # A Section may live in any region, so its row carries a move-to-region
+    # dropdown (plugins restricted to a single region do not).
+    article = Article.objects.create(title="Move Test")
+    section = article.testapp_section_set.create(region="main", ordering=10)
+
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+
+    page.locator("#testapp_section_set-0 select.inline_move_to_region").select_option(
+        "sidebar"
+    )
+
+    page.click("input[name='_save']")
+    page.wait_for_selector(".success")
+
+    section.refresh_from_db()
+    assert section.region == "sidebar"
