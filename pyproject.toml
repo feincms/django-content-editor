@@ -35,7 +35,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "django>=3.2",
+  "django>=4.2",
   "django-js-asset>=3",
 ]
 optional-dependencies.docs = [

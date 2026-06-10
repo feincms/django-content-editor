@@ -5,6 +5,11 @@ Change log
 Next version
 ============
 
+- Dropped support for Django versions older than 4.2. This is a prerequisite
+  for removing the jQuery dependency from the content editor JavaScript, since
+  Django only switched the ``formset:added`` / ``formset:removed`` events to
+  native ``CustomEvent`` instances in Django 4.1.
+
 
 8.1 (2026-02-05)
 ================
