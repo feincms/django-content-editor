@@ -236,8 +236,10 @@ no build step) in `content_editor/static/content_editor/`:
 - Modules import each other via **bare specifiers** (`content-editor/…`)
   resolved through an **import map**. Relative imports are NOT used because
   `ManifestStaticFilesStorage` does not rewrite JS `import` specifiers.
-- The import map is built in `admin.py` from `_CONTENT_EDITOR_MODULES` using the
-  shared `js_asset.importmap` singleton (a page may only have one import map).
+- The import map is built in `admin.py` from `_CONTENT_EDITOR_MODULES` using
+  django-js-asset's importmap support built on its `Media` and `ImportMap`
+  classes. The `Media` object automatically merges `ImportMap` objects since a
+  page may only have one import map.
   **Adding a new module = add its name to `_CONTENT_EDITOR_MODULES`.**
 
 **jQuery:** removed from all editor logic. The only remaining use is

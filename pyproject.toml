@@ -36,7 +36,7 @@ dynamic = [
 ]
 dependencies = [
   "django>=4.2",
-  "django-js-asset>=3",
+  "django-js-asset>=4",
 ]
 optional-dependencies.docs = [
   "sphinx",

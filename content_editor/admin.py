@@ -10,7 +10,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset.js import JS, JSON, importmap, static_lazy
+from js_asset import JS, JSON, ImportMap, Media, static_lazy
 
 
 __all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
@@ -33,7 +33,7 @@ _CONTENT_EDITOR_MODULES = (
     "sections",
     "cloning",
 )
-importmap.update(
+importmap = ImportMap(
     {
         "imports": {
             f"content-editor/{name}": static_lazy(f"content_editor/{name}.js")
@@ -251,7 +251,7 @@ class ContentEditor(RefinedModelAdmin):
         }
 
     def _content_editor_media(self, request, context):
-        return forms.Media(
+        return Media(
             css={
                 "all": [
                     "content_editor/material-icons.css",
