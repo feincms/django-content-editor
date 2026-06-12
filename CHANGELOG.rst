@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+9.0 (2026-06-12)
+================
+
 - Dropped support for Django versions older than 4.2. This is a prerequisite
   for modernizing the content editor JavaScript, since Django only switched the
   ``formset:added`` / ``formset:removed`` events to native ``CustomEvent``
@@ -12,7 +15,8 @@ Next version
 - Restructured the content editor JavaScript into native ES modules, split by
   concern (context, regions/rights, order machine, drag and drop, sections,
   cloning) with a single central initialization. The modules are loaded through
-  an import map so that hashed static file storage keeps working.
+  an import map so that hashed static file storage keeps working. Bumped the
+  django-js-asset dependency so that we can use the new import map utilities.
 - Removed the jQuery dependency from the content editor JavaScript; it is now
   vanilla JavaScript. jQuery is only still used as the DOM-ready hook so that
   initialization runs after Django's admin inline setup.
