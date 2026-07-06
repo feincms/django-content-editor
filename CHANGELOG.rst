@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+- Avoided submitting the clone from region form when canceling.
+
+
 9.0 (2026-06-12)
 ================
 

@@ -223,6 +223,13 @@ no build step) in `content_editor/static/content_editor/`:
   (public API: `addContent`, `addPluginButton`).
 - `utils.js` - Pure helpers (`qs`/`qsa`/`crel`/`debounce`), storage, and the
   native custom-event `emit`/`delegate` helpers.
+  - `crel(tag, attrs, children)` assigns most `attrs` as DOM **properties**
+    (`dom[name] = value`), only using `setAttribute` for `data-`/`aria-`/`role`.
+    This is deliberate: properties drive behavior (`checked`, `value`,
+    `disabled` set the live state, not just a default). Consequence: don't
+    assume a content attribute exists for property-set keys. In Playwright,
+    prefer role/text locators (`get_by_role("button", name="Cancel")`) over
+    `[value=...]` attribute selectors, which depend on the content attribute.
 - `regions.js` - Region tabs, current region, region assignment + move-to-region
   dropdowns, and the plugin-button **rights/visibility** logic.
 - `machine.js` - The order machine: scaffolding, `reorderInlines`, ordering
