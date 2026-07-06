@@ -335,6 +335,54 @@ def test_clone_plugins_functionality(page: Page, django_server, client, user):
 
 
 @pytest.mark.django_db
+def test_clone_cancel_does_not_submit_form(page: Page, django_server, client, user):
+    """Canceling the clone dialog must not submit the surrounding form.
+
+    Regression test: the Cancel button used to be a ``<button>`` which defaults
+    to ``type=submit`` inside a form, so clicking it closed the dialog *and*
+    submitted (and thus saved) the article.
+    """
+    login_admin(page, django_server)
+
+    article = Article.objects.create(title="Clone Cancel Test Article")
+    article.testapp_richtext_set.create(
+        text="<p>Rich text in main</p>", region="main", ordering=10
+    )
+
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".tabs.regions")
+
+    # A marker that only survives if the page is not reloaded by a form submit.
+    page.evaluate("() => { window.__notSubmitted = true }")
+
+    # Switch to the sidebar region and open the clone dialog.
+    page.click(".tabs.regions .tab:has-text('sidebar region')")
+    page.click(".order-machine-insert-target")
+    page.wait_for_selector(".plugin-button:has-text('Clone')")
+    page.click(".plugin-button:has-text('Clone')")
+    page.wait_for_selector("dialog.clone")
+
+    # Select something to clone so that a submit would actually copy content.
+    page.locator("details[name='clone-region']").first.evaluate(
+        "d => { d.open = true }"
+    )
+    page.locator("dialog.clone input[name='_clone']").first.check()
+
+    # Cancel the dialog.
+    page.click("dialog.clone input[value='Cancel']")
+
+    # The dialog is closed, and the form is not submitted: no navigation happened
+    # (the marker survives), no success message appears, and nothing was cloned.
+    expect(page.locator("dialog.clone")).not_to_be_visible()
+    page.wait_for_timeout(200)
+    assert page.evaluate("() => window.__notSubmitted") is True
+    expect(page.locator(".success")).to_have_count(0)
+    assert f"/admin/testapp/article/{article.pk}/change/" in page.url
+
+    assert article.testapp_richtext_set.filter(region="sidebar").count() == 0
+
+
+@pytest.mark.django_db
 def test_clone_insert_between_existing_content(page: Page, django_server, client, user):
     """Cloned content is inserted at the chosen position with correct ordering."""
     login_admin(page, django_server)

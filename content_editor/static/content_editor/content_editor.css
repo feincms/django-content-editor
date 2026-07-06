@@ -363,7 +363,7 @@ h3[draggable] {
 }
 
 /* CLONING start */
-dialog.clone {
+dialog.clone[open] {
   position: fixed;
   width: max(90vw, 400px);
   height: max(90vh, 400px);

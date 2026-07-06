@@ -18,6 +18,7 @@ export class Cloning {
   addButton() {
     const button = document.createElement("a")
     button.className = "plugin-button"
+    button.role = "button"
     button.innerHTML = `
       <span class="plugin-button-icon"><span class="material-icons">content_copy</span></span>
       <span class="plugin-button-title">${this.ContentEditor.messages.clone}</span>
@@ -131,11 +132,14 @@ export class Cloning {
 
     const saveButton = qs("input[name=_continue]").cloneNode(true)
 
-    const cancelButton = crel("button", {
+    // input[type="submit"] reuses the proper submit row button styling
+    const cancelButton = crel("input", {
       className: "button",
-      textContent: window.gettext("Cancel"),
+      type: "submit",
+      value: window.gettext("Cancel"),
     })
-    cancelButton.addEventListener("click", () => {
+    cancelButton.addEventListener("click", (e) => {
+      e.preventDefault()
       dialog.close()
     })
 
