@@ -2,7 +2,7 @@ from itertools import chain
 from operator import attrgetter
 
 
-__all__ = ("Contents", "contents_for_items", "contents_for_item")
+__all__ = ("Contents", "contents_for_item", "contents_for_items")
 
 
 class Contents:
