@@ -13,7 +13,7 @@ from django.utils.translation import gettext
 from js_asset import JS, JSON, ImportMap, Media, static_lazy
 
 
-__all__ = ("ContentEditorInline", "ContentEditor", "allow_regions", "deny_regions")
+__all__ = ("ContentEditor", "ContentEditorInline", "allow_regions", "deny_regions")
 
 
 _inline_index = itertools.count()
