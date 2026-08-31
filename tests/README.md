@@ -54,8 +54,12 @@ except AssertionError:
 Example of **GOOD** test pattern:
 ```python
 # DO THIS - strict assertions reveal real issues
-assert "Cloning plugins failed" in error_message, f"Expected error not found: {error_message}"
-assert "This field is required" in error_message, f"Field validation missing: {error_message}"
+assert "Cloning plugins failed" in error_message, (
+    f"Expected error not found: {error_message}"
+)
+assert "This field is required" in error_message, (
+    f"Field validation missing: {error_message}"
+)
 
 # DO THIS - precise validation
 assert len(sidebar_items) == 3, f"Expected exactly 3 items, got {len(sidebar_items)}"
