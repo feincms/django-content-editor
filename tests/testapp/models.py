@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django_json_schema_editor.plugins import JSONPluginBase
 
 from content_editor.models import Region, create_plugin_base
 
@@ -54,6 +55,25 @@ class Section(ArticlePlugin):
 
 class CloseSection(ArticlePlugin):
     pass
+
+
+class JSONPlugin(JSONPluginBase, ArticlePlugin):
+    """All proxies below share this table and are told apart by ``type``."""
+
+
+# Several proxies so that copying and cloning has a chance to mix them up.
+JSONText = JSONPlugin.proxy(
+    "json_text",
+    schema={"__str__": "text", "properties": {"text": {"type": "string"}}},
+)
+JSONTeaser = JSONPlugin.proxy(
+    "json_teaser",
+    schema={"__str__": "title", "properties": {"title": {"type": "string"}}},
+)
+JSONSpacer = JSONPlugin.proxy(
+    "json_spacer",
+    schema={"type": "object", "title": "Spacer", "properties": {}},
+)
 
 
 class Thing(models.Model):

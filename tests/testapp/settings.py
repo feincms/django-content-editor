@@ -9,6 +9,7 @@ INSTALLED_APPS = (
     "django.contrib.staticfiles",
     "testapp",
     "content_editor",
+    "django_json_schema_editor",
 )
 STATIC_URL = "/static/"
 SECRET_KEY = "tests"

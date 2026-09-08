@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.db import models
+from django_json_schema_editor.plugins import JSONPluginInline
 
 from content_editor.admin import (
     ContentEditor,
@@ -12,6 +13,9 @@ from testapp.models import (
     Article,
     CloseSection,
     Download,
+    JSONSpacer,
+    JSONTeaser,
+    JSONText,
     NoRegionArticle,
     NoRegionText,
     Page,
@@ -51,17 +55,19 @@ class CloseSectionInline(ContentEditorInline):
     sections = -1
 
 
-admin.site.register(
-    Article,
-    ContentEditor,
-    inlines=[
+@admin.register(Article)
+class ArticleAdmin(ContentEditor):
+    save_as = True
+    inlines = [
         RichTextInline,
         ContentEditorInline.create(model=Download, regions=deny_regions({"sidebar"})),
         ThingInline,
         SectionInline,
         CloseSectionInline,
-    ],
-)
+        JSONPluginInline.create(model=JSONText),
+        JSONPluginInline.create(model=JSONTeaser),
+        JSONPluginInline.create(model=JSONSpacer),
+    ]
 
 
 @admin.register(Page)
