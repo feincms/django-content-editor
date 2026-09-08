@@ -318,8 +318,13 @@ class CloneForm(forms.Form):
         instances = {}
         for model, pks in objects.items():
             cls = apps.get_model(model)
+            # get_queryset() and not _base_manager: plugin models which share a
+            # table (and only differ in a type field) downcast their instances
+            # here. Skipping that would clone them as whatever model was
+            # submitted, silently changing their type.
             instances |= {
-                f"{model}:{obj.pk}": obj for obj in cls._base_manager.filter(pk__in=pks)
+                f"{model}:{obj.pk}": obj
+                for obj in cls.get_queryset().filter(pk__in=pks)
             }
 
         data["_clone_instances"] = [

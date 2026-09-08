@@ -6,6 +6,9 @@ Next version
 ============
 
 - Avoided submitting the clone from region form when canceling.
+- Changed cloning to fetch plugins using the plugin model's own
+  ``get_queryset()`` instead of the plain base manager, so that plugin models
+  which share a table (and downcast their instances) keep their type.
 
 
 9.0 (2026-06-12)
