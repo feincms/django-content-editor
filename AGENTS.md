@@ -178,8 +178,15 @@ ContentEditorInline automatically hides `region` and `ordering` fields using `Hi
 ## Git and Version Control
 
 - Repository is at `github.com/matthiask/django-content-editor`
-- Follow conventional commit messages
 - Don't commit unless explicitly requested
+- Commit feature by feature, not everything at once. Each commit should stand
+  on its own: ship a change together with the tests covering it, so that the
+  test suite passes at every commit.
+- Write short commit messages: one imperative summary line, matching the
+  existing log (no `feat:`/`fix:` prefixes). The message doesn't have to repeat
+  what the diff already says; only add a body when the *why* isn't obvious.
+- Never add attribution to commits: no `Co-Authored-By` trailers, no
+  "Generated with ..." lines, no other agent or tool attribution.
 - Never use `--no-verify` or skip hooks
 - Stage specific files by name (avoid `git add -A`)
 - Watch for sensitive files (.env, credentials) before staging
