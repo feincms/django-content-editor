@@ -6,6 +6,14 @@ Next version
 ============
 
 - Avoided submitting the clone from region form when canceling.
+- Fixed the mapping from an inline's DOM id back to its plugin: the formset
+  prefix is now matched exactly after stripping the form index instead of
+  matching the longest prefix the id starts with. Proxy models of the same
+  concrete model all inherit the same default formset prefix, and Django
+  disambiguates the duplicates by appending ``-2``, ``-3``, ... -- which the
+  prefix match confused with the third and fourth form of the undecorated
+  prefix. Cloning such a plugin submitted the wrong model and therefore changed
+  the plugin's type.
 - Changed cloning to fetch plugins using the plugin model's own
   ``get_queryset()`` instead of the plain base manager, so that plugin models
   which share a table (and downcast their instances) keep their type.

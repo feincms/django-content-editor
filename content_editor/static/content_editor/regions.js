@@ -35,17 +35,16 @@ export class Regions {
    */
 
   // Fetch the inline type from id
+  //
+  // Inline ids are ``<formset prefix>-<form index>`` (or ``-empty`` for the
+  // template form), so strip the trailing index and match the prefix exactly.
+  // Prefix matching would be ambiguous: proxies of the same concrete model all
+  // inherit the same default formset prefix, and Django disambiguates the
+  // duplicates by appending ``-2``, ``-3``, ... -- which is indistinguishable
+  // from the third and fourth form of the undecorated prefix.
   getPluginTypeFromId(id) {
-    let ret = null
-    for (const plugin of this.ContentEditor.plugins) {
-      if (
-        id.startsWith(plugin.prefix) &&
-        (!ret || plugin.prefix.length > ret.prefix.length)
-      ) {
-        ret = plugin
-      }
-    }
-    return ret
+    const prefix = id.replace(/-(?:\d+|empty)$/, "")
+    return this.ContentEditor.pluginsByPrefix[prefix] || null
   }
 
   // Assign data-region to all inlines. We also want the data attribute to be

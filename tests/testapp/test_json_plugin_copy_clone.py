@@ -17,6 +17,8 @@ from django.urls import reverse
 from content_editor.admin import CloneForm
 from testapp.models import Article, JSONPlugin, JSONSpacer, JSONTeaser, JSONText
 
+from .test_playwright_helpers import login_admin
+
 
 # Deliberately more than two plugins of the first type: their inlines are
 # rendered as ``testapp_jsonplugin_set-0`` ... ``-3``, and the last two of those
@@ -229,3 +231,46 @@ def test_inline_ids_map_back_to_their_plugin(client):
             )
 
     assert seen == set(plugins)
+
+
+@pytest.mark.django_db
+def test_clone_dialog_keeps_plugin_types(page, live_server, client, user):
+    """The clone dialog must offer each plugin under its own model.
+
+    The regression this guards against: proxies of one concrete model share a
+    formset prefix, so the third and fourth inline of the first proxy have DOM
+    ids which look exactly like the second and third proxy's prefix. Cloning
+    them then submitted the wrong model and rewrote their type.
+    """
+    login_admin(page, live_server.url)
+    article = create_article()
+
+    page.goto(f"{live_server.url}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".tabs.regions")
+
+    page.click(".tabs.regions .tab:has-text('sidebar region')")
+    page.click(".order-machine-insert-target")
+    page.click(".plugin-button:has-text('Clone')")
+    page.wait_for_selector("dialog.clone")
+
+    page.locator("details[name='clone-region']").first.evaluate(
+        "d => { d.open = true }"
+    )
+    checkboxes = page.locator("dialog.clone input[name='_clone']")
+    assert sorted(
+        checkboxes.evaluate_all("els => els.map((el) => el.value)")
+    ) == sorted(
+        f"{plugin._meta.label_lower}:{plugin.pk}"
+        for plugin in JSONPlugin.objects.filter(
+            parent=article, region="main"
+        ).downcast()
+    )
+
+    for index in range(checkboxes.count()):
+        checkboxes.nth(index).check()
+
+    page.click("dialog.clone input[name='_continue']")
+    page.wait_for_selector(".messagelist .success")
+
+    assert plugins_in(article, "sidebar") == expected_plugins()
+    assert plugins_in(article, "main") == expected_plugins()
