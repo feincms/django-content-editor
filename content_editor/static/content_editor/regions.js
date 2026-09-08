@@ -1,4 +1,10 @@
-import { buildDropdown, delegate, qs, qsa } from "content-editor/utils"
+import {
+  buildDropdown,
+  delegate,
+  isRealRegion,
+  qs,
+  qsa,
+} from "content-editor/utils"
 
 /*
  * REGIONS & PLUGIN RIGHTS
@@ -20,11 +26,6 @@ export class Regions {
     this.ContentEditor = ContentEditor
     this.machine = machine
     this.tabs = []
-
-    // Pre map plugin regions
-    this.pluginRegions = Object.fromEntries(
-      ContentEditor.plugins.map((plugin) => [plugin.prefix, plugin.regions]),
-    )
 
     this.bindInsertTargets()
     this.bindGlobalHandlers()
@@ -81,19 +82,22 @@ export class Regions {
 
   attachMoveToRegionDropdown(inline) {
     const CE = this.ContentEditor
-    // Filter allowed regions
-    const inlineType = this.getPluginTypeFromId(inline.id)?.type
-    const regions = []
-    for (const region of CE.regions) {
-      if (
-        (!inlineType ||
-          !this.pluginRegions[inlineType] ||
-          this.pluginRegions[inlineType].includes(region.key)) &&
-        !/^_unknown_/.test(region.key)
-      ) {
-        regions.push(region)
-      }
-    }
+    // Filter allowed regions. ``plugin.regions`` is null for plugins which
+    // aren't restricted to particular regions, and the ``_adding_not_allowed``
+    // sentinel for plugins the user may not add -- moving content which
+    // already exists isn't adding, so that sentinel restricts nothing here.
+    // The region the plugin is in stays offered even when it isn't allowed
+    // there (content predating a restriction): the dropdown has to show where
+    // the plugin is now, and it's the only way to move it out again.
+    const allowed = this.getPluginTypeFromId(inline.id)?.regions
+    const unrestricted = !allowed || allowed.includes("_adding_not_allowed")
+    const regions = CE.regions.filter(
+      (region) =>
+        isRealRegion(CE, region.key) &&
+        (unrestricted ||
+          allowed.includes(region.key) ||
+          region.key === inline.dataset.region),
+    )
 
     const isCurrentUnknown = /^_unknown_/.test(inline.dataset.region)
 

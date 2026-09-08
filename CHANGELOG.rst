@@ -17,6 +17,11 @@ Next version
 - Changed cloning to fetch plugins using the plugin model's own
   ``get_queryset()`` instead of the plain base manager, so that plugin models
   which share a table (and downcast their instances) keep their type.
+- Fixed the move-to-region dropdown to actually honor the plugin's allowed
+  regions; it looked them up by a key which the editor context never contained,
+  so it always offered all regions. The region a plugin currently is in stays
+  offered even when the plugin isn't allowed there, so that content predating a
+  restriction can still be moved out.
 
 
 9.0 (2026-06-12)

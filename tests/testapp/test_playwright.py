@@ -690,3 +690,75 @@ def test_move_plugin_to_other_region(page: Page, django_server, client, user):
 
     section.refresh_from_db()
     assert section.region == "sidebar"
+
+
+@pytest.mark.django_db
+def test_move_to_region_honors_plugin_restrictions(
+    page: Page, django_server, client, user
+):
+    """The move-to-region dropdown must only offer regions the plugin allows.
+
+    Regression test: the dropdown looked the plugin's allowed regions up by a
+    ``type`` key which the editor context never contained, so the lookup always
+    missed and every plugin was offered every region.
+    """
+    login_admin(page, django_server)
+
+    article = Article.objects.create(title="Restricted Move Test")
+    # RichText is restricted to the main region, Download is denied the sidebar,
+    # Section may go anywhere.
+    article.testapp_richtext_set.create(text="<p>a</p>", region="main", ordering=10)
+    article.testapp_download_set.create(file="a.pdf", region="main", ordering=20)
+    article.testapp_section_set.create(region="main", ordering=30)
+
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+
+    # Both restricted plugins are left with a single region, which is not worth
+    # a dropdown at all.
+    expect(
+        page.locator("#testapp_richtext_set-0 select.inline_move_to_region")
+    ).to_have_count(0)
+    expect(
+        page.locator("#testapp_download_set-0 select.inline_move_to_region")
+    ).to_have_count(0)
+
+    section_regions = page.locator(
+        "#testapp_section_set-0 select.inline_move_to_region option"
+    )
+    assert section_regions.evaluate_all("els => els.map((el) => el.value)") == [
+        "main",
+        "sidebar",
+    ]
+
+
+@pytest.mark.django_db
+def test_move_to_region_keeps_offering_the_current_region(
+    page: Page, django_server, client, user
+):
+    """A plugin in a region it isn't allowed in can still be moved out."""
+    login_admin(page, django_server)
+
+    # RichText is restricted to the main region -- this one predates that.
+    article = Article.objects.create(title="Stranded Move Test")
+    richtext = article.testapp_richtext_set.create(
+        text="<p>a</p>", region="sidebar", ordering=10
+    )
+
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+    page.click(".tabs.regions .tab:has-text('sidebar region')")
+
+    select = page.locator("#testapp_richtext_set-0 select.inline_move_to_region")
+    # The dropdown shows where the plugin is, plus where it may go.
+    assert select.locator("option").evaluate_all(
+        "els => els.map((el) => el.value)"
+    ) == ["main", "sidebar"]
+    expect(select).to_have_value("sidebar")
+
+    select.select_option("main")
+    page.click("input[name='_save']")
+    page.wait_for_selector(".success")
+
+    richtext.refresh_from_db()
+    assert richtext.region == "main"
