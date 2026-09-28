@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+9.1a1 (2026-09-28)
+==================
+
 - Avoided submitting the clone from region form when canceling.
 - Fixed the mapping from an inline's DOM id back to its plugin: the formset
   prefix is now matched exactly after stripping the form index instead of
@@ -22,6 +25,8 @@ Next version
   so it always offered all regions. The region a plugin currently is in stays
   offered even when the plugin isn't allowed there, so that content predating a
   restriction can still be moved out.
+- Updated the media and import map handling for DEP 0022 and django-js-asset
+  5.0a1.
 
 
 9.0 (2026-06-12)
