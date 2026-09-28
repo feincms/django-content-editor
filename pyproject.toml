@@ -46,7 +46,7 @@ optional-dependencies.docs = [
 optional-dependencies.tests = [
   "beautifulsoup4",
   "coverage",
-  "django-json-schema-editor",
+  "django-json-schema-editor>=0.15a1",
   "pytest",
   "pytest-asyncio",
   "pytest-cov",
