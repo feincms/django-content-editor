@@ -252,6 +252,7 @@ class ContentEditor(RefinedModelAdmin):
 
     def _content_editor_media(self, request, context):
         return Media(
+            importmap=importmap,
             css={
                 "all": [
                     "content_editor/material-icons.css",
@@ -264,7 +265,6 @@ class ContentEditor(RefinedModelAdmin):
                 # (which also runs on the jQuery ready queue). Declare the
                 # dependency explicitly.
                 "admin/js/jquery.init.js",
-                importmap,
                 JSON(
                     self._content_editor_context(request, context),
                     id="content-editor-context",
