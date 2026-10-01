@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+- Added Django 6.1 to the CI.
+- Fixed a deprecation warning because of the way the import map was defined.
+
+
 9.1a1 (2026-09-28)
 ==================
 

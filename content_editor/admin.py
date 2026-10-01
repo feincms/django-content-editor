@@ -10,7 +10,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset import JS, JSON, ImportMap, Media, static_lazy
+from js_asset import JS, JSON, ImportMap, Media
 
 
 __all__ = ("ContentEditor", "ContentEditorInline", "allow_regions", "deny_regions")
@@ -35,10 +35,8 @@ _CONTENT_EDITOR_MODULES = (
 )
 importmap = ImportMap(
     {
-        "imports": {
-            f"content-editor/{name}": static_lazy(f"content_editor/{name}.js")
-            for name in _CONTENT_EDITOR_MODULES
-        }
+        f"content-editor/{name}": f"content_editor/{name}.js"
+        for name in _CONTENT_EDITOR_MODULES
     }
 )
 
