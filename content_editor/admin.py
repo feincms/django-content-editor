@@ -10,7 +10,7 @@ from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
 from django.utils.text import capfirst
 from django.utils.translation import gettext
-from js_asset import JS, JSON, ImportMap, Media
+from js_asset import JSON, ImportMap, Media, Script
 
 
 __all__ = ("ContentEditor", "ContentEditorInline", "allow_regions", "deny_regions")
@@ -267,7 +267,7 @@ class ContentEditor(RefinedModelAdmin):
                     self._content_editor_context(request, context),
                     id="content-editor-context",
                 ),
-                JS("content_editor/index.js", {"type": "module"}),
+                Script("content_editor/index.js", type="module"),
             ],
         )
 

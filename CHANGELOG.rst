@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+- Switched from the deprecated ``JS(src, {...})`` form of django-js-asset to
+  ``Script(src, **attrs)``.
+
 9.1a2 (2026-10-01)
 ==================
 
