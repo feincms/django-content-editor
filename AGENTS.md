@@ -184,7 +184,7 @@ ContentEditorInline automatically hides `region` and `ordering` fields using `Hi
   test suite passes at every commit.
 - Write short commit messages: one imperative summary line, matching the
   existing log (no `feat:`/`fix:` prefixes). The message doesn't have to repeat
-  what the diff already says; only add a body when the *why* isn't obvious.
+  what the diff already says; only add a body when the _why_ isn't obvious.
 - Never add attribution to commits: no `Co-Authored-By` trailers, no
   "Generated with ..." lines, no other agent or tool attribution.
 - Never use `--no-verify` or skip hooks
@@ -258,7 +258,7 @@ no build step) in `content_editor/static/content_editor/`:
 
 **jQuery:** removed from all editor logic. The only remaining use is
 `django.jQuery(init)` in `index.js` as the DOM-ready hook, so initialization
-runs *after* Django's admin `inlines.js` setup (which runs on the jQuery ready
+runs _after_ Django's admin `inlines.js` setup (which runs on the jQuery ready
 queue). `admin/js/jquery.init.js` is declared as a `Media` dependency for this.
 Requires Django >= 4.1 (the project targets >= 4.2), since formset events are
 native `CustomEvent`s only from 4.1 on.
