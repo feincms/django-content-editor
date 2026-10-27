@@ -25,101 +25,92 @@ msgid "Add new item"
 msgstr "Yeni öğe ekle"
 
 #: admin.py:289
-#, fuzzy
-#| msgid "max. items"
 msgid "No items."
-msgstr "max. öğe"
+msgstr "Öğe yok."
 
 #: admin.py:290
 msgid "No items. Region may inherit content."
-msgstr ""
+msgstr "Öğe yok. Bölge içerik devralabilir."
 
 #: admin.py:291
 msgid "No regions available."
-msgstr ""
+msgstr "Kullanılabilir bölge yok."
 
 #: admin.py:292
 msgid "No plugins allowed in this region."
-msgstr ""
+msgstr "Bu bölgede eklentiye izin verilmiyor."
 
 #: admin.py:293
-#, fuzzy
-#| msgid "max. items"
 msgid "New item"
-msgstr "max. öğe"
+msgstr "Yeni öğe"
 
 #: admin.py:294
 msgid "Unknown region"
-msgstr ""
+msgstr "Bilinmeyen bölge"
 
 #: admin.py:295
-#, fuzzy
-#| msgid "Collapse tree"
 msgid "Collapse all items"
-msgstr "Ağacı daralt"
+msgstr "Tüm öğeleri daralt"
 
 #: admin.py:296
-#, fuzzy
-#| msgid "Collapse tree"
 msgid "Uncollapse all items"
-msgstr "Ağacı daralt"
+msgstr "Tüm öğeleri genişlet"
 
 #: admin.py:297
 msgid "marked for deletion"
-msgstr ""
+msgstr "silinmek üzere işaretlendi"
 
 #: admin.py:299
 msgid "Use Ctrl-Click to select and move multiple items."
-msgstr ""
+msgstr "Birden fazla öğe seçip taşımak için Ctrl+tıklama kullanın."
 
 #: admin.py:301
 msgid "Clone from region"
-msgstr ""
+msgstr "Bölgeden klonla"
 
 #: admin.py:302
 msgid "Didn't find anything to clone"
-msgstr ""
+msgstr "Klonlanacak bir şey bulunamadı"
 
 #: admin.py:303
 msgid "Select all"
-msgstr ""
+msgstr "Tümünü seç"
 
 #: admin.py:305
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
 msgstr ""
+"Bu kapsayıcı boş değil. Hangi öğeler silinmek üzere işaretlensin? "
+"Kaydederken silinecekler."
 
 #: admin.py:308
-#, fuzzy
-#| msgid "raw contents"
 msgid "Container and contents"
-msgstr "ham içerikler"
+msgstr "Kapsayıcı ve içeriği"
 
 #: admin.py:309
 msgid "Only the container"
-msgstr ""
+msgstr "Yalnızca kapsayıcı"
 
 #: admin.py:310
 msgid "Indent (Alt+Shift+Right)"
-msgstr ""
+msgstr "Girintiyi artır (Alt+Shift+Sağ)"
 
 #: admin.py:311
 msgid "Outdent (Alt+Shift+Left)"
-msgstr ""
+msgstr "Girintiyi azalt (Alt+Shift+Sol)"
 
 #: admin.py:355
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
-msgstr ""
+msgstr "Klonlanan eklenti sayısı: {}"
 
 #: admin.py:360
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
-msgstr ""
+msgstr "Eklentiler klonlanamadı: {}"
 
 #, fuzzy
-#~| msgid "template contents"
 #~ msgid "Show/hide contents"
 #~ msgstr "tema içerikleri"
 
@@ -139,7 +130,6 @@ msgstr ""
 #~ msgstr "başlık"
 
 #, fuzzy
-#~| msgid "You don't have the necessary permissions to edit this object"
 #~ msgid "You do not have permission to modify this object"
 #~ msgstr "Bu nesneye düzenlemek için gerekli izinleriniz yok"
 
@@ -153,7 +143,6 @@ msgstr ""
 #~ msgstr "olaylar"
 
 #, fuzzy
-#~| msgid "Successfully deleted %s items."
 #~ msgid "Successfully deleted %(count)d items."
 #~ msgstr "%s öğeleri başarıyla silindi."
 
@@ -537,7 +526,6 @@ msgstr ""
 #~ msgstr "Navigasyon bileşeni"
 
 #, fuzzy
-#~| msgid "in navigation"
 #~ msgid "navigation group"
 #~ msgstr "navigasyonda"
 
@@ -566,7 +554,6 @@ msgstr ""
 #~ msgstr "sayfa başlığı"
 
 #, fuzzy
-#~| msgid "Page title for browser window. Same as title by default."
 #~ msgid ""
 #~ "Page title for browser window. Same as title bydefault. Must not be "
 #~ "longer than 70 characters."
@@ -615,7 +602,6 @@ msgstr ""
 #~ msgstr "aktif"
 
 #, fuzzy
-#~| msgid "This is used for the generated navigation too."
 #~ msgid "This title is also used for navigation menu items."
 #~ msgstr "Bu da oluşturulan navigasyon için kullanılır."
 

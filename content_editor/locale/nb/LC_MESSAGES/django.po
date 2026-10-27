@@ -24,101 +24,92 @@ msgid "Add new item"
 msgstr "Legg til nytt objekt"
 
 #: admin.py:289
-#, fuzzy
-#| msgid "max. items"
 msgid "No items."
-msgstr "maks antall objekter"
+msgstr "Ingen objekter."
 
 #: admin.py:290
 msgid "No items. Region may inherit content."
-msgstr ""
+msgstr "Ingen objekter. Regionen kan arve innhold."
 
 #: admin.py:291
 msgid "No regions available."
-msgstr ""
+msgstr "Ingen regioner tilgjengelig."
 
 #: admin.py:292
 msgid "No plugins allowed in this region."
-msgstr ""
+msgstr "Ingen plugins er tillatt i denne regionen."
 
 #: admin.py:293
-#, fuzzy
-#| msgid "max. items"
 msgid "New item"
-msgstr "maks antall objekter"
+msgstr "Nytt objekt"
 
 #: admin.py:294
 msgid "Unknown region"
-msgstr ""
+msgstr "Ukjent region"
 
 #: admin.py:295
-#, fuzzy
-#| msgid "Collapse tree"
 msgid "Collapse all items"
-msgstr "Slå sammen tre"
+msgstr "Skjul alle objekter"
 
 #: admin.py:296
-#, fuzzy
-#| msgid "Collapse tree"
 msgid "Uncollapse all items"
-msgstr "Slå sammen tre"
+msgstr "Vis alle objekter"
 
 #: admin.py:297
 msgid "marked for deletion"
-msgstr ""
+msgstr "merket for sletting"
 
 #: admin.py:299
 msgid "Use Ctrl-Click to select and move multiple items."
-msgstr ""
+msgstr "Bruk Ctrl+klikk for å velge og flytte flere objekter."
 
 #: admin.py:301
 msgid "Clone from region"
-msgstr ""
+msgstr "Klon fra region"
 
 #: admin.py:302
 msgid "Didn't find anything to clone"
-msgstr ""
+msgstr "Fant ikke noe å klone"
 
 #: admin.py:303
 msgid "Select all"
-msgstr ""
+msgstr "Velg alle"
 
 #: admin.py:305
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
 msgstr ""
+"Denne beholderen er ikke tom. Hvilke objekter skal merkes for sletting? De "
+"slettes når du lagrer."
 
 #: admin.py:308
-#, fuzzy
-#| msgid "raw contents"
 msgid "Container and contents"
-msgstr "råinnhold"
+msgstr "Beholder og innhold"
 
 #: admin.py:309
 msgid "Only the container"
-msgstr ""
+msgstr "Bare beholderen"
 
 #: admin.py:310
 msgid "Indent (Alt+Shift+Right)"
-msgstr ""
+msgstr "Øk innrykk (Alt+Shift+Høyre)"
 
 #: admin.py:311
 msgid "Outdent (Alt+Shift+Left)"
-msgstr ""
+msgstr "Reduser innrykk (Alt+Shift+Venstre)"
 
 #: admin.py:355
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
-msgstr ""
+msgstr "Plugins klonet: {}"
 
 #: admin.py:360
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
-msgstr ""
+msgstr "Kloning av plugins mislyktes: {}"
 
 #, fuzzy
-#~| msgid "template contents"
 #~ msgid "Show/hide contents"
 #~ msgstr "malinnhold"
 
@@ -479,7 +470,6 @@ msgstr ""
 #~ msgstr "Navigasjonsutvidelse"
 
 #, fuzzy
-#~| msgid "in navigation"
 #~ msgid "navigation group"
 #~ msgstr "i navigasjon"
 
@@ -505,7 +495,6 @@ msgstr ""
 #~ msgstr "sidetittel"
 
 #, fuzzy
-#~| msgid "Page title for browser window. Same as title by default."
 #~ msgid ""
 #~ "Page title for browser window. Same as title bydefault. Must not be "
 #~ "longer than 70 characters."
@@ -545,7 +534,6 @@ msgstr ""
 #~ msgstr "aktiv"
 
 #, fuzzy
-#~| msgid "This is used for the generated navigation too."
 #~ msgid "This title is also used for navigation menu items."
 #~ msgstr "Denne vil også bli brukt for navigasjon."
 
