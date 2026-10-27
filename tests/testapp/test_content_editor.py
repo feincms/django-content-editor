@@ -1,11 +1,15 @@
 import pytest
+from django import forms
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
+from django.test import RequestFactory
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains
 
+from content_editor.admin import ContentEditorInline
 from content_editor.contents import contents_for_item
 from content_editor.models import Region
 from testapp.models import Article, Download, RichText
@@ -111,3 +115,28 @@ def test_invalid_region_objects():
 
 def test_hashable_types():
     _mapping = {Region(key="hello", title="Hello"): Region(key="world", title="World")}
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"fieldsets": [("Text", {"fields": ["text"]})]},
+        {"fields": ["text"]},
+        {},
+    ],
+)
+def test_structural_fields_are_added(options):
+    """region and ordering are added to the inline's form if missing, as
+    hidden fields."""
+    inline_class = type(
+        "RichTextInline", (ContentEditorInline,), {"model": RichText, **options}
+    )
+    inline = inline_class(Article, admin.AdminSite())
+    request = RequestFactory().get("/")
+    request.user = User(is_active=True, is_superuser=True)
+
+    fieldsets = inline.get_fieldsets(request)
+    assert fieldsets[-1][1]["fields"][-2:] == ["region", "ordering"]
+    form = inline.get_formset(request).form
+    for field in ("region", "ordering"):
+        assert isinstance(form.base_fields[field].widget, forms.HiddenInput)

@@ -93,8 +93,9 @@ tox -l             # List available test environments
 
 ### System Checks
 
-The library provides four system checks:
-- `content_editor.E001` - Missing region/ordering in fieldsets
+The library provides three system checks (`content_editor.E001`, missing
+region/ordering in fieldsets, was removed since those fields are now added
+automatically):
 - `content_editor.E002` - Missing regions attribute on model
 - `content_editor.E003` - Regions not iterable
 - `content_editor.I001` - Non-abstract base classes warning
@@ -173,7 +174,7 @@ contents = contents_for_item(
 
 ### Field Visibility
 
-ContentEditorInline automatically hides `region` and `ordering` fields using `HiddenInput` widget. These fields must exist in fieldsets but won't be visible to users.
+ContentEditorInline automatically adds the `region` and `ordering` fields (`_STRUCTURAL_FIELDS` in `admin.py`) to the fieldsets or fields if they are missing, and hides them using the `HiddenInput` widget.
 
 ## Git and Version Control
 
@@ -289,8 +290,9 @@ with zero regions), and `addContent` refuses without a valid current region.
 - Regions must be iterable (list, tuple, set) not string
 - Region keys must be valid Python identifiers
 
-**Fieldset validation:**
-- ContentEditorInline fieldsets must include `region` and `ordering`
+**Fieldsets:**
+- `region` and `ordering` are added automatically if missing; listing them is
+  optional
 - These fields are automatically hidden (don't add HiddenInput manually)
 
 ## References

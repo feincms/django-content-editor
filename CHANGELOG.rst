@@ -5,6 +5,10 @@ Change log
 Next version
 ============
 
+- Added the ``region`` and ``ordering`` fields to ``ContentEditorInline``
+  fieldsets (or fields) automatically if they are missing, and removed the
+  ``content_editor.E001`` system check which required listing them.
+
 9.2 (2026-10-27)
 ================
 

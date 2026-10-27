@@ -18,6 +18,9 @@ __all__ = ("ContentEditor", "ContentEditorInline", "allow_regions", "deny_region
 
 _inline_index = itertools.count()
 
+# Fields the content editor needs in every plugin form
+_STRUCTURAL_FIELDS = ("region", "ordering")
+
 
 # The content editor JavaScript ships as native ES modules. Modules import each
 # other via bare specifiers (``content-editor/…``) which are resolved through an
@@ -64,25 +67,8 @@ class ContentEditorChecks(ModelAdminChecks):
 class ContentEditorInlineChecks(InlineModelAdminChecks):
     def check(self, inline_obj, **kwargs):
         errors = super().check(inline_obj, **kwargs)
-        errors.extend(self.check_content_editor_fields_in_fieldset(inline_obj))
         errors.extend(self.check_content_editor_iterable_regions(inline_obj))
         return errors
-
-    def check_content_editor_fields_in_fieldset(self, obj):
-        if obj.fieldsets is None:
-            return []
-
-        fields = flatten_fieldsets(obj.fieldsets)
-        if all(field in fields for field in ("region", "ordering")):
-            return []
-
-        return [
-            checks.Error(
-                "fieldsets must contain both 'region' and 'ordering'.",
-                obj=obj.__class__,
-                id="content_editor.E001",
-            )
-        ]
 
     def check_content_editor_iterable_regions(self, obj):
         if obj.regions is None:
@@ -113,6 +99,22 @@ class ContentEditorInline(StackedInline):
     icon = ""
     color = ""
     sections = 0
+
+    def get_fields(self, request, obj=None):
+        """Add the structural fields if they are missing"""
+        fields = list(super().get_fields(request, obj))
+        return fields + [field for field in _STRUCTURAL_FIELDS if field not in fields]
+
+    def get_fieldsets(self, request, obj=None):
+        """Add the structural fields to the last fieldset if they are missing"""
+        fieldsets = super().get_fieldsets(request, obj)
+        present = flatten_fieldsets(fieldsets)
+        if missing := [field for field in _STRUCTURAL_FIELDS if field not in present]:
+            *fieldsets, (name, options) = fieldsets
+            fieldsets.append(
+                (name, {**options, "fields": [*options["fields"], *missing]})
+            )
+        return fieldsets
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
         """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""

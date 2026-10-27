@@ -32,12 +32,6 @@ def test_model_checks():
 def test_inline_checks():
     assert admin.ModelAdmin(Article, admin.AdminSite()).check() == []
 
-    class RichTextInline(ContentEditorInline):
-        model = RichText
-        # Purposefully construct an inline with missing region
-        # and ordering fields
-        fieldsets = [(None, {"fields": ("text",)})]
-
     class InvalidRegionsStringInline(ContentEditorInline):
         model = RichText
         regions = "main"
@@ -57,18 +51,12 @@ def test_inline_checks():
     class ArticleAdmin(ContentEditor):
         model = Article
         inlines = [
-            RichTextInline,
             InvalidRegionsStringInline,
             InvalidRegionsCallableInline,
             ValidRegionsGeneratorInline,
         ]
 
     assert ArticleAdmin(Article, admin.AdminSite()).check() == [
-        checks.Error(
-            "fieldsets must contain both 'region' and 'ordering'.",
-            obj=RichTextInline,
-            id="content_editor.E001",
-        ),
         checks.Error(
             "regions must be 'None' or an iterable. Current value is 'main'.",
             obj=InvalidRegionsStringInline,

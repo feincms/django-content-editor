@@ -12,16 +12,16 @@ content_editor.E001
 
 **Missing region and ordering fields in fieldsets**
 
-When using ``ContentEditorInline`` with custom fieldsets, both ``region`` and ``ordering`` fields must be included.
+Removed in django-content-editor 9.3. ``ContentEditorInline`` now adds the
+``region`` and ``ordering`` fields to its fieldsets (or fields) automatically
+if they are missing, so they don't have to be listed anymore:
 
 .. code-block:: python
 
     class MyPluginInline(ContentEditorInline):
         model = MyPlugin
         fieldsets = [
-            (None, {
-                "fields": ["title", "content", "region", "ordering"],
-            }),
+            (None, {"fields": ["title", "content"]}),
         ]
 
 content_editor.E002

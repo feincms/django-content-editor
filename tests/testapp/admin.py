@@ -37,7 +37,8 @@ class RichTextarea(forms.Textarea):
 class RichTextInline(ContentEditorInline):
     model = RichText
     formfield_overrides = {models.TextField: {"widget": RichTextarea}}
-    fieldsets = [(None, {"fields": ("text", "region", "ordering")})]
+    # region and ordering are added automatically
+    fieldsets = [(None, {"fields": ("text",)})]
     regions = allow_regions({"main"})
 
 
