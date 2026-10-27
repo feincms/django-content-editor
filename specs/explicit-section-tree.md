@@ -199,11 +199,45 @@ renderer.register(
 )
 ```
 
-A container's renderer receives the rendered children in addition to the
-plugin and the context (`template_renderer` exposes them as `children` in the
-template). Containers are registered explicitly instead of being inferred
-from the data, because an empty container has to render as a container too,
-and because its renderer is called differently.
+A container's renderer receives its children explicitly, as a third argument:
+`renderer(plugin, context, children)`. `register(..., container=True)`
+checks that the renderer accepts it, like the existing check for two
+arguments. `children` is a sequence of rendered child nodes in order; each
+node has the child's `plugin` and renders as the child's HTML, and the
+sequence itself renders as the concatenated HTML. So a simple container
+template only needs `{{ children }}`, while e.g. tabs can loop over the nodes
+and use each child plugin for the tab titles. `template_renderer` exposes
+the sequence as `children` in the template.
+
+Containers are registered explicitly instead of being inferred from the
+data, because an empty container has to render as a container too, and
+because its renderer is called differently.
+
+The renderer renders each list of siblings (the top level of a region, or
+the children of one container) through one overridable method, e.g.
+`render_siblings(plugins, context)`. By default it renders the plugins one by
+one, recursing into containers.
+
+### Sections and subregions
+
+Both stay, for different purposes:
+
+- **Sections (containers)** are explicit structure. Editors create them in
+  the content editor and see them there. Use them when the editor decides
+  what belongs together: accordions, tabs, columns.
+- **Subregions** are implicit grouping at render time, decided by the
+  developer based on which plugins follow each other, and invisible in the
+  editor. Use them for grouping which should just happen, e.g. rendering two
+  consecutive images side by side.
+
+The documentation states this distinction prominently, with the rule of
+thumb: if the editor decides the grouping, use a container; if it follows
+from adjacent plugin types, use a subregion.
+
+Subregions only ever group siblings: subregion handling runs inside
+`render_siblings`, so a subregion run can't cross a container boundary, and
+consecutive images are grouped inside a container the same way as at the top
+level. This makes sections win over subregions without any special rules.
 
 `render_section_plugins`, `register_section_close` and `handle__close_section`
 stay in feincms3 for a deprecation period so that projects rendering
@@ -213,10 +247,9 @@ closer-based data keep working.
 
 `feincms3.renderer.RegionRenderer` subclasses the new
 `content_editor.renderer.RegionRenderer` and re-exports the moved names, so
-existing imports keep working. Subregions
-and marks either stay in this subclass or move as well (see open questions).
-If they stay, the rule that sections win over subregions (see decisions) is
-implemented there.
+existing imports keep working. If subregions and marks stay in feincms3 (see
+open questions), the subclass implements subregions by overriding
+`render_siblings`.
 
 ## Migration path
 
@@ -265,17 +298,17 @@ implemented there.
   checkbox) have to drop a hidden container's descendants too, otherwise they
   attach to whatever precedes the container. A small helper could be offered,
   but isn't required.
-- **Sections win over subregions.** Combining feincms3's subregions with
-  sections isn't an expected use case, but if it happens, the section
-  structure takes precedence: a subregion run ends at every depth change, and
-  a container always starts its own section regardless of its subregion. In
-  the renderer, `takewhile_subregion` additionally stops when the depth
-  differs from the depth of the run's first plugin.
+- **Sections and subregions both stay.** Sections are explicit structure
+  created by editors, subregions implicit render-time grouping of adjacent
+  plugins. Subregions only group siblings, so sections always win (see
+  "Sections and subregions").
+- **Container renderers receive their children explicitly**, as a sequence of
+  rendered child nodes which also renders as the concatenated HTML.
 
 ## Open questions
 
 - Do subregions and marks move to `content_editor.renderer` too? They are
-  generic, but so far they are mostly used by feincms3 projects. If they stay in
-  feincms3, the core renderer needs no `handle_<subregion>` dispatch at all.
-- The exact signature of container renderers: an additional `children`
-  argument, or the children made available through the context.
+  generic, and having sections and subregions documented side by side in one
+  place may help with choosing between them. If they stay in feincms3, the
+  core renderer needs no `handle_<subregion>` dispatch at all; feincms3 adds
+  it by overriding `render_siblings`.
