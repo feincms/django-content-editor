@@ -241,6 +241,36 @@ h3[draggable] {
   padding: 0px 1px;
 }
 
+.inline_depth {
+  display: flex;
+  margin: -4px 4px -4px 0;
+}
+
+.inline_depth button {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.inline_depth button:is(:hover, :focus-visible) {
+  opacity: 1;
+}
+
+.inline_depth button:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.order-machine h3 .inline_depth .material-icons {
+  top: 0;
+  left: 0;
+  width: auto;
+  font-size: 18px;
+}
+
 .content-editor-hide {
   display: none !important;
 }

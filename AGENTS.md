@@ -246,6 +246,10 @@ no build step) in `content_editor/static/content_editor/`:
   math, the Django formset add/remove lifecycle, and collapse/expand.
 - `sections.js`, `dragdrop.js`, `cloning.js` - Single-instance classes for
   nested sections, drag & drop, and the clone dialog.
+  Sections come in two modes, chosen per admin: containers (`container = True`
+  on the inline, nesting stored in the hidden `depth` field,
+  `ContentEditor.usesDepth`) and the deprecated closer-based `sections`, where
+  nesting is derived by counting openers and closers.
 - `save_shortcut.js`, `tabbed_fieldsets.js` - Standalone scripts (Ctrl/Cmd-S
   save; tabbed fieldsets for `RefinedModelAdmin`).
 

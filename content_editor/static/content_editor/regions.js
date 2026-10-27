@@ -120,10 +120,22 @@ export class Regions {
 
     select.addEventListener("change", () => {
       if (select.value) {
-        inline.setAttribute("data-region", select.value)
-        regionInput.value = select.value
+        // Containers are moved together with their contents. The container
+        // ends up at depth 0, its descendants keep their relative depth.
+        const sections = this.machine.sections
+        const depth = sections.depthOf(inline)
+        const moving = CE.usesDepth
+          ? [inline, ...sections.descendants(inline)]
+          : [inline]
+        for (const el of moving) {
+          el.setAttribute("data-region", select.value)
+          qs(".order-machine-region", el).value = select.value
+          const other = qs(":scope > h3 .inline_move_to_region", el)
+          if (other) other.value = select.value
+          if (CE.usesDepth) sections.setDepth(el, sections.depthOf(el) - depth)
+          this.machine.setBiggestOrdering(el)
+        }
         this.hideInlinesFromOtherRegions()
-        this.machine.setBiggestOrdering(inline)
         this.machine.reorderInlines()
       }
     })
@@ -305,6 +317,7 @@ export class Regions {
         this.hidePluginButtons()
         if (isSelected) {
           this.ContentEditor._insertBefore = null
+          this.ContentEditor._insertDepth = null
         } else {
           target.classList.add("selected")
 
@@ -324,6 +337,7 @@ export class Regions {
           this.machine.wrapper.classList.add("plugin-buttons-visible")
 
           this.ContentEditor._insertBefore = target.closest(".inline-related")
+          this.ContentEditor._insertDepth = +target.dataset.depth || 0
         }
       },
     )

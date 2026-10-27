@@ -184,10 +184,14 @@ export class Machine {
       qs(`.field-region input[name$="-region"]`, inline).classList.add(
         "order-machine-region",
       )
+      qs(`.field-depth input[name$="-depth"]`, inline)?.classList.add(
+        "order-machine-depth",
+      )
 
       const ordering = qs(".order-machine-ordering", inline).value || 1e9
       inline.style.order = ordering
       this.dragdrop.ensureDraggable(inline)
+      this.sections.ensureDepthButtons(inline)
     }
 
     for (const inline of inlines) {
@@ -223,6 +227,12 @@ export class Machine {
       this.insertAdjacent(row, insertBefore)
       CE._insertBefore = null
     }
+    // New inlines take the depth of their position
+    this.sections.setDepth(
+      row,
+      insertBefore ? this.sections.depthOf(insertBefore) : CE._insertDepth || 0,
+    )
+    CE._insertDepth = null
 
     this.emitInline("content-editor:activate", row)
     this.addSectionClosers(CE.pluginsByPrefix[prefix].sections, insertBefore)
@@ -350,7 +360,8 @@ export class Machine {
         target.closest(".inline-related").classList.toggle("selected")
       } else if (
         !e.target.closest(".delete") &&
-        !e.target.closest(".inline_move_to_region")
+        !e.target.closest(".inline_move_to_region") &&
+        !e.target.closest(".inline_depth")
       ) {
         e.preventDefault()
         const inline = target.closest(".inline-related")

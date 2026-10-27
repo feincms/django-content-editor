@@ -9,8 +9,10 @@ import { qsa } from "content-editor/utils"
  * the window while dragging near the viewport edges. Single instance; depends on
  * ``machine`` (ordering) and ``sections`` (section structure).
  *
- * The drop position is determined by the pointer's vertical position. At the
- * end of a region, sections may still be open; there, the pointer's horizontal
+ * The drop position is determined by the pointer's vertical position. With
+ * containers, the pointer's horizontal position chooses the depth within the
+ * range allowed at that position. With closer-based sections, sections may
+ * still be open at the end of a region; there, the pointer's horizontal
  * position decides how many of them the dropped inlines are moved out of. The
  * required closing plugins are added automatically.
  */
@@ -98,6 +100,10 @@ export class DragDrop {
       over
     const depth = this.sections.depthMap.get(over) || 0
 
+    if (this.ContentEditor.usesDepth) {
+      return this.depthDropTarget(e, over, after ? anchor : null, depth)
+    }
+
     const moving = this.movingInlines()
     const remaining = this.machine
       .findInlinesInOrder()
@@ -132,6 +138,78 @@ export class DragDrop {
       close,
       offset: INDENT * (targetDepth - depth),
     }
+  }
+
+  // The drop target with containers: the dragged inlines are inserted after
+  // ``previous`` (or before ``next``), the remaining inlines directly before and
+  // after the gap. ``anchor`` is the inline the gap follows, if any.
+  depthDropTarget(e, over, anchor, overDepth) {
+    const moving = this.movingInlines()
+    const anchorOrder = anchor ? +anchor.style.order : Number.NEGATIVE_INFINITY
+    const remaining = this.machine
+      .findInlinesInOrder()
+      .filter((el) => !moving.has(el))
+    const previous = remaining
+      .filter((el) => +el.style.order <= anchorOrder)
+      .at(-1)
+    const next = remaining.find((el) => +el.style.order > anchorOrder)
+
+    // Dropping never splits a section, so the next inline keeps its parent
+    const depthOf = (el) => this.sections.depthMap.get(el) || 0
+    const minimum = next ? depthOf(next) : 0
+    const maximum = previous
+      ? depthOf(previous) + (this.sections.isContainer(previous) ? 1 : 0)
+      : 0
+    const base = over.getBoundingClientRect().left - INDENT * overDepth
+    const depth = Math.max(
+      minimum,
+      Math.min(maximum, Math.floor((e.clientX - base) / INDENT)),
+    )
+
+    return {
+      over,
+      after: Boolean(anchor),
+      previous,
+      next,
+      depth,
+      offset: INDENT * (depth - overDepth),
+    }
+  }
+
+  // Move the dragged subtrees to the drop target. The roots end up at the
+  // target depth, their descendants keep their relative depth.
+  dropAtDepth(target, moving) {
+    const sections = this.sections
+    const roots = [...moving].filter(
+      (el) =>
+        !sections.ancestorsOf(el).some((ancestor) => moving.has(ancestor)),
+    )
+    const depths = new Map()
+    for (const root of roots) {
+      const delta = target.depth - sections.depthOf(root)
+      for (const el of [root, ...sections.descendants(root)]) {
+        depths.set(el, sections.depthOf(el) + delta)
+      }
+    }
+
+    const anchor = target.previous || target.next
+    if (anchor) {
+      const after = Boolean(target.previous)
+      const toMove = [...moving].map((el) => [el, +el.style.order])
+      toMove.sort((a, b) => (after ? -1 : 1) * (a[1] - b[1]))
+      for (const row of toMove) {
+        this.machine.insertAdjacent(row[0], anchor, after)
+      }
+    }
+    for (const [el, depth] of depths) sections.setDepth(el, depth)
+
+    // Keep the inlines visible if they moved into a collapsed container
+    for (const root of roots) {
+      for (const el of sections.ancestorsOf(root)) {
+        el.classList.remove("collapsed")
+      }
+    }
+    this.machine.updateSections()
   }
 
   clearDragover() {
@@ -196,6 +274,11 @@ export class DragDrop {
       const moving = this.movingInlines()
       this.dragging = null
       if (!target) return
+
+      if (this.ContentEditor.usesDepth) {
+        this.dropAtDepth(target, moving)
+        return
+      }
 
       let { anchor, after } = target
       if (target.close) {

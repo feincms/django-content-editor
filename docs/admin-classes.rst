@@ -86,11 +86,50 @@ repetitive if you have many regions and many restrictions:
 Sections
 --------
 
-Plugins may open and close sections by setting ``sections`` to a positive
+Plugins may contain other plugins. Inlines of such plugins (accordions, tabs,
+columns, ...) set ``container = True``:
+
+.. code-block:: python
+
+    class ArticleAdmin(ContentEditor):
+        inlines = [
+            ContentEditorInline.create(model=Accordion, container=True),
+            ContentEditorInline.create(model=RichText),
+            ...
+        ]
+
+The nesting is stored in the ``depth`` field of every plugin: a container's
+children are the following plugins with a greater depth. ``depth`` is added
+to the inline forms as a hidden field automatically. The editor never
+produces invalid depths; when saving, depths are additionally normalized so
+that a plugin is at most one level deeper than the previous plugin, and only
+if that is a container.
+
+In the editor, containers are drawn around their contents, and they are
+collapsed, moved, cloned and deleted together with their contents:
+
+- While dragging, the horizontal pointer position chooses the depth within
+  the range allowed at the drop position. Dropping never splits a section.
+- The buttons in the header of each item and Alt+Shift+Left/Right indent and
+  outdent items directly. Outdenting an item also outdents its following
+  siblings.
+- New items take the depth of the position where they are added. At the end
+  of a region, there's one "+" button per open level.
+- Moving a container to another region moves its contents too.
+- Marking a container for deletion asks whether only the container should be
+  marked for deletion (its contents move one level up), or the contents too.
+
+See :doc:`rendering` for rendering containers.
+
+Deprecated: closer-based sections
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Plugins may also open and close sections by setting ``sections`` to a positive
 number (opens that many sections) or to a negative number (closes sections).
 All plugins between the opening and the closing plugin are grouped visually,
 and they are collapsed and moved together. Sections which aren't closed extend
-until the end of the region.
+until the end of the region. An admin uses either ``sections`` or
+``container``, not both.
 
 .. code-block:: python
 

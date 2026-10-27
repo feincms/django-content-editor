@@ -299,6 +299,8 @@ class ContentEditor(RefinedModelAdmin):
                 ),
                 "deleteSectionAll": gettext("Section and contents"),
                 "deleteSectionUnwrap": gettext("Only the section"),
+                "indent": gettext("Indent (Alt+Shift+Right)"),
+                "outdent": gettext("Outdent (Alt+Shift+Left)"),
             },
         }
 

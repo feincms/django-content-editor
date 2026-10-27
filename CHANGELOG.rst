@@ -21,6 +21,11 @@ Next version
   relative to the root when cloning plugins. ``sections`` is deprecated
   (``content_editor.W001``), and an admin cannot use both
   (``content_editor.E004``).
+- Added editor support for containers: the horizontal pointer position chooses
+  the depth when dropping anywhere, items can be indented and outdented using
+  buttons and Alt+Shift+Left/Right, new items take the depth of their
+  position (with one "+" per open level at the end of a region), and
+  containers are moved to other regions together with their contents.
 - Added ``content_editor.migrations_utils.compute_depths`` for data migrations
   computing ``depth`` from closer-based sections.
 

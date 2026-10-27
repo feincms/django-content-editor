@@ -83,7 +83,12 @@ export class Cloning {
 
       for (const inline of inlines) {
         const { model } = this.regions.getPluginTypeFromId(inline.id)
-        nextIndent = Math.max(0, indent + this.sections.sectionsOf(inline))
+        if (CE.usesDepth) {
+          indent = Math.min(indent, this.sections.depthOf(inline))
+          nextIndent = indent + (this.sections.isContainer(inline) ? 1 : 0)
+        } else {
+          nextIndent = Math.max(0, indent + this.sections.sectionsOf(inline))
+        }
 
         const cb = crel("input", {
           type: "checkbox",
@@ -148,6 +153,14 @@ export class Cloning {
       type: "hidden",
       name: "_clone_ordering",
     })
+    // Cloned plugins take the depth of the insert position
+    const depthField = crel("input", {
+      type: "hidden",
+      name: "_clone_depth",
+      value: CE._insertBefore
+        ? this.sections.depthOf(CE._insertBefore)
+        : CE._insertDepth || 0,
+    })
 
     dialog.append(
       crel("input", {
@@ -156,6 +169,7 @@ export class Cloning {
         value: CE.currentRegion,
       }),
       orderingField,
+      depthField,
     )
 
     dialog.append(
