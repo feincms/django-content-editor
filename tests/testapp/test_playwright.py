@@ -765,8 +765,15 @@ def test_move_to_region_keeps_offering_the_current_region(
 
 
 def open_article(page: Page, django_server, article):
+    # .order-machine exists before the inlines have been moved into it and
+    # positioned, so wait until the editor is fully initialized.
+    page.add_init_script("""
+        document.addEventListener("content-editor:ready", () => {
+            window.__contentEditorReady = true
+        })
+    """)
     page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-    page.wait_for_selector(".order-machine")
+    page.wait_for_function("() => window.__contentEditorReady")
 
 
 @pytest.mark.django_db
@@ -901,9 +908,12 @@ def drag_after(page: Page, source, target, *, dx):
     page.mouse.move(handle["x"] + 20, handle["y"] + 5)
     page.mouse.down()
     page.mouse.move(handle["x"] + 30, handle["y"] + 10)
+    # Chromium starts dragging asynchronously; moves before that are lost.
+    page.wait_for_selector(".fs-dragging")
     box = target.bounding_box()
     page.mouse.move(box["x"] + dx, box["y"] + box["height"] - 3)
     page.mouse.move(box["x"] + dx, box["y"] + box["height"] - 2)
+    page.wait_for_selector(".fs-dragover")
     page.mouse.up()
 
 
@@ -977,6 +987,7 @@ def test_drop_indicator_after_section_plugins(page: Page, django_server, client,
     page.mouse.move(handle["x"] + 20, handle["y"] + 5)
     page.mouse.down()
     page.mouse.move(handle["x"] + 30, handle["y"] + 10)
+    page.wait_for_selector(".fs-dragging")
 
     indicator = page.locator(".fs-dragover")
     for upper, lower, offset in [
