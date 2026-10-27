@@ -1013,3 +1013,23 @@ def test_drop_indicator_after_section_plugins(page: Page, django_server, client,
             )
 
     dispatch_drag(page, ("dragend", source, 20, 5))
+
+
+@pytest.mark.django_db
+def test_editor_works_without_local_storage(page: Page, django_server, client, user):
+    """The editor initializes even if accessing localStorage throws."""
+    login_admin(page, django_server)
+    page.add_init_script("""
+        Object.defineProperty(window, "localStorage", {
+            get() { throw new DOMException("Access denied", "SecurityError") },
+        })
+    """)
+    article = Article.objects.create(title="No storage")
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=10)
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+
+    expect(page.locator(".tabs.regions h2.active")).to_have_count(1)
+    page.locator(".collapse-items").click()
+    expect(page.locator("#testapp_richtext_set-0")).to_have_class(
+        re.compile(r"\bcollapsed\b")
+    )

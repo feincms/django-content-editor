@@ -16,6 +16,8 @@ Next version
 - Determined the drop position from the pointer position inside the whole
   order machine instead of only the inline below the pointer, and showed
   exactly one drop indicator per gap, at the depth the dropped items will have.
+- Fixed the editor failing to initialize when the browser blocks access to
+  ``localStorage``.
 
 9.1 (2026-10-26)
 ================

@@ -77,26 +77,28 @@ export function delegate(root, type, selector, handler) {
 /*
  * STORAGE
  */
-const safeStorage = (storage, prefix = "ContentEditor:") => {
+// Accessing the storage may throw, e.g. when the browser blocks it, so it is
+// only accessed lazily and errors are ignored.
+const safeStorage = (getStorage, prefix = "ContentEditor:") => {
   return {
     set(name, value) {
       try {
-        storage.setItem(prefix + name, JSON.stringify(value))
-      } finally {
-        /* empty */
+        getStorage().setItem(prefix + name, JSON.stringify(value))
+      } catch {
+        /* Storage unavailable */
       }
     },
     get(name) {
       try {
-        return JSON.parse(storage.getItem(prefix + name))
-      } finally {
-        /* empty */
+        return JSON.parse(getStorage().getItem(prefix + name))
+      } catch {
+        return null
       }
     },
   }
 }
 
-export const LS = safeStorage(localStorage)
+export const LS = safeStorage(() => window.localStorage)
 
 /*
  * REGION HELPERS
