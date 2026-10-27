@@ -245,6 +245,12 @@ class ContentEditor(RefinedModelAdmin):
                 "clone": gettext("Clone from region"),
                 "noClone": gettext("Didn't find anything to clone"),
                 "selectAll": gettext("Select all"),
+                "deleteSection": gettext(
+                    "This section contains other items. Which items should be"
+                    " marked for deletion? They will be deleted when saving."
+                ),
+                "deleteSectionAll": gettext("Section and contents"),
+                "deleteSectionUnwrap": gettext("Only the section"),
             },
         }
 

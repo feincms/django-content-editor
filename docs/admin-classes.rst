@@ -104,6 +104,10 @@ keeping sections balanced:
 
 - Adding a section opener adds the closing plugin right after it.
 
+Marking a section opener for deletion asks whether only the opener and its
+closing plugin should be marked for deletion, or the contents of the section
+too.
+
 RefinedModelAdmin
 =================
 

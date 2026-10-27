@@ -367,6 +367,19 @@ h3[draggable] {
   display: none;
 }
 
+dialog.section-delete .submit-row {
+  margin: 0;
+}
+
+dialog.section-delete .delete {
+  background: var(--delete-button-bg, #ba2121);
+  color: var(--button-fg, #fff);
+}
+
+dialog.section-delete .delete:is(:hover, :focus) {
+  background: var(--delete-button-hover-bg, #a41515);
+}
+
 /* CLONING start */
 dialog.clone[open] {
   position: fixed;

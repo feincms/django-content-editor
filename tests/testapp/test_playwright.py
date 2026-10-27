@@ -811,3 +811,81 @@ def test_adding_section_adds_closer(page: Page, django_server, client, user):
     close = article.testapp_closesection_set.get()
     text = article.testapp_richtext_set.get()
     assert section.ordering < close.ordering < text.ordering
+
+
+def create_closed_section(article):
+    article.testapp_section_set.create(region="main", ordering=10)
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=20)
+    article.testapp_closesection_set.create(region="main", ordering=30)
+    article.testapp_richtext_set.create(text="<p>B</p>", region="main", ordering=40)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("answer", "remaining"),
+    [
+        ("Section and contents", (0, ["<p>B</p>"], 0)),
+        ("Only the section", (0, ["<p>A</p>", "<p>B</p>"], 0)),
+        ("Cancel", (1, ["<p>A</p>", "<p>B</p>"], 1)),
+    ],
+)
+def test_delete_section(page: Page, django_server, client, user, answer, remaining):
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Delete section")
+    create_closed_section(article)
+    open_article(page, django_server, article)
+
+    # Not .check(): the checkbox stays unchecked until the dialog is answered
+    page.locator("#testapp_section_set-0 .delete input[type=checkbox]").click()
+    page.locator("dialog.section-delete").get_by_role("button", name=answer).click()
+    expect(page.locator("dialog.section-delete")).to_have_count(0)
+
+    page.click("input[name='_save']")
+    expect(page.locator(".success")).to_contain_text("was changed successfully")
+
+    assert (
+        article.testapp_section_set.count(),
+        list(
+            article.testapp_richtext_set.order_by("ordering").values_list(
+                "text", flat=True
+            )
+        ),
+        article.testapp_closesection_set.count(),
+    ) == remaining
+
+
+@pytest.mark.django_db
+def test_undelete_section(page: Page, django_server, client, user):
+    """Unchecking the section opener's delete checkbox restores the others."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Undelete section")
+    create_closed_section(article)
+    open_article(page, django_server, article)
+
+    checkbox = page.locator("#testapp_section_set-0 .delete input[type=checkbox]")
+    checkbox.click()
+    page.get_by_role("button", name="Section and contents").click()
+    expect(page.locator(".order-machine .for-deletion")).to_have_count(3)
+
+    checkbox.uncheck()
+    expect(page.locator(".order-machine .for-deletion")).to_have_count(0)
+    expect(page.locator(".order-machine .delete input:checked")).to_have_count(0)
+
+
+@pytest.mark.django_db
+def test_remove_new_empty_section(page: Page, django_server, client, user):
+    """Removing a new, empty section removes its closer too, without asking."""
+    login_admin(page, django_server)
+    page.goto(f"{django_server}/admin/testapp/article/add/")
+    page.click(".order-machine-insert-target")
+    page.locator(".plugin-buttons .plugin-button[title='Section']").click()
+    expect(
+        page.locator(".order-machine .dynamic-testapp_closesection_set")
+    ).to_have_count(1)
+
+    page.locator("#testapp_section_set-0 .inline-deletelink").click()
+    expect(page.locator(".order-machine .dynamic-testapp_section_set")).to_have_count(0)
+    expect(
+        page.locator(".order-machine .dynamic-testapp_closesection_set")
+    ).to_have_count(0)
+    expect(page.locator("dialog.section-delete")).to_have_count(0)
