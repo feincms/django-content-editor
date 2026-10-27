@@ -765,15 +765,8 @@ def test_move_to_region_keeps_offering_the_current_region(
 
 
 def open_article(page: Page, django_server, article):
-    # .order-machine exists before the inlines have been moved into it and
-    # positioned, so wait until the editor is fully initialized.
-    page.add_init_script("""
-        document.addEventListener("content-editor:ready", () => {
-            window.__contentEditorReady = true
-        })
-    """)
     page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-    page.wait_for_function("() => window.__contentEditorReady")
+    page.wait_for_selector(".order-machine")
 
 
 @pytest.mark.django_db
