@@ -1,7 +1,16 @@
 import pytest
 
 from content_editor.migrations_utils import compute_depths
-from testapp.models import Article, CloseSection, Download, RichText, Section
+from testapp.models import (
+    Article,
+    CloseSection,
+    Download,
+    JSONPlugin,
+    JSONSpacer,
+    JSONText,
+    RichText,
+    Section,
+)
 
 
 @pytest.mark.django_db
@@ -48,3 +57,32 @@ def test_compute_depths():
     sidebar.refresh_from_db()
     other_text.refresh_from_db()
     assert sidebar.depth == other_text.depth == 0
+
+
+@pytest.mark.django_db
+def test_compute_depths_json_plugins():
+    """JSON plugin proxies share a table; openers and closers among them are
+    selected using querysets."""
+    article = Article.objects.create(title="Test")
+    Section.objects.create(parent=article, region="main", ordering=10)
+    JSONText.objects.create(
+        parent=article, region="main", ordering=20, data={"text": "inside"}
+    )
+    JSONSpacer.objects.create(parent=article, region="main", ordering=30, data={})
+    JSONText.objects.create(
+        parent=article, region="main", ordering=40, data={"text": "after"}
+    )
+
+    with pytest.raises(ValueError, match="is a proxy model"):
+        compute_depths(Article, plugins=[], openers=[], closers=[JSONSpacer])
+    assert JSONPlugin.objects.count() == 3
+
+    compute_depths(
+        Article,
+        plugins=[JSONPlugin],
+        openers=[Section],
+        closers=[JSONPlugin.objects.filter(type="json_spacer")],
+    )
+    assert list(
+        JSONPlugin.objects.order_by("ordering").values_list("type", "depth")
+    ) == [("json_text", 1), ("json_text", 0)]

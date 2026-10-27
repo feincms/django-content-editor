@@ -2,8 +2,14 @@
 Change log
 ==========
 
-Next version
-============
+10.0 (unreleased)
+=================
+
+Upgrading: every plugin model gets a ``depth`` field, so run
+``makemigrations`` and migrate, also if you don't use sections. Plugin
+containers replace the closer-based ``sections``; see the documentation for
+migrating existing content using ``compute_depths``, and upgrade feincms3 at
+the same time so that its renderer knows containers.
 
 - Added the ``region`` and ``ordering`` fields to ``ContentEditorInline``
   fieldsets (or fields) automatically if they are missing, and removed the
@@ -32,7 +38,9 @@ Next version
   ``render_siblings`` renders the top level of a region and the children of
   each container.
 - Added ``content_editor.migrations_utils.compute_depths`` for data migrations
-  computing ``depth`` from closer-based sections.
+  computing ``depth`` from closer-based sections. Openers and closers may be
+  passed as querysets, which is required for proxies sharing a table such as
+  JSON plugins.
 - Renamed sections to containers in the editor, including the CSS classes
   (``.order-machine-section`` is now ``.order-machine-container``,
   ``dialog.section-delete`` is now ``dialog.container-delete``), the

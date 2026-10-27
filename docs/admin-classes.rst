@@ -97,6 +97,12 @@ renderer both use this:
 
         title = models.CharField(max_length=200)
 
+    # JSON plugin proxies are containers too when using a mixin:
+    class Container:
+        container = True
+
+    JSONColumns = JSONPlugin.proxy("columns", schema=..., mixins=[Container])
+
     class ArticleAdmin(ContentEditor):
         inlines = [
             ContentEditorInline.create(model=Accordion),
@@ -163,37 +169,62 @@ too.
 Migrating from closer-based sections
 ------------------------------------
 
+.. warning::
+
+   The data migration deletes the closing plugins and cannot be reversed.
+   Back up the database first.
+
 Plugins created with ``create_plugin_base`` have a ``depth`` field, so
-``makemigrations`` adds it to all plugin models. Then, write a data migration
-which computes ``depth`` from the existing opening and closing plugins and
-deletes the closing plugins:
+``makemigrations`` adds it to all plugin models. This is required when
+upgrading to django-content-editor 10.0 even if you don't use sections.
 
-.. code-block:: python
+To migrate closer-based sections:
 
-    from django.db import migrations
+1. Set ``container = True`` on the models of the opening plugins.
+2. Write a data migration which computes ``depth`` from the existing opening
+   and closing plugins and deletes the closing plugins:
 
-    from content_editor.migrations_utils import compute_depths
+   .. code-block:: python
 
+       from django.db import migrations
 
-    def forwards(apps, schema_editor):
-        compute_depths(
-            apps.get_model("pages", "Page"),
-            plugins=[apps.get_model("pages", "RichText"), ...],
-            openers=[apps.get_model("pages", "Accordion")],
-            closers=[apps.get_model("pages", "CloseSection")],
-        )
+       from content_editor.migrations_utils import compute_depths
 
 
-    class Migration(migrations.Migration):
-        dependencies = [...]
-        operations = [migrations.RunPython(forwards, migrations.RunPython.noop)]
+       def forwards(apps, schema_editor):
+           JSONPlugin = apps.get_model("pages", "JSONPlugin")
+           compute_depths(
+               apps.get_model("pages", "Page"),
+               plugins=[apps.get_model("pages", "RichText"), JSONPlugin],
+               openers=[apps.get_model("pages", "Accordion")],
+               closers=[JSONPlugin.objects.filter(type="close_section")],
+           )
 
-``plugins`` lists all remaining plugin models. Sections which are still open
-at the end of a region end there. Afterwards, remove ``sections = 1`` from the
-inlines of the opening plugins and set ``container = True`` on their models,
-and remove the closing plugins' models and inlines. Each model is fetched using its base
-manager, so the openers and closers should be concrete models, not proxies
-sharing a table with other plugins.
+
+       class Migration(migrations.Migration):
+           dependencies = [...]
+           operations = [migrations.RunPython(forwards, migrations.RunPython.noop)]
+
+   ``plugins`` lists all remaining plugin models. Openers, closers and plugins
+   are either models or querysets. Proxies which share a table with other
+   plugins, such as JSON plugins, have to be passed as querysets selecting
+   the right rows when they open or close sections: models are fetched
+   without filtering, so passing a proxy would treat every row of the table
+   as an opener or closer. ``compute_depths`` rejects proxy models in
+   ``openers`` and ``closers`` for this reason. Each row is processed once;
+   closers take precedence over openers, and openers over the remaining
+   plugins, so the concrete JSON plugin model can be passed in ``plugins``.
+
+   Sections which are still open at the end of a region end there. Openers
+   opening several sections at once (``sections = 2``) aren't supported, every
+   opener counts as one level.
+3. Remove ``sections`` from the inlines, and remove the closing plugins'
+   models and inlines.
+
+Deploy the data migration together with a renderer which knows containers
+(``content_editor.renderer``, or a feincms3 release building on it). Older
+renderers render every section until the end of its region since the closing
+plugins are gone.
 
 RefinedModelAdmin
 =================
