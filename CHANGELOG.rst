@@ -5,6 +5,8 @@ Change log
 Next version
 ============
 
+- Drew sections which are still open at the end of a region open-ended.
+
 9.1 (2026-10-26)
 ================
 

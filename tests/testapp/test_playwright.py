@@ -762,3 +762,26 @@ def test_move_to_region_keeps_offering_the_current_region(
 
     richtext.refresh_from_db()
     assert richtext.region == "main"
+
+
+def open_article(page: Page, django_server, article):
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+
+
+@pytest.mark.django_db
+def test_unclosed_section_is_drawn_open(page: Page, django_server, client, user):
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Open section")
+    article.testapp_section_set.create(region="main", ordering=10)
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=20)
+    open_article(page, django_server, article)
+
+    expect(page.locator(".order-machine-section")).to_have_count(1)
+    expect(page.locator(".order-machine-section--open")).to_have_count(1)
+
+    article.testapp_closesection_set.create(region="main", ordering=30)
+    open_article(page, django_server, article)
+
+    expect(page.locator(".order-machine-section")).to_have_count(1)
+    expect(page.locator(".order-machine-section--open")).to_have_count(0)

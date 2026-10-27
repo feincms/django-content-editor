@@ -37,6 +37,11 @@ html {
   pointer-events: none;
 }
 
+/* Sections which are still open at the end of the region */
+.order-machine-section--open {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent);
+}
+
 .order-machine .inline-related {
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: 0;

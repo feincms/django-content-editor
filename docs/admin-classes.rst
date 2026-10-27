@@ -81,6 +81,24 @@ repetitive if you have many regions and many restrictions:
             RichTextInline.create(regions=deny_regions({"sidebar"})),
         ]
 
+Sections
+--------
+
+Plugins may open and close sections by setting ``sections`` to a positive
+number (opens that many sections) or to a negative number (closes sections).
+All plugins between the opening and the closing plugin are grouped visually,
+and they are collapsed and moved together. Sections which aren't closed extend
+until the end of the region.
+
+.. code-block:: python
+
+    class ArticleAdmin(ContentEditor):
+        inlines = [
+            ContentEditorInline.create(model=Accordion, sections=1),
+            ContentEditorInline.create(model=CloseSection, sections=-1),
+            ...
+        ]
+
 RefinedModelAdmin
 =================
 

@@ -6,8 +6,9 @@ import { debounce } from "content-editor/utils"
  * Plugins may open (``sections > 0``) and close (``sections < 0``) nested
  * sections. This class draws the visual grouping rectangles behind the inlines
  * and tracks, for every section-opening inline, the inlines contained within it
- * (``childrenMap``) so they can be hidden or selected together. Single instance,
- * owned by ``index.js`` and queried by ``machine``/``dragdrop``.
+ * (``childrenMap``) so they can be hidden or selected together. Sections
+ * which are still open at the end of the region are drawn open-ended. Single
+ * instance, owned by ``index.js`` and queried by ``machine``/``dragdrop``.
  */
 export class Sections {
   constructor(ContentEditor, machine) {
@@ -21,6 +22,11 @@ export class Sections {
       const resizeObserver = new ResizeObserver(() => debounced())
       resizeObserver.observe(machine.wrapper)
     }
+  }
+
+  sectionsOf(inline) {
+    const prefix = inline.id.replace(/-[0-9]+$/, "")
+    return this.ContentEditor.pluginsByPrefix[prefix]?.sections || 0
   }
 
   update() {
@@ -39,7 +45,7 @@ export class Sections {
     const newChildrenMap = new Map()
     const topLevel = []
 
-    const closeSection = (atInline) => {
+    const closeSection = (atInline, open = false) => {
       const fromInline = stack.pop()
       const from = fromInline.getBoundingClientRect()
       const until = atInline.getBoundingClientRect()
@@ -57,8 +63,9 @@ export class Sections {
       div.style.top = `${from.top - wrapperRect.top - 5}px`
       div.style.left = `${from.left - wrapperRect.left - 5}px`
       div.style.right = "5px"
-      div.style.height = `${until.top - from.top + until.height + 10}px`
+      div.style.height = `${until.top - from.top + until.height + (open ? 30 : 10)}px`
 
+      div.classList.toggle("order-machine-section--open", open)
       div.classList.toggle(
         "content-editor-hide",
         fromInline.classList.contains("collapsed"),
@@ -66,12 +73,8 @@ export class Sections {
     }
 
     for (const inline of inlines) {
-      const prefix = inline.id.replace(/-[0-9]+$/, "")
       inline.style.marginInlineStart = `${30 * indent}px`
-      nextIndent = Math.max(
-        0,
-        indent + this.ContentEditor.pluginsByPrefix[prefix].sections,
-      )
+      nextIndent = Math.max(0, indent + this.sectionsOf(inline))
 
       if (stack.length) {
         newChildrenMap.get(stack[stack.length - 1]).push(inline)
@@ -104,7 +107,7 @@ export class Sections {
         --lastVisibleIndex
       }
       while (stack.length) {
-        closeSection(inlines[lastVisibleIndex])
+        closeSection(inlines[lastVisibleIndex], true)
       }
     }
 
