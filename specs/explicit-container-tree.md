@@ -298,8 +298,8 @@ and migrate in one step.
    and `content_editor.W001`. feincms3 removes closer-based section rendering
    at the same time. `compute_depths` stays, since data migrations import it.
 
-The new messages (indent, outdent, the container deletion dialog) are
-translated to German; the other catalogs list them for their translators.
+All messages are translated to every language the package ships; apart
+from German, the translations haven't been reviewed by native speakers.
 
 ### Upgrading projects
 
