@@ -122,17 +122,18 @@ export class Regions {
       if (select.value) {
         // Containers are moved together with their contents. The container
         // ends up at depth 0, its descendants keep their relative depth.
-        const sections = this.machine.sections
-        const depth = sections.depthOf(inline)
+        const containers = this.machine.containers
+        const depth = containers.depthOf(inline)
         const moving = CE.usesDepth
-          ? [inline, ...sections.descendants(inline)]
+          ? [inline, ...containers.descendants(inline)]
           : [inline]
         for (const el of moving) {
           el.setAttribute("data-region", select.value)
           qs(".order-machine-region", el).value = select.value
           const other = qs(":scope > h3 .inline_move_to_region", el)
           if (other) other.value = select.value
-          if (CE.usesDepth) sections.setDepth(el, sections.depthOf(el) - depth)
+          if (CE.usesDepth)
+            containers.setDepth(el, containers.depthOf(el) - depth)
           this.machine.setBiggestOrdering(el)
         }
         this.hideInlinesFromOtherRegions()
@@ -192,7 +193,7 @@ export class Regions {
       tab.classList.toggle("active", tab.dataset.region === key)
     }
     this.updatePluginButtonsVisibility()
-    this.machine.updateSections()
+    this.machine.updateContainers()
   }
 
   // Activate the region matching ``region`` (from the URL hash), else the first

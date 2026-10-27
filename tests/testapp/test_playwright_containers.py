@@ -11,7 +11,7 @@ from .test_playwright_helpers import dispatch_drag, drag_after, login_admin
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
-SECTION = "#testapp_pagesection_set-{}"
+CONTAINER = "#testapp_pagecontainer_set-{}"
 TEXT = "#testapp_pagetext_set-{}"
 
 
@@ -32,7 +32,7 @@ def save(page: Page):
 
 def depths(obj):
     plugins = [
-        *obj.testapp_pagesection_set.all(),
+        *obj.testapp_pagecontainer_set.all(),
         *obj.testapp_pagetext_set.all(),
     ]
     return [
@@ -46,28 +46,28 @@ def expect_indentation(page: Page, selector, value):
 
 
 @pytest.fixture
-def section_page():
-    """A section containing A, followed by B"""
-    obj = PageModel.objects.create(title="Sections")
-    obj.testapp_pagesection_set.create(title="S", region="main", ordering=10)
+def container_page():
+    """A container containing A, followed by B"""
+    obj = PageModel.objects.create(title="Containers")
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
     obj.testapp_pagetext_set.create(text="A", region="main", ordering=20, depth=1)
     obj.testapp_pagetext_set.create(text="B", region="main", ordering=30)
     return obj
 
 
 @pytest.mark.django_db
-def test_containers_are_drawn(page: Page, django_server, user, section_page):
+def test_containers_are_drawn(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
 
-    expect(page.locator(".order-machine-section")).to_have_count(1)
-    expect(page.locator(".order-machine-section--open")).to_have_count(0)
-    expect_indentation(page, SECTION.format(0), "0px")
+    expect(page.locator(".order-machine-container")).to_have_count(1)
+    expect(page.locator(".order-machine-container--open")).to_have_count(0)
+    expect_indentation(page, CONTAINER.format(0), "0px")
     expect_indentation(page, TEXT.format(0), "30px")
     expect_indentation(page, TEXT.format(1), "0px")
 
     # Collapsing the container hides its contents
-    page.locator(f"{SECTION.format(0)} > h3 .inline_label").click()
+    page.locator(f"{CONTAINER.format(0)} > h3 .inline_label").click()
     expect(page.locator(TEXT.format(0))).to_be_hidden()
     expect(page.locator(TEXT.format(1))).to_be_visible()
 
@@ -76,15 +76,15 @@ def test_containers_are_drawn(page: Page, django_server, user, section_page):
 def test_indent_and_outdent(page: Page, django_server, user):
     login_admin(page, django_server)
     obj = PageModel.objects.create(title="Indent")
-    obj.testapp_pagesection_set.create(title="S", region="main", ordering=10)
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
     for index, text in enumerate("ABC"):
         obj.testapp_pagetext_set.create(
             text=text, region="main", ordering=20 + 10 * index, depth=index < 2
         )
     open_page(page, django_server, obj)
 
-    expect(page.locator(f"{SECTION.format(0)} .inline_outdent")).to_be_disabled()
-    expect(page.locator(f"{SECTION.format(0)} .inline_indent")).to_be_disabled()
+    expect(page.locator(f"{CONTAINER.format(0)} .inline_outdent")).to_be_disabled()
+    expect(page.locator(f"{CONTAINER.format(0)} .inline_indent")).to_be_disabled()
     # B can't be indented, A isn't a container
     expect(page.locator(f"{TEXT.format(1)} .inline_indent")).to_be_disabled()
 
@@ -92,7 +92,7 @@ def test_indent_and_outdent(page: Page, django_server, user):
     page.locator(f"{TEXT.format(0)} .inline_outdent").click()
     expect_indentation(page, TEXT.format(0), "0px")
     expect_indentation(page, TEXT.format(1), "0px")
-    expect(page.locator(".order-machine-section")).to_have_count(1)
+    expect(page.locator(".order-machine-container")).to_have_count(1)
 
     # Keyboard shortcuts work inside the inline
     page.locator("#id_testapp_pagetext_set-0-text").press("Alt+Shift+ArrowRight")
@@ -115,14 +115,14 @@ def test_indent_and_outdent(page: Page, django_server, user):
 def test_indent_into_collapsed_container(page: Page, django_server, user):
     login_admin(page, django_server)
     obj = PageModel.objects.create(title="Collapsed")
-    obj.testapp_pagesection_set.create(title="S", region="main", ordering=10)
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
     obj.testapp_pagetext_set.create(text="A", region="main", ordering=20)
     open_page(page, django_server, obj)
 
-    page.locator(f"{SECTION.format(0)} > h3 .inline_label").click()
+    page.locator(f"{CONTAINER.format(0)} > h3 .inline_label").click()
     page.locator(f"{TEXT.format(0)} .inline_indent").click()
     expect(page.locator(TEXT.format(0))).to_be_visible()
-    expect(page.locator(SECTION.format(0))).not_to_have_class(
+    expect(page.locator(CONTAINER.format(0))).not_to_have_class(
         re.compile(r"\bcollapsed\b")
     )
 
@@ -131,13 +131,13 @@ def test_indent_into_collapsed_container(page: Page, django_server, user):
 def test_drag_chooses_depth(page: Page, django_server, user):
     login_admin(page, django_server)
     obj = PageModel.objects.create(title="Drag")
-    obj.testapp_pagesection_set.create(title="S", region="main", ordering=10)
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
     obj.testapp_pagetext_set.create(text="A", region="main", ordering=20)
     obj.testapp_pagetext_set.create(text="B", region="main", ordering=30)
     open_page(page, django_server, obj)
 
     # Into the container: the pointer is right of the container's indentation
-    drag_after(page, TEXT.format(1), SECTION.format(0), dx=100)
+    drag_after(page, TEXT.format(1), CONTAINER.format(0), dx=100)
     expect_indentation(page, TEXT.format(1), "30px")
     save(page)
     assert depths(obj) == [("main", "S", 0), ("main", "B", 1), ("main", "A", 0)]
@@ -148,23 +148,23 @@ def test_drag_chooses_depth(page: Page, django_server, user):
     drag_after(page, TEXT.format(0), TEXT.format(0), dx=-20)
     expect_indentation(page, TEXT.format(0), "0px")
 
-    # Dropping never splits the section: A ends up inside even with the
+    # Dropping never splits the container: A ends up inside even with the
     # pointer far to the left, because B follows
-    drag_after(page, TEXT.format(0), SECTION.format(0), dx=-20)
+    drag_after(page, TEXT.format(0), CONTAINER.format(0), dx=-20)
     expect_indentation(page, TEXT.format(0), "30px")
     save(page)
     assert depths(obj) == [("main", "S", 0), ("main", "A", 1), ("main", "B", 1)]
 
 
 @pytest.mark.django_db
-def test_drop_indicator_offset(page: Page, django_server, user, section_page):
+def test_drop_indicator_offset(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
     dispatch_drag(page, ("dragstart", TEXT.format(1), 20, 5))
 
     indicator = page.locator(".fs-dragover")
     for selector, dx, offset in [
-        (SECTION.format(0), 100, "30px"),
+        (CONTAINER.format(0), 100, "30px"),
         (TEXT.format(0), -20, "-30px"),
     ]:
         dispatch_drag(page, ("dragover", selector, dx, -3))
@@ -177,13 +177,13 @@ def test_drop_indicator_offset(page: Page, django_server, user, section_page):
 
 
 @pytest.mark.django_db
-def test_drag_container_with_contents(page: Page, django_server, user, section_page):
+def test_drag_container_with_contents(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
 
-    drag_after(page, SECTION.format(0), TEXT.format(1), dx=5)
+    drag_after(page, CONTAINER.format(0), TEXT.format(1), dx=5)
     save(page)
-    assert depths(section_page) == [
+    assert depths(container_page) == [
         ("main", "B", 0),
         ("main", "S", 0),
         ("main", "A", 1),
@@ -191,16 +191,16 @@ def test_drag_container_with_contents(page: Page, django_server, user, section_p
 
 
 @pytest.mark.django_db
-def test_add_plugins_at_depth(page: Page, django_server, user, section_page):
+def test_add_plugins_at_depth(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
-    section_page.testapp_pagetext_set.filter(text="B").delete()
-    open_page(page, django_server, section_page)
+    container_page.testapp_pagetext_set.filter(text="B").delete()
+    open_page(page, django_server, container_page)
 
     # One insert target per open level at the end of the region
     end_targets = page.locator(".order-machine > .order-machine-insert-target.last")
     expect(end_targets).to_have_count(2)
 
-    # Before A, inside the section
+    # Before A, inside the container
     page.locator(f"{TEXT.format(0)} > .order-machine-insert-target").click()
     page.locator(".plugin-buttons .plugin-button[title='Rich text']").click()
     page.fill("#id_testapp_pagetext_set-1-text", "inside")
@@ -214,7 +214,7 @@ def test_add_plugins_at_depth(page: Page, django_server, user, section_page):
     page.fill("#id_testapp_pagetext_set-3-text", "end")
 
     save(page)
-    assert depths(section_page) == [
+    assert depths(container_page) == [
         ("main", "S", 0),
         ("main", "inside", 1),
         ("main", "A", 1),
@@ -227,32 +227,32 @@ def test_add_plugins_at_depth(page: Page, django_server, user, section_page):
 @pytest.mark.parametrize(
     ("answer", "remaining"),
     [
-        ("Section and contents", [("main", "B", 0)]),
-        ("Only the section", [("main", "A", 0), ("main", "B", 0)]),
+        ("Container and contents", [("main", "B", 0)]),
+        ("Only the container", [("main", "A", 0), ("main", "B", 0)]),
     ],
 )
 def test_delete_container(
-    page: Page, django_server, user, section_page, answer, remaining
+    page: Page, django_server, user, container_page, answer, remaining
 ):
     login_admin(page, django_server)
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
 
-    page.locator(f"{SECTION.format(0)} .delete input[type=checkbox]").click()
-    page.locator("dialog.section-delete").get_by_role("button", name=answer).click()
+    page.locator(f"{CONTAINER.format(0)} .delete input[type=checkbox]").click()
+    page.locator("dialog.container-delete").get_by_role("button", name=answer).click()
     save(page)
-    assert depths(section_page) == remaining
+    assert depths(container_page) == remaining
 
 
 @pytest.mark.django_db
 def test_undelete_container_restores_depths(
-    page: Page, django_server, user, section_page
+    page: Page, django_server, user, container_page
 ):
     login_admin(page, django_server)
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
 
-    checkbox = page.locator(f"{SECTION.format(0)} .delete input[type=checkbox]")
+    checkbox = page.locator(f"{CONTAINER.format(0)} .delete input[type=checkbox]")
     checkbox.click()
-    page.get_by_role("button", name="Only the section").click()
+    page.get_by_role("button", name="Only the container").click()
     expect_indentation(page, TEXT.format(0), "0px")
 
     checkbox.uncheck()
@@ -264,13 +264,13 @@ def test_move_container_to_other_region(page: Page, django_server, user):
     login_admin(page, django_server)
     obj = PageModel.objects.create(title="Move")
     obj.testapp_pagetext_set.create(text="X", region="main", ordering=10)
-    obj.testapp_pagesection_set.create(title="S", region="main", ordering=20, depth=0)
-    obj.testapp_pagesection_set.create(title="T", region="main", ordering=30, depth=1)
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=20, depth=0)
+    obj.testapp_pagecontainer_set.create(title="T", region="main", ordering=30, depth=1)
     obj.testapp_pagetext_set.create(text="A", region="main", ordering=40, depth=2)
     obj.testapp_pagetext_set.create(text="B", region="main", ordering=50, depth=0)
     open_page(page, django_server, obj)
 
-    page.locator(f"{SECTION.format(1)} select.inline_move_to_region").select_option(
+    page.locator(f"{CONTAINER.format(1)} select.inline_move_to_region").select_option(
         "sidebar"
     )
     save(page)
@@ -284,15 +284,15 @@ def test_move_container_to_other_region(page: Page, django_server, user):
 
 
 @pytest.mark.django_db
-def test_clone_into_container(page: Page, django_server, user, section_page):
+def test_clone_into_container(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
-    section_page.testapp_pagesection_set.create(
+    container_page.testapp_pagecontainer_set.create(
         title="U", region="sidebar", ordering=100
     )
-    section_page.testapp_pagetext_set.create(
+    container_page.testapp_pagetext_set.create(
         text="C", region="sidebar", ordering=110, depth=1
     )
-    open_page(page, django_server, section_page)
+    open_page(page, django_server, container_page)
 
     page.locator(f"{TEXT.format(0)} > .order-machine-insert-target").click()
     page.locator(".plugin-button:has-text('Clone from region')").click()
@@ -303,7 +303,7 @@ def test_clone_into_container(page: Page, django_server, user, section_page):
     dialog.locator("input[name='_continue']").click()
     expect(page.locator(".success").first).to_be_visible()
 
-    assert [row for row in depths(section_page) if row[0] == "main"] == [
+    assert [row for row in depths(container_page) if row[0] == "main"] == [
         ("main", "S", 0),
         ("main", "U", 1),
         ("main", "C", 2),

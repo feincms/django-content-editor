@@ -115,7 +115,7 @@ class PageText(AbstractRichText, PagePlugin):
     pass
 
 
-class PageSection(PagePlugin):
+class PageContainer(PagePlugin):
     container = True
 
     title = models.CharField(max_length=200, blank=True)

@@ -17,7 +17,7 @@ from testapp.models import (
     Article,
     Download,
     Page,
-    PageSection,
+    PageContainer,
     PageText,
     RichText,
     Thing,
@@ -187,7 +187,7 @@ def test_depths_are_normalized_when_saving(client):
             "title": "Page",
             "parent": "",
             **plugin_post_data(
-                "testapp_pagesection_set",
+                "testapp_pagecontainer_set",
                 [{"region": "main", "ordering": 10, "depth": 0, "title": "S"}],
             ),
             **plugin_post_data(
@@ -204,7 +204,7 @@ def test_depths_are_normalized_when_saving(client):
     assert response.status_code == 302
 
     page = Page.objects.get()
-    assert page.testapp_pagesection_set.get().depth == 0
+    assert page.testapp_pagecontainer_set.get().depth == 0
     assert [
         (text.text, text.depth)
         for text in page.testapp_pagetext_set.order_by("ordering")
@@ -225,9 +225,9 @@ def test_depths_are_not_normalized_with_sections():
 @pytest.mark.django_db
 def test_clone_keeps_relative_depths():
     page = Page.objects.create(title="Test")
-    section = page.testapp_pagesection_set.create(region="main", ordering=10)
+    container = page.testapp_pagecontainer_set.create(region="main", ordering=10)
     a = page.testapp_pagetext_set.create(region="main", ordering=20, depth=1)
-    inner = page.testapp_pagesection_set.create(region="main", ordering=30, depth=1)
+    inner = page.testapp_pagecontainer_set.create(region="main", ordering=30, depth=1)
     b = page.testapp_pagetext_set.create(region="main", ordering=40, depth=2)
     c = page.testapp_pagetext_set.create(region="main", ordering=50, depth=0)
 
@@ -235,7 +235,7 @@ def test_clone_keeps_relative_depths():
     post["_clone_region"] = "sidebar"
     post["_clone_ordering"] = 100
     post["_clone_depth"] = 1
-    for plugin in [section, a, inner, b, c]:
+    for plugin in [container, a, inner, b, c]:
         post.appendlist("_clone", f"{plugin._meta.label_lower}:{plugin.pk}")
 
     form = CloneForm(post)
@@ -244,7 +244,7 @@ def test_clone_keeps_relative_depths():
 
     cloned = sorted(
         [
-            *page.testapp_pagesection_set.filter(region="sidebar"),
+            *page.testapp_pagecontainer_set.filter(region="sidebar"),
             *page.testapp_pagetext_set.filter(region="sidebar"),
         ],
         key=lambda plugin: plugin.ordering,
@@ -254,13 +254,13 @@ def test_clone_keeps_relative_depths():
     # Without a depth, the roots end up at depth 0
     post["_clone_depth"] = ""
     post.setlist(
-        "_clone", [f"testapp.pagesection:{inner.pk}", f"testapp.pagetext:{b.pk}"]
+        "_clone", [f"testapp.pagecontainer:{inner.pk}", f"testapp.pagetext:{b.pk}"]
     )
     form = CloneForm(post)
     assert form.is_valid(), form.errors
     form.process()
     assert [
         plugin.depth
-        for plugin in PageSection.objects.filter(region="sidebar").order_by("pk")
+        for plugin in PageContainer.objects.filter(region="sidebar").order_by("pk")
     ] == [1, 2, 0]
     assert PageText.objects.filter(region="sidebar").order_by("pk").last().depth == 1

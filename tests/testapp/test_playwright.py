@@ -753,14 +753,14 @@ def test_unclosed_section_is_drawn_open(page: Page, django_server, client, user)
     article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=20)
     open_article(page, django_server, article)
 
-    expect(page.locator(".order-machine-section")).to_have_count(1)
-    expect(page.locator(".order-machine-section--open")).to_have_count(1)
+    expect(page.locator(".order-machine-container")).to_have_count(1)
+    expect(page.locator(".order-machine-container--open")).to_have_count(1)
 
     article.testapp_closesection_set.create(region="main", ordering=30)
     open_article(page, django_server, article)
 
-    expect(page.locator(".order-machine-section")).to_have_count(1)
-    expect(page.locator(".order-machine-section--open")).to_have_count(0)
+    expect(page.locator(".order-machine-container")).to_have_count(1)
+    expect(page.locator(".order-machine-container--open")).to_have_count(0)
 
 
 @pytest.mark.django_db
@@ -778,7 +778,7 @@ def test_adding_section_adds_closer(page: Page, django_server, client, user):
     expect(
         page.locator(".order-machine .dynamic-testapp_closesection_set")
     ).to_have_count(1)
-    expect(page.locator(".order-machine-section--open")).to_have_count(0)
+    expect(page.locator(".order-machine-container--open")).to_have_count(0)
 
     page.click("input[name='_save']")
     expect(page.locator(".success")).to_contain_text("was changed successfully")
@@ -800,8 +800,8 @@ def create_closed_section(article):
 @pytest.mark.parametrize(
     ("answer", "remaining"),
     [
-        ("Section and contents", (0, ["<p>B</p>"], 0)),
-        ("Only the section", (0, ["<p>A</p>", "<p>B</p>"], 0)),
+        ("Container and contents", (0, ["<p>B</p>"], 0)),
+        ("Only the container", (0, ["<p>A</p>", "<p>B</p>"], 0)),
         ("Cancel", (1, ["<p>A</p>", "<p>B</p>"], 1)),
     ],
 )
@@ -813,8 +813,8 @@ def test_delete_section(page: Page, django_server, client, user, answer, remaini
 
     # Not .check(): the checkbox stays unchecked until the dialog is answered
     page.locator("#testapp_section_set-0 .delete input[type=checkbox]").click()
-    page.locator("dialog.section-delete").get_by_role("button", name=answer).click()
-    expect(page.locator("dialog.section-delete")).to_have_count(0)
+    page.locator("dialog.container-delete").get_by_role("button", name=answer).click()
+    expect(page.locator("dialog.container-delete")).to_have_count(0)
 
     page.click("input[name='_save']")
     expect(page.locator(".success")).to_contain_text("was changed successfully")
@@ -840,7 +840,7 @@ def test_undelete_section(page: Page, django_server, client, user):
 
     checkbox = page.locator("#testapp_section_set-0 .delete input[type=checkbox]")
     checkbox.click()
-    page.get_by_role("button", name="Section and contents").click()
+    page.get_by_role("button", name="Container and contents").click()
     expect(page.locator(".order-machine .for-deletion")).to_have_count(3)
 
     checkbox.uncheck()
@@ -864,7 +864,7 @@ def test_remove_new_empty_section(page: Page, django_server, client, user):
     expect(
         page.locator(".order-machine .dynamic-testapp_closesection_set")
     ).to_have_count(0)
-    expect(page.locator("dialog.section-delete")).to_have_count(0)
+    expect(page.locator("dialog.container-delete")).to_have_count(0)
 
 
 @pytest.mark.django_db

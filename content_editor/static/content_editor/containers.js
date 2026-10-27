@@ -1,38 +1,39 @@
 import { crel, debounce, delegate, qs, qsa } from "content-editor/utils"
 
 /*
- * SECTIONS
+ * CONTAINERS
  *
- * Plugins are nested in sections in one of two ways:
+ * Plugins are nested in containers in one of two ways:
  *
- * - Containers (``container``) store the nesting explicitly using the hidden
- *   ``depth`` field of every plugin (``usesDepth``). A container's children
- *   are the following inlines with a greater depth.
+ * - Container plugins (``container``) store the nesting explicitly using the
+ *   hidden ``depth`` field of every plugin (``usesDepth``). A container's
+ *   children are the following inlines with a greater depth.
  * - Deprecated: plugins open (``sections > 0``) and close (``sections < 0``)
- *   sections, and the nesting is derived by counting.
+ *   sections, and the nesting is derived by counting. The opening plugins act
+ *   as containers.
  *
- * This class draws the visual grouping rectangles behind the inlines and
- * tracks, for every section-opening inline, the inlines contained within it
+ * This class draws the outlines of the containers behind the inlines and
+ * tracks, for every container, the inlines contained within it
  * (``childrenMap``, including the closing inline) and its closing inline
  * (``closerMap``) so they can be hidden, moved or deleted together. Sections
  * which are still open at the end of the region are drawn open-ended. Single
  * instance, owned by ``index.js`` and queried by ``machine``/``dragdrop``.
  */
-// Indentation per section level in pixels
+// Indentation per level in pixels
 export const INDENT = 30
 
-export class Sections {
+export class Containers {
   constructor(ContentEditor, machine) {
     this.ContentEditor = ContentEditor
     this.machine = machine
-    this.sectionsMap = new Map()
+    this.outlineMap = new Map()
     this.childrenMap = new Map()
     this.closerMap = new Map()
     this.depthMap = new Map()
     this.deletionGroups = new Map()
     this.unwrapped = new Map()
 
-    if (ContentEditor.hasSections) {
+    if (ContentEditor.hasContainers) {
       const debounced = debounce(() => this.update(), 10)
       const resizeObserver = new ResizeObserver(() => debounced())
       resizeObserver.observe(machine.wrapper)
@@ -92,7 +93,7 @@ export class Sections {
 
   update() {
     /* Bail out early if we wouldn't do anything anyway */
-    if (!this.ContentEditor.hasSections) return
+    if (!this.ContentEditor.hasContainers) return
     if (this.ContentEditor.usesDepth) {
       this.updateFromDepth()
       return
@@ -104,19 +105,19 @@ export class Sections {
     let nextIndent
     const stack = []
 
-    const newSectionsMap = new Map()
+    const newOutlineMap = new Map()
     const newChildrenMap = new Map()
     const newCloserMap = new Map()
     const newDepthMap = new Map()
 
     const closeSection = (atInline, open = false) => {
       const fromInline = stack.pop()
-      this.drawSection(fromInline, atInline, open, newSectionsMap)
+      this.drawOutline(fromInline, atInline, open, newOutlineMap)
       if (!open) newCloserMap.set(fromInline, atInline)
     }
 
     for (const inline of inlines) {
-      /* Inlines are hidden if any section containing them is collapsed */
+      /* Inlines are hidden if any container containing them is collapsed */
       inline.classList.toggle(
         "content-editor-hide",
         stack.some((el) => el.classList.contains("collapsed")),
@@ -158,39 +159,39 @@ export class Sections {
       }
     }
 
-    for (const section of this.sectionsMap.values()) {
-      section.remove()
+    for (const outline of this.outlineMap.values()) {
+      outline.remove()
     }
 
-    this.sectionsMap = newSectionsMap
+    this.outlineMap = newOutlineMap
     this.childrenMap = newChildrenMap
     this.closerMap = newCloserMap
     this.depthMap = newDepthMap
   }
 
-  // Draw the rectangle of the section opened by ``fromInline`` until
-  // ``untilInline``, reusing the existing element if there is one.
-  drawSection(fromInline, untilInline, open, newSectionsMap) {
+  // Draw the outline of the container ``fromInline`` until ``untilInline``,
+  // reusing the existing element if there is one.
+  drawOutline(fromInline, untilInline, open, newOutlineMap) {
     const wrapperRect = this.machine.wrapper.getBoundingClientRect()
     const from = fromInline.getBoundingClientRect()
     const until = untilInline.getBoundingClientRect()
 
-    let div = this.sectionsMap.get(fromInline)
+    let div = this.outlineMap.get(fromInline)
     if (div) {
-      this.sectionsMap.delete(fromInline)
+      this.outlineMap.delete(fromInline)
     } else {
       div = document.createElement("div")
-      div.classList.add("order-machine-section")
+      div.classList.add("order-machine-container")
       this.machine.wrapper.prepend(div)
     }
 
-    newSectionsMap.set(fromInline, div)
+    newOutlineMap.set(fromInline, div)
     div.style.top = `${from.top - wrapperRect.top - 5}px`
     div.style.left = `${from.left - wrapperRect.left - 5}px`
     div.style.right = "5px"
     div.style.height = `${until.top - from.top + until.height + (open ? 30 : 10)}px`
 
-    div.classList.toggle("order-machine-section--open", open)
+    div.classList.toggle("order-machine-container--open", open)
     div.classList.toggle(
       "content-editor-hide",
       fromInline.classList.contains("collapsed") ||
@@ -204,7 +205,7 @@ export class Sections {
   updateFromDepth() {
     const inlines = this.machine.findInlinesInOrder()
 
-    const newSectionsMap = new Map()
+    const newOutlineMap = new Map()
     const newChildrenMap = new Map()
     const newDepthMap = new Map()
 
@@ -244,13 +245,13 @@ export class Sections {
       const last = [container, ...this.descendants(container)].findLast(
         (el) => !el.classList.contains("content-editor-hide"),
       )
-      this.drawSection(container, last || container, false, newSectionsMap)
+      this.drawOutline(container, last || container, false, newOutlineMap)
     }
 
-    for (const section of this.sectionsMap.values()) {
-      section.remove()
+    for (const outline of this.outlineMap.values()) {
+      outline.remove()
     }
-    this.sectionsMap = newSectionsMap
+    this.outlineMap = newOutlineMap
 
     this.updateEndInsertTargets(maximum)
   }
@@ -277,20 +278,20 @@ export class Sections {
     for (const target of targets.slice(maximum + 1)) target.remove()
   }
 
-  hideSection(inline, hide = true) {
+  hideChildren(inline, hide = true) {
     const children = this.childrenMap.get(inline)
     if (children) {
       for (const child of children) {
         child.classList.toggle("content-editor-hide", hide)
         if (hide || !child.classList.contains("collapsed")) {
-          /* Hiding is recursive, showing uncollapsed child sections too */
-          this.hideSection(child, hide)
+          /* Hiding is recursive, showing uncollapsed child containers too */
+          this.hideChildren(child, hide)
         }
       }
     }
   }
 
-  // The section openers containing ``inline``, outermost first. Works for
+  // The containers containing ``inline``, outermost first. Works for
   // inlines in all regions, not only the current one.
   ancestorsOf(inline) {
     if (this.ContentEditor.usesDepth) {
@@ -317,7 +318,7 @@ export class Sections {
     return [...new Set(stack)]
   }
 
-  // Uncollapse inlines with errors and all sections containing them
+  // Uncollapse inlines with errors and all containers containing them
   showErrors() {
     for (const errorlist of qsa(
       ".order-machine .inline-related:not(.empty-form) .errorlist",
@@ -330,7 +331,7 @@ export class Sections {
     this.update()
   }
 
-  // All inlines contained in the section opened by ``inline``, in order and
+  // All inlines contained in the container ``inline``, in order and
   // including the closing inlines.
   descendants(inline) {
     return (this.childrenMap.get(inline) || []).flatMap((child) => [
@@ -342,8 +343,8 @@ export class Sections {
   /*
    * DELETION
    *
-   * Marking a section opener for deletion asks whether the contents of the
-   * section should be marked too or only the opener and its closer. New
+   * Marking a container for deletion asks whether its contents should be
+   * marked too or only the container (and its closer, if any). New
    * inlines are removed right away as usual, saved inlines only when saving.
    */
   bindDeleteHandlers() {
@@ -399,7 +400,7 @@ export class Sections {
       return true
     }
 
-    this.askDeleteSection().then((answer) => {
+    this.askDeleteContainer().then((answer) => {
       if (answer === "all") {
         this.deleteGroup(inline, [...contents, ...(closer ? [closer] : [])])
       } else if (answer === "unwrap") {
@@ -543,7 +544,7 @@ export class Sections {
     this.update()
   }
 
-  askDeleteSection() {
+  askDeleteContainer() {
     const messages = this.ContentEditor.messages
     return new Promise((resolve) => {
       let answer = null
@@ -556,11 +557,11 @@ export class Sections {
         return el
       }
 
-      const dialog = crel("dialog", { className: "section-delete" }, [
-        crel("p", { textContent: messages.deleteSection }),
+      const dialog = crel("dialog", { className: "container-delete" }, [
+        crel("p", { textContent: messages.deleteContainer }),
         crel("div", { className: "submit-row" }, [
-          button(messages.deleteSectionUnwrap, "unwrap", "button delete"),
-          button(messages.deleteSectionAll, "all", "button delete"),
+          button(messages.deleteContainerUnwrap, "unwrap", "button delete"),
+          button(messages.deleteContainerAll, "all", "button delete"),
           button(window.gettext("Cancel"), null),
         ]),
       ])

@@ -19,7 +19,7 @@ from testapp.models import (
     NoRegionArticle,
     NoRegionText,
     Page,
-    PageSection,
+    PageContainer,
     PageText,
     RichText,
     Section,
@@ -80,7 +80,7 @@ class PageAdmin(ContentEditor):
     ]
     inlines = [
         ContentEditorInline.create(model=PageText),
-        ContentEditorInline.create(model=PageSection),
+        ContentEditorInline.create(model=PageContainer),
     ]
 
 

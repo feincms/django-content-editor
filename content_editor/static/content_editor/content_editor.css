@@ -31,14 +31,14 @@ html {
   flex-flow: column nowrap;
 }
 
-.order-machine-section {
+.order-machine-container {
   position: absolute;
   background: rgba(0 0 0 / 0.1);
   pointer-events: none;
 }
 
-/* Sections which are still open at the end of the region */
-.order-machine-section--open {
+/* Closer-based sections which are still open at the end of the region */
+.order-machine-container--open {
   mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent);
 }
 
@@ -397,16 +397,16 @@ h3[draggable] {
   display: none;
 }
 
-dialog.section-delete .submit-row {
+dialog.container-delete .submit-row {
   margin: 0;
 }
 
-dialog.section-delete .delete {
+dialog.container-delete .delete {
   background: var(--delete-button-bg, #ba2121);
   color: var(--button-fg, #fff);
 }
 
-dialog.section-delete .delete:is(:hover, :focus) {
+dialog.container-delete .delete:is(:hover, :focus) {
   background: var(--delete-button-hover-bg, #a41515);
 }
 

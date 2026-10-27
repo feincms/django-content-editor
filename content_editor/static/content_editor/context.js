@@ -22,11 +22,11 @@ export function initContext() {
     regionsByKey: Object.fromEntries(
       ContentEditor.regions.map((region) => [region.key, region]),
     ),
-    hasSections: ContentEditor.plugins.some(
+    hasContainers: ContentEditor.plugins.some(
       (plugin) => plugin.sections || plugin.container,
     ),
-    // Sections are stored explicitly using the ``depth`` field unless plugins
-    // still open and close sections using ``sections``.
+    // Containers store the nesting explicitly using the ``depth`` field unless
+    // plugins still open and close sections using ``sections``.
     usesDepth:
       ContentEditor.plugins.some((plugin) => plugin.container) &&
       !ContentEditor.plugins.some((plugin) => plugin.sections),

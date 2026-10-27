@@ -13,7 +13,7 @@
 
 **Clone Ordering**: `_clone_ordering` = ordering value to insert _before_. After save, existing content gets renormalized but cloned content keeps its target ordering value. This is correct behavior.
 
-**Section Auto-Selection**: JavaScript auto-selects nested checkboxes. Use direct JS evaluation in tests.
+**Container Auto-Selection**: JavaScript auto-selects nested checkboxes. Use direct JS evaluation in tests.
 
 **Region Targeting**: Use `[data-region="sidebar"] .order-machine-insert-target` for region-specific insert targets.
 

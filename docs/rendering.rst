@@ -111,14 +111,14 @@ Containers
 ==========
 
 Plugins whose models set ``container = True`` contain the following plugins
-with a greater ``depth`` (see :ref:`sections`). Their renderer receives the
+with a greater ``depth`` (see :ref:`containers`). Their renderer receives the
 children explicitly, as a third argument:
 
 .. code-block:: python
 
     renderer.register(
         Accordion,
-        template_renderer("sections/accordion.html"),
+        template_renderer("containers/accordion.html"),
     )
     renderer.register(
         Columns,
@@ -154,8 +154,8 @@ container with a lower depth, or rendered at the top level. Projects which
 hide plugins should also hide the descendants of hidden containers.
 
 
-Sections and subregions
-=======================
+Containers and subregions
+=========================
 
 Containers and subregions both group plugins, for different purposes:
 

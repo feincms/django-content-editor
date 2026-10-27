@@ -13,13 +13,13 @@ Next version
   ``content_editor.renderer`` module and the ``content_editor`` template tag
   library.
 - Added a ``depth`` field to plugins created by ``create_plugin_base``, which
-  stores the nesting of sections explicitly. Projects have to generate
+  stores the nesting of plugins explicitly. Projects have to generate
   migrations for their plugin models.
 - Added the ``container`` attribute to plugin models (``False`` by default on
   ``PluginBase``), which replaces plugins opening (``sections = 1``) and
-  closing (``sections = -1``) sections. ``depth`` is
-  added to the inline forms automatically, normalized when saving, and kept
-  relative to the root when cloning plugins. ``sections`` is deprecated
+  closing (``sections = -1``) sections. ``depth`` is added to the inline forms
+  automatically, normalized when saving, and kept relative to the root when
+  cloning plugins. ``sections`` is deprecated
   (``content_editor.W001``), and an admin cannot use both
   (``content_editor.E004``).
 - Added editor support for containers: the horizontal pointer position chooses
@@ -28,10 +28,16 @@ Next version
   position (with one "+" per open level at the end of a region), and
   containers are moved to other regions together with their contents.
 - Added depth-based container rendering to the ``RegionRenderer``: renderers
-  of container plugins receive the rendered children as a third argument, and ``render_siblings`` renders the top level of a region
-  and the children of each container.
+  of container plugins receive the rendered children as a third argument, and
+  ``render_siblings`` renders the top level of a region and the children of
+  each container.
 - Added ``content_editor.migrations_utils.compute_depths`` for data migrations
   computing ``depth`` from closer-based sections.
+- Renamed sections to containers in the editor, including the CSS classes
+  (``.order-machine-section`` is now ``.order-machine-container``,
+  ``dialog.section-delete`` is now ``dialog.container-delete``), the
+  ``sections.js`` module (now ``containers.js``) and the deletion dialog's
+  messages.
 
 9.2 (2026-10-27)
 ================

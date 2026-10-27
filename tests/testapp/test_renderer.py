@@ -20,7 +20,7 @@ from testapp.models import (
     JSONTeaser,
     JSONText,
     Page,
-    PageSection,
+    PageContainer,
     PageText,
     RichText,
 )
@@ -229,11 +229,11 @@ def test_proxy_warning():
     renderer.register(JSONTeaser, "", fetch=False)
 
 
-def section_renderer():
+def container_renderer():
     renderer = RegionRenderer()
     renderer.register(PageText, lambda plugin, context: plugin.text)
     renderer.register(
-        PageSection,
+        PageContainer,
         lambda plugin, context, children: f"<section>{children}</section>",
     )
     return renderer
@@ -248,31 +248,38 @@ def render_main(renderer, plugins):
 
 
 def test_containers():
-    renderer = section_renderer()
+    renderer = container_renderer()
 
     def text(text, depth=0):
         return PageText(text=text, depth=depth)
 
-    def section(depth=0):
-        return PageSection(depth=depth)
+    def container(depth=0):
+        return PageContainer(depth=depth)
 
-    assert render_main(renderer, [section()]) == "<section></section>"
+    assert render_main(renderer, [container()]) == "<section></section>"
     assert (
         render_main(
             renderer,
-            [text("A"), section(), text("B", 1), section(1), text("C", 2), text("D")],
+            [
+                text("A"),
+                container(),
+                text("B", 1),
+                container(1),
+                text("C", 2),
+                text("D"),
+            ],
         )
         == "A<section>B<section>C</section></section>D"
     )
     # Plugins belong to the closest preceding container with a lower depth
     assert (
-        render_main(renderer, [section(), text("A", 1), text("B", 3)])
+        render_main(renderer, [container(), text("A", 1), text("B", 3)])
         == "<section>AB</section>"
     )
     assert render_main(renderer, [text("A"), text("B", 1)]) == "AB"
 
     # Rendering a container outside a region renders it without children
-    assert renderer.render_plugin(section(), None) == "<section></section>"
+    assert renderer.render_plugin(container(), None) == "<section></section>"
 
 
 def test_container_renderer_arguments():
@@ -280,15 +287,15 @@ def test_container_renderer_arguments():
     with pytest.raises(
         ImproperlyConfigured, match=r"has less than the three required arguments"
     ):
-        renderer.register(PageSection, lambda plugin, context: "")
+        renderer.register(PageContainer, lambda plugin, context: "")
 
 
 @pytest.mark.django_db
 def test_container_templates():
     page = Page.objects.create(title="Test")
-    tabs = page.testapp_pagesection_set.create(region="main", ordering=10)
+    tabs = page.testapp_pagecontainer_set.create(region="main", ordering=10)
     page.testapp_pagetext_set.create(region="main", ordering=20, depth=1, text="A")
-    page.testapp_pagesection_set.create(
+    page.testapp_pagecontainer_set.create(
         region="main", ordering=30, depth=1, title="Inner"
     )
     page.testapp_pagetext_set.create(region="main", ordering=40, depth=2, text="B")
@@ -296,9 +303,9 @@ def test_container_templates():
     renderer = RegionRenderer()
     renderer.register(PageText, lambda plugin, context: plugin.text)
     renderer.register(
-        PageSection,
+        PageContainer,
         lambda plugin, context, children: template_renderer(
-            "renderer/tabs.html" if plugin == tabs else "renderer/section.html"
+            "renderer/tabs.html" if plugin == tabs else "renderer/container.html"
         )(plugin, context, children),
     )
 
@@ -325,7 +332,7 @@ def test_subregions_in_containers():
     renderer = TextsRenderer()
     renderer.register(PageText, lambda plugin, context: plugin.text, subregion="texts")
     renderer.register(
-        PageSection,
+        PageContainer,
         lambda plugin, context, children: f"<section>{children}</section>",
     )
 
@@ -334,7 +341,7 @@ def test_subregions_in_containers():
         render_main(
             renderer,
             [
-                PageSection(),
+                PageContainer(),
                 PageText(text="A", depth=1),
                 PageText(text="B", depth=1),
                 PageText(text="C"),

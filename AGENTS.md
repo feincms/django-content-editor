@@ -64,6 +64,10 @@ tox -l             # List available test environments
 **PluginBase model:**
 - Abstract base class for all content plugins
 - Provides `parent`, `region`, `ordering` and `depth` fields
+- Plugins containing other plugins set `container = True` on the model. Use
+  "container" for this concept everywhere (code, CSS, UI strings, docs);
+  "sections" only refers to the deprecated `sections` inline attribute
+  (closer-based sections)
 - Plugins are typically defined per-project (not in this library)
 
 **ContentEditorInline:**
@@ -244,10 +248,10 @@ no build step) in `content_editor/static/content_editor/`:
   dropdowns, and the plugin-button **rights/visibility** logic.
 - `machine.js` - The order machine: scaffolding, `reorderInlines`, ordering
   math, the Django formset add/remove lifecycle, and collapse/expand.
-- `sections.js`, `dragdrop.js`, `cloning.js` - Single-instance classes for
-  nested sections, drag & drop, and the clone dialog.
-  Sections come in two modes, chosen per admin: containers (`container = True`
-  on the plugin model, nesting stored in the hidden `depth` field,
+- `containers.js`, `dragdrop.js`, `cloning.js` - Single-instance classes for
+  nested containers, drag & drop, and the clone dialog.
+  Containers come in two modes, chosen per admin: container plugins
+  (`container = True` on the plugin model, nesting stored in the hidden `depth` field,
   `ContentEditor.usesDepth`) and the deprecated closer-based `sections`, where
   nesting is derived by counting openers and closers.
 - `save_shortcut.js`, `tabbed_fieldsets.js` - Standalone scripts (Ctrl/Cmd-S

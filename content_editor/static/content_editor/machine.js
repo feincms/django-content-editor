@@ -7,7 +7,7 @@ import { LS, delegate, emit, qs, qsa } from "content-editor/utils"
  * pulls the plugin inlines out of their Django inline groups into a single
  * sortable container, owns the ordering arithmetic (``style.order`` ↔ the
  * ``-ordering`` form field), drives the Django formset add/remove lifecycle,
- * and implements collapse/expand. Single instance; wired to ``sections``,
+ * and implements collapse/expand. Single instance; wired to ``containers``,
  * ``regions`` and ``dragdrop`` after construction.
  */
 export class Machine {
@@ -28,8 +28,8 @@ export class Machine {
   }
 
   // Set the sibling subsystems. Called once by index.js before init runs.
-  wire({ sections, regions, dragdrop }) {
-    this.sections = sections
+  wire({ containers, regions, dragdrop }) {
+    this.containers = containers
     this.regions = regions
     this.dragdrop = dragdrop
   }
@@ -191,7 +191,7 @@ export class Machine {
       const ordering = qs(".order-machine-ordering", inline).value || 1e9
       inline.style.order = ordering
       this.dragdrop.ensureDraggable(inline)
-      this.sections.ensureDepthButtons(inline)
+      this.containers.ensureDepthButtons(inline)
     }
 
     for (const inline of inlines) {
@@ -228,9 +228,11 @@ export class Machine {
       CE._insertBefore = null
     }
     // New inlines take the depth of their position
-    this.sections.setDepth(
+    this.containers.setDepth(
       row,
-      insertBefore ? this.sections.depthOf(insertBefore) : CE._insertDepth || 0,
+      insertBefore
+        ? this.containers.depthOf(insertBefore)
+        : CE._insertDepth || 0,
     )
     CE._insertDepth = null
 
@@ -240,12 +242,12 @@ export class Machine {
     const field = qs("input, select, textarea", row)
     if (field) field.focus()
 
-    this.updateSections()
+    this.updateContainers()
   }
 
   // Close sections opened by a newly added plugin right away.
   addSectionClosers(count, insertBefore) {
-    const closer = count > 0 && this.sections.closerPlugin()
+    const closer = count > 0 && this.containers.closerPlugin()
     if (!closer) return
     for (let i = 0; i < count; ++i) {
       this.ContentEditor._insertBefore = insertBefore
@@ -282,7 +284,7 @@ export class Machine {
       )) {
         this.emitInline("content-editor:activate", el)
       }
-      this.updateSections()
+      this.updateContainers()
     }, 0)
   }
 
@@ -312,10 +314,10 @@ export class Machine {
   collapseInline(inline, collapsed = true) {
     inline.classList.toggle("collapsed", collapsed)
     if (!collapsed) {
-      /* Could have been hidden through sections */
+      /* Could have been hidden through containers */
       inline.classList.remove("order-machine-hide")
     }
-    this.sections.hideSection(inline, collapsed)
+    this.containers.hideChildren(inline, collapsed)
   }
 
   initializeCollapseAll() {
@@ -329,7 +331,7 @@ export class Machine {
       LS.set("collapseAll", collapseAllInput.checked)
 
       if (collapseAllInput.checked) {
-        this.sections.showErrors()
+        this.containers.showErrors()
       }
     })
     // Only apply when checked, otherwise inlines collapsed before saving would
@@ -385,8 +387,8 @@ export class Machine {
     })
   }
 
-  updateSections() {
-    this.sections.update()
+  updateContainers() {
+    this.containers.update()
   }
 
   // Dispatch a public ``content-editor:activate``/``deactivate`` event for an

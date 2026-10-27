@@ -3,7 +3,7 @@ import { initContext } from "content-editor/context"
 import { DragDrop } from "content-editor/dragdrop"
 import { Machine } from "content-editor/machine"
 import { Regions } from "content-editor/regions"
-import { Sections } from "content-editor/sections"
+import { Containers } from "content-editor/containers"
 import { emit, qs, qsa } from "content-editor/utils"
 
 /*
@@ -71,7 +71,7 @@ function saveEditorState(ContentEditor) {
   return u.toString()
 }
 
-function restoreEditorState(regions, machine, sections) {
+function restoreEditorState(regions, machine, containers) {
   const u = new URLSearchParams(location.hash.replace(/^#/, ""))
   if (u.size) {
     const region = u.get("region")
@@ -86,7 +86,7 @@ function restoreEditorState(regions, machine, sections) {
       )
       inline.classList.toggle("collapsed", wasCollapsed)
     }
-    sections.showErrors()
+    containers.showErrors()
 
     regions.selectInitial(region)
     machine.initializeCollapseAll()
@@ -108,10 +108,10 @@ function init() {
   injectStyles(ContentEditor)
 
   const machine = new Machine(ContentEditor)
-  const sections = new Sections(ContentEditor, machine)
-  const dragdrop = new DragDrop(ContentEditor, machine, sections)
+  const containers = new Containers(ContentEditor, machine)
+  const dragdrop = new DragDrop(ContentEditor, machine, containers)
   const regions = new Regions(ContentEditor, machine)
-  machine.wire({ sections, regions, dragdrop })
+  machine.wire({ containers, regions, dragdrop })
 
   // Public API: expose addPluginButton on the shared ContentEditor object.
   ContentEditor.addPluginButton = (prefix, iconHTML, initializing) =>
@@ -136,7 +136,7 @@ function init() {
   }
 
   if (ContentEditor.declaredRegions.length > 1) {
-    new Cloning(ContentEditor, machine, regions, sections).addButton()
+    new Cloning(ContentEditor, machine, regions, containers).addButton()
   }
 
   regions.initTabs()
@@ -148,7 +148,7 @@ function init() {
     })
   }
 
-  restoreEditorState(regions, machine, sections)
+  restoreEditorState(regions, machine, containers)
 
   if (!ContentEditor.allowChange) {
     qs(".order-machine-wrapper").classList.add("order-machine-readonly")

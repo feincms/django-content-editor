@@ -5,7 +5,7 @@ from django.test.utils import isolate_apps
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.checks import check_plugin_bases
-from testapp.models import Article, Page, PageSection, PageText, RichText
+from testapp.models import Article, Page, PageContainer, PageText, RichText
 
 
 @isolate_apps()
@@ -95,7 +95,7 @@ def test_sections_checks():
 
     class PageAdmin(ContentEditor):
         model = Page
-        inlines = [SectionInline, ContentEditorInline.create(model=PageSection)]
+        inlines = [SectionInline, ContentEditorInline.create(model=PageContainer)]
 
     assert PageAdmin(Page, admin.AdminSite()).check() == [
         checks.Warning(

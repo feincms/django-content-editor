@@ -4,16 +4,16 @@ import { crel, qs, qsa } from "content-editor/utils"
  * CLONING
  *
  * Adds a "Clone from region" plugin button which opens a dialog letting the
- * editor copy plugins (and whole sections) from another region into the current
+ * editor copy plugins (and whole containers) from another region into the current
  * one at the selected insert position. Only constructed when more than one
  * region is declared.
  */
 export class Cloning {
-  constructor(ContentEditor, machine, regions, sections) {
+  constructor(ContentEditor, machine, regions, containers) {
     this.ContentEditor = ContentEditor
     this.machine = machine
     this.regions = regions
-    this.sections = sections
+    this.containers = containers
   }
 
   addButton() {
@@ -84,10 +84,10 @@ export class Cloning {
       for (const inline of inlines) {
         const { model } = this.regions.getPluginTypeFromId(inline.id)
         if (CE.usesDepth) {
-          indent = Math.min(indent, this.sections.depthOf(inline))
-          nextIndent = indent + (this.sections.isContainer(inline) ? 1 : 0)
+          indent = Math.min(indent, this.containers.depthOf(inline))
+          nextIndent = indent + (this.containers.isContainer(inline) ? 1 : 0)
         } else {
-          nextIndent = Math.max(0, indent + this.sections.sectionsOf(inline))
+          nextIndent = Math.max(0, indent + this.containers.sectionsOf(inline))
         }
 
         const cb = crel("input", {
@@ -158,7 +158,7 @@ export class Cloning {
       type: "hidden",
       name: "_clone_depth",
       value: CE._insertBefore
-        ? this.sections.depthOf(CE._insertBefore)
+        ? this.containers.depthOf(CE._insertBefore)
         : CE._insertDepth || 0,
     })
 

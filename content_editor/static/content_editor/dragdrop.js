@@ -1,13 +1,13 @@
-import { INDENT } from "content-editor/sections"
+import { INDENT } from "content-editor/containers"
 import { qsa } from "content-editor/utils"
 
 /*
  * DRAG & DROP
  *
  * Makes order-machine inlines draggable and handles reordering on drop,
- * including moving whole sections and the selected multi-selection. Auto-scrolls
+ * including moving whole containers and the selected multi-selection. Auto-scrolls
  * the window while dragging near the viewport edges. Single instance; depends on
- * ``machine`` (ordering) and ``sections`` (section structure).
+ * ``machine`` (ordering) and ``containers`` (nesting).
  *
  * The drop position is determined by the pointer's vertical position. With
  * containers, the pointer's horizontal position chooses the depth within the
@@ -17,10 +17,10 @@ import { qsa } from "content-editor/utils"
  * required closing plugins are added automatically.
  */
 export class DragDrop {
-  constructor(ContentEditor, machine, sections) {
+  constructor(ContentEditor, machine, containers) {
     this.ContentEditor = ContentEditor
     this.machine = machine
-    this.sections = sections
+    this.containers = containers
     this.dragging = null
     this.clientY = null
 
@@ -58,12 +58,12 @@ export class DragDrop {
     }
   }
 
-  // The selected inlines together with the contents of selected sections
+  // The selected inlines together with the contents of selected containers
   movingInlines() {
     const moving = new Set()
     for (const el of qsa(".order-machine .inline-related.selected")) {
       moving.add(el)
-      for (const child of this.sections.descendants(el)) moving.add(child)
+      for (const child of this.containers.descendants(el)) moving.add(child)
     }
     return moving
   }
@@ -92,13 +92,13 @@ export class DragDrop {
       after = true
     }
 
-    // Dropping after a collapsed section moves the inlines after the section.
+    // Dropping after a collapsed container moves the inlines after it.
     const anchor =
       (after &&
         over.classList.contains("collapsed") &&
-        this.sections.descendants(over).at(-1)) ||
+        this.containers.descendants(over).at(-1)) ||
       over
-    const depth = this.sections.depthMap.get(over) || 0
+    const depth = this.containers.depthMap.get(over) || 0
 
     if (this.ContentEditor.usesDepth) {
       return this.depthDropTarget(e, over, after ? anchor : null, depth)
@@ -117,12 +117,12 @@ export class DragDrop {
     let targetDepth = after
       ? Math.max(
           0,
-          (this.sections.depthMap.get(anchor) || 0) +
-            this.sections.sectionsOf(anchor),
+          (this.containers.depthMap.get(anchor) || 0) +
+            this.containers.sectionsOf(anchor),
         )
       : depth
-    if (atEnd && this.sections.closerPlugin()) {
-      const open = this.sections.depthAfter(remaining)
+    if (atEnd && this.containers.closerPlugin()) {
+      const open = this.containers.depthAfter(remaining)
       const base = over.getBoundingClientRect().left - INDENT * depth
       targetDepth = Math.min(
         open,
@@ -154,11 +154,11 @@ export class DragDrop {
       .at(-1)
     const next = remaining.find((el) => +el.style.order > anchorOrder)
 
-    // Dropping never splits a section, so the next inline keeps its parent
-    const depthOf = (el) => this.sections.depthMap.get(el) || 0
+    // Dropping never splits a container, so the next inline keeps its parent
+    const depthOf = (el) => this.containers.depthMap.get(el) || 0
     const minimum = next ? depthOf(next) : 0
     const maximum = previous
-      ? depthOf(previous) + (this.sections.isContainer(previous) ? 1 : 0)
+      ? depthOf(previous) + (this.containers.isContainer(previous) ? 1 : 0)
       : 0
     const base = over.getBoundingClientRect().left - INDENT * overDepth
     const depth = Math.max(
@@ -179,16 +179,16 @@ export class DragDrop {
   // Move the dragged subtrees to the drop target. The roots end up at the
   // target depth, their descendants keep their relative depth.
   dropAtDepth(target, moving) {
-    const sections = this.sections
+    const containers = this.containers
     const roots = [...moving].filter(
       (el) =>
-        !sections.ancestorsOf(el).some((ancestor) => moving.has(ancestor)),
+        !containers.ancestorsOf(el).some((ancestor) => moving.has(ancestor)),
     )
     const depths = new Map()
     for (const root of roots) {
-      const delta = target.depth - sections.depthOf(root)
-      for (const el of [root, ...sections.descendants(root)]) {
-        depths.set(el, sections.depthOf(el) + delta)
+      const delta = target.depth - containers.depthOf(root)
+      for (const el of [root, ...containers.descendants(root)]) {
+        depths.set(el, containers.depthOf(el) + delta)
       }
     }
 
@@ -201,15 +201,15 @@ export class DragDrop {
         this.machine.insertAdjacent(row[0], anchor, after)
       }
     }
-    for (const [el, depth] of depths) sections.setDepth(el, depth)
+    for (const [el, depth] of depths) containers.setDepth(el, depth)
 
     // Keep the inlines visible if they moved into a collapsed container
     for (const root of roots) {
-      for (const el of sections.ancestorsOf(root)) {
+      for (const el of containers.ancestorsOf(root)) {
         el.classList.remove("collapsed")
       }
     }
-    this.machine.updateSections()
+    this.machine.updateContainers()
   }
 
   clearDragover() {
@@ -283,7 +283,7 @@ export class DragDrop {
       let { anchor, after } = target
       if (target.close) {
         this.ContentEditor._insertBefore = null
-        const closer = this.sections.closerPlugin()
+        const closer = this.containers.closerPlugin()
         for (let i = 0; i < target.close; ++i) {
           this.ContentEditor.addContent(closer.prefix)
         }
@@ -303,7 +303,7 @@ export class DragDrop {
         this.machine.insertAdjacent(row[0], anchor, after)
       }
 
-      this.machine.updateSections()
+      this.machine.updateContainers()
     })
   }
 

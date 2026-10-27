@@ -81,10 +81,10 @@ repetitive if you have many regions and many restrictions:
             RichTextInline.create(regions=deny_regions({"sidebar"})),
         ]
 
-.. _sections:
+.. _containers:
 
-Sections
---------
+Containers
+----------
 
 Plugins may contain other plugins. The models of such plugins (accordions,
 tabs, columns, ...) set ``container = True``; the content editor and the
@@ -115,7 +115,7 @@ In the editor, containers are drawn around their contents, and they are
 collapsed, moved, cloned and deleted together with their contents:
 
 - While dragging, the horizontal pointer position chooses the depth within
-  the range allowed at the drop position. Dropping never splits a section.
+  the range allowed at the drop position. Dropping never splits a container.
 - The buttons in the header of each item and Alt+Shift+Left/Right indent and
   outdent items directly. Outdenting an item also outdents its following
   siblings.

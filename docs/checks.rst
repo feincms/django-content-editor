@@ -64,11 +64,11 @@ The ``regions`` attribute on ``ContentEditorInline`` must be ``None`` or an iter
 content_editor.E004
 -------------------
 
-**Sections and containers in the same admin**
+**Closer-based sections and containers in the same admin**
 
 Inlines of a ``ContentEditor`` either use the deprecated ``sections``
 attribute or plugin models with ``container = True``, not both. See
-:ref:`sections`.
+:ref:`containers`.
 
 content_editor.W001
 -------------------
@@ -77,7 +77,7 @@ content_editor.W001
 
 ``ContentEditorInline.sections`` (plugins opening and closing sections) is
 deprecated. Set ``container = True`` on the models of plugins opening sections
-and remove the plugins closing them; see :ref:`sections` for migrating existing content.
+and remove the plugins closing them; see :ref:`migrating-sections` for migrating existing content.
 
 Model Checks
 ============

@@ -1,4 +1,4 @@
-# Explicit section tree
+# Explicit container tree
 
 Status: proposal, not scheduled.
 
@@ -52,9 +52,9 @@ Why `depth` and not a `parent` foreign key:
   the same set of rows the editor already updates when reordering.
 
 Closers disappear entirely. They never carry content, so nothing is lost.
-Openers stay regular plugins: they have fields and determine how their
-section is rendered (accordion, tabs, ...); they only gain the `container`
-flag.
+Openers stay regular plugins and become containers: they have fields and
+determine how their contents are rendered (accordion, tabs, ...); they only
+gain the `container` flag.
 
 ### Container declaration
 
@@ -90,15 +90,15 @@ deletion are skipped. This only matters for crafted requests and programmatic
 changes. Rejecting instead would need validation errors spanning several
 formsets, which the Django admin has no good place for.
 
-A system check reports inlines using `sections` and `container` in the same
-admin, and warns about inlines still using `sections`.
+A system check reports inlines using `sections` and container plugins in the
+same admin, and warns about inlines still using `sections`.
 
 ## Editing experience
 
 What explicit depth buys editors, compared to the closer-based model (including
 the auto-closer and drop-depth improvements shipped in 9.2):
 
-- **No closer rows.** A section ends where the depth goes back down. The list
+- **No closer rows.** A container ends where the depth goes back down. The list
   only shows real content; nothing has to be created automatically, kept
   balanced, or deleted together with its opener.
 - **Every gap works like the end of a region does today.** While dragging, the
@@ -108,16 +108,16 @@ the auto-closer and drop-depth improvements shipped in 9.2):
 - **Adding at any depth.** Insert targets add plugins at the depth of their
   position, and the "+" at the end of a region is no longer stuck inside open
   sections.
-- **Ending a section early is one action.** To end a section after item A,
+- **Ending a container early is one action.** To end a container after item A,
   outdent the item following A. Today the closer has to be found and dragged
   up instead.
 - **Indent/outdent without dragging.** Buttons on the inline (and keyboard
   shortcuts, e.g. Alt+Shift+Arrow keys; not Tab, which has to keep moving the
   focus) change the depth directly.
-- **"Only the section" is trivial.** Deleting a container just decreases the
+- **"Only the container" is trivial.** Deleting a container just decreases the
   depth of its descendants by one; there's no closer to locate.
 - **Invalid states can't be built.** No orphaned closers, no closer moved to
-  another region on its own, no unbalanced sections; every list of depths the
+  another region on its own, no unbalanced containers; every list of depths the
   editor produces is a valid tree.
 
 ## Editor changes
@@ -126,8 +126,8 @@ In all of the following, "previous item" means the item directly preceding a
 position in the region's order, which for a collapsed container is its last
 descendant, not the container itself.
 
-- `Sections.update` reads `depth` from a hidden `-depth` input instead of
-  counting `sections`; so do `depthAfter` and `ancestorsOf`, which become
+- `Containers.update` (formerly `Sections.update`) reads `depth` from a hidden
+  `-depth` input instead of counting `sections`; so do `depthAfter` and `ancestorsOf`, which become
   trivial. `childrenMap` stays as it is; `closerMap` and the auto-closer logic
   go away.
 - Drag & drop: the vertical position chooses the gap (as today, exactly one
@@ -135,7 +135,7 @@ descendant, not the container itself.
   range allowed at that gap: from the depth of the next item up to the depth
   of the previous item, plus one if the previous item is a container. This
   generalizes today's end-of-region behavior to every gap.
-  Dropping never splits a section: the minimum depth is the depth of the next
+  Dropping never splits a container: the minimum depth is the depth of the next
   item, so items following the gap keep their parent. Splitting is done by
   outdenting.
 - Dragged items move together with their descendants, which keep their depth
@@ -166,7 +166,7 @@ descendant, not the container itself.
 The renderer moves from feincms3 into django-content-editor, so that the
 package defining the tree also renders it. feincms3 builds on top of it.
 
-Apart from section rendering, the move doesn't depend on `depth`. It can land
+Apart from container rendering, the move doesn't depend on `depth`. It can land
 earlier, in a 9.x release, with closer-based section rendering staying in
 feincms3 until `depth` exists.
 
@@ -183,7 +183,7 @@ A new `content_editor.renderer` module with the core of today's
   regions object with its cache handling.
 - The helpers `template_renderer`, `render_in_context`, `default_context` and
   `PluginNotRegisteredError`.
-- Section rendering, rebuilt on `depth` (see below).
+- Container rendering, rebuilt on `depth` (see below).
 - Subregions: the `subregion` argument of `register`, the dispatch to
   `handle_<subregion>` methods, `subregion()` and `takewhile_subregion()`.
 - Marks: the `marks` argument of `register`, `marks()` and
@@ -197,7 +197,7 @@ The deprecated compatibility APIs (`TemplatePluginRenderer`,
 `render_plugin_in_context`, `feincms3.regions`) don't move; they stay in
 feincms3 until they are removed.
 
-### Sections
+### Containers
 
 Today, sections are rendered through subregions: an opener is registered with
 a subregion, a `handle_<subregion>` method calls `render_section_plugins`,
@@ -208,7 +208,7 @@ attribute:
 ```python
 renderer.register(
     Accordion,
-    template_renderer("sections/accordion.html"),
+    template_renderer("containers/accordion.html"),
 )
 ```
 
@@ -233,11 +233,11 @@ subregion's `handle_<subregion>` method, exactly like `handle()` does today;
 `handle_default` renders plugins one by one, recursing into containers. The
 handlers only ever see the siblings, never the whole region.
 
-### Sections and subregions
+### Containers and subregions
 
 Both stay, for different purposes:
 
-- **Sections (containers)** are explicit structure. Editors create them in
+- **Containers** are explicit structure. Editors create them in
   the content editor and see them there. Use them when the editor decides
   what belongs together: accordions, tabs, columns.
 - **Subregions** are implicit grouping at render time, decided by the
@@ -252,7 +252,7 @@ from adjacent plugin types, use a subregion.
 Subregions only ever group siblings: subregion handling runs inside
 `render_siblings`, so a subregion run can't cross a container boundary, and
 consecutive images are grouped inside a container the same way as at the top
-level. This makes sections win over subregions without any special rules.
+level. This makes containers win over subregions without any special rules.
 
 `render_section_plugins`, `register_section_close` and `handle__close_section`
 stay in feincms3 for a deprecation period so that projects rendering
@@ -296,7 +296,7 @@ methods.
    The editor supports both modes, selected per admin by whether any inline
    uses `sections`.
    `content_editor.renderer` (if it hasn't moved earlier) gains depth-based
-   section rendering.
+   container rendering.
 2. feincms3: `feincms3.renderer` builds on `content_editor.renderer` and
    re-exports its names; closer-based section rendering is deprecated.
 3. django-content-editor 11.0: remove `sections` support.
@@ -314,15 +314,18 @@ methods.
   checkbox) have to drop a hidden container's descendants too, otherwise they
   attach to whatever precedes the container. A small helper could be offered,
   but isn't required.
-- **Sections and subregions both stay.** Sections are explicit structure
+- **Containers and subregions both stay.** Containers are explicit structure
   created by editors, subregions implicit render-time grouping of adjacent
-  plugins. Subregions only group siblings, so sections always win (see
-  "Sections and subregions").
+  plugins. Subregions only group siblings, so containers always win (see
+  "Containers and subregions").
 - **`container` lives on the plugin model**, not on the inline or in the
   renderer registration. It defines what the stored depths mean, so the
   editor and the renderer must agree on it.
 - **Container renderers receive their children explicitly**, as a sequence of
   rendered child nodes which also renders as the concatenated HTML.
 - **Subregions and marks move to django-content-editor** together with the
-  rest of the renderer. Sections and subregions are documented side by side,
+  rest of the renderer. Containers and subregions are documented side by side,
   which helps with choosing between them; marks are cheap when unused.
+- **The concept is called "container" everywhere**: in the API, the editor
+  (module, CSS classes, messages) and the documentation. "Sections" only
+  refers to the deprecated closer-based `sections` attribute.
