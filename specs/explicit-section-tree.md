@@ -5,8 +5,8 @@ Status: proposal, not scheduled.
 ## Problem
 
 Sections are implicit. Plugins are a flat, ordered list per region; a plugin
-whose inline has `sections = n > 0` opens `n` sections, a plugin whose inline
-has `sections < 0` closes sections. Nesting is derived by walking the list and
+whose inline has `sections = 1` opens a section, a plugin whose inline has
+`sections = -1` closes one. Nesting is derived by walking the list and
 counting. The walk exists several times: in the editor (`Sections.update`,
 `depthAfter` and `ancestorsOf` in
 `content_editor/static/content_editor/sections.js`, and the clone dialog in
@@ -63,9 +63,6 @@ Replace the integer `sections` with a boolean on the inline:
 ```python
 ContentEditorInline.create(model=Accordion, container=True)
 ```
-
-Multi-level openers (`sections = 2`) go away; nesting is expressed by nesting
-containers.
 
 ### Consistency on save
 
@@ -170,7 +167,7 @@ period so that projects rendering old data keep working.
    by a data migration using a helper which computes `depth` from the
    existing closer-based structure. The helper can't use the inlines'
    `sections` attributes (they live in the admin, not on the models), so the
-   section counts are passed explicitly:
+   openers and closers are passed explicitly:
 
    ```python
    from content_editor.migrations_utils import compute_depths
@@ -180,17 +177,15 @@ period so that projects rendering old data keep working.
        compute_depths(
            apps.get_model("pages", "Page"),
            plugins=[apps.get_model("pages", "RichText"), ...],
-           sections={
-               apps.get_model("pages", "Accordion"): 1,
-               apps.get_model("pages", "CloseSection"): -1,
-           },
+           openers=[apps.get_model("pages", "Accordion")],
+           closers=[apps.get_model("pages", "CloseSection")],
        )
    ```
 
-   The helper walks each region of each page exactly like `Sections.update`,
-   writes `depth`, and deletes the closers. Sections which are still open at
-   the end of a region simply end there. The closer models and inlines can be
-   removed afterwards.
+   `plugins` lists the remaining plugin models. The helper walks each region
+   of each page exactly like `Sections.update`, writes `depth`, and deletes
+   the closers. Sections which are still open at the end of a region simply
+   end there. The closer models and inlines can be removed afterwards.
    The editor supports both modes, selected per admin by whether any inline
    uses `sections`.
 2. feincms3: depth-aware section rendering, closer-based rendering
