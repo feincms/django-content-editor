@@ -41,6 +41,10 @@ the same time so that its renderer knows containers.
   computing ``depth`` from closer-based sections. Openers and closers may be
   passed as querysets, which is required for proxies sharing a table such as
   JSON plugins.
+- Translated all messages to every shipped language, and renamed the
+  ``zh_CN`` catalog to ``zh_Hans`` so that it's used for Django's ``zh-hans``
+  language code. The deprecated ``zh-cn`` code isn't translated anymore, the
+  same as in Django itself.
 - Renamed sections to containers in the editor, including the CSS classes
   (``.order-machine-section`` is now ``.order-machine-container``,
   ``dialog.section-delete`` is now ``dialog.container-delete``), the
