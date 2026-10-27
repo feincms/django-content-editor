@@ -889,3 +889,111 @@ def test_remove_new_empty_section(page: Page, django_server, client, user):
         page.locator(".order-machine .dynamic-testapp_closesection_set")
     ).to_have_count(0)
     expect(page.locator("dialog.section-delete")).to_have_count(0)
+
+
+def drag_after(page: Page, source, target, *, dx):
+    """Drag ``source`` just below ``target``, ``dx`` pixels from its left edge.
+
+    Uses discrete mouse moves because ``drag_to`` doesn't produce ``dragover``
+    events at the exact target position."""
+    page.set_viewport_size({"width": 1280, "height": 2000})
+    handle = source.bounding_box()
+    page.mouse.move(handle["x"] + 20, handle["y"] + 5)
+    page.mouse.down()
+    page.mouse.move(handle["x"] + 30, handle["y"] + 10)
+    box = target.bounding_box()
+    page.mouse.move(box["x"] + dx, box["y"] + box["height"] - 3)
+    page.mouse.move(box["x"] + dx, box["y"] + box["height"] - 2)
+    page.mouse.up()
+
+
+@pytest.mark.django_db
+def test_drag_out_of_unclosed_section(page: Page, django_server, client, user):
+    """Dropping at the end of an unclosed section with the pointer in the
+    outer indentation level closes the section first."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Drag out")
+    section = article.testapp_section_set.create(region="main", ordering=10)
+    a = article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=20)
+    b = article.testapp_richtext_set.create(text="<p>B</p>", region="main", ordering=30)
+    open_article(page, django_server, article)
+
+    b_inline = page.locator("#testapp_richtext_set-1")
+    drag_after(page, b_inline.locator("> h3"), b_inline, dx=-20)
+
+    expect(
+        page.locator(".order-machine .dynamic-testapp_closesection_set")
+    ).to_have_count(1)
+    b_box = b_inline.bounding_box()
+    a_box = page.locator("#testapp_richtext_set-0").bounding_box()
+    assert b_box["x"] < a_box["x"], "B should not be indented anymore"
+
+    page.click("input[name='_save']")
+    expect(page.locator(".success")).to_contain_text("was changed successfully")
+
+    section.refresh_from_db()
+    a.refresh_from_db()
+    b.refresh_from_db()
+    close = article.testapp_closesection_set.get()
+    assert section.ordering < a.ordering < close.ordering < b.ordering
+
+
+@pytest.mark.django_db
+def test_drag_into_end_of_unclosed_section(page: Page, django_server, client, user):
+    """Dropping at the end of an unclosed section with the pointer over the
+    inline keeps the dropped inline inside the section."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Drag in")
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=10)
+    article.testapp_section_set.create(region="main", ordering=20)
+    article.testapp_richtext_set.create(text="<p>B</p>", region="main", ordering=30)
+    open_article(page, django_server, article)
+
+    a_inline = page.locator("#testapp_richtext_set-0")
+    b_inline = page.locator("#testapp_richtext_set-1")
+    drag_after(page, a_inline.locator("> h3"), b_inline, dx=100)
+
+    expect(
+        page.locator(".order-machine .dynamic-testapp_closesection_set")
+    ).to_have_count(0)
+    assert a_inline.bounding_box()["x"] == b_inline.bounding_box()["x"]
+    assert a_inline.bounding_box()["y"] > b_inline.bounding_box()["y"]
+
+
+@pytest.mark.django_db
+def test_drop_indicator_after_section_plugins(page: Page, django_server, client, user):
+    """Each gap has exactly one drop indicator, shown at the depth following
+    section openers and closers."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Indicator")
+    article.testapp_section_set.create(region="main", ordering=10)
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=20)
+    article.testapp_closesection_set.create(region="main", ordering=30)
+    article.testapp_richtext_set.create(text="<p>B</p>", region="main", ordering=40)
+    open_article(page, django_server, article)
+    page.set_viewport_size({"width": 1280, "height": 2000})
+
+    handle = page.locator("#testapp_richtext_set-1 > h3").bounding_box()
+    page.mouse.move(handle["x"] + 20, handle["y"] + 5)
+    page.mouse.down()
+    page.mouse.move(handle["x"] + 30, handle["y"] + 10)
+
+    indicator = page.locator(".fs-dragover")
+    for upper, lower, offset in [
+        ("#testapp_section_set-0", "#testapp_richtext_set-0", "30px"),
+        ("#testapp_closesection_set-0", "#testapp_richtext_set-1", "-30px"),
+    ]:
+        # Below the upper inline and above the lower inline
+        for selector, dy in [(upper, -3), (lower, 3)]:
+            box = page.locator(selector).bounding_box()
+            y = box["y"] + (box["height"] if dy < 0 else 0) + dy
+            page.mouse.move(box["x"] + 100, y)
+            page.mouse.move(box["x"] + 100, y + 1)
+            expect(indicator).to_have_count(1)
+            expect(indicator).to_have_id(upper[1:])
+            expect(indicator).to_have_class(re.compile(r"\bfs-dragover--after\b"))
+            expect(indicator).to_have_attribute(
+                "style", re.compile(f"--fs-dragover-offset: {offset}")
+            )
+
+    page.mouse.up()

@@ -103,6 +103,9 @@ If there's exactly one plugin closing a single section, the editor helps with
 keeping sections balanced:
 
 - Adding a section opener adds the closing plugin right after it.
+- Dragging items below the end of a region where sections are still open
+  closes those sections first if the pointer is moved to the left, into the
+  indentation of an outer level.
 
 Marking a section opener for deletion asks whether only the opener and its
 closing plugin should be marked for deletion, or the contents of the section

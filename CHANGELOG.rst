@@ -10,6 +10,12 @@ Next version
   there's exactly one plugin closing a single section.
 - Asked whether only the section or the section and its contents should be
   marked for deletion when marking a section opener for deletion.
+- Allowed dragging items out of sections which are still open at the end of a
+  region by moving the pointer into the indentation of an outer level; the
+  required closing plugins are added automatically.
+- Determined the drop position from the pointer position inside the whole
+  order machine instead of only the inline below the pointer, and showed
+  exactly one drop indicator per gap, at the depth the dropped items will have.
 
 9.1 (2026-10-26)
 ================

@@ -18,6 +18,7 @@ export class Sections {
     this.sectionsMap = new Map()
     this.childrenMap = new Map()
     this.closerMap = new Map()
+    this.depthMap = new Map()
     this.deletionGroups = new Map()
 
     if (ContentEditor.hasSections) {
@@ -30,6 +31,16 @@ export class Sections {
   sectionsOf(inline) {
     const prefix = inline.id.replace(/-[0-9]+$/, "")
     return this.ContentEditor.pluginsByPrefix[prefix]?.sections || 0
+  }
+
+  // The depth after the given inlines, that is, the number of sections which
+  // are still open at the end.
+  depthAfter(inlines) {
+    let indent = 0
+    for (const inline of inlines) {
+      indent = Math.max(0, indent + this.sectionsOf(inline))
+    }
+    return indent
   }
 
   // The plugin which is used to close sections automatically. Only available
@@ -61,6 +72,7 @@ export class Sections {
     const newSectionsMap = new Map()
     const newChildrenMap = new Map()
     const newCloserMap = new Map()
+    const newDepthMap = new Map()
     const topLevel = []
 
     const closeSection = (atInline, open = false) => {
@@ -93,6 +105,7 @@ export class Sections {
 
     for (const inline of inlines) {
       inline.style.marginInlineStart = `${30 * indent}px`
+      newDepthMap.set(inline, indent)
       nextIndent = Math.max(0, indent + this.sectionsOf(inline))
 
       if (stack.length) {
@@ -137,6 +150,7 @@ export class Sections {
     this.sectionsMap = newSectionsMap
     this.childrenMap = newChildrenMap
     this.closerMap = newCloserMap
+    this.depthMap = newDepthMap
 
     /* Top level inline's sections should be hidden if the inline is collapsed */
     for (const inline of topLevel) {
@@ -164,16 +178,6 @@ export class Sections {
       child,
       ...this.descendants(child),
     ])
-  }
-
-  selectSection(inline) {
-    const children = this.childrenMap.get(inline)
-    if (children) {
-      for (const child of children) {
-        child.classList.add("selected")
-        this.selectSection(child)
-      }
-    }
   }
 
   /*

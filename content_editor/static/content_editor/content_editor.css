@@ -272,7 +272,7 @@ h3[draggable] {
   content: " ";
   display: block;
   position: absolute;
-  left: 0;
+  left: var(--fs-dragover-offset, 0);
   right: 0;
   top: -8px;
   height: 4px;
