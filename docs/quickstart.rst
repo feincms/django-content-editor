@@ -191,9 +191,8 @@ Here's a possible view implementation:
 
 .. note::
 
-   The ``RegionRenderer`` from `feincms3
-   <https://feincms3.readthedocs.io/>`__ offers a more flexible and
-   capable method of rendering plugins.
+   The ``RegionRenderer`` from ``content_editor.renderer`` offers a more
+   flexible and capable method of rendering plugins, see :doc:`rendering`.
 
 After the ``render_regions`` call all that's left to do is add the
 content to the template.

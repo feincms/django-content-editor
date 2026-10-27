@@ -8,6 +8,10 @@ Next version
 - Added the ``region`` and ``ordering`` fields to ``ContentEditorInline``
   fieldsets (or fields) automatically if they are missing, and removed the
   ``content_editor.E001`` system check which required listing them.
+- Moved the ``RegionRenderer`` (including subregions, marks and the
+  ``{% render_region %}`` template tag) from feincms3 into the new
+  ``content_editor.renderer`` module and the ``content_editor`` template tag
+  library.
 
 9.2 (2026-10-27)
 ================
