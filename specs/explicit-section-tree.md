@@ -167,12 +167,20 @@ period so that projects rendering old data keep working.
    deprecated.
 3. django-content-editor N+1: remove `sections` support.
 
-## Open questions
+## Decisions
 
-- Is `depth` needed on plugins which can never be nested? It's on
-  `PluginBase`, so every plugin table gets the column and a migration.
-- Inheritance (`inherit_from`) copies whole regions, so depths stay
-  consistent; verify that nothing else slices regions.
-- Does feincms3's `subregion` grouping interact with depth (subregions are
-  flat runs of plugins; a subregion spanning items of different depths should
-  probably be split)?
+- **All plugins get `depth`.** It lives on `PluginBase`, so every plugin table
+  gets the column and a migration, also plugins which never end up nested.
+  That keeps fetching, sorting and validation uniform.
+- **Slicing regions is the project's responsibility.** Nothing known slices
+  regions; inheritance (`inherit_from`) copies whole regions, so depths stay
+  consistent. Projects which filter plugins (e.g. a "hide this plugin"
+  checkbox) have to drop a hidden container's descendants too, otherwise they
+  attach to whatever precedes the container. A small helper could be offered,
+  but isn't required.
+- **Sections win over subregions.** Combining feincms3's subregions with
+  sections isn't an expected use case, but if it happens, the section
+  structure takes precedence: a subregion run ends at every depth change, and
+  a container always starts its own section regardless of its subregion. In
+  the renderer, `takewhile_subregion` additionally stops when the depth
+  differs from the depth of the run's first plugin.
