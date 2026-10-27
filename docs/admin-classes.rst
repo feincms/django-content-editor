@@ -99,6 +99,11 @@ until the end of the region.
             ...
         ]
 
+If there's exactly one plugin closing a single section, the editor helps with
+keeping sections balanced:
+
+- Adding a section opener adds the closing plugin right after it.
+
 RefinedModelAdmin
 =================
 

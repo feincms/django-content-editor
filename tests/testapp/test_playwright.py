@@ -785,3 +785,29 @@ def test_unclosed_section_is_drawn_open(page: Page, django_server, client, user)
 
     expect(page.locator(".order-machine-section")).to_have_count(1)
     expect(page.locator(".order-machine-section--open")).to_have_count(0)
+
+
+@pytest.mark.django_db
+def test_adding_section_adds_closer(page: Page, django_server, client, user):
+    """Adding a section opener automatically adds the section closer after it."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Auto close")
+    article.testapp_richtext_set.create(text="<p>After</p>", region="main", ordering=10)
+    open_article(page, django_server, article)
+
+    # Insert the section before the existing rich text
+    page.locator("#testapp_richtext_set-0 .order-machine-insert-target").click()
+    page.locator(".plugin-buttons .plugin-button[title='Section']").click()
+
+    expect(
+        page.locator(".order-machine .dynamic-testapp_closesection_set")
+    ).to_have_count(1)
+    expect(page.locator(".order-machine-section--open")).to_have_count(0)
+
+    page.click("input[name='_save']")
+    expect(page.locator(".success")).to_contain_text("was changed successfully")
+
+    section = article.testapp_section_set.get()
+    close = article.testapp_closesection_set.get()
+    text = article.testapp_richtext_set.get()
+    assert section.ordering < close.ordering < text.ordering

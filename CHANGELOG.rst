@@ -6,6 +6,8 @@ Next version
 ============
 
 - Drew sections which are still open at the end of a region open-ended.
+- Added the closing plugin automatically when adding a section opener, if
+  there's exactly one plugin closing a single section.
 
 9.1 (2026-10-26)
 ================

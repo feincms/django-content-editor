@@ -29,6 +29,20 @@ export class Sections {
     return this.ContentEditor.pluginsByPrefix[prefix]?.sections || 0
   }
 
+  // The plugin which is used to close sections automatically. Only available
+  // if there's exactly one plugin closing a single section and it may be added
+  // to the current region.
+  closerPlugin() {
+    const closers = this.ContentEditor.plugins.filter(
+      (plugin) => plugin.sections < 0,
+    )
+    return closers.length === 1 &&
+      closers[0].sections === -1 &&
+      this.machine.regions.pluginInCurrentRegion(closers[0].prefix)
+      ? closers[0]
+      : null
+  }
+
   update() {
     /* Bail out early if we wouldn't do anything anyway */
     if (!this.ContentEditor.hasSections) return

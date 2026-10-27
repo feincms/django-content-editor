@@ -218,17 +218,30 @@ export class Machine {
 
     this.emptyMessage.classList.add("hidden")
 
-    if (CE._insertBefore) {
-      this.insertAdjacent(row, CE._insertBefore)
+    const insertBefore = CE._insertBefore
+    if (insertBefore) {
+      this.insertAdjacent(row, insertBefore)
       CE._insertBefore = null
     }
 
     this.emitInline("content-editor:activate", row)
+    this.addSectionClosers(CE.pluginsByPrefix[prefix].sections, insertBefore)
 
     const field = qs("input, select, textarea", row)
     if (field) field.focus()
 
     this.updateSections()
+  }
+
+  // Close sections opened by a newly added plugin right away.
+  addSectionClosers(count, insertBefore) {
+    const closer = count > 0 && this.sections.closerPlugin()
+    if (!closer) return
+    for (let i = 0; i < count; ++i) {
+      this.ContentEditor._insertBefore = insertBefore
+      this.ContentEditor.addContent(closer.prefix)
+    }
+    this.ContentEditor._insertBefore = null
   }
 
   handleFormsetRemoved(prefix) {
