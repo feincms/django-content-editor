@@ -1,6 +1,7 @@
 # Explicit container tree
 
-Status: proposal, not scheduled.
+Status: implemented, to be released in django-content-editor 10.0 together
+with a feincms3 release building on it (see "Release plan").
 
 ## Problem
 
@@ -75,9 +76,9 @@ data (APIs, exports, copying content) find it in the same place.
 ### Admin forms
 
 `ContentEditorInline` adds the structural fields to its fieldsets (or fields)
-automatically if they are missing, and renders them as hidden inputs; this is
-already the case for `region` and `ordering` since 9.3. `depth` is added to
-the same list (`_STRUCTURAL_FIELDS` in `content_editor/admin.py`), so projects
+automatically if they are missing, and renders them as hidden inputs; this
+is new for `region` and `ordering` in 10.0 too. `depth` is added to the same
+list (`_STRUCTURAL_FIELDS` in `content_editor/admin.py`), so projects
 don't have to change any fieldsets, and no system check is needed for it.
 
 ### Consistency on save
@@ -85,9 +86,10 @@ don't have to change any fieldsets, and no system check is needed for it.
 The editor never produces invalid depths, so the server doesn't reject them
 but normalizes them when saving (e.g. in `ContentEditor.save_related`): walking
 each region in order, an item's depth is clamped to at most the previous
-item's depth, plus one if the previous item is a container. Items marked for
-deletion are skipped. This only matters for crafted requests and programmatic
-changes. Rejecting instead would need validation errors spanning several
+item's depth, plus one if the previous item is a container. Normalization
+runs after the formsets have been saved, so items marked for deletion are
+already gone. It only runs for admins with container plugins and without
+`sections`. This only matters for crafted requests and programmatic changes. Rejecting instead would need validation errors spanning several
 formsets, which the Django admin has no good place for.
 
 A system check reports inlines using `sections` and container plugins in the
@@ -127,9 +129,10 @@ position in the region's order, which for a collapsed container is its last
 descendant, not the container itself.
 
 - `Containers.update` (formerly `Sections.update`) reads `depth` from a hidden
-  `-depth` input instead of counting `sections`; so do `depthAfter` and `ancestorsOf`, which become
-  trivial. `childrenMap` stays as it is; `closerMap` and the auto-closer logic
-  go away.
+  `-depth` input instead of counting `sections`, and normalizes it using the
+  same rule as the server; so does `ancestorsOf`. `childrenMap` stays as it
+  is. `closerMap`, `depthAfter` and the auto-closer logic are only used by
+  the deprecated closer-based mode and go away together with `sections`.
 - Drag & drop: the vertical position chooses the gap (as today, exactly one
   indicator per gap) and the horizontal position chooses the depth within the
   range allowed at that gap: from the depth of the next item up to the depth
@@ -155,20 +158,24 @@ descendant, not the container itself.
 - Adding a plugin through an insert target takes the depth of the position.
   The "+" at the end of a region needs a depth choice too, e.g. one insert
   target per open level.
-- Moving to another region and cloning (the server-side `CloneForm`) move or
-  copy whole subtrees. The root ends up at depth 0, descendants keep their
-  depth relative to the root.
+- Moving a container to another region moves its whole subtree. It's
+  appended to the end of the region; the root ends up at depth 0, descendants
+  keep their depth relative to the root.
+- Cloning (the server-side `CloneForm`) copies the selected plugins to the
+  insert position. The roots take the depth of that position (`_clone_depth`),
+  like added plugins do, so cloning into a container doesn't end it;
+  descendants keep their depth relative to their root.
 - Deleting a container either marks the subtree for deletion or decreases the
-  depth of the descendants by one (same dialog as today).
+  depth of the descendants by one (same dialog as today). Unchecking the
+  container's delete checkbox restores the previous depths.
 
 ## Rendering
 
 The renderer moves from feincms3 into django-content-editor, so that the
 package defining the tree also renders it. feincms3 builds on top of it.
 
-Apart from container rendering, the move doesn't depend on `depth`. It can land
-earlier, in a 9.x release, with closer-based section rendering staying in
-feincms3 until `depth` exists.
+Apart from container rendering, the move doesn't depend on `depth`, but it
+lands together with it in 10.0 (see "Release plan").
 
 ### What moves
 
@@ -189,8 +196,10 @@ A new `content_editor.renderer` module with the core of today's
 - Marks: the `marks` argument of `register`, `marks()` and
   `takewhile_mark()`. They cost nothing when unused, and emulating them
   without such a concept would be needlessly hard.
-- Probably the `{% render_region %}` template tag, which only calls
-  `regions.render()`.
+- The `{% render_region %}` template tag, which only calls
+  `regions.render()`, in the `content_editor` template tag library
+  (`{% load content_editor %}`). feincms3's `{% load feincms3 %}` keeps
+  offering it.
 
 The deprecated compatibility APIs (`TemplatePluginRenderer`,
 `register_string_renderer`, `register_template_renderer`,
@@ -227,7 +236,7 @@ data, because an empty container has to render as a container too, and
 because its renderer is called differently.
 
 The renderer renders each list of siblings (the top level of a region, or
-the children of one container) through one overridable method, e.g.
+the children of one container) through one overridable method,
 `render_siblings(plugins, context)`. It dispatches runs of plugins to their
 subregion's `handle_<subregion>` method, exactly like `handle()` does today;
 `handle_default` renders plugins one by one, recursing into containers. The
@@ -266,40 +275,81 @@ APIs and closer-based section rendering until they are removed. Projects
 build on the renderer as before, e.g. with their own `handle_<subregion>`
 methods.
 
-## Migration path
+## Release plan
 
-1. django-content-editor 10.0: add `depth` (default 0) and the model-level
-   `container` attribute. Projects
-   generate a schema migration adding `depth` to every plugin model, followed
-   by a data migration using a helper which computes `depth` from the
-   existing closer-based structure. The helper can't use the inlines'
-   `sections` attributes (they live in the admin, not on the models), so the
-   openers and closers are passed explicitly:
+Everything lands at once, in one release per package, so projects upgrade
+and migrate in one step.
 
-   ```python
-   from content_editor.migrations_utils import compute_depths
+1. django-content-editor 10.0: `depth`, the model-level `container`
+   attribute, editor support, the renderer including container rendering,
+   the migration helper and the rename of sections to containers.
+2. feincms3, released at the same time and requiring django-content-editor
+   10.0: `feincms3.renderer` builds on `content_editor.renderer` and
+   re-exports its names; closer-based section rendering
+   (`render_section_plugins`, `register_section_close`) emits a
+   `DeprecationWarning`. feincms3 currently requires
+   `django-content-editor>=9` without an upper bound, so older feincms3
+   releases are installed together with 10.0 too. Their renderer keeps working
+   for closer-based data but doesn't know containers.
+3. django-content-editor 11.0: remove `sections`: the inline attribute, the
+   closer-based mode in the editor (`closerMap`, `closerPlugin`, `depthAfter`,
+   `addSectionClosers`, closing sections when dropping at the end of a region,
+   `.order-machine-container--open`), and the checks `content_editor.E004`
+   and `content_editor.W001`. feincms3 removes closer-based section rendering
+   at the same time. `compute_depths` stays, since data migrations import it.
+
+Before releasing 10.0, the new messages (indent, outdent, the container
+deletion dialog) need translations.
+
+### Upgrading projects
+
+1. Upgrade django-content-editor and feincms3 together.
+2. Run `makemigrations`: every plugin model gets the `depth` column. This is
+   required for all projects, also those not using sections; without the
+   column, fetching plugins fails.
+3. Projects using sections additionally:
+   - Set `container = True` on the models of the opening plugins (JSON
+     plugin proxies get it using a mixin passed to `proxy(mixins=[...])`).
+   - Write a data migration using a helper which computes `depth` from the
+     existing closer-based structure. The helper can't use the inlines'
+     `sections` attributes (they live in the admin, not on the models), so
+     the openers and closers are passed explicitly, as models or querysets:
+
+     ```python
+     from content_editor.migrations_utils import compute_depths
 
 
-   def forwards(apps, schema_editor):
-       compute_depths(
-           apps.get_model("pages", "Page"),
-           plugins=[apps.get_model("pages", "RichText"), ...],
-           openers=[apps.get_model("pages", "Accordion")],
-           closers=[apps.get_model("pages", "CloseSection")],
-       )
-   ```
+     def forwards(apps, schema_editor):
+         JSONPlugin = apps.get_model("pages", "JSONPlugin")
+         compute_depths(
+             apps.get_model("pages", "Page"),
+             plugins=[apps.get_model("pages", "RichText"), JSONPlugin],
+             openers=[apps.get_model("pages", "Accordion")],
+             closers=[JSONPlugin.objects.filter(type="close_section")],
+         )
+     ```
 
-   `plugins` lists the remaining plugin models. The helper walks each region
-   of each page exactly like `Sections.update`, writes `depth`, and deletes
-   the closers. Sections which are still open at the end of a region simply
-   end there. The closer models and inlines can be removed afterwards.
-   The editor supports both modes, selected per admin by whether any inline
-   uses `sections`.
-   `content_editor.renderer` (if it hasn't moved earlier) gains depth-based
-   container rendering.
-2. feincms3: `feincms3.renderer` builds on `content_editor.renderer` and
-   re-exports its names; closer-based section rendering is deprecated.
-3. django-content-editor 11.0: remove `sections` support.
+     `plugins` lists the remaining plugin models. The helper walks each
+     region of each page like the editor does, writes `depth`, and deletes
+     the closers. Sections which are still open at the end of a region simply
+     end there. Each row is processed once; closers take precedence over
+     openers, and openers over the remaining plugins. Proxies sharing a table
+     (e.g. JSON plugins) can't be passed as openers or closers, because
+     models are fetched without filtering, so the helper rejects them; they
+     are passed as querysets instead. Openers opening several sections at
+     once (`sections = 2`) aren't supported; the helper counts every opener
+     as one level.
+   - The data migration deletes the closers and can't be reversed, so back up
+     the database first.
+   - Run the data migration only together with a renderer which knows
+     containers (`content_editor.renderer` or the feincms3 release from
+     step 2 above). Older renderers would render every section until the end
+     of its region, since the closers are gone.
+   - Remove `sections` from the inlines, and the closer models and inlines.
+
+The editor supports both modes until 11.0, selected per admin: depth-based
+when the admin has container plugins and no inline uses `sections`,
+closer-based otherwise.
 
 ## Decisions
 
@@ -311,8 +361,9 @@ methods.
 - **Slicing regions is the project's responsibility.** Nothing known slices
   regions; inheritance (`inherit_from`) copies whole regions, so depths stay
   consistent. Projects which filter plugins (e.g. a "hide this plugin"
-  checkbox) have to drop a hidden container's descendants too, otherwise they
-  attach to whatever precedes the container. A small helper could be offered,
+  checkbox) have to drop a hidden container's descendants too, otherwise the
+  renderer attaches them to the closest preceding container with a lower
+  depth, or renders them at the top level. A small helper could be offered,
   but isn't required.
 - **Containers and subregions both stay.** Containers are explicit structure
   created by editors, subregions implicit render-time grouping of adjacent
@@ -326,6 +377,10 @@ methods.
 - **Subregions and marks move to django-content-editor** together with the
   rest of the renderer. Containers and subregions are documented side by side,
   which helps with choosing between them; marks are cheap when unused.
+- **Everything lands in 10.0**, together with a feincms3 release building on
+  `content_editor.renderer`. Releasing the renderer earlier (e.g. in 9.3)
+  would only help if feincms3 had to be released before 10.0, which isn't
+  needed.
 - **The concept is called "container" everywhere**: in the API, the editor
   (module, CSS classes, messages) and the documentation. "Sections" only
   refers to the deprecated closer-based `sections` attribute.
