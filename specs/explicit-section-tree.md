@@ -10,8 +10,8 @@ whose inline has `sections = 1` opens a section, a plugin whose inline has
 counting. The walk exists several times: in the editor (`Sections.update`,
 `depthAfter` and `ancestorsOf` in
 `content_editor/static/content_editor/sections.js`, and the clone dialog in
-`cloning.js`), in `RegionRenderer.render_section_plugins` in feincms3, and in
-project-specific code.
+`cloning.js`), in `RegionRenderer.render_section_plugins` in feincms3 (which
+builds sections on top of subregions), and in project-specific code.
 
 Consequences:
 
@@ -145,20 +145,70 @@ descendant, not the container itself.
 - Deleting a container either marks the subtree for deletion or decreases the
   depth of the descendants by one (same dialog as today).
 
-## Renderer changes (feincms3)
+## Rendering
 
-`RegionRenderer.render_section_plugins` and `register_section_close` assume
-closers. Add a depth-based variant:
+The renderer moves from feincms3 into django-content-editor, so that the
+package defining the tree also renders it. feincms3 builds on top of it.
+
+Apart from section rendering, the move doesn't depend on `depth`. It can land
+earlier, in a 9.x release, with closer-based section rendering staying in
+feincms3 until `depth` exists.
+
+### What moves
+
+A new `content_editor.renderer` module with the core of today's
+`feincms3.renderer`:
+
+- `RegionRenderer` with plugin registration (`register`, `unregister`,
+  `copy`, `plugins(fetch=...)`), `render_plugin`, `render_region` and
+  `render_regions`.
+- Fetching and caching: `regions_from_item` (using `contents_for_item`, the
+  `fetch` flag and `inherit_from`), `regions_from_contents` and the opaque
+  regions object with its cache handling.
+- The helpers `template_renderer`, `render_in_context`, `default_context` and
+  `PluginNotRegisteredError`.
+- Section rendering, rebuilt on `depth` (see below).
+- Probably the `{% render_region %}` template tag, which only calls
+  `regions.render()`.
+
+The deprecated compatibility APIs (`TemplatePluginRenderer`,
+`register_string_renderer`, `register_template_renderer`,
+`render_plugin_in_context`, `feincms3.regions`) don't move; they stay in
+feincms3 until they are removed.
+
+### Sections
+
+Today, sections are rendered through subregions: an opener is registered with
+a subregion, a `handle_<subregion>` method calls `render_section_plugins`,
+and a registered closer ends the section. With `depth`, the renderer walks the
+tree instead, and containers are registered as such:
 
 ```python
-def render_section_plugins(self, section, plugins, context):
-    out = []
-    while plugins and plugins[0].depth > section.depth:
-        ...
+renderer.register(
+    Accordion,
+    template_renderer("sections/accordion.html"),
+    container=True,
+)
 ```
 
-`register_section_close` and `handle__close_section` stay for a deprecation
-period so that projects rendering old data keep working.
+A container's renderer receives the rendered children in addition to the
+plugin and the context (`template_renderer` exposes them as `children` in the
+template). Containers are registered explicitly instead of being inferred
+from the data, because an empty container has to render as a container too,
+and because its renderer is called differently.
+
+`render_section_plugins`, `register_section_close` and `handle__close_section`
+stay in feincms3 for a deprecation period so that projects rendering
+closer-based data keep working.
+
+### What builds on top
+
+`feincms3.renderer.RegionRenderer` subclasses the new
+`content_editor.renderer.RegionRenderer` and re-exports the moved names, so
+existing imports keep working. Subregions
+and marks either stay in this subclass or move as well (see open questions).
+If they stay, the rule that sections win over subregions (see decisions) is
+implemented there.
 
 ## Migration path
 
@@ -188,8 +238,10 @@ period so that projects rendering old data keep working.
    end there. The closer models and inlines can be removed afterwards.
    The editor supports both modes, selected per admin by whether any inline
    uses `sections`.
-2. feincms3: depth-aware section rendering, closer-based rendering
-   deprecated.
+   `content_editor.renderer` (if it hasn't moved earlier) gains depth-based
+   section rendering.
+2. feincms3: `feincms3.renderer` builds on `content_editor.renderer` and
+   re-exports its names; closer-based section rendering is deprecated.
 3. django-content-editor 11.0: remove `sections` support.
 
 ## Decisions
@@ -211,3 +263,11 @@ period so that projects rendering old data keep working.
   a container always starts its own section regardless of its subregion. In
   the renderer, `takewhile_subregion` additionally stops when the depth
   differs from the depth of the run's first plugin.
+
+## Open questions
+
+- Do subregions and marks move to `content_editor.renderer` too? They are
+  generic, but so far they are mostly used by feincms3 projects. If they stay in
+  feincms3, the core renderer needs no `handle_<subregion>` dispatch at all.
+- The exact signature of container renderers: an additional `children`
+  argument, or the children made available through the context.
