@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 09:56+0200\n"
+"POT-Creation-Date: 2026-10-27 11:00-0500\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/feincms/language/"
@@ -21,75 +21,101 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: admin.py:209
+#: admin.py:288
 msgid "Add new item"
 msgstr "Добавить элемент"
 
-#: admin.py:210
+#: admin.py:289
 #, fuzzy
 #| msgid "max. items"
 msgid "No items."
 msgstr "макс. число элементов"
 
-#: admin.py:211
+#: admin.py:290
 msgid "No items. Region may inherit content."
 msgstr ""
 
-#: admin.py:212
+#: admin.py:291
 msgid "No regions available."
 msgstr ""
 
-#: admin.py:213
+#: admin.py:292
 msgid "No plugins allowed in this region."
 msgstr ""
 
-#: admin.py:214
+#: admin.py:293
 #, fuzzy
 #| msgid "max. items"
 msgid "New item"
 msgstr "макс. число элементов"
 
-#: admin.py:215
+#: admin.py:294
 msgid "Unknown region"
 msgstr ""
 
-#: admin.py:216
+#: admin.py:295
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Collapse all items"
 msgstr "Свернуть"
 
-#: admin.py:217
+#: admin.py:296
 #, fuzzy
 #| msgid "Collapse tree"
 msgid "Uncollapse all items"
 msgstr "Свернуть"
 
-#: admin.py:218
+#: admin.py:297
 msgid "marked for deletion"
 msgstr ""
 
-#: admin.py:220
+#: admin.py:299
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr ""
 
-#: admin.py:222
+#: admin.py:301
 msgid "Clone from region"
 msgstr ""
 
-#: admin.py:223
+#: admin.py:302
 msgid "Didn't find anything to clone"
 msgstr ""
 
-#: admin.py:224
+#: admin.py:303
 msgid "Select all"
 msgstr ""
 
-#: admin.py:262
+#: admin.py:305
+msgid ""
+"This container isn't empty. Which items should be marked for deletion? They "
+"will be deleted when saving."
+msgstr ""
+
+#: admin.py:308
+#, fuzzy
+#| msgid "raw contents"
+msgid "Container and contents"
+msgstr "HTML данные"
+
+#: admin.py:309
+msgid "Only the container"
+msgstr ""
+
+#: admin.py:310
+msgid "Indent (Alt+Shift+Right)"
+msgstr ""
+
+#: admin.py:311
+msgid "Outdent (Alt+Shift+Left)"
+msgstr ""
+
+#: admin.py:355
+#, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr ""
 
-#: admin.py:266
+#: admin.py:360
+#, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr ""
 
@@ -214,9 +240,6 @@ msgstr ""
 #~ msgstr "тип"
 
 #~ msgid "raw content"
-#~ msgstr "HTML данные"
-
-#~ msgid "raw contents"
 #~ msgstr "HTML данные"
 
 #~ msgid "HTML Tidy"

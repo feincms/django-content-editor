@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-25 09:56+0200\n"
+"POT-Creation-Date: 2026-10-27 11:00-0500\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,68 +20,94 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:209
+#: admin.py:288
 msgid "Add new item"
 msgstr "Neues Element hinzufügen"
 
-#: admin.py:210
+#: admin.py:289
 msgid "No items."
 msgstr "Keine Elemente."
 
-#: admin.py:211
+#: admin.py:290
 msgid "No items. Region may inherit content."
 msgstr "Keine Elemente. Region könnte Inhalt erben."
 
-#: admin.py:212
+#: admin.py:291
 msgid "No regions available."
 msgstr "Keine Regionen verfügbar."
 
-#: admin.py:213
+#: admin.py:292
 msgid "No plugins allowed in this region."
 msgstr "Keine der Elemente sind in dieser Region erlaubt."
 
-#: admin.py:214
+#: admin.py:293
 msgid "New item"
 msgstr "Neues Element"
 
-#: admin.py:215
+#: admin.py:294
 msgid "Unknown region"
 msgstr "Unbekannte Region"
 
-#: admin.py:216
+#: admin.py:295
 msgid "Collapse all items"
 msgstr "Alle Elemente ausblenden"
 
-#: admin.py:217
+#: admin.py:296
 msgid "Uncollapse all items"
 msgstr "Alle Elemente einblenden"
 
-#: admin.py:218
+#: admin.py:297
 msgid "marked for deletion"
 msgstr "zur Löschung markiert"
 
-#: admin.py:220
+#: admin.py:299
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr ""
 "Mit Ctrl-Click können mehrere Elemente ausgewählt und verschoben werden."
 
-#: admin.py:222
+#: admin.py:301
 msgid "Clone from region"
 msgstr "Von Region klonen"
 
-#: admin.py:223
+#: admin.py:302
 msgid "Didn't find anything to clone"
 msgstr "Konnte nichts finden zum Klonen"
 
-#: admin.py:224
+#: admin.py:303
 msgid "Select all"
 msgstr "Alle auswählen"
 
-#: admin.py:262
+#: admin.py:305
+msgid ""
+"This container isn't empty. Which items should be marked for deletion? They "
+"will be deleted when saving."
+msgstr ""
+"Dieser Container ist nicht leer. Welche Elemente sollen zur Löschung markiert "
+"werden? Sie werden beim Speichern gelöscht."
+
+#: admin.py:308
+msgid "Container and contents"
+msgstr "Container und Inhalt"
+
+#: admin.py:309
+msgid "Only the container"
+msgstr "Nur den Container"
+
+#: admin.py:310
+msgid "Indent (Alt+Shift+Right)"
+msgstr "Einrücken (Alt+Umschalt+Rechts)"
+
+#: admin.py:311
+msgid "Outdent (Alt+Shift+Left)"
+msgstr "Ausrücken (Alt+Umschalt+Links)"
+
+#: admin.py:355
+#, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "{} Elemente erfolgreich geklont."
 
-#: admin.py:266
+#: admin.py:360
+#, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Fehler beim klonen: {}"
 
