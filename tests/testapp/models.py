@@ -115,6 +115,13 @@ class PageText(AbstractRichText, PagePlugin):
     pass
 
 
+class PageSection(PagePlugin):
+    title = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.title
+
+
 class NoRegionArticle(models.Model):
     """Article whose ``regions`` are empty at runtime.
 

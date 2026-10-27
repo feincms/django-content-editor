@@ -12,6 +12,15 @@ Next version
   ``{% render_region %}`` template tag) from feincms3 into the new
   ``content_editor.renderer`` module and the ``content_editor`` template tag
   library.
+- Added a ``depth`` field to plugins created by ``create_plugin_base``, which
+  stores the nesting of sections explicitly. Projects have to generate
+  migrations for their plugin models.
+- Added ``ContentEditorInline.container``, which replaces plugins opening
+  (``sections = 1``) and closing (``sections = -1``) sections. ``depth`` is
+  added to the inline forms automatically, normalized when saving, and kept
+  relative to the root when cloning plugins. ``sections`` is deprecated
+  (``content_editor.W001``), and an admin cannot use both
+  (``content_editor.E004``).
 
 9.2 (2026-10-27)
 ================

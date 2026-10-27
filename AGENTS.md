@@ -63,7 +63,7 @@ tox -l             # List available test environments
 
 **PluginBase model:**
 - Abstract base class for all content plugins
-- Provides `parent`, `region`, and `ordering` fields
+- Provides `parent`, `region`, `ordering` and `depth` fields
 - Plugins are typically defined per-project (not in this library)
 
 **ContentEditorInline:**
@@ -93,11 +93,13 @@ tox -l             # List available test environments
 
 ### System Checks
 
-The library provides three system checks (`content_editor.E001`, missing
+The library provides system checks (`content_editor.E001`, missing
 region/ordering in fieldsets, was removed since those fields are now added
 automatically):
 - `content_editor.E002` - Missing regions attribute on model
 - `content_editor.E003` - Regions not iterable
+- `content_editor.E004` - Inlines using both `sections` and `container`
+- `content_editor.W001` - Inlines using the deprecated `sections`
 - `content_editor.I001` - Non-abstract base classes warning
 
 **Check implementation:**
@@ -174,7 +176,7 @@ contents = contents_for_item(
 
 ### Field Visibility
 
-ContentEditorInline automatically adds the `region` and `ordering` fields (`_STRUCTURAL_FIELDS` in `admin.py`) to the fieldsets or fields if they are missing, and hides them using the `HiddenInput` widget.
+ContentEditorInline automatically adds the `region`, `ordering` and `depth` (if the model has it) fields (`_STRUCTURAL_FIELDS` in `admin.py`) to the fieldsets or fields if they are missing, and hides them using the `HiddenInput` widget.
 
 ## Git and Version Control
 

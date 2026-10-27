@@ -4,15 +4,24 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
+from django.http import QueryDict
 from django.test import RequestFactory
 from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains
 
-from content_editor.admin import ContentEditorInline
+from content_editor.admin import CloneForm, ContentEditorInline
 from content_editor.contents import contents_for_item
 from content_editor.models import Region
-from testapp.models import Article, Download, RichText
+from testapp.models import (
+    Article,
+    Download,
+    Page,
+    PageSection,
+    PageText,
+    RichText,
+    Thing,
+)
 
 
 @pytest.fixture
@@ -126,8 +135,8 @@ def test_hashable_types():
     ],
 )
 def test_structural_fields_are_added(options):
-    """region and ordering are added to the inline's form if missing, as
-    hidden fields."""
+    """region, ordering and depth are added to the inline's form if missing,
+    as hidden fields."""
     inline_class = type(
         "RichTextInline", (ContentEditorInline,), {"model": RichText, **options}
     )
@@ -136,7 +145,122 @@ def test_structural_fields_are_added(options):
     request.user = User(is_active=True, is_superuser=True)
 
     fieldsets = inline.get_fieldsets(request)
-    assert fieldsets[-1][1]["fields"][-2:] == ["region", "ordering"]
+    assert fieldsets[-1][1]["fields"][-3:] == ["region", "ordering", "depth"]
     form = inline.get_formset(request).form
-    for field in ("region", "ordering"):
+    for field in ("region", "ordering", "depth"):
         assert isinstance(form.base_fields[field].widget, forms.HiddenInput)
+
+
+def test_depth_is_only_added_if_it_exists():
+    inline = ContentEditorInline.create(model=Thing, fk_name="article")(
+        Article, admin.AdminSite()
+    )
+    request = RequestFactory().get("/")
+    request.user = User(is_active=True, is_superuser=True)
+    assert inline.get_fields(request)[-2:] == ["region", "ordering"]
+
+
+@pytest.mark.django_db
+def test_container_in_context(client):
+    response = client.get(reverse("admin:testapp_page_add"))
+    assertContains(response, '"container": true', 1)
+    assertContains(response, '"container": false', 1)
+
+
+def plugin_post_data(prefix, rows):
+    data = {
+        f"{prefix}-TOTAL_FORMS": len(rows),
+        f"{prefix}-INITIAL_FORMS": 0,
+        f"{prefix}-MIN_NUM_FORMS": 0,
+        f"{prefix}-MAX_NUM_FORMS": 1000,
+    }
+    for index, row in enumerate(rows):
+        data |= {f"{prefix}-{index}-{key}": value for key, value in row.items()}
+    return data
+
+
+@pytest.mark.django_db
+def test_depths_are_normalized_when_saving(client):
+    response = client.post(
+        reverse("admin:testapp_page_add"),
+        {
+            "title": "Page",
+            "parent": "",
+            **plugin_post_data(
+                "testapp_pagesection_set",
+                [{"region": "main", "ordering": 10, "depth": 0, "title": "S"}],
+            ),
+            **plugin_post_data(
+                "testapp_pagetext_set",
+                [
+                    {"region": "main", "ordering": 20, "depth": 3, "text": "a"},
+                    {"region": "main", "ordering": 30, "depth": 2, "text": "b"},
+                    {"region": "main", "ordering": 40, "depth": 0, "text": "c"},
+                    {"region": "sidebar", "ordering": 50, "depth": 1, "text": "d"},
+                ],
+            ),
+        },
+    )
+    assert response.status_code == 302
+
+    page = Page.objects.get()
+    assert page.testapp_pagesection_set.get().depth == 0
+    assert [
+        (text.text, text.depth)
+        for text in page.testapp_pagetext_set.order_by("ordering")
+    ] == [("a", 1), ("b", 1), ("c", 0), ("d", 0)]
+
+
+@pytest.mark.django_db
+def test_depths_are_not_normalized_with_sections():
+    article = Article.objects.create(title="Test")
+    text = article.testapp_richtext_set.create(region="main", ordering=10, depth=2)
+    request = RequestFactory().get("/")
+    request.user = User(is_active=True, is_superuser=True)
+    admin.site._registry[Article]._normalize_depths(request, article)
+    text.refresh_from_db()
+    assert text.depth == 2
+
+
+@pytest.mark.django_db
+def test_clone_keeps_relative_depths():
+    page = Page.objects.create(title="Test")
+    section = page.testapp_pagesection_set.create(region="main", ordering=10)
+    a = page.testapp_pagetext_set.create(region="main", ordering=20, depth=1)
+    inner = page.testapp_pagesection_set.create(region="main", ordering=30, depth=1)
+    b = page.testapp_pagetext_set.create(region="main", ordering=40, depth=2)
+    c = page.testapp_pagetext_set.create(region="main", ordering=50, depth=0)
+
+    post = QueryDict(mutable=True)
+    post["_clone_region"] = "sidebar"
+    post["_clone_ordering"] = 100
+    post["_clone_depth"] = 1
+    for plugin in [section, a, inner, b, c]:
+        post.appendlist("_clone", f"{plugin._meta.label_lower}:{plugin.pk}")
+
+    form = CloneForm(post)
+    assert form.is_valid(), form.errors
+    assert form.process() == 5
+
+    cloned = sorted(
+        [
+            *page.testapp_pagesection_set.filter(region="sidebar"),
+            *page.testapp_pagetext_set.filter(region="sidebar"),
+        ],
+        key=lambda plugin: plugin.ordering,
+    )
+    assert [plugin.depth for plugin in cloned] == [1, 2, 2, 3, 1]
+
+    # Without a depth, the roots end up at depth 0
+    post["_clone_depth"] = ""
+    post.setlist(
+        "_clone", [f"testapp.pagesection:{inner.pk}", f"testapp.pagetext:{b.pk}"]
+    )
+    form = CloneForm(post)
+    assert form.is_valid(), form.errors
+    form.process()
+    assert [
+        plugin.depth
+        for plugin in PageSection.objects.filter(region="sidebar").order_by("pk")
+    ] == [1, 2, 0]
+    assert PageText.objects.filter(region="sidebar").order_by("pk").last().depth == 1

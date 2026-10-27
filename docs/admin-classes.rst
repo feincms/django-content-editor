@@ -81,6 +81,8 @@ repetitive if you have many regions and many restrictions:
             RichTextInline.create(regions=deny_regions({"sidebar"})),
         ]
 
+.. _sections:
+
 Sections
 --------
 

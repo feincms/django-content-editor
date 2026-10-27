@@ -19,7 +19,7 @@ __all__ = ("ContentEditor", "ContentEditorInline", "allow_regions", "deny_region
 _inline_index = itertools.count()
 
 # Fields the content editor needs in every plugin form
-_STRUCTURAL_FIELDS = ("region", "ordering")
+_STRUCTURAL_FIELDS = ("region", "ordering", "depth")
 
 
 # The content editor JavaScript ships as native ES modules. Modules import each
@@ -44,10 +44,15 @@ importmap = ImportMap(
 )
 
 
+def _has_depth(model):
+    return any(field.name == "depth" for field in model._meta.fields)
+
+
 class ContentEditorChecks(ModelAdminChecks):
     def check(self, admin_obj, **kwargs):
         errors = super().check(admin_obj, **kwargs)
         errors.extend(self.check_content_editor_regions_attribute(admin_obj))
+        errors.extend(self.check_content_editor_sections_and_containers(admin_obj))
         return errors
 
     def check_content_editor_regions_attribute(self, admin_obj):
@@ -63,11 +68,31 @@ class ContentEditorChecks(ModelAdminChecks):
 
         return []
 
+    def check_content_editor_sections_and_containers(self, admin_obj):
+        inlines = [
+            inline
+            for inline in admin_obj.inlines
+            if issubclass(inline, ContentEditorInline)
+        ]
+        if any(inline.sections for inline in inlines) and any(
+            inline.container for inline in inlines
+        ):
+            return [
+                checks.Error(
+                    "ContentEditor inlines cannot use both 'sections' and 'container'.",
+                    obj=admin_obj.__class__,
+                    id="content_editor.E004",
+                )
+            ]
+
+        return []
+
 
 class ContentEditorInlineChecks(InlineModelAdminChecks):
     def check(self, inline_obj, **kwargs):
         errors = super().check(inline_obj, **kwargs)
         errors.extend(self.check_content_editor_iterable_regions(inline_obj))
+        errors.extend(self.check_content_editor_sections(inline_obj))
         return errors
 
     def check_content_editor_iterable_regions(self, obj):
@@ -80,6 +105,16 @@ class ContentEditorInlineChecks(InlineModelAdminChecks):
                 f"regions must be 'None' or an iterable. Current value is {regions!r}.",
                 obj=obj.__class__,
                 id="content_editor.E003",
+            )
+
+    def check_content_editor_sections(self, obj):
+        if obj.sections:
+            yield checks.Warning(
+                "'sections' is deprecated.",
+                hint="Use 'container = True' for plugins opening sections and"
+                " remove the plugins closing them.",
+                obj=obj.__class__,
+                id="content_editor.W001",
             )
 
 
@@ -99,17 +134,27 @@ class ContentEditorInline(StackedInline):
     icon = ""
     color = ""
     sections = 0
+    container = False
+
+    def _structural_fields(self):
+        if _has_depth(self.model):
+            return _STRUCTURAL_FIELDS
+        return [field for field in _STRUCTURAL_FIELDS if field != "depth"]
 
     def get_fields(self, request, obj=None):
         """Add the structural fields if they are missing"""
         fields = list(super().get_fields(request, obj))
-        return fields + [field for field in _STRUCTURAL_FIELDS if field not in fields]
+        return fields + [
+            field for field in self._structural_fields() if field not in fields
+        ]
 
     def get_fieldsets(self, request, obj=None):
         """Add the structural fields to the last fieldset if they are missing"""
         fieldsets = super().get_fieldsets(request, obj)
         present = flatten_fieldsets(fieldsets)
-        if missing := [field for field in _STRUCTURAL_FIELDS if field not in present]:
+        if missing := [
+            field for field in self._structural_fields() if field not in present
+        ]:
             *fieldsets, (name, options) = fieldsets
             fieldsets.append(
                 (name, {**options, "fields": [*options["fields"], *missing]})
@@ -117,9 +162,9 @@ class ContentEditorInline(StackedInline):
         return fieldsets
 
     def formfield_for_dbfield(self, db_field, *args, **kwargs):
-        """Ensure ``region`` and ``ordering`` use a HiddenInput widget"""
+        """Ensure the structural fields use a HiddenInput widget"""
         # `request` was made a positional argument in dbb0df2a0 (2015-12-24)
-        if db_field.name in ("region", "ordering"):
+        if db_field.name in _STRUCTURAL_FIELDS:
             kwargs["widget"] = forms.HiddenInput
         return super().formfield_for_dbfield(db_field, *args, **kwargs)
 
@@ -213,6 +258,7 @@ class ContentEditor(RefinedModelAdmin):
                     "button": button,
                     "color": iaf.opts.color,
                     "sections": iaf.opts.sections,
+                    "container": iaf.opts.container,
                     "model": iaf.opts.model._meta.label_lower,
                 }
             )
@@ -305,11 +351,46 @@ class ContentEditor(RefinedModelAdmin):
                     level=messages.ERROR,
                 )
 
+        self._normalize_depths(request, form.instance)
+
+    def _normalize_depths(self, request, obj):
+        """
+        Clamp the depth of each plugin to at most the previous plugin's depth,
+        plus one if the previous plugin is a container. The editor never
+        produces invalid depths, this only matters for crafted requests.
+        """
+        inlines = [
+            inline(self.model, self.admin_site)
+            for inline in self.inlines
+            if issubclass(inline, ContentEditorInline) and _has_depth(inline.model)
+        ]
+        if not any(inline.container for inline in inlines) or any(
+            inline.sections for inline in inlines
+        ):
+            return
+
+        regions = defaultdict(list)
+        for inline in inlines:
+            for plugin in inline.get_queryset(request).filter(**{inline.fk_name: obj}):
+                regions[plugin.region].append((plugin, inline.container))
+
+        for plugins in regions.values():
+            plugins.sort(key=lambda row: row[0].ordering)
+            maximum = 0
+            for plugin, container in plugins:
+                if plugin.depth > maximum:
+                    plugin.depth = maximum
+                    plugin.__class__._base_manager.filter(pk=plugin.pk).update(
+                        depth=maximum
+                    )
+                maximum = plugin.depth + 1 if container else plugin.depth
+
 
 class CloneForm(forms.Form):
     _clone = forms.CharField()
     _clone_region = forms.CharField()
     _clone_ordering = forms.IntegerField()
+    _clone_depth = forms.IntegerField(required=False, min_value=0)
 
     def clean(self):
         data = super().clean()
@@ -342,10 +423,22 @@ class CloneForm(forms.Form):
     def process(self):
         ordering = self.cleaned_data["_clone_ordering"]
         region = self.cleaned_data["_clone_region"]
+        depth = self.cleaned_data["_clone_depth"] or 0
 
         count = 0
+        # Original depths of the cloned ancestors of the current instance
+        ancestors = []
 
         for instance in self.cleaned_data["_clone_instances"]:
+            if hasattr(instance, "depth"):
+                while ancestors and ancestors[-1] >= instance.depth:
+                    ancestors.pop()
+                original = instance.depth
+                instance.depth = (
+                    depth + original - (ancestors[0] if ancestors else original)
+                )
+                ancestors.append(original)
+
             instance.pk = None
             instance.ordering = ordering
             instance.region = region

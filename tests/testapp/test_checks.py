@@ -86,3 +86,32 @@ def test_plugin_base_checks():
     assert len(testapp_infos) == 0, (
         f"Unexpected infos for testapp models: {testapp_infos}"
     )
+
+
+def test_sections_checks():
+    class SectionInline(ContentEditorInline):
+        model = RichText
+        sections = 1
+
+    class ContainerInline(ContentEditorInline):
+        model = RichText
+        container = True
+
+    class ArticleAdmin(ContentEditor):
+        model = Article
+        inlines = [SectionInline, ContainerInline]
+
+    assert ArticleAdmin(Article, admin.AdminSite()).check() == [
+        checks.Warning(
+            "'sections' is deprecated.",
+            hint="Use 'container = True' for plugins opening sections and"
+            " remove the plugins closing them.",
+            obj=SectionInline,
+            id="content_editor.W001",
+        ),
+        checks.Error(
+            "ContentEditor inlines cannot use both 'sections' and 'container'.",
+            obj=ArticleAdmin,
+            id="content_editor.E004",
+        ),
+    ]

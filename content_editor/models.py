@@ -78,7 +78,7 @@ def create_plugin_base(content_base):
     Create and return a base class for plugins
 
     The base class contains a ``parent`` foreign key and the required
-    ``region`` and ``ordering`` fields.
+    ``region``, ``ordering`` and ``depth`` fields.
     """
 
     class PluginBaseImpl(PluginBase):
@@ -89,6 +89,7 @@ def create_plugin_base(content_base):
         )
         region = models.CharField(max_length=255)
         ordering = models.IntegerField(default=0)
+        depth = models.PositiveSmallIntegerField(default=0)
 
         class Meta:
             abstract = True
