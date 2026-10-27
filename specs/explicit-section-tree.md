@@ -50,6 +50,11 @@ Why `depth` and not a `parent` foreign key:
 - Moving a subtree changes the `ordering` and `depth` of the moved items only,
   the same set of rows the editor already updates when reordering.
 
+Closers disappear entirely. They never carry content, so nothing is lost.
+Openers stay regular plugins: they have fields and determine how their
+section is rendered (accordion, tabs, ...); they only gain the `container`
+flag.
+
 ### Container declaration
 
 Replace the integer `sections` with a boolean on the inline:
@@ -68,6 +73,34 @@ containers.
   Otherwise the editor and the renderer could disagree about the tree.
 - A system check warns about inlines still using `sections`.
 
+## Editing experience
+
+What explicit depth buys editors, compared to the closer-based model (including
+the auto-closer and drop-depth improvements already shipped):
+
+- **No closer rows.** A section ends where the depth goes back down. The list
+  only shows real content; nothing has to be created automatically, kept
+  balanced, or deleted together with its opener.
+- **Every gap works like the end of a region does today.** While dragging, the
+  horizontal pointer position picks the depth anywhere, within the range the
+  gap allows. Today this only works at the end of a region, and only by
+  creating closers behind the scenes.
+- **Adding at any depth.** Insert targets add plugins at the depth of their
+  position, and the "+" at the end of a region is no longer stuck inside open
+  sections.
+- **Ending a section early is one action.** To end a section after item A,
+  outdent the item following A. Today the closer has to be found and dragged
+  up instead.
+- **Indent/outdent without dragging.** Buttons on the inline (and keyboard
+  shortcuts, e.g. Tab/Shift+Tab on a focused header) change the depth
+  directly. Indenting an item directly after a container moves it into the
+  container.
+- **"Only the section" is trivial.** Deleting a container just decreases the
+  depth of its descendants by one; there's no closer to locate.
+- **Invalid states can't be built.** No orphaned closers, no closer moved to
+  another region on its own, no unbalanced sections; every list of depths the
+  editor produces is a valid tree.
+
 ## Editor changes
 
 - `Sections.update` reads `depth` from a hidden `-depth` input instead of
@@ -78,6 +111,17 @@ containers.
   depth of the next item up to the depth of the previous item, plus one if
   the previous item is a container). This generalizes today's end-of-region
   behavior to every gap.
+  Dropping never splits a section: the minimum depth is the depth of the next
+  item, so items following the gap keep their parent. Splitting is done by
+  outdenting.
+- Outdenting an item moves it one level up and automatically takes its
+  following siblings (with their descendants) along, so that the items after
+  it don't end up inside a plugin which isn't a container. The outdented
+  items stay siblings; they don't become children of the outdented item even
+  if it is a container. Its own descendants move up together with it.
+- Indenting an item is only possible if its new depth is at most the previous
+  item's depth, plus one if the previous item is a container (the same rule
+  the save validation enforces). Its descendants move along.
 - Adding a plugin through an insert target takes the depth of the position.
   The "+" at the end of a region needs a depth choice too, e.g. one insert
   target per open level.
@@ -127,9 +171,6 @@ period so that projects rendering old data keep working.
 
 - Is `depth` needed on plugins which can never be nested? It's on
   `PluginBase`, so every plugin table gets the column and a migration.
-- Should the "closer" survive as an optional visual footer for sections with
-  content after the children (e.g. a footer inside an accordion)? With
-  explicit depth this would just be a regular child plugin.
 - Inheritance (`inherit_from`) copies whole regions, so depths stay
   consistent; verify that nothing else slices regions.
 - Does feincms3's `subregion` grouping interact with depth (subregions are
