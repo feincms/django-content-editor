@@ -48,3 +48,47 @@ def create_article_with_content(page: Page, django_server: str, title: str):
 
     # Return the created article from the database
     return Article.objects.get(title=title)
+
+
+def open_article(page: Page, django_server, article):
+    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
+    page.wait_for_selector(".order-machine")
+
+
+# Native drag and drop in headless Chromium is unreliable (dragstart sometimes
+# doesn't fire at all on CI), so the tests dispatch the drag events directly.
+# Coordinates are computed in the page when dispatching the events because the
+# editor auto-scrolls while dragging near the viewport edges.
+_DISPATCH_DRAG = """(steps) => {
+    for (const [type, selector, dx, dy] of steps) {
+        const rect = document.querySelector(selector).getBoundingClientRect()
+        const el = ["dragstart", "dragend"].includes(type)
+            ? document.querySelector(`${selector} > h3`)
+            : document.querySelector(".order-machine")
+        el.dispatchEvent(new DragEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            clientX: rect.left + dx,
+            clientY: dy < 0 ? rect.bottom + dy : rect.top + dy,
+            dataTransfer: new DataTransfer(),
+        }))
+    }
+}"""
+
+
+def dispatch_drag(page: Page, *steps):
+    """Dispatch ``(type, selector, dx, dy)`` drag events; negative ``dy`` values
+    are relative to the bottom of the element matching ``selector``."""
+    page.evaluate(_DISPATCH_DRAG, [list(step) for step in steps])
+
+
+def drag_after(page: Page, source, target, *, dx):
+    """Drag ``source`` just below ``target``, ``dx`` pixels from its left edge."""
+    dispatch_drag(
+        page,
+        ("dragstart", source, 20, 5),
+        ("dragenter", target, dx, -3),
+        ("dragover", target, dx, -3),
+        ("drop", target, dx, -3),
+        ("dragend", source, 20, 5),
+    )

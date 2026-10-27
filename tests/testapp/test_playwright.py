@@ -12,7 +12,13 @@ from playwright.sync_api import Page, expect
 from content_editor.admin import CloneForm
 from testapp.models import Article
 
-from .test_playwright_helpers import create_article_with_content, login_admin
+from .test_playwright_helpers import (
+    create_article_with_content,
+    dispatch_drag,
+    drag_after,
+    login_admin,
+    open_article,
+)
 
 
 # Allow Django to operate in async context
@@ -93,49 +99,24 @@ def test_no_regions_blocks_adding(page: Page, django_server, client, user):
 
 @pytest.mark.django_db
 def test_drag_and_drop_ordering(page: Page, django_server, client, user):
-    """Test drag and drop functionality for ordering content items."""
-    # Simplified test that creates a simple article and checks if the UI loads
-    # Skip the drag and drop part which is too fragile for automated testing
-
+    """Dragging an inline below another one reorders them."""
+    login_admin(page, django_server)
     article = Article.objects.create(title="DnD Test")
-    article.testapp_richtext_set.create(
+    first = article.testapp_richtext_set.create(
         text="<p>First item</p>", region="main", ordering=10
     )
-    article.testapp_richtext_set.create(
+    second = article.testapp_richtext_set.create(
         text="<p>Second item</p>", region="main", ordering=20
     )
+    open_article(page, django_server, article)
 
-    # Login to admin
-    login_admin(page, django_server)
+    drag_after(page, "#testapp_richtext_set-0", "#testapp_richtext_set-1", dx=100)
 
-    # Navigate to article change page
-    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-
-    # Wait for the page to load
-    page.wait_for_selector("input[name='title']")
-
-    # Verify the title is correct
-    value = page.input_value("input[name='title']")
-    assert value == "DnD Test", f"Title should be 'DnD Test', but got '{value}'"
-
-    # Verify we can see the article content
-    content_count = page.locator("textarea.richtext").count()
-    assert content_count >= 2, (
-        f"Should have at least 2 rich text items, but found {content_count}"
-    )
-
-    # Make a simple change to the title
-    page.fill("input[name='title']", "DnD Test Updated")
-
-    # Save the article
     page.click("input[name='_save']")
-
-    # Check that success message is displayed
     expect(page.locator(".success")).to_contain_text("was changed successfully")
-
-    # Verify the change was saved in the database
-    article.refresh_from_db()
-    assert article.title == "DnD Test Updated"
+    first.refresh_from_db()
+    second.refresh_from_db()
+    assert second.ordering < first.ordering
 
 
 @pytest.mark.django_db
@@ -764,11 +745,6 @@ def test_move_to_region_keeps_offering_the_current_region(
     assert richtext.region == "main"
 
 
-def open_article(page: Page, django_server, article):
-    page.goto(f"{django_server}/admin/testapp/article/{article.pk}/change/")
-    page.wait_for_selector(".order-machine")
-
-
 @pytest.mark.django_db
 def test_unclosed_section_is_drawn_open(page: Page, django_server, client, user):
     login_admin(page, django_server)
@@ -889,45 +865,6 @@ def test_remove_new_empty_section(page: Page, django_server, client, user):
         page.locator(".order-machine .dynamic-testapp_closesection_set")
     ).to_have_count(0)
     expect(page.locator("dialog.section-delete")).to_have_count(0)
-
-
-# Native drag and drop in headless Chromium is unreliable (dragstart sometimes
-# doesn't fire at all on CI), so the tests dispatch the drag events directly.
-# Coordinates are computed in the page when dispatching the events because the
-# editor auto-scrolls while dragging near the viewport edges.
-_DISPATCH_DRAG = """(steps) => {
-    for (const [type, selector, dx, dy] of steps) {
-        const rect = document.querySelector(selector).getBoundingClientRect()
-        const el = ["dragstart", "dragend"].includes(type)
-            ? document.querySelector(`${selector} > h3`)
-            : document.querySelector(".order-machine")
-        el.dispatchEvent(new DragEvent(type, {
-            bubbles: true,
-            cancelable: true,
-            clientX: rect.left + dx,
-            clientY: dy < 0 ? rect.bottom + dy : rect.top + dy,
-            dataTransfer: new DataTransfer(),
-        }))
-    }
-}"""
-
-
-def dispatch_drag(page: Page, *steps):
-    """Dispatch ``(type, selector, dx, dy)`` drag events; negative ``dy`` values
-    are relative to the bottom of the element matching ``selector``."""
-    page.evaluate(_DISPATCH_DRAG, [list(step) for step in steps])
-
-
-def drag_after(page: Page, source, target, *, dx):
-    """Drag ``source`` just below ``target``, ``dx`` pixels from its left edge."""
-    dispatch_drag(
-        page,
-        ("dragstart", source, 20, 5),
-        ("dragenter", target, dx, -3),
-        ("dragover", target, dx, -3),
-        ("drop", target, dx, -3),
-        ("dragend", source, 20, 5),
-    )
 
 
 @pytest.mark.django_db
