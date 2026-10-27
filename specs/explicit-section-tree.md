@@ -176,6 +176,11 @@ A new `content_editor.renderer` module with the core of today's
 - The helpers `template_renderer`, `render_in_context`, `default_context` and
   `PluginNotRegisteredError`.
 - Section rendering, rebuilt on `depth` (see below).
+- Subregions: the `subregion` argument of `register`, the dispatch to
+  `handle_<subregion>` methods, `subregion()` and `takewhile_subregion()`.
+- Marks: the `marks` argument of `register`, `marks()` and
+  `takewhile_mark()`. They cost nothing when unused, and emulating them
+  without such a concept would be needlessly hard.
 - Probably the `{% render_region %}` template tag, which only calls
   `regions.render()`.
 
@@ -215,8 +220,10 @@ because its renderer is called differently.
 
 The renderer renders each list of siblings (the top level of a region, or
 the children of one container) through one overridable method, e.g.
-`render_siblings(plugins, context)`. By default it renders the plugins one by
-one, recursing into containers.
+`render_siblings(plugins, context)`. It dispatches runs of plugins to their
+subregion's `handle_<subregion>` method, exactly like `handle()` does today;
+`handle_default` renders plugins one by one, recursing into containers. The
+handlers only ever see the siblings, never the whole region.
 
 ### Sections and subregions
 
@@ -245,11 +252,11 @@ closer-based data keep working.
 
 ### What builds on top
 
-`feincms3.renderer.RegionRenderer` subclasses the new
-`content_editor.renderer.RegionRenderer` and re-exports the moved names, so
-existing imports keep working. If subregions and marks stay in feincms3 (see
-open questions), the subclass implements subregions by overriding
-`render_siblings`.
+`feincms3.renderer` re-exports the moved names, so existing imports keep
+working. Its `RegionRenderer` subclass only adds the deprecated compatibility
+APIs and closer-based section rendering until they are removed. Projects
+build on the renderer as before, e.g. with their own `handle_<subregion>`
+methods.
 
 ## Migration path
 
@@ -304,11 +311,6 @@ open questions), the subclass implements subregions by overriding
   "Sections and subregions").
 - **Container renderers receive their children explicitly**, as a sequence of
   rendered child nodes which also renders as the concatenated HTML.
-
-## Open questions
-
-- Do subregions and marks move to `content_editor.renderer` too? They are
-  generic, and having sections and subregions documented side by side in one
-  place may help with choosing between them. If they stay in feincms3, the
-  core renderer needs no `handle_<subregion>` dispatch at all; feincms3 adds
-  it by overriding `render_siblings`.
+- **Subregions and marks move to django-content-editor** together with the
+  rest of the renderer. Sections and subregions are documented side by side,
+  which helps with choosing between them; marks are cheap when unused.
