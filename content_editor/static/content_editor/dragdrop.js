@@ -18,9 +18,11 @@ export class DragDrop {
     this.ContentEditor = ContentEditor
     this.machine = machine
     this.sections = sections
+    this.dragging = null
+    this.clientY = null
 
     if (ContentEditor.allowChange) {
-      this.bindDropHandlers()
+      this.bindDragHandlers()
     }
   }
 
@@ -32,13 +34,13 @@ export class DragDrop {
 
   startMouseMonitor() {
     const updater = (e) => {
-      window.__fs_clientY = e.clientY
+      this.clientY = e.clientY
     }
     window.addEventListener("mousemove", updater)
     window.addEventListener("dragover", updater)
 
     const interval = setInterval(() => {
-      const clientY = window.__fs_clientY
+      const { clientY } = this
       if (clientY && clientY / window.innerHeight < 0.1) {
         window.scrollBy(0, -10)
       } else if (clientY && clientY / window.innerHeight > 0.9) {
@@ -132,14 +134,40 @@ export class DragDrop {
     }
   }
 
-  bindDropHandlers() {
+  bindDragHandlers() {
     const orderMachine = this.machine.orderMachine
+    let cancelMouseMonitor
+
+    orderMachine.addEventListener("dragstart", (e) => {
+      // Only handle events from [draggable] elements
+      if (!e.target.closest("h3[draggable]")) return
+
+      this.dragging = e.target.closest(".inline-related")
+      this.dragging.classList.add("fs-dragging", "selected")
+
+      e.dataTransfer.dropEffect = "move"
+      e.dataTransfer.effectAllowed = "move"
+      e.dataTransfer.setData("text/plain", "")
+
+      cancelMouseMonitor = this.startMouseMonitor()
+    })
+    orderMachine.addEventListener("dragend", () => {
+      this.dragging = null
+      this.clientY = null
+      for (const el of qsa(".fs-dragging")) el.classList.remove("fs-dragging")
+      this.clearDragover()
+      for (const el of qsa(".order-machine .inline-related.selected")) {
+        el.classList.remove("selected")
+      }
+      cancelMouseMonitor?.()
+      cancelMouseMonitor = null
+    })
 
     orderMachine.addEventListener("dragenter", (e) => {
-      if (window.__fs_dragging) e.preventDefault()
+      if (this.dragging) e.preventDefault()
     })
     orderMachine.addEventListener("dragover", (e) => {
-      if (!window.__fs_dragging) return
+      if (!this.dragging) return
       e.preventDefault()
       this.clearDragover()
       const target = this.dropTarget(e)
@@ -155,11 +183,11 @@ export class DragDrop {
     })
 
     orderMachine.addEventListener("drop", (e) => {
-      if (!window.__fs_dragging) return
+      if (!this.dragging) return
       e.preventDefault()
       const target = this.dropTarget(e)
       const moving = this.movingInlines()
-      window.__fs_dragging = null
+      this.dragging = null
       if (!target) return
 
       let { anchor, after } = target
@@ -192,45 +220,12 @@ export class DragDrop {
   ensureDraggable(inline) {
     if (
       !this.ContentEditor.allowChange ||
-      inline.classList.contains("empty-form") ||
-      inline.classList.contains("fs-draggable")
+      inline.classList.contains("empty-form")
     )
       return
-
-    let cancelMouseMonitor
-
-    inline.addEventListener("dragstart", (e) => {
-      // Only handle events from [draggable] elements
-      if (!e.target.closest("h3[draggable]")) return
-
-      window.__fs_dragging = e.target.closest(".inline-related")
-      window.__fs_dragging.classList.add("fs-dragging")
-      window.__fs_dragging.classList.add("selected")
-
-      e.dataTransfer.dropEffect = "move"
-      e.dataTransfer.effectAllowed = "move"
-      try {
-        e.dataTransfer.setData("text/plain", "")
-      } finally {
-        // IE11 needs this.
-      }
-
-      cancelMouseMonitor = this.startMouseMonitor()
-    })
-    inline.addEventListener("dragend", () => {
-      window.__fs_dragging = null
-      for (const el of qsa(".fs-dragging")) el.classList.remove("fs-dragging")
-      this.clearDragover()
-      for (const el of qsa(".order-machine .inline-related.selected")) {
-        el.classList.remove("selected")
-      }
-      cancelMouseMonitor?.()
-      cancelMouseMonitor = null
-    })
 
     for (const handle of qsa(":scope > h3, .card-title", inline)) {
       handle.setAttribute("draggable", true) // Default admin, Jazzmin
     }
-    inline.classList.add("fs-draggable")
   }
 }
