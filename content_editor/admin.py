@@ -169,6 +169,11 @@ class ContentEditorInline(StackedInline):
         # `request` was made a positional argument in dbb0df2a0 (2015-12-24)
         if db_field.name in _STRUCTURAL_FIELDS:
             kwargs["widget"] = forms.HiddenInput
+        if db_field.name == "depth":
+            # Data posted without depth (e.g. from code predating it) keeps
+            # the default or current depth instead of failing validation on a
+            # hidden field.
+            kwargs["required"] = False
         return super().formfield_for_dbfield(db_field, *args, **kwargs)
 
     @classmethod

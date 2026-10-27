@@ -212,6 +212,24 @@ def test_depths_are_normalized_when_saving(client):
 
 
 @pytest.mark.django_db
+def test_depth_is_optional(client):
+    response = client.post(
+        reverse("admin:testapp_page_add"),
+        {
+            "title": "Page",
+            "parent": "",
+            **plugin_post_data("testapp_pagecontainer_set", []),
+            **plugin_post_data(
+                "testapp_pagetext_set",
+                [{"region": "main", "ordering": 10, "text": "a"}],
+            ),
+        },
+    )
+    assert response.status_code == 302
+    assert Page.objects.get().testapp_pagetext_set.get().depth == 0
+
+
+@pytest.mark.django_db
 def test_depths_are_not_normalized_with_sections():
     article = Article.objects.create(title="Test")
     text = article.testapp_richtext_set.create(region="main", ordering=10, depth=2)
