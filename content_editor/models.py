@@ -60,7 +60,12 @@ class PluginBase(models.Model):
 
     This class is used by create_plugin_base() to create plugin base classes.
     It serves as a marker to identify plugin models in system checks.
+
+    Plugins which contain other plugins (the following plugins with a greater
+    ``depth``) set ``container = True``.
     """
+
+    container = False
 
     class Meta:
         abstract = True

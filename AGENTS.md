@@ -98,7 +98,7 @@ region/ordering in fieldsets, was removed since those fields are now added
 automatically):
 - `content_editor.E002` - Missing regions attribute on model
 - `content_editor.E003` - Regions not iterable
-- `content_editor.E004` - Inlines using both `sections` and `container`
+- `content_editor.E004` - Inlines using both `sections` and container plugins
 - `content_editor.W001` - Inlines using the deprecated `sections`
 - `content_editor.I001` - Non-abstract base classes warning
 
@@ -247,7 +247,7 @@ no build step) in `content_editor/static/content_editor/`:
 - `sections.js`, `dragdrop.js`, `cloning.js` - Single-instance classes for
   nested sections, drag & drop, and the clone dialog.
   Sections come in two modes, chosen per admin: containers (`container = True`
-  on the inline, nesting stored in the hidden `depth` field,
+  on the plugin model, nesting stored in the hidden `depth` field,
   `ContentEditor.usesDepth`) and the deprecated closer-based `sections`, where
   nesting is derived by counting openers and closers.
 - `save_shortcut.js`, `tabbed_fieldsets.js` - Standalone scripts (Ctrl/Cmd-S

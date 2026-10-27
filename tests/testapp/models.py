@@ -116,6 +116,8 @@ class PageText(AbstractRichText, PagePlugin):
 
 
 class PageSection(PagePlugin):
+    container = True
+
     title = models.CharField(max_length=200, blank=True)
 
     def __str__(self):

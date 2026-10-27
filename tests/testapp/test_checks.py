@@ -5,7 +5,7 @@ from django.test.utils import isolate_apps
 
 from content_editor.admin import ContentEditor, ContentEditorInline
 from content_editor.checks import check_plugin_bases
-from testapp.models import Article, RichText
+from testapp.models import Article, Page, PageSection, PageText, RichText
 
 
 @isolate_apps()
@@ -90,28 +90,24 @@ def test_plugin_base_checks():
 
 def test_sections_checks():
     class SectionInline(ContentEditorInline):
-        model = RichText
+        model = PageText
         sections = 1
 
-    class ContainerInline(ContentEditorInline):
-        model = RichText
-        container = True
+    class PageAdmin(ContentEditor):
+        model = Page
+        inlines = [SectionInline, ContentEditorInline.create(model=PageSection)]
 
-    class ArticleAdmin(ContentEditor):
-        model = Article
-        inlines = [SectionInline, ContainerInline]
-
-    assert ArticleAdmin(Article, admin.AdminSite()).check() == [
+    assert PageAdmin(Page, admin.AdminSite()).check() == [
         checks.Warning(
             "'sections' is deprecated.",
-            hint="Use 'container = True' for plugins opening sections and"
-            " remove the plugins closing them.",
+            hint="Set 'container = True' on the models of plugins opening"
+            " sections and remove the plugins closing them.",
             obj=SectionInline,
             id="content_editor.W001",
         ),
         checks.Error(
-            "ContentEditor inlines cannot use both 'sections' and 'container'.",
-            obj=ArticleAdmin,
+            "ContentEditor inlines cannot use both 'sections' and container plugins.",
+            obj=PageAdmin,
             id="content_editor.E004",
         ),
     ]

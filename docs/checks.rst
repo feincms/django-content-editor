@@ -67,7 +67,8 @@ content_editor.E004
 **Sections and containers in the same admin**
 
 Inlines of a ``ContentEditor`` either use the deprecated ``sections``
-attribute or ``container = True``, not both. See :ref:`sections`.
+attribute or plugin models with ``container = True``, not both. See
+:ref:`sections`.
 
 content_editor.W001
 -------------------
@@ -75,8 +76,8 @@ content_editor.W001
 **Deprecated sections attribute**
 
 ``ContentEditorInline.sections`` (plugins opening and closing sections) is
-deprecated. Use ``container = True`` for plugins opening sections and remove
-the plugins closing them; see :ref:`sections` for migrating existing content.
+deprecated. Set ``container = True`` on the models of plugins opening sections
+and remove the plugins closing them; see :ref:`sections` for migrating existing content.
 
 Model Checks
 ============

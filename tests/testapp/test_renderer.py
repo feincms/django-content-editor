@@ -185,8 +185,8 @@ def test_register_unregister():
     richtext_renderer = template_renderer("renderer/richtext.html")
     download_renderer = template_renderer("renderer/download.html")
 
-    richtext_cfg = (RichText, richtext_renderer, "default", {"default"}, True, False)
-    download_cfg = (Download, download_renderer, "default", {"default"}, True, False)
+    richtext_cfg = (RichText, richtext_renderer, "default", {"default"}, True)
+    download_cfg = (Download, download_renderer, "default", {"default"}, True)
 
     renderer = RegionRenderer()
     renderer.register(RichText, richtext_renderer)
@@ -235,7 +235,6 @@ def section_renderer():
     renderer.register(
         PageSection,
         lambda plugin, context, children: f"<section>{children}</section>",
-        container=True,
     )
     return renderer
 
@@ -281,7 +280,7 @@ def test_container_renderer_arguments():
     with pytest.raises(
         ImproperlyConfigured, match=r"has less than the three required arguments"
     ):
-        renderer.register(PageSection, lambda plugin, context: "", container=True)
+        renderer.register(PageSection, lambda plugin, context: "")
 
 
 @pytest.mark.django_db
@@ -301,7 +300,6 @@ def test_container_templates():
         lambda plugin, context, children: template_renderer(
             "renderer/tabs.html" if plugin == tabs else "renderer/section.html"
         )(plugin, context, children),
-        container=True,
     )
 
     assertHTMLEqual(
@@ -329,7 +327,6 @@ def test_subregions_in_containers():
     renderer.register(
         PageSection,
         lambda plugin, context, children: f"<section>{children}</section>",
-        container=True,
     )
 
     # Subregions never cross container boundaries

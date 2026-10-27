@@ -86,14 +86,20 @@ repetitive if you have many regions and many restrictions:
 Sections
 --------
 
-Plugins may contain other plugins. Inlines of such plugins (accordions, tabs,
-columns, ...) set ``container = True``:
+Plugins may contain other plugins. The models of such plugins (accordions,
+tabs, columns, ...) set ``container = True``; the content editor and the
+renderer both use this:
 
 .. code-block:: python
 
+    class Accordion(ArticlePlugin):
+        container = True
+
+        title = models.CharField(max_length=200)
+
     class ArticleAdmin(ContentEditor):
         inlines = [
-            ContentEditorInline.create(model=Accordion, container=True),
+            ContentEditorInline.create(model=Accordion),
             ContentEditorInline.create(model=RichText),
             ...
         ]
@@ -128,8 +134,8 @@ Plugins may also open and close sections by setting ``sections`` to a positive
 number (opens that many sections) or to a negative number (closes sections).
 All plugins between the opening and the closing plugin are grouped visually,
 and they are collapsed and moved together. Sections which aren't closed extend
-until the end of the region. An admin uses either ``sections`` or
-``container``, not both.
+until the end of the region. An admin uses either ``sections`` or container
+plugins, not both.
 
 .. code-block:: python
 
@@ -183,9 +189,9 @@ deletes the closing plugins:
         operations = [migrations.RunPython(forwards, migrations.RunPython.noop)]
 
 ``plugins`` lists all remaining plugin models. Sections which are still open
-at the end of a region end there. Afterwards, replace ``sections = 1`` with
-``container = True`` on the inlines of the opening plugins, and remove the
-closing plugins' models and inlines. Each model is fetched using its base
+at the end of a region end there. Afterwards, remove ``sections = 1`` from the
+inlines of the opening plugins and set ``container = True`` on their models,
+and remove the closing plugins' models and inlines. Each model is fetched using its base
 manager, so the openers and closers should be concrete models, not proxies
 sharing a table with other plugins.
 

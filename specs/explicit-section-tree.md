@@ -58,11 +58,19 @@ flag.
 
 ### Container declaration
 
-Replace the integer `sections` with a boolean on the inline:
+Replace the integer `sections` on the inline with a boolean on the plugin
+model, `False` by default on `PluginBase`:
 
 ```python
-ContentEditorInline.create(model=Accordion, container=True)
+class Accordion(PagePlugin):
+    container = True
 ```
+
+Whether a plugin is a container defines what the stored `depth` values mean,
+so it's a property of the data, not of a particular admin or renderer. The
+content editor (including normalization when saving) and the renderer both
+read it from the model, so they can't disagree, and other consumers of the
+data (APIs, exports, copying content) find it in the same place.
 
 ### Admin forms
 
@@ -194,19 +202,19 @@ feincms3 until they are removed.
 Today, sections are rendered through subregions: an opener is registered with
 a subregion, a `handle_<subregion>` method calls `render_section_plugins`,
 and a registered closer ends the section. With `depth`, the renderer walks the
-tree instead, and containers are registered as such:
+tree instead, and containers are recognized by their model's `container`
+attribute:
 
 ```python
 renderer.register(
     Accordion,
     template_renderer("sections/accordion.html"),
-    container=True,
 )
 ```
 
 A container's renderer receives its children explicitly, as a third argument:
-`renderer(plugin, context, children)`. `register(..., container=True)`
-checks that the renderer accepts it, like the existing check for two
+`renderer(plugin, context, children)`. `register` checks that the renderer
+of a container accepts it, like the existing check for two
 arguments. `children` is a sequence of rendered child nodes in order; each
 node has the child's `plugin` and renders as the child's HTML, and the
 sequence itself renders as the concatenated HTML. So a simple container
@@ -214,7 +222,7 @@ template only needs `{{ children }}`, while e.g. tabs can loop over the nodes
 and use each child plugin for the tab titles. `template_renderer` exposes
 the sequence as `children` in the template.
 
-Containers are registered explicitly instead of being inferred from the
+Containers are declared explicitly instead of being inferred from the
 data, because an empty container has to render as a container too, and
 because its renderer is called differently.
 
@@ -260,7 +268,8 @@ methods.
 
 ## Migration path
 
-1. django-content-editor 10.0: add `depth` (default 0) and `container`. Projects
+1. django-content-editor 10.0: add `depth` (default 0) and the model-level
+   `container` attribute. Projects
    generate a schema migration adding `depth` to every plugin model, followed
    by a data migration using a helper which computes `depth` from the
    existing closer-based structure. The helper can't use the inlines'
@@ -309,6 +318,9 @@ methods.
   created by editors, subregions implicit render-time grouping of adjacent
   plugins. Subregions only group siblings, so sections always win (see
   "Sections and subregions").
+- **`container` lives on the plugin model**, not on the inline or in the
+  renderer registration. It defines what the stored depths mean, so the
+  editor and the renderer must agree on it.
 - **Container renderers receive their children explicitly**, as a sequence of
   rendered child nodes which also renders as the concatenated HTML.
 - **Subregions and marks move to django-content-editor** together with the

@@ -80,7 +80,7 @@ class PageAdmin(ContentEditor):
     ]
     inlines = [
         ContentEditorInline.create(model=PageText),
-        ContentEditorInline.create(model=PageSection, container=True),
+        ContentEditorInline.create(model=PageSection),
     ]
 
 

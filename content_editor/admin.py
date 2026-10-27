@@ -44,6 +44,10 @@ importmap = ImportMap(
 )
 
 
+def _is_container(model):
+    return getattr(model, "container", False)
+
+
 def _has_depth(model):
     return any(field.name == "depth" for field in model._meta.fields)
 
@@ -75,11 +79,11 @@ class ContentEditorChecks(ModelAdminChecks):
             if issubclass(inline, ContentEditorInline)
         ]
         if any(inline.sections for inline in inlines) and any(
-            inline.container for inline in inlines
+            _is_container(inline.model) for inline in inlines
         ):
             return [
                 checks.Error(
-                    "ContentEditor inlines cannot use both 'sections' and 'container'.",
+                    "ContentEditor inlines cannot use both 'sections' and container plugins.",
                     obj=admin_obj.__class__,
                     id="content_editor.E004",
                 )
@@ -111,8 +115,8 @@ class ContentEditorInlineChecks(InlineModelAdminChecks):
         if obj.sections:
             yield checks.Warning(
                 "'sections' is deprecated.",
-                hint="Use 'container = True' for plugins opening sections and"
-                " remove the plugins closing them.",
+                hint="Set 'container = True' on the models of plugins opening"
+                " sections and remove the plugins closing them.",
                 obj=obj.__class__,
                 id="content_editor.W001",
             )
@@ -134,7 +138,6 @@ class ContentEditorInline(StackedInline):
     icon = ""
     color = ""
     sections = 0
-    container = False
 
     def _structural_fields(self):
         if _has_depth(self.model):
@@ -258,7 +261,7 @@ class ContentEditor(RefinedModelAdmin):
                     "button": button,
                     "color": iaf.opts.color,
                     "sections": iaf.opts.sections,
-                    "container": iaf.opts.container,
+                    "container": _is_container(iaf.opts.model),
                     "model": iaf.opts.model._meta.label_lower,
                 }
             )
@@ -366,7 +369,7 @@ class ContentEditor(RefinedModelAdmin):
             for inline in self.inlines
             if issubclass(inline, ContentEditorInline) and _has_depth(inline.model)
         ]
-        if not any(inline.container for inline in inlines) or any(
+        if not any(_is_container(inline.model) for inline in inlines) or any(
             inline.sections for inline in inlines
         ):
             return
@@ -374,7 +377,7 @@ class ContentEditor(RefinedModelAdmin):
         regions = defaultdict(list)
         for inline in inlines:
             for plugin in inline.get_queryset(request).filter(**{inline.fk_name: obj}):
-                regions[plugin.region].append((plugin, inline.container))
+                regions[plugin.region].append((plugin, _is_container(inline.model)))
 
         for plugins in regions.values():
             plugins.sort(key=lambda row: row[0].ordering)

@@ -110,8 +110,8 @@ by one.
 Containers
 ==========
 
-Plugins registered with ``container=True`` contain the following plugins with
-a greater ``depth`` (see :ref:`sections`). Their renderer receives the
+Plugins whose models set ``container = True`` contain the following plugins
+with a greater ``depth`` (see :ref:`sections`). Their renderer receives the
 children explicitly, as a third argument:
 
 .. code-block:: python
@@ -119,14 +119,12 @@ children explicitly, as a third argument:
     renderer.register(
         Accordion,
         template_renderer("sections/accordion.html"),
-        container=True,
     )
     renderer.register(
         Columns,
         lambda plugin, context, children: format_html(
             '<div class="columns">{}</div>', children
         ),
-        container=True,
     )
 
 ``children`` is a sequence of nodes, one per child. Each node renders as the
@@ -144,8 +142,9 @@ only needs ``{{ children }}``, while e.g. tabs can loop over the nodes:
       {% endfor %}
     </div>
 
-Containers are registered explicitly instead of being inferred from the data,
-because empty containers have to be rendered as containers too.
+Containers are declared on the model instead of being inferred from the data,
+because empty containers have to be rendered as containers too. The model is
+the one place both the content editor and the renderer read it from.
 
 The top level of a region and the children of each container are rendered
 using ``render_siblings(plugins, context)``, which dispatches runs of plugins

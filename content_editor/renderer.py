@@ -88,7 +88,6 @@ _renderer = 1
 _subregion = 2
 _marks = 3
 _fetch = 4
-_container = 5
 
 # Maps id(container) to the list of its children while rendering a region
 _children = ContextVar("content_editor_children", default=None)
@@ -235,7 +234,6 @@ class RegionRenderer:
         subregion="default",
         marks=_default_marks,
         fetch=True,
-        container=False,
     ):
         """
         Register a plugin class
@@ -260,26 +258,25 @@ class RegionRenderer:
         - ``fetch = True``: By default a plugin is fetched from the database;
           setting this to ``False`` allows registering plugin classes which
           shouldn't be fetched from the database.
-        - ``container = False``: Containers contain the following plugins with
-          a greater ``depth``. Their renderer receives the children as a third
-          argument, a sequence of nodes with a ``plugin`` attribute which
-          render as the child's HTML. The sequence itself renders as the
-          concatenated HTML of all children.
-        """
-        required = 3 if container else 2
-        if (
-            callable(renderer)
-            and len(inspect.signature(renderer).parameters) < required
-        ):
-            raise ImproperlyConfigured(
-                f"The renderer function {renderer} has less than the"
-                f" {'three' if container else 'two'} required arguments."
-            )
 
+        The renderer of containers (plugin models with ``container = True``)
+        receives the children as a third argument, a sequence of nodes with a
+        ``plugin`` attribute which render as the child's HTML. The sequence
+        itself renders as the concatenated HTML of all children.
+        """
         if not isinstance(plugin, (list, tuple)):
             plugin = [plugin]
 
         for p in plugin:
+            container = getattr(p, "container", False)
+            if callable(renderer) and len(inspect.signature(renderer).parameters) < (
+                3 if container else 2
+            ):
+                raise ImproperlyConfigured(
+                    f"The renderer function {renderer} has less than the"
+                    f" {'three' if container else 'two'} required arguments."
+                )
+
             if p in self._plugins:
                 warnings.warn(
                     f"The plugin {p} has already been registered with {self.__class__} before.",
@@ -292,7 +289,7 @@ class RegionRenderer:
                     stacklevel=2,
                 )
 
-            self._plugins[p] = (p, renderer, subregion, marks, fetch, container)
+            self._plugins[p] = (p, renderer, subregion, marks, fetch)
 
     def plugins(self, *, fetch=True):
         """
@@ -323,7 +320,7 @@ class RegionRenderer:
         renderer = config[_renderer]
         if not callable(renderer):
             return renderer
-        if config[_container]:
+        if getattr(plugin, "container", False):
             children = _children.get() or {}
             return renderer(
                 plugin,
@@ -408,8 +405,7 @@ class RegionRenderer:
             while stack and stack[-1][0] >= depth:
                 stack.pop()
             (children[id(stack[-1][1])] if stack else top).append(plugin)
-            config = self._plugins.get(plugin.__class__)
-            if config and config[_container]:
+            if getattr(plugin, "container", False):
                 children[id(plugin)] = []
                 stack.append((depth, plugin))
         return top, children
