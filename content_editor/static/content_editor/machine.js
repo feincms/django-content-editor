@@ -327,8 +327,12 @@ export class Machine {
         }
       }
     })
+    // Only apply when checked, otherwise inlines collapsed before saving would
+    // be uncollapsed again.
     collapseAllInput.checked = LS.get("collapseAll")
-    collapseAllInput.dispatchEvent(new Event("change"))
+    if (collapseAllInput.checked) {
+      collapseAllInput.dispatchEvent(new Event("change"))
+    }
   }
 
   bindCollapseHandlers() {

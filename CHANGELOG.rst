@@ -18,6 +18,8 @@ Next version
   exactly one drop indicator per gap, at the depth the dropped items will have.
 - Fixed the editor failing to initialize when the browser blocks access to
   ``localStorage``.
+- Fixed restoring collapsed inlines after saving; they were uncollapsed again
+  unless "Collapse all items" was active.
 
 9.1 (2026-10-26)
 ================
