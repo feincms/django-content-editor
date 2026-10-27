@@ -5,21 +5,22 @@ Status: proposal, not scheduled.
 ## Problem
 
 Sections are implicit. Plugins are a flat, ordered list per region; a plugin
-with `sections = n > 0` opens `n` sections, a plugin with `sections < 0`
-closes sections. Nesting is derived by walking the list and counting
-(`content_editor/static/content_editor/sections.js`,
-`content_editor/static/content_editor/cloning.js`, and
-`RegionRenderer.render_section_plugins` in feincms3).
+whose inline has `sections = n > 0` opens `n` sections, a plugin whose inline
+has `sections < 0` closes sections. Nesting is derived by walking the list and
+counting. The walk exists several times: in the editor (`Sections.update`,
+`depthAfter` and `ancestorsOf` in
+`content_editor/static/content_editor/sections.js`, and the clone dialog in
+`cloning.js`), in `RegionRenderer.render_section_plugins` in feincms3, and in
+project-specific code.
 
 Consequences:
 
 - A section without a closer extends to the end of the region. "After the
-  section" doesn't exist as a position, so the editor can only express it by
-  creating a closer (done since the auto-closer and drop-depth changes).
+  section" doesn't exist as a position. Since 9.2, the editor works around this
+  by creating closers: when adding an opener, and when dragging items out of
+  sections which are still open at the end of a region.
 - The closer is a model with a database table and an admin inline whose only
   purpose is structural. Editors see it as an item in the list.
-- Every consumer re-implements the counting walk: the editor (twice), the
-  clone dialog, feincms3's renderer, and project-specific code.
 - Invalid states are representable: closers without openers, unbalanced
   sections, a closer moved to another region on its own.
 
@@ -36,9 +37,9 @@ class PluginBase(models.Model):
 
 The list ordered by `ordering` plus `depth` per item is a complete outline. A
 plugin's children are the following items with a greater depth, up to the
-next item with a depth less than or equal to its own. Only plugins which may
-contain other plugins (container plugins, the current openers) are allowed to
-have deeper items directly following them.
+next item with a depth less than or equal to its own. Only containers (the
+current openers) may be followed directly by a deeper item, and only one level
+deeper. The first item of a region has depth 0.
 
 Why `depth` and not a `parent` foreign key:
 
@@ -66,17 +67,23 @@ ContentEditorInline.create(model=Accordion, container=True)
 Multi-level openers (`sections = 2`) go away; nesting is expressed by nesting
 containers.
 
-### Validation
+### Consistency on save
 
-- On save (`ContentEditor.save_related` or a formset clean), check that depth
-  only increases by one at a time, and only directly after a container.
-  Otherwise the editor and the renderer could disagree about the tree.
-- A system check warns about inlines still using `sections`.
+The editor never produces invalid depths, so the server doesn't reject them
+but normalizes them when saving (e.g. in `ContentEditor.save_related`): walking
+each region in order, an item's depth is clamped to at most the previous
+item's depth, plus one if the previous item is a container. Items marked for
+deletion are skipped. This only matters for crafted requests and programmatic
+changes. Rejecting instead would need validation errors spanning several
+formsets, which the Django admin has no good place for.
+
+A system check reports inlines using `sections` and `container` in the same
+admin, and warns about inlines still using `sections`.
 
 ## Editing experience
 
 What explicit depth buys editors, compared to the closer-based model (including
-the auto-closer and drop-depth improvements already shipped):
+the auto-closer and drop-depth improvements shipped in 9.2):
 
 - **No closer rows.** A section ends where the depth goes back down. The list
   only shows real content; nothing has to be created automatically, kept
@@ -92,9 +99,8 @@ the auto-closer and drop-depth improvements already shipped):
   outdent the item following A. Today the closer has to be found and dragged
   up instead.
 - **Indent/outdent without dragging.** Buttons on the inline (and keyboard
-  shortcuts, e.g. Tab/Shift+Tab on a focused header) change the depth
-  directly. Indenting an item directly after a container moves it into the
-  container.
+  shortcuts, e.g. Alt+Shift+Arrow keys; not Tab, which has to keep moving the
+  focus) change the depth directly.
 - **"Only the section" is trivial.** Deleting a container just decreases the
   depth of its descendants by one; there's no closer to locate.
 - **Invalid states can't be built.** No orphaned closers, no closer moved to
@@ -103,32 +109,44 @@ the auto-closer and drop-depth improvements already shipped):
 
 ## Editor changes
 
+In all of the following, "previous item" means the item directly preceding a
+position in the region's order, which for a collapsed container is its last
+descendant, not the container itself.
+
 - `Sections.update` reads `depth` from a hidden `-depth` input instead of
-  counting `sections`. `childrenMap` stays as it is; `closerMap` and the
-  auto-closer logic go away.
-- Drag & drop: the vertical position chooses the gap and the horizontal
-  position chooses the depth within the range allowed at that gap (from the
-  depth of the next item up to the depth of the previous item, plus one if
-  the previous item is a container). This generalizes today's end-of-region
-  behavior to every gap.
+  counting `sections`; so do `depthAfter` and `ancestorsOf`, which become
+  trivial. `childrenMap` stays as it is; `closerMap` and the auto-closer logic
+  go away.
+- Drag & drop: the vertical position chooses the gap (as today, exactly one
+  indicator per gap) and the horizontal position chooses the depth within the
+  range allowed at that gap: from the depth of the next item up to the depth
+  of the previous item, plus one if the previous item is a container. This
+  generalizes today's end-of-region behavior to every gap.
   Dropping never splits a section: the minimum depth is the depth of the next
   item, so items following the gap keep their parent. Splitting is done by
   outdenting.
-- Outdenting an item moves it one level up and automatically takes its
-  following siblings (with their descendants) along, so that the items after
-  it don't end up inside a plugin which isn't a container. The outdented
-  items stay siblings; they don't become children of the outdented item even
-  if it is a container. Its own descendants move up together with it.
-- Indenting an item is only possible if its new depth is at most the previous
-  item's depth, plus one if the previous item is a container (the same rule
-  the save validation enforces). Its descendants move along.
+- Dragged items move together with their descendants, which keep their depth
+  relative to the dragged item. With a multi-selection, every selected subtree
+  is dropped at the chosen depth, as siblings in their previous order.
+- Outdenting an item moves it one level up together with its descendants. Its
+  following siblings (with their descendants) automatically move up one level
+  as well, so that they don't end up inside a plugin which isn't a container.
+  They stay siblings of the outdented item; they don't become its children
+  even if it is a container. Items at depth 0 can't be outdented.
+- Indenting an item moves it one level down together with its descendants. It
+  is only possible if the new depth is at most the previous item's depth, plus
+  one if the previous item is a container (the same rule used when saving).
+  Directly after a container, the item becomes the container's first child;
+  after the last descendant of a preceding sibling container, it becomes that
+  container's last child.
 - Adding a plugin through an insert target takes the depth of the position.
   The "+" at the end of a region needs a depth choice too, e.g. one insert
   target per open level.
-- Moving to another region and cloning move whole subtrees and reset the
-  depth of the root to 0.
+- Moving to another region and cloning (the server-side `CloneForm`) move or
+  copy whole subtrees. The root ends up at depth 0, descendants keep their
+  depth relative to the root.
 - Deleting a container either marks the subtree for deletion or decreases the
-  depth of the children by one (same dialog as today).
+  depth of the descendants by one (same dialog as today).
 
 ## Renderer changes (feincms3)
 
@@ -147,31 +165,45 @@ period so that projects rendering old data keep working.
 
 ## Migration path
 
-1. django-content-editor N: add `depth` (default 0) and `container`. Ship a
-   helper which computes `depth` from the existing `sections` counters for
-   one parent, usable from a data migration in projects:
+1. django-content-editor 10.0: add `depth` (default 0) and `container`. Projects
+   generate a schema migration adding `depth` to every plugin model, followed
+   by a data migration using a helper which computes `depth` from the
+   existing closer-based structure. The helper can't use the inlines'
+   `sections` attributes (they live in the admin, not on the models), so the
+   section counts are passed explicitly:
 
    ```python
    from content_editor.migrations_utils import compute_depths
 
 
    def forwards(apps, schema_editor):
-       compute_depths(apps.get_model("pages", "Page"), plugins=[...])
+       compute_depths(
+           apps.get_model("pages", "Page"),
+           plugins=[apps.get_model("pages", "RichText"), ...],
+           sections={
+               apps.get_model("pages", "Accordion"): 1,
+               apps.get_model("pages", "CloseSection"): -1,
+           },
+       )
    ```
 
-   The helper walks each region exactly like `Sections.update`, writes
-   `depth`, and deletes the closers.
+   The helper walks each region of each page exactly like `Sections.update`,
+   writes `depth`, and deletes the closers. Sections which are still open at
+   the end of a region simply end there. The closer models and inlines can be
+   removed afterwards.
    The editor supports both modes, selected per admin by whether any inline
    uses `sections`.
 2. feincms3: depth-aware section rendering, closer-based rendering
    deprecated.
-3. django-content-editor N+1: remove `sections` support.
+3. django-content-editor 11.0: remove `sections` support.
 
 ## Decisions
 
 - **All plugins get `depth`.** It lives on `PluginBase`, so every plugin table
   gets the column and a migration, also plugins which never end up nested.
   That keeps fetching, sorting and validation uniform.
+- **Outdenting takes the following siblings along** (see above), instead of
+  turning them into children of the outdented item.
 - **Slicing regions is the project's responsibility.** Nothing known slices
   regions; inheritance (`inherit_from`) copies whole regions, so depths stay
   consistent. Projects which filter plugins (e.g. a "hide this plugin"
