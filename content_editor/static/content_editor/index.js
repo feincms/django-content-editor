@@ -71,7 +71,7 @@ function saveEditorState(ContentEditor) {
   return u.toString()
 }
 
-function restoreEditorState(regions, machine) {
+function restoreEditorState(regions, machine, sections) {
   const u = new URLSearchParams(location.hash.replace(/^#/, ""))
   if (u.size) {
     const region = u.get("region")
@@ -84,12 +84,9 @@ function restoreEditorState(regions, machine) {
       const wasCollapsed = collapsed.includes(
         qs(".order-machine-ordering", inline).value,
       )
-      /* XXX handle sections */
-      inline.classList.toggle(
-        "collapsed",
-        wasCollapsed && !inline.querySelector(".errorlist"),
-      )
+      inline.classList.toggle("collapsed", wasCollapsed)
     }
+    sections.showErrors()
 
     regions.selectInitial(region)
     machine.initializeCollapseAll()
@@ -151,7 +148,7 @@ function init() {
     })
   }
 
-  restoreEditorState(regions, machine)
+  restoreEditorState(regions, machine, sections)
 
   if (!ContentEditor.allowChange) {
     qs(".order-machine-wrapper").classList.add("order-machine-readonly")

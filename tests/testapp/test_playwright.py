@@ -1055,3 +1055,52 @@ def test_collapsed_inlines_stay_collapsed_after_saving(
     expect(page.locator("#testapp_richtext_set-1")).not_to_have_class(
         re.compile(r"\bcollapsed\b")
     )
+
+
+@pytest.mark.django_db
+def test_errors_in_collapsed_sections_are_shown(
+    page: Page, django_server, client, user
+):
+    """Collapsing everything keeps inlines with errors and the sections
+    containing them uncollapsed."""
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Errors")
+    article.testapp_section_set.create(region="main", ordering=10)
+    article.testapp_download_set.create(file="x", region="main", ordering=20)
+    article.testapp_closesection_set.create(region="main", ordering=30)
+    open_article(page, django_server, article)
+
+    page.fill("#id_testapp_download_set-0-file", "")
+    page.locator(".collapse-items").click()
+    expect(page.locator("#testapp_download_set-0")).to_be_hidden()
+    page.click("input[name='_continue']")
+
+    expect(page.locator(".errornote")).to_be_visible()
+    expect(page.locator("#testapp_download_set-0 .errorlist")).to_be_visible()
+    expect(page.locator("#testapp_section_set-0")).not_to_have_class(
+        re.compile(r"\bcollapsed\b")
+    )
+
+
+@pytest.mark.django_db
+def test_nested_collapsed_section_stays_hidden_after_saving(
+    page: Page, django_server, client, user
+):
+    login_admin(page, django_server)
+    article = Article.objects.create(title="Nested")
+    article.testapp_section_set.create(region="main", ordering=10)
+    article.testapp_section_set.create(region="main", ordering=20)
+    article.testapp_richtext_set.create(text="<p>A</p>", region="main", ordering=30)
+    article.testapp_closesection_set.create(region="main", ordering=40)
+    article.testapp_closesection_set.create(region="main", ordering=50)
+    open_article(page, django_server, article)
+
+    page.locator("#testapp_section_set-1 > h3 .inline_label").click()
+    expect(page.locator("#testapp_richtext_set-0")).to_be_hidden()
+
+    page.click("input[name='_continue']")
+    expect(page.locator(".success")).to_contain_text("was changed successfully")
+    expect(page.locator("#testapp_section_set-1")).to_have_class(
+        re.compile(r"\bcollapsed\b")
+    )
+    expect(page.locator("#testapp_richtext_set-0")).to_be_hidden()

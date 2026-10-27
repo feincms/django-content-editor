@@ -319,12 +319,7 @@ export class Machine {
       LS.set("collapseAll", collapseAllInput.checked)
 
       if (collapseAllInput.checked) {
-        /* XXX handle sections */
-        for (const errorlist of qsa(
-          ".order-machine .inline-related:not(.empty-form) .errorlist",
-        )) {
-          errorlist.closest(".inline-related").classList.remove("collapsed")
-        }
+        this.sections.showErrors()
       }
     })
     // Only apply when checked, otherwise inlines collapsed before saving would

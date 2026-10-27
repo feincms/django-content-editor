@@ -1,4 +1,4 @@
-import { crel, debounce, delegate, qs } from "content-editor/utils"
+import { crel, debounce, delegate, qs, qsa } from "content-editor/utils"
 
 /*
  * SECTIONS
@@ -76,7 +76,6 @@ export class Sections {
     const newChildrenMap = new Map()
     const newCloserMap = new Map()
     const newDepthMap = new Map()
-    const topLevel = []
 
     const closeSection = (atInline, open = false) => {
       const fromInline = stack.pop()
@@ -102,19 +101,23 @@ export class Sections {
       div.classList.toggle("order-machine-section--open", open)
       div.classList.toggle(
         "content-editor-hide",
-        fromInline.classList.contains("collapsed"),
+        fromInline.classList.contains("collapsed") ||
+          fromInline.classList.contains("content-editor-hide"),
       )
     }
 
     for (const inline of inlines) {
+      /* Inlines are hidden if any section containing them is collapsed */
+      inline.classList.toggle(
+        "content-editor-hide",
+        stack.some((el) => el.classList.contains("collapsed")),
+      )
       inline.style.marginInlineStart = `${INDENT * indent}px`
       newDepthMap.set(inline, indent)
       nextIndent = Math.max(0, indent + this.sectionsOf(inline))
 
       if (stack.length) {
         newChildrenMap.get(stack[stack.length - 1]).push(inline)
-      } else {
-        topLevel.push(inline)
       }
 
       while (indent < nextIndent) {
@@ -154,11 +157,6 @@ export class Sections {
     this.childrenMap = newChildrenMap
     this.closerMap = newCloserMap
     this.depthMap = newDepthMap
-
-    /* Top level inline's sections should be hidden if the inline is collapsed */
-    for (const inline of topLevel) {
-      this.hideSection(inline, inline.classList.contains("collapsed"))
-    }
   }
 
   hideSection(inline, hide = true) {
@@ -172,6 +170,35 @@ export class Sections {
         }
       }
     }
+  }
+
+  // The section openers containing ``inline``, outermost first. Works for
+  // inlines in all regions, not only the current one.
+  ancestorsOf(inline) {
+    const stack = []
+    for (const el of this.machine.findInlinesInOrder(inline.dataset.region)) {
+      if (el === inline) break
+      const sections = this.sectionsOf(el)
+      if (sections > 0) {
+        stack.push(...Array(sections).fill(el))
+      } else {
+        stack.length = Math.max(0, stack.length + sections)
+      }
+    }
+    return [...new Set(stack)]
+  }
+
+  // Uncollapse inlines with errors and all sections containing them
+  showErrors() {
+    for (const errorlist of qsa(
+      ".order-machine .inline-related:not(.empty-form) .errorlist",
+    )) {
+      const inline = errorlist.closest(".inline-related")
+      for (const el of [inline, ...this.ancestorsOf(inline)]) {
+        el.classList.remove("collapsed")
+      }
+    }
+    this.update()
   }
 
   // All inlines contained in the section opened by ``inline``, in order and

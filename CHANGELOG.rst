@@ -20,6 +20,8 @@ Next version
   ``localStorage``.
 - Fixed restoring collapsed inlines after saving; they were uncollapsed again
   unless "Collapse all items" was active.
+- Uncollapsed sections containing inlines with errors, and kept inlines of
+  collapsed sections nested in uncollapsed sections hidden after reloading.
 
 9.1 (2026-10-26)
 ================
