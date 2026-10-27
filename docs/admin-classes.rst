@@ -113,6 +113,43 @@ Marking a section opener for deletion asks whether only the opener and its
 closing plugin should be marked for deletion, or the contents of the section
 too.
 
+.. _migrating-sections:
+
+Migrating from closer-based sections
+------------------------------------
+
+Plugins created with ``create_plugin_base`` have a ``depth`` field, so
+``makemigrations`` adds it to all plugin models. Then, write a data migration
+which computes ``depth`` from the existing opening and closing plugins and
+deletes the closing plugins:
+
+.. code-block:: python
+
+    from django.db import migrations
+
+    from content_editor.migrations_utils import compute_depths
+
+
+    def forwards(apps, schema_editor):
+        compute_depths(
+            apps.get_model("pages", "Page"),
+            plugins=[apps.get_model("pages", "RichText"), ...],
+            openers=[apps.get_model("pages", "Accordion")],
+            closers=[apps.get_model("pages", "CloseSection")],
+        )
+
+
+    class Migration(migrations.Migration):
+        dependencies = [...]
+        operations = [migrations.RunPython(forwards, migrations.RunPython.noop)]
+
+``plugins`` lists all remaining plugin models. Sections which are still open
+at the end of a region end there. Afterwards, replace ``sections = 1`` with
+``container = True`` on the inlines of the opening plugins, and remove the
+closing plugins' models and inlines. Each model is fetched using its base
+manager, so the openers and closers should be concrete models, not proxies
+sharing a table with other plugins.
+
 RefinedModelAdmin
 =================
 

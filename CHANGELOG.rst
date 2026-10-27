@@ -21,6 +21,8 @@ Next version
   relative to the root when cloning plugins. ``sections`` is deprecated
   (``content_editor.W001``), and an admin cannot use both
   (``content_editor.E004``).
+- Added ``content_editor.migrations_utils.compute_depths`` for data migrations
+  computing ``depth`` from closer-based sections.
 
 9.2 (2026-10-27)
 ================
