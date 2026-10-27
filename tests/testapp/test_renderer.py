@@ -14,7 +14,16 @@ from content_editor.renderer import (
     RegionRenderer,
     template_renderer,
 )
-from testapp.models import Article, Download, JSONTeaser, JSONText, RichText
+from testapp.models import (
+    Article,
+    Download,
+    JSONTeaser,
+    JSONText,
+    Page,
+    PageSection,
+    PageText,
+    RichText,
+)
 
 
 @pytest.fixture
@@ -176,8 +185,8 @@ def test_register_unregister():
     richtext_renderer = template_renderer("renderer/richtext.html")
     download_renderer = template_renderer("renderer/download.html")
 
-    richtext_cfg = (RichText, richtext_renderer, "default", {"default"}, True)
-    download_cfg = (Download, download_renderer, "default", {"default"}, True)
+    richtext_cfg = (RichText, richtext_renderer, "default", {"default"}, True, False)
+    download_cfg = (Download, download_renderer, "default", {"default"}, True, False)
 
     renderer = RegionRenderer()
     renderer.register(RichText, richtext_renderer)
@@ -218,3 +227,122 @@ def test_proxy_warning():
     with pytest.warns(UserWarning, match="is a proxy"):
         renderer.register(JSONText, "")
     renderer.register(JSONTeaser, "", fetch=False)
+
+
+def section_renderer():
+    renderer = RegionRenderer()
+    renderer.register(PageText, lambda plugin, context: plugin.text)
+    renderer.register(
+        PageSection,
+        lambda plugin, context, children: f"<section>{children}</section>",
+        container=True,
+    )
+    return renderer
+
+
+def render_main(renderer, plugins):
+    return renderer.render_region(
+        region=Region(key="main", title="Main"),
+        contents={"main": plugins},
+        context=None,
+    )
+
+
+def test_containers():
+    renderer = section_renderer()
+
+    def text(text, depth=0):
+        return PageText(text=text, depth=depth)
+
+    def section(depth=0):
+        return PageSection(depth=depth)
+
+    assert render_main(renderer, [section()]) == "<section></section>"
+    assert (
+        render_main(
+            renderer,
+            [text("A"), section(), text("B", 1), section(1), text("C", 2), text("D")],
+        )
+        == "A<section>B<section>C</section></section>D"
+    )
+    # Plugins belong to the closest preceding container with a lower depth
+    assert (
+        render_main(renderer, [section(), text("A", 1), text("B", 3)])
+        == "<section>AB</section>"
+    )
+    assert render_main(renderer, [text("A"), text("B", 1)]) == "AB"
+
+    # Rendering a container outside a region renders it without children
+    assert renderer.render_plugin(section(), None) == "<section></section>"
+
+
+def test_container_renderer_arguments():
+    renderer = RegionRenderer()
+    with pytest.raises(
+        ImproperlyConfigured, match=r"has less than the three required arguments"
+    ):
+        renderer.register(PageSection, lambda plugin, context: "", container=True)
+
+
+@pytest.mark.django_db
+def test_container_templates():
+    page = Page.objects.create(title="Test")
+    tabs = page.testapp_pagesection_set.create(region="main", ordering=10)
+    page.testapp_pagetext_set.create(region="main", ordering=20, depth=1, text="A")
+    page.testapp_pagesection_set.create(
+        region="main", ordering=30, depth=1, title="Inner"
+    )
+    page.testapp_pagetext_set.create(region="main", ordering=40, depth=2, text="B")
+
+    renderer = RegionRenderer()
+    renderer.register(PageText, lambda plugin, context: plugin.text)
+    renderer.register(
+        PageSection,
+        lambda plugin, context, children: template_renderer(
+            "renderer/tabs.html" if plugin == tabs else "renderer/section.html"
+        )(plugin, context, children),
+        container=True,
+    )
+
+    assertHTMLEqual(
+        renderer.regions_from_item(page).render("main", Context()),
+        """
+        <div class="tabs">
+          <h2>A</h2><div>A</div>
+          <h2>Inner</h2><div><section>B</section></div>
+        </div>
+        """,
+    )
+
+
+def test_subregions_in_containers():
+    class TextsRenderer(RegionRenderer):
+        def handle_texts(self, plugins, context):
+            texts = "".join(
+                self.render_plugin(plugin, context)
+                for plugin in self.takewhile_subregion(plugins, "texts")
+            )
+            yield f"<div>{texts}</div>"
+
+    renderer = TextsRenderer()
+    renderer.register(PageText, lambda plugin, context: plugin.text, subregion="texts")
+    renderer.register(
+        PageSection,
+        lambda plugin, context, children: f"<section>{children}</section>",
+        container=True,
+    )
+
+    # Subregions never cross container boundaries
+    assert (
+        render_main(
+            renderer,
+            [
+                PageSection(),
+                PageText(text="A", depth=1),
+                PageText(text="B", depth=1),
+                PageText(text="C"),
+                PageText(text="D"),
+            ],
+        )
+        == "<section><div>AB</div></section><div>CD</div>"
+    )

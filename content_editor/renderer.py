@@ -1,11 +1,13 @@
 import inspect
 import warnings
 from collections import deque
+from collections.abc import Sequence
+from contextvars import ContextVar
 
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.template import Context, Engine
-from django.utils.functional import SimpleLazyObject
+from django.utils.functional import SimpleLazyObject, cached_property
 from django.utils.html import mark_safe
 
 from content_editor.contents import contents_for_item
@@ -66,10 +68,17 @@ def template_renderer(template_name, local_context=default_context, /):
     Build a renderer for the region renderer which uses a template (or a list
     of templates) and optionally a local context function. The context contains
     the site-wide context variables too when invoked via ``{% render_region %}``
+
+    The children of containers are available as ``children``.
     """
-    return lambda plugin, context: render_in_context(
-        context, template_name, local_context(plugin, context)
-    )
+
+    def renderer(plugin, context, children=None):
+        local = local_context(plugin, context)
+        if children is not None:
+            local = {**local, "children": children}
+        return render_in_context(context, template_name, local)
+
+    return renderer
 
 
 # See RegionRenderer.register()
@@ -79,6 +88,83 @@ _renderer = 1
 _subregion = 2
 _marks = 3
 _fetch = 4
+_container = 5
+
+# Maps id(container) to the list of its children while rendering a region
+_children = ContextVar("content_editor_children", default=None)
+
+
+def _with_children(children, function, *args):
+    token = _children.set(children)
+    try:
+        return function(*args)
+    finally:
+        _children.reset(token)
+
+
+class _Child:
+    """
+    A child of a container. Renders as the child's HTML, and offers the
+    child's ``plugin``.
+    """
+
+    def __init__(self, renderer, plugin, context, children):
+        self.plugin = plugin
+        self._renderer = renderer
+        self._context = context
+        self._children = children
+
+    @cached_property
+    def _html(self):
+        return mark_safe(
+            _with_children(
+                self._children,
+                self._renderer.render_plugin,
+                self.plugin,
+                self._context,
+            )
+        )
+
+    def __html__(self):
+        return self._html
+
+    __str__ = __html__
+
+
+class _Children(Sequence):
+    """
+    The children of a container, as a sequence of ``_Child`` nodes. Renders as
+    the concatenated HTML of the children, using subregions.
+    """
+
+    def __init__(self, renderer, plugins, context, children):
+        self._renderer = renderer
+        self._plugins = plugins
+        self._context = context
+        self._children = children
+        self._nodes = [
+            _Child(renderer, plugin, context, children) for plugin in plugins
+        ]
+
+    def __getitem__(self, index):
+        return self._nodes[index]
+
+    def __len__(self):
+        return len(self._nodes)
+
+    @cached_property
+    def _html(self):
+        return _with_children(
+            self._children,
+            self._renderer.render_siblings,
+            self._plugins,
+            self._context,
+        )
+
+    def __html__(self):
+        return self._html
+
+    __str__ = __html__
 
 
 class RegionRenderer:
@@ -149,6 +235,7 @@ class RegionRenderer:
         subregion="default",
         marks=_default_marks,
         fetch=True,
+        container=False,
     ):
         """
         Register a plugin class
@@ -159,7 +246,7 @@ class RegionRenderer:
         will be a Django template ``Context`` (or even ``RequestContext``)
         instance.
 
-        The three optional keyword arguments' are:
+        The optional keyword arguments are:
 
         - ``subregion: str = "default"``: The subregion for this plugin as a
           string or as a callable accepting a single plugin instance. A
@@ -173,10 +260,20 @@ class RegionRenderer:
         - ``fetch = True``: By default a plugin is fetched from the database;
           setting this to ``False`` allows registering plugin classes which
           shouldn't be fetched from the database.
+        - ``container = False``: Containers contain the following plugins with
+          a greater ``depth``. Their renderer receives the children as a third
+          argument, a sequence of nodes with a ``plugin`` attribute which
+          render as the child's HTML. The sequence itself renders as the
+          concatenated HTML of all children.
         """
-        if callable(renderer) and len(inspect.signature(renderer).parameters) < 2:
+        required = 3 if container else 2
+        if (
+            callable(renderer)
+            and len(inspect.signature(renderer).parameters) < required
+        ):
             raise ImproperlyConfigured(
-                f"The renderer function {renderer} has less than the two required arguments."
+                f"The renderer function {renderer} has less than the"
+                f" {'three' if container else 'two'} required arguments."
             )
 
         if not isinstance(plugin, (list, tuple)):
@@ -195,7 +292,7 @@ class RegionRenderer:
                     stacklevel=2,
                 )
 
-            self._plugins[p] = (p, renderer, subregion, marks, fetch)
+            self._plugins[p] = (p, renderer, subregion, marks, fetch, container)
 
     def plugins(self, *, fetch=True):
         """
@@ -222,10 +319,18 @@ class RegionRenderer:
         """
         Render a single plugin using the registered renderer
         """
-        renderer = self._config(plugin)[_renderer]
-        if callable(renderer):
-            return renderer(plugin, context)
-        return renderer
+        config = self._config(plugin)
+        renderer = config[_renderer]
+        if not callable(renderer):
+            return renderer
+        if config[_container]:
+            children = _children.get() or {}
+            return renderer(
+                plugin,
+                context,
+                _Children(self, children.get(id(plugin), []), context, children),
+            )
+        return renderer(plugin, context)
 
     def subregion(self, plugin):
         """
@@ -284,11 +389,37 @@ class RegionRenderer:
         for plugin in self.takewhile_subregion(plugins, "default"):
             yield self.render_plugin(plugin, context)
 
+    def render_siblings(self, plugins, context):
+        """
+        Render a list of siblings, that is, the top level of a region or the
+        children of a container. Subregions only ever group siblings.
+        """
+        return mark_safe("".join(self.handle(plugins, context)))
+
+    def _tree(self, plugins):
+        """
+        Return the top level plugins and a mapping of ``id(container)`` to the
+        children of each container. Plugins belong to the closest preceding
+        container with a lower ``depth``.
+        """
+        top, children, stack = [], {}, []
+        for plugin in plugins:
+            depth = getattr(plugin, "depth", 0)
+            while stack and stack[-1][0] >= depth:
+                stack.pop()
+            (children[id(stack[-1][1])] if stack else top).append(plugin)
+            config = self._plugins.get(plugin.__class__)
+            if config and config[_container]:
+                children[id(plugin)] = []
+                stack.append((depth, plugin))
+        return top, children
+
     def render_region(self, *, region, contents, context):
         """
         Render one region.
         """
-        return mark_safe("".join(self.handle(contents[region.key], context)))
+        top, children = self._tree(contents[region.key])
+        return _with_children(children, self.render_siblings, top, context)
 
     def render_regions(self, *, regions, contents, context):
         """

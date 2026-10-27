@@ -26,6 +26,10 @@ Next version
   buttons and Alt+Shift+Left/Right, new items take the depth of their
   position (with one "+" per open level at the end of a region), and
   containers are moved to other regions together with their contents.
+- Added depth-based container rendering to the ``RegionRenderer``:
+  ``register(..., container=True)`` renderers receive the rendered children as
+  a third argument, and ``render_siblings`` renders the top level of a region
+  and the children of each container.
 - Added ``content_editor.migrations_utils.compute_depths`` for data migrations
   computing ``depth`` from closer-based sections.
 

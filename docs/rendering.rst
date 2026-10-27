@@ -107,4 +107,73 @@ by one.
     renderer.register(ProjectTeaser, ..., subregion="teasers")
 
 
+Containers
+==========
+
+Plugins registered with ``container=True`` contain the following plugins with
+a greater ``depth`` (see :ref:`sections`). Their renderer receives the
+children explicitly, as a third argument:
+
+.. code-block:: python
+
+    renderer.register(
+        Accordion,
+        template_renderer("sections/accordion.html"),
+        container=True,
+    )
+    renderer.register(
+        Columns,
+        lambda plugin, context, children: format_html(
+            '<div class="columns">{}</div>', children
+        ),
+        container=True,
+    )
+
+``children`` is a sequence of nodes, one per child. Each node renders as the
+child's HTML and has the child's ``plugin``; the sequence itself renders as
+the concatenated HTML of all children. Templates used with
+``template_renderer`` receive it as ``children``. A simple container template
+only needs ``{{ children }}``, while e.g. tabs can loop over the nodes:
+
+.. code-block:: html+django
+
+    <div class="tabs">
+      {% for child in children %}
+        <h2>{{ child.plugin.title }}</h2>
+        <div class="tab">{{ child }}</div>
+      {% endfor %}
+    </div>
+
+Containers are registered explicitly instead of being inferred from the data,
+because empty containers have to be rendered as containers too.
+
+The top level of a region and the children of each container are rendered
+using ``render_siblings(plugins, context)``, which dispatches runs of plugins
+to their subregion's handler. Plugins whose preceding container is missing
+(e.g. because it has been filtered out) are attached to the closest preceding
+container with a lower depth, or rendered at the top level. Projects which
+hide plugins should also hide the descendants of hidden containers.
+
+
+Sections and subregions
+=======================
+
+Containers and subregions both group plugins, for different purposes:
+
+- **Containers** are explicit structure. Editors create them in the content
+  editor and see them there. Use them when the editor decides what belongs
+  together: accordions, tabs, columns.
+- **Subregions** are implicit grouping at render time, decided by the
+  developer based on which plugins follow each other, and invisible in the
+  editor. Use them for grouping which should just happen, e.g. rendering
+  consecutive images as a gallery.
+
+Rule of thumb: if the editor decides the grouping, use a container; if it
+follows from adjacent plugin types, use a subregion.
+
+Subregions only ever group siblings: a run of plugins never crosses a
+container boundary, and consecutive images are grouped inside a container the
+same way as at the top level.
+
+
 .. _feincms3: https://feincms3.readthedocs.io/
