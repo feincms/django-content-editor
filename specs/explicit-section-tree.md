@@ -64,6 +64,14 @@ Replace the integer `sections` with a boolean on the inline:
 ContentEditorInline.create(model=Accordion, container=True)
 ```
 
+### Admin forms
+
+`ContentEditorInline` adds the structural fields to its fieldsets (or fields)
+automatically if they are missing, and renders them as hidden inputs; this is
+already the case for `region` and `ordering` since 9.3. `depth` is added to
+the same list (`_STRUCTURAL_FIELDS` in `content_editor/admin.py`), so projects
+don't have to change any fieldsets, and no system check is needed for it.
+
 ### Consistency on save
 
 The editor never produces invalid depths, so the server doesn't reject them
