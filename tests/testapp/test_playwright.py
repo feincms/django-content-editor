@@ -900,45 +900,41 @@ def test_remove_new_empty_section(page: Page, django_server, client, user):
 
 # Native drag and drop in headless Chromium is unreliable (dragstart sometimes
 # doesn't fire at all on CI), so the tests dispatch the drag events directly.
-_DISPATCH_DRAG = """([type, x, y, selector]) => {
-    const el = selector
-        ? document.querySelector(selector)
-        : document.elementFromPoint(x, y)
-    el.dispatchEvent(new DragEvent(type, {
-        bubbles: true,
-        cancelable: true,
-        clientX: x,
-        clientY: y,
-        dataTransfer: new DataTransfer(),
-    }))
+# Coordinates are computed in the page when dispatching the events because the
+# editor auto-scrolls while dragging near the viewport edges.
+_DISPATCH_DRAG = """(steps) => {
+    for (const [type, selector, dx, dy] of steps) {
+        const rect = document.querySelector(selector).getBoundingClientRect()
+        const el = ["dragstart", "dragend"].includes(type)
+            ? document.querySelector(`${selector} > h3`)
+            : document.querySelector(".order-machine")
+        el.dispatchEvent(new DragEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            clientX: rect.left + dx,
+            clientY: dy < 0 ? rect.bottom + dy : rect.top + dy,
+            dataTransfer: new DataTransfer(),
+        }))
+    }
 }"""
 
 
-def drag_start(page: Page, selector):
-    page.set_viewport_size({"width": 1280, "height": 2000})
-    box = page.locator(f"{selector} > h3").bounding_box()
-    page.evaluate(
-        _DISPATCH_DRAG, ["dragstart", box["x"] + 20, box["y"] + 5, f"{selector} > h3"]
-    )
-
-
-def drag_over(page: Page, x, y):
-    page.evaluate(_DISPATCH_DRAG, ["dragenter", x, y, None])
-    page.evaluate(_DISPATCH_DRAG, ["dragover", x, y, None])
-
-
-def drag_end(page: Page, selector, x, y):
-    page.evaluate(_DISPATCH_DRAG, ["drop", x, y, None])
-    page.evaluate(_DISPATCH_DRAG, ["dragend", x, y, f"{selector} > h3"])
+def dispatch_drag(page: Page, *steps):
+    """Dispatch ``(type, selector, dx, dy)`` drag events; negative ``dy`` values
+    are relative to the bottom of the element matching ``selector``."""
+    page.evaluate(_DISPATCH_DRAG, [list(step) for step in steps])
 
 
 def drag_after(page: Page, source, target, *, dx):
     """Drag ``source`` just below ``target``, ``dx`` pixels from its left edge."""
-    drag_start(page, source)
-    box = page.locator(target).bounding_box()
-    x, y = box["x"] + dx, box["y"] + box["height"] - 3
-    drag_over(page, x, y)
-    drag_end(page, source, x, y)
+    dispatch_drag(
+        page,
+        ("dragstart", source, 20, 5),
+        ("dragenter", target, dx, -3),
+        ("dragover", target, dx, -3),
+        ("drop", target, dx, -3),
+        ("dragend", source, 20, 5),
+    )
 
 
 @pytest.mark.django_db
@@ -1005,7 +1001,8 @@ def test_drop_indicator_after_section_plugins(page: Page, django_server, client,
     article.testapp_closesection_set.create(region="main", ordering=30)
     article.testapp_richtext_set.create(text="<p>B</p>", region="main", ordering=40)
     open_article(page, django_server, article)
-    drag_start(page, "#testapp_richtext_set-1")
+    source = "#testapp_richtext_set-1"
+    dispatch_drag(page, ("dragstart", source, 20, 5))
 
     indicator = page.locator(".fs-dragover")
     for upper, lower, offset in [
@@ -1014,9 +1011,7 @@ def test_drop_indicator_after_section_plugins(page: Page, django_server, client,
     ]:
         # Below the upper inline and above the lower inline
         for selector, dy in [(upper, -3), (lower, 3)]:
-            box = page.locator(selector).bounding_box()
-            y = box["y"] + (box["height"] if dy < 0 else 0) + dy
-            drag_over(page, box["x"] + 100, y)
+            dispatch_drag(page, ("dragover", selector, 100, dy))
             expect(indicator).to_have_count(1)
             expect(indicator).to_have_id(upper[1:])
             expect(indicator).to_have_class(re.compile(r"\bfs-dragover--after\b"))
@@ -1024,4 +1019,4 @@ def test_drop_indicator_after_section_plugins(page: Page, django_server, client,
                 "style", re.compile(f"--fs-dragover-offset: {offset}")
             )
 
-    drag_end(page, "#testapp_richtext_set-1", box["x"] + 100, y)
+    dispatch_drag(page, ("dragend", source, 20, 5))
