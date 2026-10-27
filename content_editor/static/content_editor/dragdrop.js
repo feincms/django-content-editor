@@ -1,3 +1,4 @@
+import { INDENT } from "content-editor/sections"
 import { qsa } from "content-editor/utils"
 
 /*
@@ -116,15 +117,21 @@ export class DragDrop {
       : depth
     if (atEnd && this.sections.closerPlugin()) {
       const open = this.sections.depthAfter(remaining)
-      const base = over.getBoundingClientRect().left - 30 * depth
+      const base = over.getBoundingClientRect().left - INDENT * depth
       targetDepth = Math.min(
         open,
-        Math.max(0, Math.floor((e.clientX - base) / 30)),
+        Math.max(0, Math.floor((e.clientX - base) / INDENT)),
       )
       close = open - targetDepth
     }
 
-    return { over, anchor, after, close, offset: 30 * (targetDepth - depth) }
+    return {
+      over,
+      anchor,
+      after,
+      close,
+      offset: INDENT * (targetDepth - depth),
+    }
   }
 
   clearDragover() {

@@ -11,6 +11,9 @@ import { crel, debounce, delegate, qs } from "content-editor/utils"
  * which are still open at the end of the region are drawn open-ended. Single
  * instance, owned by ``index.js`` and queried by ``machine``/``dragdrop``.
  */
+// Indentation per section level in pixels
+export const INDENT = 30
+
 export class Sections {
   constructor(ContentEditor, machine) {
     this.ContentEditor = ContentEditor
@@ -105,7 +108,7 @@ export class Sections {
     }
 
     for (const inline of inlines) {
-      inline.style.marginInlineStart = `${30 * indent}px`
+      inline.style.marginInlineStart = `${INDENT * indent}px`
       newDepthMap.set(inline, indent)
       nextIndent = Math.max(0, indent + this.sectionsOf(inline))
 
