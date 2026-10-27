@@ -338,30 +338,11 @@ export class Machine {
       "click",
       ".delete>input[type=checkbox]",
       (_e, target) => {
-        const inline = target.closest(".inline-related")
-        if (!this.sections.handleDelete(inline, target.checked)) {
-          target.checked = false
-        }
-        inline.classList.toggle("for-deletion", target.checked)
+        target
+          .closest(".inline-related")
+          .classList.toggle("for-deletion", target.checked)
         target.blur()
       },
-    )
-
-    // Removing new section openers may remove their contents too. Runs in the
-    // capturing phase so that it runs before Django's own handler.
-    this.orderMachine.addEventListener(
-      "click",
-      (e) => {
-        const link = e.target.closest(".inline-deletelink")
-        if (!link || this.sections._removing) return
-        if (
-          !this.sections.handleDelete(link.closest(".inline-related"), true)
-        ) {
-          e.preventDefault()
-          e.stopPropagation()
-        }
-      },
-      true,
     )
 
     delegate(this.orderMachine, "click", ".inline-related>h3", (e, target) => {

@@ -1,4 +1,4 @@
-import { crel, debounce, qs } from "content-editor/utils"
+import { crel, debounce, delegate, qs } from "content-editor/utils"
 
 /*
  * SECTIONS
@@ -25,6 +25,7 @@ export class Sections {
       const debounced = debounce(() => this.update(), 10)
       const resizeObserver = new ResizeObserver(() => debounced())
       resizeObserver.observe(machine.wrapper)
+      this.bindDeleteHandlers()
     }
   }
 
@@ -187,6 +188,38 @@ export class Sections {
    * section should be marked too or only the opener and its closer. New
    * inlines are removed right away as usual, saved inlines only when saving.
    */
+  bindDeleteHandlers() {
+    const orderMachine = this.machine.orderMachine
+
+    // Runs after the machine's own handler which toggles ``.for-deletion``.
+    delegate(
+      orderMachine,
+      "click",
+      ".delete>input[type=checkbox]",
+      (_e, target) => {
+        const inline = target.closest(".inline-related")
+        if (!this.handleDelete(inline, target.checked)) {
+          this.markForDeletion(inline, false)
+        }
+      },
+    )
+
+    // New inlines are removed right away. Runs in the capturing phase so that
+    // it runs before Django's own handler.
+    orderMachine.addEventListener(
+      "click",
+      (e) => {
+        const link = e.target.closest(".inline-deletelink")
+        if (!link || this.removing) return
+        if (!this.handleDelete(link.closest(".inline-related"), true)) {
+          e.preventDefault()
+          e.stopPropagation()
+        }
+      },
+      true,
+    )
+  }
+
   handleDelete(inline, deleting) {
     if (!deleting) {
       for (const el of this.deletionGroups.get(inline) || []) {
@@ -231,11 +264,11 @@ export class Sections {
     } else if (deleting) {
       const link = qs(".inline-deletelink", inline)
       if (link) {
-        this._removing = true
+        this.removing = true
         try {
           link.click()
         } finally {
-          this._removing = false
+          this.removing = false
         }
       }
     }
