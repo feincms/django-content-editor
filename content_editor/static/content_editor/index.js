@@ -139,7 +139,7 @@ function init() {
   }
 
   if (ContentEditor.declaredRegions.length > 1) {
-    new Cloning(ContentEditor, machine, regions).addButton()
+    new Cloning(ContentEditor, machine, regions, sections).addButton()
   }
 
   regions.initTabs()

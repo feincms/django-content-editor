@@ -33,8 +33,7 @@ export class Sections {
   }
 
   sectionsOf(inline) {
-    const prefix = inline.id.replace(/-[0-9]+$/, "")
-    return this.ContentEditor.pluginsByPrefix[prefix]?.sections || 0
+    return this.machine.regions.getPluginTypeFromId(inline.id)?.sections || 0
   }
 
   // The depth after the given inlines, that is, the number of sections which

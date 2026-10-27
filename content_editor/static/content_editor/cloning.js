@@ -9,10 +9,11 @@ import { crel, qs, qsa } from "content-editor/utils"
  * region is declared.
  */
 export class Cloning {
-  constructor(ContentEditor, machine, regions) {
+  constructor(ContentEditor, machine, regions, sections) {
     this.ContentEditor = ContentEditor
     this.machine = machine
     this.regions = regions
+    this.sections = sections
   }
 
   addButton() {
@@ -81,8 +82,8 @@ export class Cloning {
       let nextIndent
 
       for (const inline of inlines) {
-        const { prefix, model } = this.regions.getPluginTypeFromId(inline.id)
-        nextIndent = Math.max(0, indent + CE.pluginsByPrefix[prefix].sections)
+        const { model } = this.regions.getPluginTypeFromId(inline.id)
+        nextIndent = Math.max(0, indent + this.sections.sectionsOf(inline))
 
         const cb = crel("input", {
           type: "checkbox",
