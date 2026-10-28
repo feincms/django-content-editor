@@ -195,7 +195,6 @@ To migrate closer-based sections:
        def forwards(apps, schema_editor):
            JSONPlugin = apps.get_model("pages", "JSONPlugin")
            compute_depths(
-               apps.get_model("pages", "Page"),
                plugins=[apps.get_model("pages", "RichText"), JSONPlugin],
                openers=[apps.get_model("pages", "Accordion")],
                closers=[JSONPlugin.objects.filter(type="close_section")],

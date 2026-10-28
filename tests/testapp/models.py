@@ -31,6 +31,16 @@ class Article(models.Model):
         return reverse("article_detail", kwargs={"pk": self.pk})
 
 
+# Created before ``parent`` so that it comes first in ``_meta.fields``.
+class AbstractArticleLink(models.Model):
+    article = models.ForeignKey(
+        Article, on_delete=models.CASCADE, related_name="+", null=True, blank=True
+    )
+
+    class Meta:
+        abstract = True
+
+
 ArticlePlugin = create_plugin_base(Article)
 
 
@@ -47,6 +57,11 @@ class Download(ArticlePlugin):
 
     def __str__(self):
         return self.file
+
+
+class ArticleLink(AbstractArticleLink, ArticlePlugin):
+    def __str__(self):
+        return str(self.article)
 
 
 class Section(ArticlePlugin):

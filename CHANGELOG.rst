@@ -2,6 +2,14 @@
 Change log
 ==========
 
+Next version
+============
+
+- Changed ``compute_depths`` to group plugins by their ``parent`` foreign key.
+  It used the first foreign key to the content model, which may be another
+  field, e.g. a link target. The ``content_model`` argument has been removed,
+  the plugins of several content models can be passed at once.
+
 10.0a1 (2026-10-28)
 ===================
 

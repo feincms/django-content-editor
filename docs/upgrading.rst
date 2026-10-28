@@ -145,8 +145,8 @@ deleting them has to come after the data migration.
 
 Write one data migration per app containing content models. It has to depend
 on the migration adding ``depth`` (step 3), and it should be a migration of
-its own, not part of the schema migration. Call ``compute_depths`` once per
-content model:
+its own, not part of the schema migration. Call ``compute_depths`` with the
+plugins of the app's content models:
 
 .. code-block:: python
 
@@ -158,7 +158,6 @@ content model:
     def forwards(apps, schema_editor):
         JSONPlugin = apps.get_model("pages", "JSONPlugin")
         compute_depths(
-            apps.get_model("pages", "Page"),
             plugins=[
                 apps.get_model("pages", "RichText"),
                 apps.get_model("pages", "Image"),
@@ -179,7 +178,7 @@ content model:
 Rules:
 
 - ``plugins`` has to list **every** remaining plugin model of the content
-  model, not only those used inside sections. Plugins which aren't listed
+  models, not only those used inside sections. Plugins which aren't listed
   keep ``depth = 0`` and don't take part in the computation.
 - Openers and closers sharing a table with other plugins (proxies) have to be
   passed as querysets of the concrete model filtered by type.

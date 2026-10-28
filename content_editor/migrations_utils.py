@@ -6,15 +6,6 @@ from django.db import models
 __all__ = ("compute_depths",)
 
 
-def _parent_field(plugin, content_model):
-    return next(
-        field
-        for field in plugin._meta.fields
-        if field.many_to_one
-        and field.related_model._meta.label_lower == content_model._meta.label_lower
-    )
-
-
 def _queryset(source, *, allow_proxies=True):
     if isinstance(source, models.QuerySet):
         return source
@@ -28,7 +19,7 @@ def _queryset(source, *, allow_proxies=True):
     return source._base_manager.all()
 
 
-def compute_depths(content_model, *, plugins, openers, closers):
+def compute_depths(*, plugins, openers, closers):
     """
     Compute the ``depth`` of plugins from the closer-based section structure
     and delete the closers
@@ -36,6 +27,8 @@ def compute_depths(content_model, *, plugins, openers, closers):
     ``openers`` are the plugins which opened a section (``sections = 1``),
     ``closers`` those which closed one (``sections = -1``), ``plugins`` all
     remaining plugins. Each entry is either a plugin model or a queryset.
+    Plugins are grouped by their ``parent`` and region, so the plugins of
+    several content models can be passed at once.
     Proxies sharing a table (e.g. JSON plugins) have to be passed as
     querysets when they open or close sections, since models are fetched
     without filtering. Every row is only processed once; closers take
@@ -46,7 +39,6 @@ def compute_depths(content_model, *, plugins, openers, closers):
         def forwards(apps, schema_editor):
             JSONPlugin = apps.get_model("pages", "JSONPlugin")
             compute_depths(
-                apps.get_model("pages", "Page"),
                 plugins=[apps.get_model("pages", "RichText"), JSONPlugin],
                 openers=[apps.get_model("pages", "Accordion")],
                 closers=[JSONPlugin.objects.filter(type="close_section")],
@@ -57,13 +49,16 @@ def compute_depths(content_model, *, plugins, openers, closers):
     for sources, kind in [(closers, -1), (openers, 1), (plugins, 0)]:
         for source in sources:
             queryset = _queryset(source, allow_proxies=kind == 0)
-            parent = _parent_field(queryset.model, content_model).attname
+            parent = queryset.model._meta.get_field("parent")
+            content_model = parent.related_model._meta.label_lower
             for plugin in queryset:
                 key = (plugin._meta.concrete_model._meta.label_lower, plugin.pk)
                 if key in seen:
                     continue
                 seen.add(key)
-                regions[getattr(plugin, parent), plugin.region].append((plugin, kind))
+                regions[
+                    content_model, getattr(plugin, parent.attname), plugin.region
+                ].append((plugin, kind))
 
     updates = defaultdict(list)
     deletions = defaultdict(list)
