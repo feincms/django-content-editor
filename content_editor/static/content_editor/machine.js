@@ -230,9 +230,8 @@ export class Machine {
     // New inlines take the depth of their position
     this.containers.setDepth(
       row,
-      insertBefore
-        ? this.containers.depthOf(insertBefore)
-        : CE._insertDepth || 0,
+      CE._insertDepth ??
+        (insertBefore ? this.containers.depthOf(insertBefore) : 0),
     )
     CE._insertDepth = null
 

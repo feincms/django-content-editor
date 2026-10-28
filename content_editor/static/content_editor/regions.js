@@ -338,7 +338,8 @@ export class Regions {
           this.machine.wrapper.classList.add("plugin-buttons-visible")
 
           this.ContentEditor._insertBefore = target.closest(".inline-related")
-          this.ContentEditor._insertDepth = +target.dataset.depth || 0
+          this.ContentEditor._insertDepth =
+            "depth" in target.dataset ? +target.dataset.depth : null
         }
       },
     )

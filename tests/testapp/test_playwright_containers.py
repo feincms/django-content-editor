@@ -224,6 +224,31 @@ def test_add_plugins_at_depth(page: Page, django_server, user, container_page):
 
 
 @pytest.mark.django_db
+def test_insert_at_container_end(page: Page, django_server, user, container_page):
+    login_admin(page, django_server)
+    open_page(page, django_server, container_page)
+
+    # B follows the end of the container: one additional insert target adds
+    # items to the end of the container
+    nested = page.locator(f"{TEXT.format(1)} > .order-machine-insert-target.nested")
+    expect(nested).to_have_count(1)
+    nested.click()
+    page.locator(".plugin-buttons .plugin-button[title='Rich text']").click()
+    page.fill("#id_testapp_pagetext_set-2-text", "end inside")
+    save(page)
+    assert depths(container_page) == [
+        ("main", "S", 0),
+        ("main", "A", 1),
+        ("main", "end inside", 1),
+        ("main", "B", 0),
+    ]
+
+    # Items cannot be inserted into collapsed containers
+    page.locator(f"{CONTAINER.format(0)} > h3 .inline_label").click()
+    expect(nested).to_have_count(0)
+
+
+@pytest.mark.django_db
 @pytest.mark.parametrize(
     ("answer", "remaining"),
     [

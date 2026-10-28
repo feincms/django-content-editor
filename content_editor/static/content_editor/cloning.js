@@ -157,9 +157,9 @@ export class Cloning {
     const depthField = crel("input", {
       type: "hidden",
       name: "_clone_depth",
-      value: CE._insertBefore
-        ? this.containers.depthOf(CE._insertBefore)
-        : CE._insertDepth || 0,
+      value:
+        CE._insertDepth ??
+        (CE._insertBefore ? this.containers.depthOf(CE._insertBefore) : 0),
     })
 
     dialog.append(

@@ -32,10 +32,10 @@ the same time so that its renderer knows containers.
 - Added editor support for containers: the horizontal pointer position chooses
   the depth when dropping anywhere, items can be indented and outdented using
   buttons and Alt+Shift+Left/Right, new items take the depth of their
-  position (with one "+" per open level at the end of a region), and
-  containers are moved to other regions together with their contents.
-  Containers ending at the same item are drawn with increasing space below
-  them.
+  position (with one "+" per level where containers end, also at the end of
+  a region), and containers are moved to other regions together with their
+  contents. Containers ending at the same item are drawn with increasing
+  space below them.
 - Added depth-based container rendering to the ``RegionRenderer``: renderers
   of container plugins receive the rendered children as a third argument, and
   ``render_siblings`` renders the top level of a region and the children of

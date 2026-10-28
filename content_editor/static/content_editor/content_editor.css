@@ -343,9 +343,25 @@ h3[draggable] {
 }
 .order-machine-insert-target.last {
   top: auto;
-  bottom: 4px;
+  bottom: 5px;
   left: 3px;
   z-index: 1;
+}
+/* Inserts at the end of containers ending above the inline */
+.order-machine-insert-target.nested {
+  top: calc(
+    -10px -
+    var(--container-end-space, 0px) +
+    var(--insert-target-offset, 0px)
+  );
+}
+.order-machine-insert-target.last.nested {
+  top: auto;
+  bottom: calc(
+    var(--region-end-space, 0px) -
+    var(--insert-target-offset, 0px) -
+    5px
+  );
 }
 .order-machine-insert-target:hover,
 .order-machine-insert-target.selected {

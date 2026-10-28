@@ -125,8 +125,9 @@ collapsed, moved, cloned and deleted together with their contents:
 - The buttons in the header of each item and Alt+Shift+Left/Right indent and
   outdent items directly. Outdenting an item also outdents its following
   siblings.
-- New items take the depth of the position where they are added. At the end
-  of a region, there's one "+" button per open level.
+- New items take the depth of the position where they are added. Where
+  containers end (also at the end of a region), there's one "+" button per
+  level, for adding items to the end of each container.
 - Moving a container to another region moves its contents too.
 - Marking a container for deletion asks whether only the container should be
   marked for deletion (its contents move one level up), or the contents too.

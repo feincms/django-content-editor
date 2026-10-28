@@ -224,9 +224,19 @@ export class Containers {
     const stack = []
     // The maximum depth of the current inline
     let maximum = 0
+    // The maximum depth for inserting new inlines (inlines inserted into
+    // collapsed containers would be hidden) and the depth of the innermost
+    // visible container ending at the current position
+    const insertDepths = () => {
+      const collapsed = stack.findIndex((el) =>
+        el.classList.contains("collapsed"),
+      )
+      return collapsed < 0 ? [maximum, maximum - 1] : [collapsed, collapsed]
+    }
 
     for (const inline of inlines) {
       const depth = Math.min(this.depthOf(inline), maximum)
+      this.updateInsertTargets(inline, depth, ...insertDepths())
       this.setDepth(inline, depth)
       stack.length = depth
 
@@ -290,12 +300,33 @@ export class Containers {
     }
     this.outlineMap = newOutlineMap
 
-    this.updateEndInsertTargets(maximum)
+    this.updateEndInsertTargets(...insertDepths())
+  }
+
+  // Additional insert targets above ``inline`` for adding inlines to the end
+  // of the containers ending there, one per depth.
+  updateInsertTargets(inline, depth, maximum, innermost) {
+    const targets = qsa(":scope > .order-machine-insert-target.nested", inline)
+    for (let nested = depth + 1; nested <= maximum; ++nested) {
+      let target = targets[nested - depth - 1]
+      if (!target) {
+        target = crel("span", {
+          className: "order-machine-insert-target nested",
+        })
+        inline.append(target)
+      }
+      target.dataset.depth = nested
+      target.style.marginInlineStart = `${INDENT * (nested - depth)}px`
+      this.staggerInsertTarget(target, nested, innermost)
+    }
+    for (const target of targets.slice(Math.max(0, maximum - depth))) {
+      target.remove()
+    }
   }
 
   // The insert targets at the end of the region, one per depth which is
   // available there.
-  updateEndInsertTargets(maximum) {
+  updateEndInsertTargets(maximum, innermost) {
     const orderMachine = this.machine.orderMachine
     const targets = qsa(
       ":scope > .order-machine-insert-target.last",
@@ -311,8 +342,19 @@ export class Containers {
       }
       target.dataset.depth = depth
       target.style.marginInlineStart = `${INDENT * depth}px`
+      target.classList.toggle("nested", depth > 0)
+      this.staggerInsertTarget(target, depth, innermost)
     }
     for (const target of targets.slice(maximum + 1)) target.remove()
+  }
+
+  // Move insert targets adding inlines to the end of a container to the
+  // bottom of its outline: outer containers end further down.
+  staggerInsertTarget(target, depth, innermost) {
+    target.style.setProperty(
+      "--insert-target-offset",
+      `${NESTED_END_PADDING * (innermost - depth + 1)}px`,
+    )
   }
 
   hideChildren(inline, hide = true) {
