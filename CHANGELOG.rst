@@ -34,6 +34,8 @@ the same time so that its renderer knows containers.
   buttons and Alt+Shift+Left/Right, new items take the depth of their
   position (with one "+" per open level at the end of a region), and
   containers are moved to other regions together with their contents.
+  Containers ending at the same item are drawn with increasing space below
+  them.
 - Added depth-based container rendering to the ``RegionRenderer``: renderers
   of container plugins receive the rendered children as a third argument, and
   ``render_siblings`` renders the top level of a region and the children of

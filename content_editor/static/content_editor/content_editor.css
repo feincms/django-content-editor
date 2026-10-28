@@ -22,7 +22,7 @@ html {
 }
 
 .order-machine {
-  padding: 10px 10px 20px 30px;
+  padding: 10px 10px calc(20px + var(--region-end-space, 0px)) 30px;
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-top: none;
   position: relative;
@@ -45,7 +45,7 @@ html {
 .order-machine .inline-related {
   border: 1px solid var(--hairline-color, #e8e8e8);
   border-bottom: 0;
-  margin-top: 15px;
+  margin-top: calc(15px + var(--container-end-space, 0px));
 }
 
 .order-machine .inline-related > h3 {

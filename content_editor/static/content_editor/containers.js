@@ -21,6 +21,10 @@ import { crel, debounce, delegate, qs, qsa } from "content-editor/utils"
  */
 // Indentation per level in pixels
 export const INDENT = 30
+// Space below the last child of a container, and additionally per enclosing
+// container ending at the same child, in pixels
+const END_PADDING = 20
+const NESTED_END_PADDING = 10
 
 export class Containers {
   constructor(ContentEditor, machine) {
@@ -169,9 +173,16 @@ export class Containers {
     this.depthMap = newDepthMap
   }
 
-  // Draw the outline of the container ``fromInline`` until ``untilInline``,
-  // reusing the existing element if there is one.
-  drawOutline(fromInline, untilInline, open, newOutlineMap) {
+  // Draw the outline of the container ``fromInline`` until ``untilInline``
+  // with ``padding`` pixels below it, reusing the existing element if there is
+  // one.
+  drawOutline(
+    fromInline,
+    untilInline,
+    open,
+    newOutlineMap,
+    padding = open ? 25 : 5,
+  ) {
     const wrapperRect = this.machine.wrapper.getBoundingClientRect()
     const from = fromInline.getBoundingClientRect()
     const until = untilInline.getBoundingClientRect()
@@ -189,7 +200,7 @@ export class Containers {
     div.style.top = `${from.top - wrapperRect.top - 5}px`
     div.style.left = `${from.left - wrapperRect.left - 5}px`
     div.style.right = "5px"
-    div.style.height = `${until.top - from.top + until.height + (open ? 30 : 10)}px`
+    div.style.height = `${until.top - from.top + until.height + 5 + padding}px`
 
     div.classList.toggle("order-machine-container--open", open)
     div.classList.toggle(
@@ -241,12 +252,38 @@ export class Containers {
     this.childrenMap = newChildrenMap
     this.depthMap = newDepthMap
 
-    for (const container of newChildrenMap.keys()) {
-      const last = [container, ...this.descendants(container)].findLast(
-        (el) => !el.classList.contains("content-editor-hide"),
+    // Containers ending at the same inline are drawn with increasing padding
+    // at the bottom, innermost first.
+    const ends = new Map()
+    for (const container of [...newChildrenMap.keys()].reverse()) {
+      const last =
+        [container, ...this.descendants(container)].findLast(
+          (el) => !el.classList.contains("content-editor-hide"),
+        ) || container
+      const count = ends.get(last) || 0
+      this.drawOutline(
+        container,
+        last,
+        false,
+        newOutlineMap,
+        END_PADDING + NESTED_END_PADDING * count,
       )
-      this.drawOutline(container, last || container, false, newOutlineMap)
+      ends.set(last, count + 1)
     }
+
+    // Make room for the padding below the following inline or at the end of
+    // the region.
+    let space = 0
+    for (const inline of inlines) {
+      if (inline.classList.contains("content-editor-hide")) continue
+      inline.style.setProperty("--container-end-space", `${space}px`)
+      const count = ends.get(inline)
+      space = count ? END_PADDING + NESTED_END_PADDING * (count - 1) : 0
+    }
+    this.machine.orderMachine.style.setProperty(
+      "--region-end-space",
+      `${space}px`,
+    )
 
     for (const outline of this.outlineMap.values()) {
       outline.remove()
