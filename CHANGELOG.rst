@@ -9,7 +9,8 @@ Upgrading: every plugin model gets a ``depth`` field, so run
 ``makemigrations`` and migrate, also if you don't use sections. Plugin
 containers replace the closer-based ``sections``; see the documentation for
 migrating existing content using ``compute_depths``, and upgrade feincms3 at
-the same time so that its renderer knows containers.
+the same time so that its renderer knows containers. See the "Upgrading to
+10.0" page in the documentation for step by step instructions.
 
 - Added the ``region`` and ``ordering`` fields to ``ContentEditorInline``
   fieldsets (or fields) automatically if they are missing, and removed the

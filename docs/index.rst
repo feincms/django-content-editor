@@ -45,6 +45,7 @@ So, ``django-content-editor``.
    rendering
    checks
    design-decisions
+   upgrading
    changelog
 
 .. _Django: https://www.djangoproject.com/
