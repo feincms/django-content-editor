@@ -51,6 +51,8 @@ the same time so that its renderer knows containers.
   ``dialog.section-delete`` is now ``dialog.container-delete``), the
   ``sections.js`` module (now ``containers.js``) and the deletion dialog's
   messages.
+- Set the module of inlines created using ``ContentEditorInline.create`` to
+  the plugin model's module instead of ``django.forms.widgets``.
 
 9.2 (2026-10-27)
 ================

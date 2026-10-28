@@ -160,6 +160,11 @@ def test_depth_is_only_added_if_it_exists():
     assert inline.get_fields(request)[-2:] == ["region", "ordering"]
 
 
+def test_created_inline_module():
+    assert ContentEditorInline.create(model=RichText).__module__ == "testapp.models"
+    assert ContentEditorInline.create(model=RichText, __module__="x").__module__ == "x"
+
+
 @pytest.mark.django_db
 def test_container_in_context(client):
     response = client.get(reverse("admin:testapp_page_add"))
