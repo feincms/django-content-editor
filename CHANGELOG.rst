@@ -2,8 +2,8 @@
 Change log
 ==========
 
-10.0 (unreleased)
-=================
+10.0a1 (2026-10-28)
+===================
 
 Upgrading: every plugin model gets a ``depth`` field, so run
 ``makemigrations`` and migrate, also if you don't use sections. Plugin
