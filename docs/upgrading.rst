@@ -96,6 +96,14 @@ Then find everything which belongs to closer-based sections:
   separators to split a subregion into several groups. The migration deletes
   them, so the rendering changes. Find them before migrating and decide how
   to replace them (e.g. with a container per group, or a separator plugin).
+- Openers which are never closed. A section extends until its closer or the
+  end of the region, so every following opener ends up nested inside it.
+  Editors often used openers like headings, expecting the next opener of the
+  same kind to end the previous section. ``compute_depths`` keeps the nesting
+  as stored; it doesn't show when container templates don't wrap their
+  children, but the editor draws it. Decide whether to close open sections
+  before such openers in the data migration (e.g. by inserting closers), or
+  to fix the affected content in the editor afterwards.
 - Openers with ``sections`` greater than 1. These aren't supported by the
   migration helper, which counts every opener as one level; restructure them
   by hand before migrating.
@@ -265,4 +273,5 @@ Cleanups and verification
   rendered HTML with the HTML saved in step 4. Also render content which only
   contained closers, since it has no section plugins left afterwards.
 - Open content with containers in the admin: containers are drawn around
-  their children, and saving without changes doesn't change anything.
+  their children, and saving without changes doesn't change anything. Look
+  for unexpected nesting too, since it may not show in the rendered HTML.
