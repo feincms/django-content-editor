@@ -350,3 +350,62 @@ def test_subregions_in_containers():
         )
         == "<section><div>AB</div></section><div>CD</div>"
     )
+
+
+def test_json_containers():
+    class JSONRenderer(RegionRenderer):
+        def render_siblings(self, plugins, context):
+            return list(self.handle(plugins, context))
+
+        def handle_texts(self, plugins, context):
+            yield {
+                "type": "texts",
+                "texts": [
+                    self.render_plugin(plugin, context)
+                    for plugin in self.takewhile_subregion(plugins, "texts")
+                ],
+            }
+
+    renderer = JSONRenderer()
+    renderer.register(
+        PageText,
+        lambda plugin, context: {"type": "text", "text": plugin.text},
+        subregion=lambda plugin: "texts" if plugin.text.islower() else "default",
+    )
+    renderer.register(
+        PageContainer,
+        lambda plugin, context, children: {
+            "type": "container",
+            "children": children.rendered,
+            "first": children[0].rendered if children else None,
+        },
+    )
+
+    assert render_main(
+        renderer,
+        [
+            PageText(text="A"),
+            PageContainer(),
+            PageText(text="b", depth=1),
+            PageText(text="c", depth=1),
+            PageContainer(depth=1),
+            PageText(text="D"),
+        ],
+    ) == [
+        {"type": "text", "text": "A"},
+        {
+            "type": "container",
+            "children": [
+                {
+                    "type": "texts",
+                    "texts": [
+                        {"type": "text", "text": "b"},
+                        {"type": "text", "text": "c"},
+                    ],
+                },
+                {"type": "container", "children": [], "first": None},
+            ],
+            "first": {"type": "text", "text": "b"},
+        },
+        {"type": "text", "text": "D"},
+    ]

@@ -154,6 +154,42 @@ container with a lower depth, or rendered at the top level. Projects which
 hide plugins should also hide the descendants of hidden containers.
 
 
+Generating JSON
+===============
+
+The renderer doesn't assume HTML. Renderers may return anything, and
+``render_siblings`` decides how the output of siblings is combined; it
+concatenates HTML by default. Return a list instead to generate JSON
+including the nesting of containers:
+
+.. code-block:: python
+
+    class JSONRegionRenderer(RegionRenderer):
+        def render_siblings(self, plugins, context):
+            return list(self.handle(plugins, context))
+
+    renderer = JSONRegionRenderer()
+    renderer.register(
+        RichText,
+        lambda plugin, context: {"type": "richtext", "html": plugin.text},
+    )
+    renderer.register(
+        Accordion,
+        lambda plugin, context, children: {
+            "type": "accordion",
+            "title": plugin.title,
+            "children": children.rendered,
+        },
+    )
+
+    data = renderer.regions_from_item(article).render("main", None)
+
+``children.rendered`` contains the return value of ``render_siblings`` for
+the children, and each child node's ``rendered`` the return value of its
+renderer. Put these values into the output, not the nodes themselves; this
+also keeps the output cacheable. Subregion handlers yield one item each, e.g.
+a dictionary for a whole gallery of images.
+
 Containers and subregions
 =========================
 

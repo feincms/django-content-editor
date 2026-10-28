@@ -37,7 +37,9 @@ the same time so that its renderer knows containers.
 - Added depth-based container rendering to the ``RegionRenderer``: renderers
   of container plugins receive the rendered children as a third argument, and
   ``render_siblings`` renders the top level of a region and the children of
-  each container.
+  each container. The output isn't restricted to HTML: overriding
+  ``render_siblings`` to return lists generates nested JSON, using the
+  ``rendered`` attribute of the children.
 - Added ``content_editor.migrations_utils.compute_depths`` for data migrations
   computing ``depth`` from closer-based sections. Openers and closers may be
   passed as querysets, which is required for proxies sharing a table such as

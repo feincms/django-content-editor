@@ -103,8 +103,8 @@ def _with_children(children, function, *args):
 
 class _Child:
     """
-    A child of a container. Renders as the child's HTML, and offers the
-    child's ``plugin``.
+    A child of a container. Offers the child's ``plugin`` and the return value
+    of its renderer as ``rendered``, and renders as the child's HTML.
     """
 
     def __init__(self, renderer, plugin, context, children):
@@ -114,26 +114,25 @@ class _Child:
         self._children = children
 
     @cached_property
-    def _html(self):
-        return mark_safe(
-            _with_children(
-                self._children,
-                self._renderer.render_plugin,
-                self.plugin,
-                self._context,
-            )
+    def rendered(self):
+        return _with_children(
+            self._children,
+            self._renderer.render_plugin,
+            self.plugin,
+            self._context,
         )
 
     def __html__(self):
-        return self._html
+        return mark_safe(self.rendered)
 
     __str__ = __html__
 
 
 class _Children(Sequence):
     """
-    The children of a container, as a sequence of ``_Child`` nodes. Renders as
-    the concatenated HTML of the children, using subregions.
+    The children of a container, as a sequence of ``_Child`` nodes. Offers the
+    return value of ``render_siblings`` as ``rendered``, which is the
+    concatenated HTML of the children (using subregions) by default.
     """
 
     def __init__(self, renderer, plugins, context, children):
@@ -152,7 +151,7 @@ class _Children(Sequence):
         return len(self._nodes)
 
     @cached_property
-    def _html(self):
+    def rendered(self):
         return _with_children(
             self._children,
             self._renderer.render_siblings,
@@ -161,7 +160,7 @@ class _Children(Sequence):
         )
 
     def __html__(self):
-        return self._html
+        return self.rendered
 
     __str__ = __html__
 
@@ -260,9 +259,11 @@ class RegionRenderer:
           shouldn't be fetched from the database.
 
         The renderer of containers (plugin models with ``container = True``)
-        receives the children as a third argument, a sequence of nodes with a
-        ``plugin`` attribute which render as the child's HTML. The sequence
-        itself renders as the concatenated HTML of all children.
+        receives the children as a third argument, a sequence of nodes with
+        ``plugin`` and ``rendered`` (the return value of the child's renderer)
+        attributes. The sequence's ``rendered`` attribute contains the return
+        value of ``render_siblings``. Nodes and the sequence render as HTML in
+        templates.
         """
         if not isinstance(plugin, (list, tuple)):
             plugin = [plugin]
@@ -390,6 +391,9 @@ class RegionRenderer:
         """
         Render a list of siblings, that is, the top level of a region or the
         children of a container. Subregions only ever group siblings.
+
+        Concatenates the output of the subregion handlers to HTML. Override
+        this method to produce other output, e.g. a list for JSON.
         """
         return mark_safe("".join(self.handle(plugins, context)))
 
