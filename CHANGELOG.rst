@@ -20,7 +20,8 @@ the same time so that its renderer knows containers.
   library.
 - Added a ``depth`` field to plugins created by ``create_plugin_base``, which
   stores the nesting of plugins explicitly. Projects have to generate
-  migrations for their plugin models.
+  migrations for their plugin models. Plugin models overriding ``depth`` with
+  a field of their own are rejected (``content_editor.E005``).
 - Added the ``container`` attribute to plugin models (``False`` by default on
   ``PluginBase``), which replaces plugins opening (``sections = 1``) and
   closing (``sections = -1``) sections. ``depth`` is added to the inline forms

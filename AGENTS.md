@@ -103,6 +103,7 @@ automatically):
 - `content_editor.E002` - Missing regions attribute on model
 - `content_editor.E003` - Regions not iterable
 - `content_editor.E004` - Inlines using both `sections` and container plugins
+- `content_editor.E005` - Plugin models overriding the `depth` field of `create_plugin_base`
 - `content_editor.W001` - Inlines using the deprecated `sections`
 - `content_editor.I001` - Non-abstract base classes warning
 

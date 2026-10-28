@@ -1,8 +1,15 @@
 from django.apps import apps
-from django.core.checks import Info, register
+from django.core.checks import Error, Info, register
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
 from content_editor.models import PluginBase
+
+
+def _models(app_configs):
+    if app_configs is None:
+        return apps.get_models()
+    return [model for app_config in app_configs for model in app_config.get_models()]
 
 
 @register()
@@ -16,15 +23,7 @@ def check_plugin_bases(app_configs, **kwargs):
     """
     infos = []
 
-    # Get all models from the specified app_configs or all apps
-    if app_configs is None:
-        models_to_check = apps.get_models()
-    else:
-        models_to_check = []
-        for app_config in app_configs:
-            models_to_check.extend(app_config.get_models())
-
-    for model in models_to_check:
+    for model in _models(app_configs):
         # Skip proxy models - they're expected to have non-abstract parents
         if model._meta.proxy:
             continue
@@ -52,3 +51,39 @@ def check_plugin_bases(app_configs, **kwargs):
             )
 
     return infos
+
+
+def _depth_field(model):
+    try:
+        return model._meta.get_field("depth")
+    except (AttributeError, FieldDoesNotExist):
+        return None
+
+
+@register()
+def check_plugin_depth(app_configs, **kwargs):
+    """
+    Check that plugin models do not override the ``depth`` field added by
+    ``create_plugin_base``. The content editor uses ``depth`` for nesting
+    plugins in containers and overwrites its values.
+    """
+    errors = []
+    for model in _models(app_configs):
+        if not issubclass(model, PluginBase) or not (field := _depth_field(model)):
+            continue
+        if any(
+            (base_field := _depth_field(base))
+            and base_field.creation_counter != field.creation_counter
+            for base in model.__mro__[1:]
+        ):
+            errors.append(
+                Error(
+                    f"{model._meta.label}.depth overrides the depth field of"
+                    " create_plugin_base.",
+                    hint="The content editor uses 'depth' for nesting plugins in"
+                    " containers and overwrites its values. Rename the field.",
+                    obj=model,
+                    id="content_editor.E005",
+                )
+            )
+    return errors

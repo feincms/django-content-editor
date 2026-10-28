@@ -107,3 +107,19 @@ This info-level check warns when plugin models inherit from non-abstract base cl
 
     class MyPlugin(PluginBase, MyBase):
         pass
+
+content_editor.E005
+-------------------
+
+**Overridden depth field**
+
+``create_plugin_base`` adds a ``depth`` field which the content editor uses
+for nesting plugins in containers (see :ref:`containers`). Plugin models (or
+their abstract base classes) defining a ``depth`` field of their own override
+it, and the content editor would overwrite its values. Rename the field.
+
+.. code-block:: python
+
+    # Will trigger E005:
+    class Heading(ArticlePlugin):
+        depth = models.PositiveIntegerField()  # Heading level

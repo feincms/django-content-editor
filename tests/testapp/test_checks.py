@@ -4,7 +4,8 @@ from django.db import models
 from django.test.utils import isolate_apps
 
 from content_editor.admin import ContentEditor, ContentEditorInline
-from content_editor.checks import check_plugin_bases
+from content_editor.checks import check_plugin_bases, check_plugin_depth
+from content_editor.models import Region, create_plugin_base
 from testapp.models import Article, Page, PageContainer, PageText, RichText
 
 
@@ -111,3 +112,49 @@ def test_sections_checks():
             id="content_editor.E004",
         ),
     ]
+
+
+def test_plugin_depth_checks():
+    assert check_plugin_depth(app_configs=None) == []
+
+
+def test_plugin_depth_override_checks():
+    with isolate_apps("testapp") as apps:
+
+        class Thing(models.Model):
+            regions = [Region(key="main", title="main")]
+
+            def __str__(self):
+                return ""
+
+        plugin_base = create_plugin_base(Thing)
+
+        class Plugin(plugin_base):
+            pass
+
+        class DepthPlugin(plugin_base):
+            depth = models.CharField(max_length=10)
+
+        class DepthMixin(models.Model):
+            depth = models.IntegerField()
+
+            class Meta:
+                abstract = True
+
+        class MixinPlugin(DepthMixin, plugin_base):  # noqa: DJ008
+            pass
+
+        class NoDepthPlugin(plugin_base):
+            depth = None
+
+        assert check_plugin_depth([apps.get_app_config("testapp")]) == [
+            checks.Error(
+                f"testapp.{model.__name__}.depth overrides the depth field of"
+                " create_plugin_base.",
+                hint="The content editor uses 'depth' for nesting plugins in"
+                " containers and overwrites its values. Rename the field.",
+                obj=model,
+                id="content_editor.E005",
+            )
+            for model in [DepthPlugin, MixinPlugin]
+        ]
