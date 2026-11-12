@@ -97,11 +97,11 @@ renderer both use this:
 
         title = models.CharField(max_length=200)
 
-    # JSON plugin proxies are containers too when using a mixin:
-    class Container:
+    # All proxies of a JSON plugin model for containers are containers:
+    class Container(JSONPluginBase, ArticlePlugin):
         container = True
 
-    JSONColumns = JSONPlugin.proxy("columns", schema=..., mixins=[Container])
+    Columns = Container.proxy("columns", schema=...)
 
     class ArticleAdmin(ContentEditor):
         inlines = [
