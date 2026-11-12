@@ -132,10 +132,21 @@ For JSON plugin proxies, pass a mixin:
 
 .. code-block:: python
 
-    class Container:
+    class ContainerMixin:
         container = True
 
-    Accordion = JSONPlugin.proxy("accordion", schema=..., mixins=[Container])
+    Accordion = JSONPlugin.proxy("accordion", schema=..., mixins=[ContainerMixin])
+
+This keeps the existing rows where they are. New containers can use a JSON
+plugin model of their own, all of whose proxies are containers (see
+:ref:`containers`):
+
+.. code-block:: python
+
+    class Container(JSONPluginBase, PagePlugin):
+        container = True
+
+    Columns = Container.proxy("columns", schema=...)
 
 Don't run ``makemigrations`` for removing the closers yet: the migration
 deleting them has to come after the data migration.
