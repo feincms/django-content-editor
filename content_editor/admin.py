@@ -8,6 +8,8 @@ from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
 from django.contrib.admin.utils import flatten_fieldsets
 from django.core import checks
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.text import capfirst
 from django.utils.translation import gettext
 from js_asset import JSON, ImportMap, Media, Script
@@ -454,7 +456,7 @@ class CloneForm(forms.Form):
             # table (and only differ in a type field) downcast their instances
             # here. Skipping that would clone them as whatever model was
             # submitted, silently changing their type.
-            queryset = cls.get_queryset().filter(pk__in=pks)
+            queryset = cls.get_queryset().filter(pk__in=_valid_pks(cls, pks))
             if self.parent is not None:
                 queryset = queryset.filter(parent=self.parent)
             instances |= {f"{model}:{obj.pk}": obj for obj in queryset}
@@ -462,6 +464,15 @@ class CloneForm(forms.Form):
         data["_clone_instances"] = [
             obj for obj in [instances.get(plugin) for plugin in plugins] if obj
         ]
+
+        # The clones have to fit into the fields of the database
+        if "_clone_ordering" in data:
+            ordering = data["_clone_ordering"] + 10 * len(data["_clone_instances"])
+            depth = data.get("_clone_depth") or 0
+            for instance in data["_clone_instances"]:
+                _validate(instance._meta.get_field("ordering"), ordering)
+                if hasattr(instance, "depth"):
+                    _validate(instance._meta.get_field("depth"), depth + instance.depth)
 
         return data
 
@@ -493,6 +504,32 @@ class CloneForm(forms.Form):
             count += 1
 
         return count
+
+
+_INT64 = [MinValueValidator(-(2**63)), MaxValueValidator(2**63 - 1)]
+
+
+def _validate(field, value):
+    """
+    Run the field's validators; they check the database's integer ranges,
+    except on SQLite with Django < 5.0. No database supports more than 64 bit.
+    """
+    field.run_validators(value)
+    if isinstance(value, int):
+        for validator in _INT64:
+            validator(value)
+
+
+def _valid_pks(model, pks):
+    valid = []
+    for pk in pks:
+        try:
+            value = model._meta.pk.to_python(pk)
+            _validate(model._meta.pk, value)
+            valid.append(value)
+        except ValidationError:
+            pass
+    return valid
 
 
 def allow_regions(regions):

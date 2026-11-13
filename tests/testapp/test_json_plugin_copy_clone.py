@@ -213,6 +213,60 @@ def test_clone_only_clones_plugins_of_the_edited_object(client):
 
 
 @pytest.mark.django_db
+@pytest.mark.parametrize(
+    "value",
+    [
+        "testapp.richtext:abc",
+        "testapp.richtext:",
+        "testapp.richtext",
+        f"testapp.richtext:{'9' * 30}",
+        "unknown.model:1",
+        "invalid:1",
+        ":",
+    ],
+)
+def test_clone_ignores_invalid_values(client, value):
+    article = create_article()
+    url = reverse("admin:testapp_article_change", args=(article.pk,))
+    data = change_form_data(client.get(url))
+    data["_continue"] = ["Save and continue editing"]
+    data["_clone_region"] = ["main"]
+    data["_clone_ordering"] = ["1000"]
+    data["_clone"] = [value]
+
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    assert "Cloning 0 plugins succeeded." in [
+        message.message for message in response.context["messages"]
+    ]
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("ordering", "depth"),
+    [("9" * 30, ""), (str(2**63 - 15), ""), ("1000", "9" * 30)],
+)
+def test_clone_rejects_out_of_range_values(client, ordering, depth):
+    article = create_article()
+    url = reverse("admin:testapp_article_change", args=(article.pk,))
+    response = client.get(url)
+    data = change_form_data(response)
+    data["_continue"] = ["Save and continue editing"]
+    data["_clone_region"] = ["sidebar"]
+    data["_clone_ordering"] = [ordering]
+    data["_clone_depth"] = [depth]
+    data["_clone"] = clone_values(response, "main")
+
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    assert any(
+        message.message.startswith("Cloning plugins failed")
+        for message in response.context["messages"]
+    )
+    assert plugins_in(article, "sidebar") == []
+
+
+@pytest.mark.django_db
 def test_clone_downcasts_plugins():
     """Cloning has to go through the plugin's own queryset.
 
