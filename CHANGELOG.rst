@@ -13,6 +13,10 @@ Next version
   Crafted requests could clone plugins of other objects or arbitrary models.
 - Fixed a server error when posting an empty ``depth``.
 - Fixed server errors when cloning with invalid or out of range data.
+- Changed the object returned by ``regions_from_item`` and
+  ``regions_from_contents`` to render the regions only once. Previously, all
+  regions were rendered again for each ``render()`` call. The context passed to
+  the first ``render()`` call is now used for all regions.
 
 10.0a2 (2026-10-28)
 ===================

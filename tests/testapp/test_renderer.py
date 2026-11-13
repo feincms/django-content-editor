@@ -62,6 +62,25 @@ def test_basic_rendering(article):
 
 
 @pytest.mark.django_db
+def test_regions_are_rendered_once(article):
+    calls = []
+
+    def render(plugin, context):
+        calls.append(plugin)
+        return plugin.region
+
+    renderer = RegionRenderer()
+    renderer.register([RichText, Download], render)
+    RichText.objects.create(parent=article, region="sidebar", ordering=10, text="")
+
+    regions = renderer.regions_from_item(article)
+    assert regions.render("main", None) == "main" * 4
+    assert regions.render("sidebar", None) == "sidebar"
+    assert regions.render("main", None) == "main" * 4
+    assert len(calls) == 5
+
+
+@pytest.mark.django_db
 def test_render_region_tag(article):
     renderer = template_region_renderer()
     assertHTMLEqual(

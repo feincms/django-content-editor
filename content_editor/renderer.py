@@ -482,16 +482,23 @@ class _Regions:
         self._renderer = renderer
         self._cache_key = cache_key
         self._timeout = timeout
+        self._result = None
 
     def _rendered(self, context):
+        # All regions are rendered at once, and only once. The context of the
+        # first render() call is used for all regions.
+        if self._result is not None:
+            return self._result
         caching = self._cache_key and self._timeout
-        if caching and (result := cache.get(self._cache_key)):
+        if caching and (result := cache.get(self._cache_key)) is not None:
+            self._result = result
             return result
         result = self._renderer.render_regions(
             regions=self.regions, contents=self._contents, context=context
         )
         if caching:
             cache.set(self._cache_key, result, timeout=self._timeout)
+        self._result = result
         return result
 
     @property

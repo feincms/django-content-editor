@@ -56,8 +56,10 @@ Rendering regions
 
 ``regions_from_item`` fetches the plugins (using ``contents_for_item``) lazily
 and returns an object with a ``regions`` attribute and a
-``render(region_key, context)`` method. Passing ``timeout`` caches the
-rendered regions, ``inherit_from`` is passed on to ``contents_for_item``.
+``render(region_key, context)`` method. All regions are rendered at once
+when calling ``render()`` the first time, using its context. Passing
+``timeout`` additionally caches the rendered regions, ``inherit_from`` is
+passed on to ``contents_for_item``.
 ``regions_from_contents`` does the same for an existing ``Contents``
 instance.
 
