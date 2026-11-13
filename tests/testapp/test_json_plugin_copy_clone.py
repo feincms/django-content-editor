@@ -283,7 +283,7 @@ def test_clone_downcasts_plugins():
     # A sibling proxy's label for a plugin which is not of that type.
     post.appendlist("_clone", f"{JSONTeaser._meta.label_lower}:{plugin.pk}")
 
-    form = CloneForm(post)
+    form = CloneForm(post, plugins=[JSONTeaser], parent=article)
     assert form.is_valid(), form.errors
     assert form.process() == 1
 

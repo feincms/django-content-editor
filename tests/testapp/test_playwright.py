@@ -10,7 +10,7 @@ from django.urls import reverse
 from playwright.sync_api import Page, expect
 
 from content_editor.admin import CloneForm
-from testapp.models import Article
+from testapp.models import Article, CloseSection, RichText, Section
 
 from .test_playwright_helpers import (
     create_article_with_content,
@@ -469,7 +469,7 @@ def test_clone_backend_logic():
     ]:
         post.appendlist("_clone", item)
 
-    form = CloneForm(post)
+    form = CloneForm(post, plugins=[Section, RichText, CloseSection])
     assert form.is_valid(), form.errors
     assert form.process() == 4
 

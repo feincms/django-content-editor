@@ -348,7 +348,7 @@ def test_clone_keeps_relative_depths():
     for plugin in [container, a, inner, b, c]:
         post.appendlist("_clone", f"{plugin._meta.label_lower}:{plugin.pk}")
 
-    form = CloneForm(post)
+    form = CloneForm(post, plugins=[PageContainer, PageText])
     assert form.is_valid(), form.errors
     assert form.process() == 5
 
@@ -366,7 +366,7 @@ def test_clone_keeps_relative_depths():
     post.setlist(
         "_clone", [f"testapp.pagecontainer:{inner.pk}", f"testapp.pagetext:{b.pk}"]
     )
-    form = CloneForm(post)
+    form = CloneForm(post, plugins=[PageContainer, PageText])
     assert form.is_valid(), form.errors
     form.process()
     assert [

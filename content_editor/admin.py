@@ -2,7 +2,6 @@ import itertools
 from collections import defaultdict
 
 from django import forms
-from django.apps import apps
 from django.contrib import messages
 from django.contrib.admin.checks import InlineModelAdminChecks, ModelAdminChecks
 from django.contrib.admin.options import ModelAdmin, StackedInline
@@ -421,19 +420,15 @@ class CloneForm(forms.Form):
     _clone_ordering = forms.IntegerField()
     _clone_depth = forms.IntegerField(required=False, min_value=0)
 
-    def __init__(self, *args, parent=None, plugins=None, **kwargs):
+    def __init__(self, *args, plugins, parent=None, **kwargs):
         """
-        ``parent`` and ``plugins`` restrict cloning to the plugins of the given
-        parent instance and to the given plugin models. Both are passed by the
-        ``ContentEditor``, which must not clone arbitrary objects.
+        Only the given plugin models are cloned, and only plugins of ``parent``
+        if it is given. The ``ContentEditor`` passes both, it must not clone
+        arbitrary objects.
         """
         super().__init__(*args, **kwargs)
         self.parent = parent
-        self.plugins = (
-            None
-            if plugins is None
-            else {plugin._meta.label_lower: plugin for plugin in plugins}
-        )
+        self.plugins = {plugin._meta.label_lower: plugin for plugin in plugins}
 
     def clean(self):
         data = super().clean()
@@ -447,9 +442,7 @@ class CloneForm(forms.Form):
 
         instances = {}
         for model, pks in objects.items():
-            if self.plugins is None:
-                cls = apps.get_model(model)
-            elif not (cls := self.plugins.get(model)):
+            if not (cls := self.plugins.get(model)):
                 continue
             # get_queryset() and not _base_manager: plugin models which share a
             # table (and only differ in a type field) downcast their instances
