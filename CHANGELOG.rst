@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+10.0 (2026-11-13)
+=================
+
 - Fixed plugins whose ``regions`` restriction evaluates to an empty set (e.g.
   ``deny_regions`` denying all regions) being allowed in every region.
 - Fixed the clone dialog: canceling it still cloned the selected plugins on
