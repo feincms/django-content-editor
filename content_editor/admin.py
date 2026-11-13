@@ -286,7 +286,6 @@ class ContentEditor(RefinedModelAdmin):
                 "key": region.key,
                 "title": str(region.title),
                 "inherited": region.inherited,
-                # TODO correct template when POSTing?
             }
             for region in instance.regions
         ]
