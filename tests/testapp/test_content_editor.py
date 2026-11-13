@@ -270,6 +270,58 @@ def test_depth_is_optional(client):
 
 
 @pytest.mark.django_db
+def test_empty_depth_keeps_the_depth(client):
+    response = client.post(
+        reverse("admin:testapp_page_add"),
+        {
+            "title": "Page",
+            "parent": "",
+            **plugin_post_data("testapp_pagecontainer_set", []),
+            **plugin_post_data(
+                "testapp_pagetext_set",
+                [{"region": "main", "ordering": 10, "depth": "", "text": "a"}],
+            ),
+        },
+    )
+    assert response.status_code == 302
+    page = Page.objects.get()
+    text = page.testapp_pagetext_set.get()
+    assert text.depth == 0
+
+    text.depth = 1
+    text.save()
+    container = page.testapp_pagecontainer_set.create(region="main", ordering=5)
+    response = client.post(
+        reverse("admin:testapp_page_change", args=(page.pk,)),
+        {
+            "title": "Page",
+            "parent": "",
+            **plugin_post_data(
+                "testapp_pagecontainer_set",
+                [{"id": container.pk, "region": "main", "ordering": 5, "depth": 0}],
+            ),
+            **plugin_post_data(
+                "testapp_pagetext_set",
+                [
+                    {
+                        "id": text.pk,
+                        "region": "main",
+                        "ordering": 10,
+                        "depth": "",
+                        "text": "a",
+                    }
+                ],
+            ),
+            "testapp_pagecontainer_set-INITIAL_FORMS": 1,
+            "testapp_pagetext_set-INITIAL_FORMS": 1,
+        },
+    )
+    assert response.status_code == 302
+    text.refresh_from_db()
+    assert text.depth == 1
+
+
+@pytest.mark.django_db
 def test_depths_are_not_normalized_with_sections():
     article = Article.objects.create(title="Test")
     text = article.testapp_richtext_set.create(region="main", ordering=10, depth=2)

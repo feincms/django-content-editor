@@ -44,6 +44,13 @@ importmap = ImportMap(
 )
 
 
+class _OptionalHiddenInput(forms.HiddenInput):
+    def value_omitted_from_data(self, data, files, name):
+        # Empty values are treated like omitted values, which makes ModelForm
+        # keep the instance's value instead of assigning None.
+        return not data.get(name)
+
+
 def _is_container(model):
     return getattr(model, "container", False)
 
@@ -170,10 +177,11 @@ class ContentEditorInline(StackedInline):
         if db_field.name in _STRUCTURAL_FIELDS:
             kwargs["widget"] = forms.HiddenInput
         if db_field.name == "depth":
-            # Data posted without depth (e.g. from code predating it) keeps
-            # the default or current depth instead of failing validation on a
-            # hidden field.
+            # Data posted without depth (e.g. from code predating it) or with
+            # an empty depth keeps the default or current depth instead of
+            # failing validation on a hidden field.
             kwargs["required"] = False
+            kwargs["widget"] = _OptionalHiddenInput
         return super().formfield_for_dbfield(db_field, *args, **kwargs)
 
     @classmethod
