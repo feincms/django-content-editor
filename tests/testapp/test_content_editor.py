@@ -1,4 +1,7 @@
+import json
+
 import pytest
+from bs4 import BeautifulSoup
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
@@ -10,7 +13,12 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains
 
-from content_editor.admin import CloneForm, ContentEditorInline
+from content_editor.admin import (
+    CloneForm,
+    ContentEditorInline,
+    allow_regions,
+    deny_regions,
+)
 from content_editor.contents import contents_for_item
 from content_editor.models import Region
 from testapp.models import (
@@ -170,6 +178,33 @@ def test_container_in_context(client):
     response = client.get(reverse("admin:testapp_page_add"))
     assertContains(response, '"container": true', 1)
     assertContains(response, '"container": false', 1)
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "regions", [allow_regions(set()), deny_regions({"main", "sidebar"})]
+)
+def test_empty_region_restriction_in_context(client, monkeypatch, regions):
+    inline = next(
+        inline
+        for inline in admin.site._registry[Article].inlines
+        if getattr(inline, "model", None) is RichText
+    )
+    monkeypatch.setattr(inline, "regions", regions)
+
+    response = client.get(reverse("admin:testapp_article_add"))
+    context = json.loads(
+        BeautifulSoup(response.content, "html.parser")
+        .find(id="content-editor-context")
+        .text
+    )
+    plugin = next(
+        plugin
+        for plugin in context["plugins"]
+        if plugin["prefix"] == "testapp_richtext_set"
+    )
+    # Not None, which would allow the plugin in all regions
+    assert plugin["regions"] == []
 
 
 def plugin_post_data(prefix, rows):

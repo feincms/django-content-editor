@@ -262,7 +262,7 @@ class ContentEditor(RefinedModelAdmin):
             plugins.append(
                 {
                     "title": capfirst(str(iaf.opts.verbose_name)),
-                    "regions": list(regions) if regions else None,
+                    "regions": None if regions is None else list(regions),
                     "prefix": iaf.formset.prefix,
                     "button": button,
                     "color": iaf.opts.color,
