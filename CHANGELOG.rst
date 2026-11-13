@@ -7,6 +7,8 @@ Next version
 
 - Fixed plugins whose ``regions`` restriction evaluates to an empty set (e.g.
   ``deny_regions`` denying all regions) being allowed in every region.
+- Fixed the clone dialog: canceling it still cloned the selected plugins on
+  the next save.
 
 10.0a2 (2026-10-28)
 ===================

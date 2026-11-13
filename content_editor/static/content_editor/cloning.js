@@ -177,7 +177,7 @@ export class Cloning {
     )
 
     const bumpOrdering = () => {
-      const checked = qsa("input[type=checkbox]:checked", dialog).length
+      const checked = qsa("input[name=_clone]:checked", dialog).length
       const inlines = this.machine.findInlinesInOrder()
       let order = 10
       let orderingFieldSet = false
@@ -203,8 +203,11 @@ export class Cloning {
 
     const form = qs("#content-main form")
     form.addEventListener("submit", bumpOrdering)
+    // Remove the dialog when it is closed, otherwise its inputs would still
+    // be submitted with the form and clone the selected plugins anyway.
     dialog.addEventListener("close", () => {
       form.removeEventListener("submit", bumpOrdering)
+      dialog.remove()
     })
 
     form.append(dialog)

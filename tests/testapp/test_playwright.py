@@ -362,6 +362,13 @@ def test_clone_cancel_does_not_submit_form(page: Page, django_server, client, us
 
     assert article.testapp_richtext_set.filter(region="sidebar").count() == 0
 
+    # Saving afterwards doesn't clone the plugins selected in the canceled dialog
+    expect(page.locator("dialog.clone")).to_have_count(0)
+    page.click("input[name='_continue']")
+    page.wait_for_selector(".success")
+    expect(page.locator(".messagelist")).not_to_contain_text("Cloning")
+    assert article.testapp_richtext_set.filter(region="sidebar").count() == 0
+
 
 @pytest.mark.django_db
 def test_clone_insert_between_existing_content(page: Page, django_server, client, user):
