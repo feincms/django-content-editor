@@ -191,6 +191,32 @@ def test_drag_container_with_contents(page: Page, django_server, user, container
 
 
 @pytest.mark.django_db
+def test_drag_ignores_selection_in_other_regions(page: Page, django_server, user):
+    login_admin(page, django_server)
+    obj = PageModel.objects.create(title="Selection")
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
+    obj.testapp_pagetext_set.create(text="A", region="main", ordering=20, depth=1)
+    obj.testapp_pagetext_set.create(text="X", region="sidebar", ordering=30)
+    obj.testapp_pagetext_set.create(text="Y", region="sidebar", ordering=40)
+    open_page(page, django_server, obj)
+
+    # Select A, then drag in another region
+    page.locator(f"{TEXT.format(0)} > h3").click(
+        modifiers=["Control"], position={"x": 5, "y": 5}
+    )
+    expect(page.locator(TEXT.format(0))).to_have_class(re.compile("selected"))
+    page.click(".tabs.regions .tab[data-region='sidebar']")
+    drag_after(page, TEXT.format(2), TEXT.format(1), dx=5)
+    save(page)
+    assert depths(obj) == [
+        ("main", "S", 0),
+        ("main", "A", 1),
+        ("sidebar", "X", 0),
+        ("sidebar", "Y", 0),
+    ]
+
+
+@pytest.mark.django_db
 def test_add_plugins_at_depth(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
     container_page.testapp_pagetext_set.filter(text="B").delete()

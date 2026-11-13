@@ -58,10 +58,14 @@ export class DragDrop {
     }
   }
 
-  // The selected inlines together with the contents of selected containers
+  // The selected inlines together with the contents of selected containers.
+  // The selection survives switching regions, so only the current region's
+  // inlines are moved.
   movingInlines() {
     const moving = new Set()
-    for (const el of qsa(".order-machine .inline-related.selected")) {
+    for (const el of qsa(
+      `.order-machine .inline-related.selected[data-region="${this.ContentEditor.currentRegion}"]`,
+    )) {
       moving.add(el)
       for (const child of this.containers.descendants(el)) moving.add(child)
     }

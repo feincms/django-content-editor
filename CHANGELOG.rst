@@ -11,6 +11,7 @@ Next version
   the next save.
 - Restricted cloning to plugins of the edited object which the user may add.
   Crafted requests could clone plugins of other objects or arbitrary models.
+- Fixed dragging also moving inlines selected in other regions.
 - Fixed a server error when posting an empty ``depth``.
 - Fixed server errors when cloning with invalid or out of range data.
 - Changed the object returned by ``regions_from_item`` and
