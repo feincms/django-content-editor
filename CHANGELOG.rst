@@ -9,6 +9,8 @@ Next version
   ``deny_regions`` denying all regions) being allowed in every region.
 - Fixed the clone dialog: canceling it still cloned the selected plugins on
   the next save.
+- Restricted cloning to plugins of the edited object which the user may add.
+  Crafted requests could clone plugins of other objects or arbitrary models.
 
 10.0a2 (2026-10-28)
 ===================

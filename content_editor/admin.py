@@ -349,7 +349,16 @@ class ContentEditor(RefinedModelAdmin):
         super().save_related(request, form, formsets, change)
 
         if request.POST.getlist("_clone"):
-            clone_form = CloneForm(request.POST)
+            clone_form = CloneForm(
+                request.POST,
+                parent=form.instance,
+                plugins=[
+                    inline.model
+                    for inline in self.get_inline_instances(request, form.instance)
+                    if isinstance(inline, ContentEditorInline)
+                    and inline.has_add_permission(request, form.instance)
+                ],
+            )
             if clone_form.is_valid():
                 count = clone_form.process()
                 self.message_user(
@@ -403,6 +412,20 @@ class CloneForm(forms.Form):
     _clone_ordering = forms.IntegerField()
     _clone_depth = forms.IntegerField(required=False, min_value=0)
 
+    def __init__(self, *args, parent=None, plugins=None, **kwargs):
+        """
+        ``parent`` and ``plugins`` restrict cloning to the plugins of the given
+        parent instance and to the given plugin models. Both are passed by the
+        ``ContentEditor``, which must not clone arbitrary objects.
+        """
+        super().__init__(*args, **kwargs)
+        self.parent = parent
+        self.plugins = (
+            None
+            if plugins is None
+            else {plugin._meta.label_lower: plugin for plugin in plugins}
+        )
+
     def clean(self):
         data = super().clean()
 
@@ -415,15 +438,18 @@ class CloneForm(forms.Form):
 
         instances = {}
         for model, pks in objects.items():
-            cls = apps.get_model(model)
+            if self.plugins is None:
+                cls = apps.get_model(model)
+            elif not (cls := self.plugins.get(model)):
+                continue
             # get_queryset() and not _base_manager: plugin models which share a
             # table (and only differ in a type field) downcast their instances
             # here. Skipping that would clone them as whatever model was
             # submitted, silently changing their type.
-            instances |= {
-                f"{model}:{obj.pk}": obj
-                for obj in cls.get_queryset().filter(pk__in=pks)
-            }
+            queryset = cls.get_queryset().filter(pk__in=pks)
+            if self.parent is not None:
+                queryset = queryset.filter(parent=self.parent)
+            instances |= {f"{model}:{obj.pk}": obj for obj in queryset}
 
         data["_clone_instances"] = [
             obj for obj in [instances.get(plugin) for plugin in plugins] if obj

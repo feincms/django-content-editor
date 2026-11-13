@@ -11,6 +11,7 @@ import re
 
 import pytest
 from bs4 import BeautifulSoup
+from django.contrib.auth.models import User
 from django.http import QueryDict
 from django.urls import reverse
 
@@ -176,6 +177,39 @@ def test_clone_from_region_keeps_plugin_types(client):
 
     assert plugins_in(article, "sidebar") == expected_plugins()
     assert plugins_in(article, "main") == expected_plugins()
+
+
+@pytest.mark.django_db
+def test_clone_only_clones_plugins_of_the_edited_object(client):
+    """Cloning must not copy plugins of other objects or arbitrary models."""
+    article = create_article()
+    other = create_article()
+    other_plugin = JSONText.objects.filter(parent=other).first()
+
+    url = reverse("admin:testapp_article_change", args=(article.pk,))
+    response = client.get(url)
+
+    data = change_form_data(response)
+    data["_continue"] = ["Save and continue editing"]
+    data["_clone_region"] = ["sidebar"]
+    data["_clone_ordering"] = ["1000"]
+    data["_clone"] = [
+        f"testapp.jsontext:{other_plugin.pk}",
+        f"auth.user:{User.objects.get().pk}",
+        f"testapp.thing:{article.thing_set.create().pk}",
+        *clone_values(response, "main")[:1],
+    ]
+
+    response = client.post(url, data, follow=True)
+    assert response.status_code == 200
+    assert "Cloning 1 plugins succeeded." in [
+        message.message for message in response.context["messages"]
+    ]
+
+    assert plugins_in(article, "sidebar") == expected_plugins()[:1]
+    assert plugins_in(other, "sidebar") == []
+    assert User.objects.count() == 1
+    assert article.thing_set.count() == 1
 
 
 @pytest.mark.django_db
