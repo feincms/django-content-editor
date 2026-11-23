@@ -38,6 +38,7 @@
 - Checking "something worked" instead of "the right thing worked correctly"
 
 Example of **BAD** test pattern:
+
 ```python
 # DON'T DO THIS - fallbacks hide real issues
 if "expected error" in messages:
@@ -56,6 +57,7 @@ except AssertionError:
 ```
 
 Example of **GOOD** test pattern:
+
 ```python
 # DO THIS - strict assertions reveal real issues
 assert "Cloning plugins failed" in error_message, (
