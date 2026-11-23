@@ -7,11 +7,13 @@ This document provides guidance for AI coding agents working on the django-conte
 django-content-editor is a Django library for editing structured content in the admin interface. It extends Django's inlines mechanism to manage heterogeneous collections of content blocks (plugins) organized into regions, commonly used for CMS-style content editing.
 
 **Key directories:**
+
 - `content_editor/` - Main package code
 - `tests/testapp/` - Test application and test suite
 - `docs/` - Sphinx documentation (reStructuredText)
 
 **Core modules:**
+
 - `admin.py` - ContentEditor, ContentEditorInline, and admin check classes
 - `models.py` - PluginBase model and Region class
 - `contents.py` - Contents class and helpers for fetching/organizing content
@@ -29,12 +31,14 @@ django-content-editor is a Django library for editing structured content in the 
 ### Testing Requirements
 
 **Run tests through tox:**
+
 ```bash
 tox -e py312-dj52  # Run specific Python/Django version
 tox -l             # List available test environments
 ```
 
 **Test suite structure:**
+
 - `test_content_editor.py` - Basic ContentEditor functionality
 - `test_contents.py` - Contents class and helpers
 - `test_checks.py` - Django system checks
@@ -42,6 +46,7 @@ tox -l             # List available test environments
 - `test_playwright_helpers.py` - Playwright utilities
 
 **Important testing practices:**
+
 - Write tests for new functionality in appropriate test files
 - Place imports at the top of test files, not inside test methods
 - Playwright tests require Chromium installation (handled by tox)
@@ -62,6 +67,7 @@ tox -l             # List available test environments
 ### Plugin System
 
 **PluginBase model:**
+
 - Abstract base class for all content plugins
 - Provides `parent`, `region`, `ordering` and `depth` fields
 - Plugins containing other plugins set `container = True` on the model. Use
@@ -71,12 +77,14 @@ tox -l             # List available test environments
 - Plugins are typically defined per-project (not in this library)
 
 **ContentEditorInline:**
+
 - Specialized StackedInline for plugins
 - Used as a marker to differentiate plugins from regular inlines
 - Can restrict plugins to specific regions using `regions` attribute
 - Supports customization via `icon`, `color`, `button` attributes
 
 **Important patterns:**
+
 - ContentEditor identifies plugins by checking `isinstance(inline, ContentEditorInline)`
 - The `.create()` classmethod dynamically creates inline classes
 - Plugins are rendered in regions using drag-and-drop interface
@@ -84,12 +92,14 @@ tox -l             # List available test environments
 ### Region System
 
 **Regions organize content:**
+
 - Defined as a `regions` attribute/property on the model
 - Must return a list of `Region` instances
 - Each region has `key`, `title`, and optional `inherited` attributes
 - Region keys must be valid Python identifiers
 
 **Contents class:**
+
 - Groups content blocks by region
 - Supports inheritance (empty regions can inherit from parent instances)
 - Access content via attribute (`contents.main`) or subscription (`contents["main"]`)
@@ -100,6 +110,7 @@ tox -l             # List available test environments
 The library provides system checks (`content_editor.E001`, missing
 region/ordering in fieldsets, was removed since those fields are now added
 automatically):
+
 - `content_editor.E002` - Missing regions attribute on model
 - `content_editor.E003` - Regions not iterable
 - `content_editor.E004` - Inlines using both `sections` and container plugins
@@ -108,6 +119,7 @@ automatically):
 - `content_editor.I001` - Non-abstract base classes warning
 
 **Check implementation:**
+
 - Admin checks use custom `checks_class` on admin classes
 - Model checks use `@register()` decorator
 - All checks documented in `docs/checks.rst`
@@ -117,6 +129,7 @@ automatically):
 ### Sphinx Documentation Structure
 
 Documentation is in `docs/` using reStructuredText:
+
 - `index.rst` - Main entry with toctree
 - `installation.rst` - Installation instructions
 - `quickstart.rst` - Getting started guide
@@ -144,6 +157,7 @@ Keep the README minimal - it just points to Read the Docs. Full documentation li
 ### Creating Plugin Inlines
 
 Use the `.create()` classmethod for convenience:
+
 ```python
 ContentEditorInline.create(
     model=MyPlugin,
@@ -156,6 +170,7 @@ ContentEditorInline.create(
 ### Region Restrictions
 
 Two helper functions for restricting plugins to regions:
+
 - `allow_regions({"main", "sidebar"})` - Only allow these regions
 - `deny_regions({"footer"})` - Allow all except these regions
 
@@ -164,6 +179,7 @@ The `deny_regions` helper returns a callable that computes allowed regions dynam
 ### Contents Helpers
 
 Prefer using helper functions over instantiating `Contents` directly:
+
 ```python
 # Single item
 contents = contents_for_item(article, plugins=[RichText, Download])
@@ -202,22 +218,26 @@ ContentEditorInline automatically adds the `region`, `ordering` and `depth` (if 
 ## File Organization
 
 **Don't create unnecessary files:**
+
 - No new markdown/documentation files without explicit request
 - Don't create helper utilities for one-time operations
 - Don't add configuration for hypothetical future needs
 
 **Static files:**
+
 - Admin CSS in `content_editor/static/content_editor/`
 - Admin JavaScript in same directory
 - Material icons CSS included
 
 **Translations:**
+
 - Locale files in `content_editor/locale/`
 - Use Django's translation functions (`gettext`, `gettext_lazy`)
 
 ## When Stuck
 
 If you need to understand complex behavior:
+
 1. Read the test files - they demonstrate real usage patterns
 2. Check `admin.py` for the ContentEditor implementation
 3. Look at `contents.py` for the Contents class and helpers
@@ -259,6 +279,7 @@ no build step) in `content_editor/static/content_editor/`:
   save; tabbed fieldsets for `RefinedModelAdmin`).
 
 **Module loading (important):**
+
 - Modules import each other via **bare specifiers** (`content-editor/…`)
   resolved through an **import map**. Relative imports are NOT used because
   `ManifestStaticFilesStorage` does not rewrite JS `import` specifiers.
@@ -281,6 +302,7 @@ activate/deactivate, `event.detail.inline` is the inline DOM element and
 `event.detail.prefix` is the plugin's formset prefix.
 
 **Context object:**
+
 - JavaScript receives configuration via the `#content-editor-context` JSON
   script tag, generated by `_content_editor_context()` in admin.
 - Context includes plugins, regions, messages, permissions.
@@ -292,16 +314,19 @@ with zero regions), and `addContent` refuses without a valid current region.
 ## Common Issues
 
 **Plugin not appearing:**
+
 - Ensure inline uses `ContentEditorInline` (not just `StackedInline`)
 - Check if plugin is restricted to regions the model doesn't have
 - Verify model inherits from `PluginBase`
 
 **Region errors:**
+
 - Model must have `regions` attribute (not method)
 - Regions must be iterable (list, tuple, set) not string
 - Region keys must be valid Python identifiers
 
 **Fieldsets:**
+
 - `region` and `ordering` are added automatically if missing; listing them is
   optional
 - These fields are automatically hidden (don't add HiddenInput manually)
