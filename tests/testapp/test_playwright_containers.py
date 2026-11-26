@@ -462,6 +462,15 @@ def test_large_page_screenshots(
         full_page=True,
     )
 
+    # The sticky tab bar shows the path of the topmost visible plugin
+    page.locator(
+        ".inline-related:has(> h3 :text('Prices: second detail'))"
+    ).first.evaluate("el => el.scrollIntoView({block: 'start'})")
+    expect(page.locator(".order-machine-breadcrumb")).to_be_visible()
+    page.screenshot(
+        path=os.path.join(SCREENSHOTS, f"large-page-breadcrumb-{color_scheme}.png")
+    )
+
 
 @pytest.mark.django_db
 def test_add_plugin_using_the_keyboard(page: Page, django_server, user, container_page):
@@ -524,3 +533,37 @@ def test_highlight_current_containers(page: Page, django_server, user):
     page.locator("#id_title").focus()
     expect(current).to_have_count(0)
     expect(page.locator(".order-machine-highlighting")).to_have_count(0)
+
+
+@pytest.mark.django_db
+def test_breadcrumb(page: Page, django_server, user, large_page):
+    obj, _collapsed = large_page
+    page.set_viewport_size({"width": 1280, "height": 900})
+    login_admin(page, django_server)
+    open_page(page, django_server, obj)
+
+    breadcrumb = page.locator(".order-machine-breadcrumb")
+    expect(breadcrumb).to_be_hidden()
+
+    page.locator(
+        ".inline-related:has(> h3 :text('Opening hours: first detail'))"
+    ).first.evaluate("el => el.scrollIntoView({block: 'start'})")
+    expect(breadcrumb.get_by_role("button")).to_have_text(
+        [
+            "main region",
+            "Page container · FAQ",
+            "Page container · FAQ · Opening hours",
+            "Page container · Opening hours details",
+        ]
+    )
+
+    breadcrumb.get_by_role("button", name="Page container · FAQ", exact=True).click()
+    expect(breadcrumb.get_by_role("button")).to_have_text(
+        ["main region", "Page container · FAQ"]
+    )
+    expect(
+        page.locator(".inline-related:has(> h3 :text('FAQ: lead'))")
+    ).to_be_in_viewport()
+
+    breadcrumb.get_by_role("button", name="main region").click()
+    expect(breadcrumb).to_be_hidden()

@@ -31,6 +31,61 @@ html {
   margin-left: auto;
 }
 
+/* The path of the topmost visible plugin, shown below the sticky tab bar */
+.order-machine-breadcrumb {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  overflow: hidden;
+  padding: 4px 10px;
+  font-size: 12px;
+  background: var(--body-bg, #fff);
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
+  box-shadow: 0 2px 4px
+    color-mix(in srgb, var(--body-fg, #333) 10%, transparent);
+}
+
+.order-machine-breadcrumb[hidden] {
+  display: none;
+}
+
+.order-machine-breadcrumb button {
+  flex: 0 1 auto;
+  min-width: 2em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--link-fg, #417893);
+  cursor: pointer;
+}
+
+.order-machine-breadcrumb button:is(:hover, :focus-visible) {
+  text-decoration: underline;
+  color: var(--link-hover-color, #036);
+}
+
+.order-machine-breadcrumb span {
+  margin: 0 0.5em;
+  color: var(--body-quiet-color, #666);
+}
+
+/* Below the sticky tab bar and the breadcrumb */
+.order-machine .inline-related {
+  scroll-margin-top: 75px;
+}
+
+.order-machine-wrapper {
+  scroll-margin-top: 50px;
+}
+
 .order-machine-wrapper {
   clear: both;
   position: relative;
@@ -98,19 +153,6 @@ html {
 .order-machine-container--open {
   border-bottom: none;
   mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent);
-}
-
-.order-machine .inline-related.order-machine-opener {
-  border-color: var(--ce-rail);
-}
-
-.order-machine .inline-related.order-machine-opener > h3 {
-  border-bottom-color: var(--ce-rail);
-  background-color: color-mix(
-    in srgb,
-    var(--ce-rail) 12%,
-    var(--ce-plugin-header-bg)
-  );
 }
 
 .order-machine .inline-related {
@@ -191,6 +233,19 @@ h3[draggable] {
 
 .order-machine .inline-related fieldset {
   position: relative;
+}
+
+.order-machine .inline-related.order-machine-opener {
+  border-color: var(--ce-rail);
+}
+
+.order-machine .inline-related.order-machine-opener > h3 {
+  border-bottom-color: var(--ce-rail);
+  background-color: color-mix(
+    in srgb,
+    var(--ce-rail) 12%,
+    var(--ce-plugin-header-bg)
+  );
 }
 
 .order-machine .inline-related.selected > h3 {

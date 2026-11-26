@@ -52,6 +52,7 @@ export class Containers {
       resizeObserver.observe(machine.wrapper)
       this.bindDeleteHandlers()
       this.bindHighlightHandlers()
+      this.buildBreadcrumb()
     }
     if (ContentEditor.usesDepth && ContentEditor.allowChange) {
       this.bindDepthHandlers()
@@ -114,6 +115,7 @@ export class Containers {
       this.updateFromSections()
     }
     this.highlight(this.highlighted)
+    this.observeTopmost()
   }
 
   updateFromSections() {
@@ -455,16 +457,25 @@ export class Containers {
     })
   }
 
-  highlight(inline) {
-    this.highlighted = inline
+  // The containers containing ``inline`` in the current region, outermost
+  // first, and ``inline`` itself if it is a container.
+  pathOf(inline) {
     const parents = new Map()
     for (const [container, children] of this.childrenMap) {
       for (const child of children) parents.set(child, container)
     }
-    const current = new Set()
+    const path = []
     for (let el = inline; el; el = parents.get(el)) {
-      if (this.outlineMap.has(el)) current.add(this.outlineMap.get(el))
+      if (this.outlineMap.has(el)) path.unshift(el)
     }
+    return path
+  }
+
+  highlight(inline) {
+    this.highlighted = inline
+    const current = new Set(
+      this.pathOf(inline).map((el) => this.outlineMap.get(el)),
+    )
     this.machine.wrapper.classList.toggle(
       "order-machine-highlighting",
       current.size > 0,
@@ -475,6 +486,89 @@ export class Containers {
         current.has(outline),
       )
     }
+  }
+
+  /*
+   * BREADCRUMB
+   *
+   * The sticky tab bar shows the path of the topmost visible inline, e.g.
+   * "Region › Accordion · FAQ › Item · Opening hours". Each step scrolls to
+   * its container.
+   */
+  buildBreadcrumb() {
+    this.tabBar = qs(".tabs.regions")
+    this.breadcrumb = crel("nav", {
+      className: "order-machine-breadcrumb",
+      hidden: true,
+      "aria-label": this.ContentEditor.messages.containerPath,
+    })
+    this.tabBar.append(this.breadcrumb)
+    this.visible = new Set()
+
+    // The topmost inline is the first one in a band below the tab bar.
+    // Recreate the observer when the height of the tab bar changes.
+    new ResizeObserver(() => {
+      this.topmostObserver?.disconnect()
+      this.topmostObserver = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) this.visible.add(entry.target)
+            else this.visible.delete(entry.target)
+          }
+          this.updateBreadcrumb()
+        },
+        {
+          // Leave room for the breadcrumb, and start above the position
+          // where scrolling to an inline puts it (its ``scroll-margin-top``)
+          rootMargin: `-${this.tabBar.offsetHeight + 25}px 0px -75% 0px`,
+        },
+      )
+      this.observeTopmost()
+    }).observe(this.tabBar)
+  }
+
+  observeTopmost() {
+    const observer = this.topmostObserver
+    if (!observer) return
+    observer.disconnect()
+    this.visible.clear()
+    for (const inline of this.machine.findInlinesInOrder()) {
+      if (!inline.classList.contains("content-editor-hide")) {
+        observer.observe(inline)
+      }
+    }
+  }
+
+  updateBreadcrumb() {
+    const topmost = [...this.visible].sort(
+      (a, b) => a.style.order - b.style.order,
+    )[0]
+    const path = topmost?.isConnected ? this.pathOf(topmost) : []
+    const step = (textContent, target) => {
+      const button = crel("button", { type: "button", textContent })
+      button.addEventListener("click", () => {
+        target.scrollIntoView({
+          behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+        })
+      })
+      return button
+    }
+    const region =
+      this.ContentEditor.regionsByKey[this.ContentEditor.currentRegion]
+    this.breadcrumb.hidden = !path.length
+    this.breadcrumb.replaceChildren(
+      ...(path.length
+        ? [
+            step(region?.title ?? "", this.machine.wrapper),
+            ...path.flatMap((el) => [
+              crel("span", { "aria-hidden": "true", textContent: "›" }),
+              step(this.labelOf(el), el),
+            ]),
+          ]
+        : []),
+    )
   }
 
   // Uncollapse inlines with errors and all containers containing them
