@@ -443,9 +443,22 @@ def test_large_page_screenshots(
         ).to_be_attached()
     expect(page.locator(".order-machine-container[data-depth='4']")).to_have_count(0)
 
+    # Shorter text areas and no sticky submit row for an overview
+    page.add_style_tag(
+        content="textarea { height: 3em } .submit-row { position: static }"
+    )
     os.makedirs(SCREENSHOTS, exist_ok=True)
     page.screenshot(
         path=os.path.join(SCREENSHOTS, f"large-page-{color_scheme}.png"),
+        full_page=True,
+    )
+
+    # Hovering a plugin highlights the containers containing it
+    page.locator(
+        ".inline-related:has(> h3 :text('Opening hours: first detail'))"
+    ).first.dispatch_event("mouseover")
+    page.screenshot(
+        path=os.path.join(SCREENSHOTS, f"large-page-hover-{color_scheme}.png"),
         full_page=True,
     )
 
@@ -476,3 +489,38 @@ def test_add_plugin_using_the_keyboard(page: Page, django_server, user, containe
         ("main", "C", 0),
         ("main", "B", 0),
     ]
+
+
+@pytest.mark.django_db
+def test_highlight_current_containers(page: Page, django_server, user):
+    login_admin(page, django_server)
+    obj = PageModel.objects.create(title="Highlight")
+    obj.testapp_pagecontainer_set.create(title="S", region="main", ordering=10)
+    obj.testapp_pagecontainer_set.create(title="T", region="main", ordering=20, depth=1)
+    obj.testapp_pagetext_set.create(text="A", region="main", ordering=30, depth=2)
+    obj.testapp_pagecontainer_set.create(title="U", region="main", ordering=40)
+    obj.testapp_pagetext_set.create(text="B", region="main", ordering=50, depth=1)
+    open_page(page, django_server, obj)
+
+    current = page.locator(".order-machine-container--current")
+    expect(current).to_have_count(0)
+
+    page.locator(f"{TEXT.format(0)} > h3").hover()
+    expect(page.locator(".order-machine-highlighting")).to_have_count(1)
+    expect(current).to_have_count(2)
+    expect(
+        current.and_(page.locator("[data-label='Page container · S']"))
+    ).to_have_count(1)
+    expect(
+        current.and_(page.locator("[data-label='Page container · T']"))
+    ).to_have_count(1)
+
+    # Focus wins once the pointer leaves the editor
+    page.locator("#id_testapp_pagetext_set-1-text").focus()
+    page.mouse.move(0, 0)
+    expect(current).to_have_count(1)
+    expect(current).to_have_attribute("data-label", "Page container · U")
+
+    page.locator("#id_title").focus()
+    expect(current).to_have_count(0)
+    expect(page.locator(".order-machine-highlighting")).to_have_count(0)

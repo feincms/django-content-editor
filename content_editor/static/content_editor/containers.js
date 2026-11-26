@@ -51,6 +51,7 @@ export class Containers {
       const resizeObserver = new ResizeObserver(() => debounced())
       resizeObserver.observe(machine.wrapper)
       this.bindDeleteHandlers()
+      this.bindHighlightHandlers()
     }
     if (ContentEditor.usesDepth && ContentEditor.allowChange) {
       this.bindDepthHandlers()
@@ -109,9 +110,13 @@ export class Containers {
     if (!this.ContentEditor.hasContainers) return
     if (this.ContentEditor.usesDepth) {
       this.updateFromDepth()
-      return
+    } else {
+      this.updateFromSections()
     }
+    this.highlight(this.highlighted)
+  }
 
+  updateFromSections() {
     const inlines = this.machine.findInlinesInOrder()
 
     let indent = 0
@@ -426,6 +431,50 @@ export class Containers {
       }
     }
     return [...new Set(stack)]
+  }
+
+  /*
+   * HIGHLIGHTING
+   *
+   * The outlines of the containers containing the hovered or focused inline
+   * are emphasized, the others are faded.
+   */
+  bindHighlightHandlers() {
+    const orderMachine = this.machine.orderMachine
+    const highlight = (e) =>
+      this.highlight(e.target.closest?.(".inline-related:not(.empty-form)"))
+    orderMachine.addEventListener("mouseover", highlight)
+    orderMachine.addEventListener("focusin", highlight)
+    orderMachine.addEventListener("mouseleave", () =>
+      this.highlight(
+        orderMachine.querySelector(".inline-related:focus-within"),
+      ),
+    )
+    orderMachine.addEventListener("focusout", (e) => {
+      if (!orderMachine.contains(e.relatedTarget)) this.highlight(null)
+    })
+  }
+
+  highlight(inline) {
+    this.highlighted = inline
+    const parents = new Map()
+    for (const [container, children] of this.childrenMap) {
+      for (const child of children) parents.set(child, container)
+    }
+    const current = new Set()
+    for (let el = inline; el; el = parents.get(el)) {
+      if (this.outlineMap.has(el)) current.add(this.outlineMap.get(el))
+    }
+    this.machine.wrapper.classList.toggle(
+      "order-machine-highlighting",
+      current.size > 0,
+    )
+    for (const outline of this.outlineMap.values()) {
+      outline.classList.toggle(
+        "order-machine-container--current",
+        current.has(outline),
+      )
+    }
   }
 
   // Uncollapse inlines with errors and all containers containing them

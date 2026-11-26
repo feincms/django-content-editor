@@ -59,6 +59,25 @@ html {
   border-bottom: 1px solid var(--ce-rail);
   border-radius: var(--admin-radius, 4px);
   pointer-events: none;
+  transition:
+    0.15s opacity,
+    0.15s box-shadow;
+}
+
+/* The containers containing the hovered or focused plugin */
+.order-machine-container--current {
+  box-shadow: -2px 0 0 var(--ce-rail);
+}
+
+.order-machine-highlighting
+  .order-machine-container:not(.order-machine-container--current) {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-machine-container {
+    transition: none;
+  }
 }
 
 .order-machine-container::after {
