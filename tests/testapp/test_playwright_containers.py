@@ -543,6 +543,9 @@ def test_breadcrumb(page: Page, django_server, user, large_page):
     page.set_viewport_size({"width": 1280, "height": 900})
     login_admin(page, django_server)
     open_page(page, django_server, obj)
+    # The height of the tab bar depends on the fonts; the inline before the
+    # one scrolled to must not end up in the band below a short tab bar
+    page.add_style_tag(content=".tabs.regions { height: 33px }")
 
     breadcrumb = page.locator(".order-machine-breadcrumb")
     expect(breadcrumb).to_be_hidden()

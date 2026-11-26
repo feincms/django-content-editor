@@ -516,6 +516,10 @@ export class Containers {
     // Recreate the observer when the height of the tab bar changes.
     new ResizeObserver(() => {
       this.topmostObserver?.disconnect()
+      const inline = qs(".inline-related", this.machine.orderMachine)
+      const scrollMargin = inline
+        ? Number.parseFloat(getComputedStyle(inline).scrollMarginTop)
+        : 0
       this.topmostObserver = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
@@ -525,9 +529,10 @@ export class Containers {
           this.updateBreadcrumb()
         },
         {
-          // Leave room for the breadcrumb, and start above the position
+          // Leave room for the breadcrumb, and start just above the position
           // where scrolling to an inline puts it (its ``scroll-margin-top``)
-          rootMargin: `-${this.tabBar.offsetHeight + 25}px 0px -75% 0px`,
+          // so that the inline before it isn't in the band anymore
+          rootMargin: `-${Math.max(this.tabBar.offsetHeight + 25, scrollMargin - 5)}px 0px -75% 0px`,
         },
       )
       this.observeTopmost()
