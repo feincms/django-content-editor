@@ -273,6 +273,7 @@ export class Regions {
     button.className = "plugin-button"
     button.title = plugin.title
     button.role = "button"
+    button.tabIndex = 0
     button.addEventListener("click", (e) => {
       e.preventDefault()
       CE.addContent(plugin.prefix)
@@ -309,46 +310,61 @@ export class Regions {
   }
 
   bindInsertTargets() {
-    delegate(
-      document,
-      "click",
-      ".order-machine-insert-target",
-      (_e, target) => {
-        const isSelected = target.classList.contains("selected")
-        this.hidePluginButtons()
-        if (isSelected) {
-          this.ContentEditor._insertBefore = null
-          this.ContentEditor._insertDepth = null
-        } else {
-          target.classList.add("selected")
+    delegate(document, "click", ".order-machine-insert-target", (e, target) => {
+      const isSelected = target.classList.contains("selected")
+      this.hidePluginButtons()
+      if (isSelected) {
+        this.ContentEditor._insertBefore = null
+        this.ContentEditor._insertDepth = null
+      } else {
+        target.classList.add("selected")
 
-          const pos = target.getBoundingClientRect()
-          const wrapperRect = this.machine.wrapper.getBoundingClientRect()
-          const buttons = qs(".plugin-buttons")
-          buttons.style.left = `${pos.left - wrapperRect.left + 30}px`
+        const pos = target.getBoundingClientRect()
+        const wrapperRect = this.machine.wrapper.getBoundingClientRect()
+        const buttons = qs(".plugin-buttons")
+        buttons.style.left = `${pos.left - wrapperRect.left + 30}px`
 
-          const y =
-            pos.top -
-            wrapperRect.top +
-            (target.classList.contains("last")
-              ? 30 - buttons.getBoundingClientRect().height
-              : 0)
-          buttons.style.top = `${y}px`
+        const y =
+          pos.top -
+          wrapperRect.top +
+          (target.classList.contains("last")
+            ? 30 - buttons.getBoundingClientRect().height
+            : 0)
+        buttons.style.top = `${y}px`
 
-          this.machine.wrapper.classList.add("plugin-buttons-visible")
-
-          this.ContentEditor._insertBefore = target.closest(".inline-related")
-          this.ContentEditor._insertDepth =
-            "depth" in target.dataset ? +target.dataset.depth : null
+        this.machine.wrapper.classList.add("plugin-buttons-visible")
+        if (e.detail === 0) {
+          // Opened using the keyboard
+          qs(".plugin-button:not(.content-editor-hide)", buttons)?.focus()
         }
-      },
-    )
+
+        this.ContentEditor._insertBefore = target.closest(".inline-related")
+        this.ContentEditor._insertDepth =
+          "depth" in target.dataset ? +target.dataset.depth : null
+      }
+    })
   }
 
   bindGlobalHandlers() {
     document.body.addEventListener("keyup", (e) => {
-      if (e.key === "Escape") this.hidePluginButtons()
+      if (e.key === "Escape") {
+        qs(".order-machine-insert-target.selected")?.focus()
+        this.hidePluginButtons()
+      }
     })
+
+    // Insert targets and plugin buttons aren't native buttons
+    delegate(
+      this.machine.wrapper,
+      "keydown",
+      ".order-machine-insert-target, .plugin-button",
+      (e, target) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          target.click()
+        }
+      },
+    )
 
     document.body.addEventListener("click", (e) => {
       if (

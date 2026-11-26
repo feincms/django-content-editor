@@ -1,4 +1,11 @@
-import { LS, delegate, emit, qs, qsa } from "content-editor/utils"
+import {
+  LS,
+  crelInsertTarget,
+  delegate,
+  emit,
+  qs,
+  qsa,
+} from "content-editor/utils"
 
 /*
  * ORDER MACHINE
@@ -17,6 +24,7 @@ export class Machine {
     this.buildScaffolding()
     this.orderMachine = qs(".order-machine")
     this.wrapper = qs(".order-machine-wrapper")
+    this.orderMachine.append(crelInsertTarget(ContentEditor, "last"))
     this.pluginButtons = qs(".plugin-buttons")
 
     this.emptyMessage = this.addMessage(ContentEditor.messages.empty)
@@ -63,9 +71,7 @@ export class Machine {
       </div>
     </div>
     <div class="module order-machine-wrapper">
-      <div class="order-machine">
-        <span class="order-machine-insert-target last"></span>
-      </div>
+      <div class="order-machine"></div>
       <div class="plugin-buttons">
       </div>
     </div>
@@ -173,9 +179,7 @@ export class Machine {
     }
 
     for (const inline of inlines) {
-      const span = document.createElement("span")
-      span.className = "order-machine-insert-target"
-      inline.appendChild(span)
+      inline.append(crelInsertTarget(this.ContentEditor, ""))
 
       // Be extra careful because multiple fields could be on one line
       qs(`.field-ordering input[name$="-ordering"]`, inline).classList.add(
@@ -238,7 +242,10 @@ export class Machine {
     this.emitInline("content-editor:activate", row)
     this.addSectionClosers(CE.pluginsByPrefix[prefix].sections, insertBefore)
 
-    const field = qs("input, select, textarea", row)
+    const field = qs(
+      "fieldset :is(input:not([type=hidden]), select, textarea)",
+      row,
+    )
     if (field) field.focus()
 
     this.updateContainers()

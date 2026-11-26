@@ -254,6 +254,51 @@ h3[draggable] {
   display: none;
 }
 
+/* The controls in plugin headers stay neutral and get their colour only when
+ * they are used */
+.order-machine
+  .inline-related
+  > h3
+  :is(.inline_move_to_region, .inline_depth button, .delete) {
+  color: var(--body-quiet-color, #666);
+  transition: 0.15s color;
+}
+
+.order-machine
+  .inline-related.selected
+  > h3
+  :is(.inline_move_to_region, .inline_depth button, .delete) {
+  color: inherit;
+}
+
+.order-machine
+  .inline-related
+  > h3
+  :is(.inline_move_to_region, .inline_depth button):is(:hover, :focus-visible) {
+  color: var(--link-fg, #417893);
+}
+
+.order-machine .inline-related > h3 .delete:is(:hover, :focus-within) {
+  color: var(--error-fg, #ba2121);
+  accent-color: var(--error-fg, #ba2121);
+}
+
+.order-machine .inline-related > h3 .inline-deletelink {
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition:
+    0.15s filter,
+    0.15s opacity;
+}
+
+.order-machine
+  .inline-related
+  > h3
+  .inline-deletelink:is(:hover, :focus-visible) {
+  filter: none;
+  opacity: 1;
+}
+
 .inline_move_to_region {
   border-color: var(--hairline-color, #e8e8e8);
   font-size: 11px;
@@ -271,17 +316,11 @@ h3[draggable] {
   border: none;
   background: none;
   padding: 0 2px;
-  color: inherit;
   cursor: pointer;
-  opacity: 0.6;
-}
-
-.inline_depth button:is(:hover, :focus-visible) {
-  opacity: 1;
 }
 
 .inline_depth button:disabled {
-  opacity: 0.2;
+  opacity: 0.3;
   cursor: default;
 }
 
@@ -354,13 +393,15 @@ h3[draggable] {
   height: 1.25em;
   line-height: 1.25em;
   border-radius: 99px;
-  background: var(--button-bg, #79aec8);
-  color: var(--button-fg, #fff);
-  box-shadow: 0 0 3px 1px var(--button-fg, #fff);
+  background: var(--body-bg, #fff);
+  color: var(--body-quiet-color, #666);
+  box-shadow: inset 0 0 0 1px var(--border-color, #ccc);
   display: grid;
   place-items: center;
   cursor: pointer;
-  opacity: 0.5;
+  transition:
+    0.15s background,
+    0.15s color;
 }
 .order-machine-insert-target.last {
   top: auto;
@@ -384,10 +425,10 @@ h3[draggable] {
     5px
   );
 }
-.order-machine-insert-target:hover,
-.order-machine-insert-target.selected {
-  opacity: 1;
-  background: var(--button-hover-bg, #609ab6);
+.order-machine-insert-target:is(:hover, :focus-visible, .selected) {
+  background: var(--button-bg, #417690);
+  color: var(--button-fg, #fff);
+  box-shadow: none;
 }
 .order-machine-insert-target::before {
   content: "+";

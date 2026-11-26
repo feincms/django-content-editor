@@ -20,6 +20,7 @@ export class Cloning {
     const button = document.createElement("a")
     button.className = "plugin-button"
     button.role = "button"
+    button.tabIndex = 0
     button.innerHTML = `
       <span class="plugin-button-icon"><span class="material-icons">content_copy</span></span>
       <span class="plugin-button-title">${this.ContentEditor.messages.clone}</span>

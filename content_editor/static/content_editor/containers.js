@@ -1,4 +1,11 @@
-import { crel, debounce, delegate, qs, qsa } from "content-editor/utils"
+import {
+  crel,
+  crelInsertTarget,
+  debounce,
+  delegate,
+  qs,
+  qsa,
+} from "content-editor/utils"
 
 /*
  * CONTAINERS
@@ -310,9 +317,7 @@ export class Containers {
     for (let nested = depth + 1; nested <= maximum; ++nested) {
       let target = targets[nested - depth - 1]
       if (!target) {
-        target = crel("span", {
-          className: "order-machine-insert-target nested",
-        })
+        target = crelInsertTarget(this.ContentEditor, "nested")
         inline.append(target)
       }
       target.dataset.depth = nested
@@ -335,9 +340,7 @@ export class Containers {
     for (let depth = 0; depth <= maximum; ++depth) {
       let target = targets[depth]
       if (!target) {
-        target = crel("span", {
-          className: "order-machine-insert-target last",
-        })
+        target = crelInsertTarget(this.ContentEditor, "last")
         orderMachine.append(target)
       }
       target.dataset.depth = depth

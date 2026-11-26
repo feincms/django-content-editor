@@ -42,6 +42,17 @@ export function buildDropdown(contents, title) {
   return select
 }
 
+// Insert targets open the plugin buttons. They are focusable buttons so that
+// content can be added using the keyboard.
+export function crelInsertTarget(ContentEditor, className) {
+  return crel("span", {
+    className: `order-machine-insert-target ${className}`.trim(),
+    tabIndex: 0,
+    role: "button",
+    title: ContentEditor.messages.createNew,
+  })
+}
+
 /* From https://www.freecodecamp.org/news/javascript-debounce-example/ */
 export function debounce(func, timeout = 300) {
   let timer

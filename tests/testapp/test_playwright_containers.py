@@ -435,3 +435,31 @@ def test_large_page_screenshots(
         path=os.path.join(SCREENSHOTS, f"large-page-{color_scheme}.png"),
         full_page=True,
     )
+
+
+@pytest.mark.django_db
+def test_add_plugin_using_the_keyboard(page: Page, django_server, user, container_page):
+    login_admin(page, django_server)
+    open_page(page, django_server, container_page)
+
+    target = page.locator(f"{TEXT.format(1)} > .order-machine-insert-target").first
+    target.focus()
+    page.keyboard.press("Enter")
+    expect(page.locator(".plugin-buttons")).to_be_visible()
+    expect(page.locator(".plugin-buttons .plugin-button").first).to_be_focused()
+
+    # Escape returns to the insert target
+    page.keyboard.press("Escape")
+    expect(target).to_be_focused()
+
+    page.keyboard.press("Enter")
+    page.locator(".plugin-buttons .plugin-button[title='Rich text']").press("Enter")
+    expect(page.locator("#id_testapp_pagetext_set-2-text")).to_be_focused()
+    page.keyboard.type("C")
+    save(page)
+    assert depths(container_page) == [
+        ("main", "S", 0),
+        ("main", "A", 1),
+        ("main", "C", 0),
+        ("main", "B", 0),
+    ]
