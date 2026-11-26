@@ -5,6 +5,9 @@ Change log
 Next version
 ============
 
+11.0 (2026-11-26)
+=================
+
 - Made the structure of large pages easier to read: plugins are closed cards
   with a visible border, containers have rails coloured by nesting level and
   an end label, the containers of the hovered or focused plugin are
