@@ -1,3 +1,18 @@
+/* Theming variables, documented in docs/admin-classes.rst. Zero specificity
+ * so that definitions on :root or html always win. */
+:where(:root) {
+  --ce-plugin-border: var(
+    --admin-border-strong,
+    color-mix(in srgb, var(--body-fg, #333) 55%, var(--body-bg, #fff))
+  );
+  --ce-plugin-header-bg: var(--darkened-bg, #f8f8f8);
+  --ce-depth-1: light-dark(#2f7d5b, #5cc08f);
+  --ce-depth-2: light-dark(#6b4fbb, #a990f0);
+  --ce-depth-3: light-dark(#1f6fa8, #5fadeb);
+  --ce-depth-4: light-dark(#b0631c, #e5965a);
+  --ce-rail-tint: 5%;
+}
+
 html {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -33,7 +48,7 @@ html {
 
 .order-machine-container {
   position: absolute;
-  background: rgba(0 0 0 / 0.1);
+  background: color-mix(in srgb, var(--body-fg, #333) 10%, transparent);
   pointer-events: none;
 }
 
@@ -56,7 +71,7 @@ html {
   height: 16px;
   padding: 7px;
   margin: 0;
-  background-color: var(--darkened-bg, #f8f8f8);
+  background-color: var(--ce-plugin-header-bg);
   transition:
     0.15s background,
     0.15s color;
@@ -119,7 +134,7 @@ h3[draggable] {
 }
 
 .order-machine .inline-related.selected > h3 {
-  color: white;
+  color: var(--button-fg, #fff);
   background-color: var(--button-bg, #79aec8);
 }
 
@@ -129,7 +144,7 @@ h3[draggable] {
 
 .order-machine .inline-related.for-deletion,
 .order-machine .inline-related.collapsed {
-  border-bottom: 1px solid var(--hairline-color);
+  border-bottom: 1px solid var(--hairline-color, #e8e8e8);
 }
 
 .order-machine .inline-related:is(.collapsed, .for-deletion) > fieldset {
@@ -162,7 +177,8 @@ h3[draggable] {
   z-index: 1982;
   top: 0;
   left: 0;
-  box-shadow: 0 0 3px 0 rgba(0, 0, 50, 0.3);
+  box-shadow: 0 0 3px 0
+    color-mix(in srgb, var(--body-fg, #333) 30%, transparent);
 
   padding: 10px 20px 10px 10px;
 
@@ -281,7 +297,7 @@ h3[draggable] {
   margin: 10px 0 0 0;
   border: none;
   opacity: 0.3;
-  background: #79aec8;
+  background: var(--primary, #79aec8);
 }
 
 .order-machine .inline-related {
@@ -306,7 +322,7 @@ h3[draggable] {
   right: 0;
   top: -8px;
   height: 4px;
-  background: #79aec8;
+  background: var(--primary, #79aec8);
 }
 .fs-dragover--after::before {
   top: auto;
@@ -335,7 +351,7 @@ h3[draggable] {
   border-radius: 99px;
   background: var(--button-bg, #79aec8);
   color: var(--button-fg, #fff);
-  box-shadow: 0 0 3px 1px var(--button-fg);
+  box-shadow: 0 0 3px 1px var(--button-fg, #fff);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -441,7 +457,7 @@ dialog.clone h2 {
 }
 
 dialog.clone details {
-  border: 1px solid var(--hairline-color);
+  border: 1px solid var(--hairline-color, #e8e8e8);
   margin-bottom: 10px;
 }
 
@@ -515,11 +531,19 @@ dialog.clone .submit-row {
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body .tabs > .active {
-  background: rgba(200, 200, 200, 0.2);
+  background: color-mix(
+    in srgb,
+    var(--body-quiet-color, #c8c8c8) 20%,
+    transparent
+  );
 }
 
 #jazzy-navbar ~ .content-wrapper .card .card-body .tabs > .active:hover {
-  background: rgba(200, 200, 200, 0.5);
+  background: color-mix(
+    in srgb,
+    var(--body-quiet-color, #c8c8c8) 50%,
+    transparent
+  );
 }
 
 #jazzy-navbar

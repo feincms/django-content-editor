@@ -50,7 +50,7 @@ function injectStyles(ContentEditor) {
 .order-machine .inline-related:not(:where(${ContentEditor.declaredRegions
     .map((region) => `[data-region="${region.key}"]`)
     .join(", ")})) .inline_move_to_region {
-  border-color: red;
+  border-color: var(--error-fg, #ba2121);
 }
   `
   document.head.append(style)

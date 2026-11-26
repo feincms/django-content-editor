@@ -226,6 +226,34 @@ Deploy the data migration together with a renderer which knows containers
 renderers render every section until the end of its region since the closing
 plugins are gone.
 
+Theming
+=======
+
+The editor takes its colours from Django's admin CSS variables
+(``--body-fg``, ``--body-bg``, ``--primary``, ``--hairline-color``,
+``--darkened-bg``, ``--button-*``, ...), so it follows the stock admin, its
+dark mode and themes built on those variables. It additionally uses the
+following variables, which may be set on ``:root`` (or ``html``) to adjust
+the editor:
+
+``--ce-plugin-border``
+    The border around plugins. Defaults to ``--admin-border-strong`` if it is
+    set, otherwise to a mix of ``--body-fg`` and ``--body-bg`` with at least
+    3:1 contrast against the background.
+``--ce-plugin-header-bg``
+    The background of plugin headers. Defaults to ``--darkened-bg``.
+``--ce-depth-1`` to ``--ce-depth-4``
+    The colours of the rails on the left side of containers, by nesting
+    level. Deeper levels start again with ``--ce-depth-1``. The defaults have
+    at least 4.5:1 contrast against the light and 3:1 against the dark admin
+    background.
+``--ce-rail-tint``
+    How strongly containers are tinted with their rail colour, as a
+    percentage. Defaults to ``5%``.
+
+The ``--admin-radius`` variable, if set, is used as the corner radius of
+plugins.
+
 RefinedModelAdmin
 =================
 
