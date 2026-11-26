@@ -361,3 +361,77 @@ def test_clone_into_container(page: Page, django_server, user, container_page):
         ("main", "A", 1),
         ("main", "B", 0),
     ]
+
+
+SCREENSHOTS = os.path.join(os.getcwd(), "test-results", "screenshots")
+
+
+@pytest.fixture
+def large_page():
+    """A region with 40+ plugins, three container levels and collapsed
+    containers. Returns the page and the orderings of the collapsed
+    containers."""
+    obj = PageModel.objects.create(title="Large")
+    ordering = 0
+    collapsed = []
+
+    def add(depth, container=None, text=None):
+        nonlocal ordering
+        ordering += 10
+        if container is not None:
+            obj.testapp_pagecontainer_set.create(
+                title=container, region="main", ordering=ordering, depth=depth
+            )
+        else:
+            obj.testapp_pagetext_set.create(
+                text=text, region="main", ordering=ordering, depth=depth
+            )
+        return ordering
+
+    add(0, text="Introduction")
+    for group in ("FAQ", "Services", "Team", "Contact"):
+        add(0, container=group)
+        add(1, text=f"{group}: lead")
+        for item in ("Opening hours", "Prices"):
+            add(1, container=f"{group} · {item}")
+            add(2, text=f"{item}: summary")
+            details = add(2, container=f"{item} details")
+            if group == "Team":
+                collapsed.append(details)
+            add(3, text=f"{item}: first detail")
+            add(3, text=f"{item}: second detail")
+            add(2, text=f"{item}: closing remark")
+        add(1, text=f"{group}: outro")
+        add(0, text=f"After {group}")
+    collapsed.append(add(0, container="Archive"))
+    add(1, text="Archived text")
+    add(0, text="Conclusion")
+    return obj, collapsed
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("color_scheme", ["light", "dark"])
+def test_large_page_screenshots(
+    page: Page, django_server, user, large_page, color_scheme
+):
+    obj, collapsed = large_page
+    assert (
+        obj.testapp_pagecontainer_set.count() + obj.testapp_pagetext_set.count() >= 40
+    )
+
+    page.emulate_media(color_scheme=color_scheme)
+    page.set_viewport_size({"width": 1280, "height": 900})
+    login_admin(page, django_server)
+    page.goto(
+        f"{django_server}/admin/testapp/page/{obj.pk}/change/"
+        f"#region=main&collapsed={','.join(map(str, collapsed))}"
+    )
+    page.wait_for_selector(".order-machine")
+    page.evaluate("() => document.fonts.ready")
+    expect(page.locator(".inline-related.collapsed")).to_have_count(len(collapsed))
+
+    os.makedirs(SCREENSHOTS, exist_ok=True)
+    page.screenshot(
+        path=os.path.join(SCREENSHOTS, f"large-page-{color_scheme}.png"),
+        full_page=True,
+    )
