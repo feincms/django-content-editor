@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/feincms/language/"
@@ -19,63 +19,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "Nieuw item toevoegen"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "Geen items."
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "Geen items. Regio kan inhoud overerven."
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "Geen regio's beschikbaar."
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "Geen plugins toegestaan in deze regio."
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "Nieuw item"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "Onbekende regio"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "Alle items inklappen"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "Alle items uitklappen"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "gemarkeerd voor verwijdering"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr "Gebruik Ctrl+klik om meerdere items te selecteren en te verplaatsen."
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "Klonen uit regio"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "Niets gevonden om te klonen"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "Alles selecteren"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
@@ -83,28 +83,38 @@ msgstr ""
 "Deze container is niet leeg. Welke items moeten worden gemarkeerd voor "
 "verwijdering? Ze worden verwijderd bij het opslaan."
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "Container en inhoud"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "Alleen de container"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "Inspringen (Alt+Shift+Rechts)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "Uitspringen (Alt+Shift+Links)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "Einde van {}"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "Containers"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "Plugins gekloond: {}"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Klonen van plugins mislukt: {}"

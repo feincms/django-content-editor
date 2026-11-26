@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Turkish (http://www.transifex.com/projects/p/feincms/language/"
@@ -20,63 +20,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "Yeni öğe ekle"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "Öğe yok."
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "Öğe yok. Bölge içerik devralabilir."
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "Kullanılabilir bölge yok."
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "Bu bölgede eklentiye izin verilmiyor."
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "Yeni öğe"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "Bilinmeyen bölge"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "Tüm öğeleri daralt"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "Tüm öğeleri genişlet"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "silinmek üzere işaretlendi"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr "Birden fazla öğe seçip taşımak için Ctrl+tıklama kullanın."
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "Bölgeden klonla"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "Klonlanacak bir şey bulunamadı"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "Tümünü seç"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
@@ -84,28 +84,38 @@ msgstr ""
 "Bu kapsayıcı boş değil. Hangi öğeler silinmek üzere işaretlensin? "
 "Kaydederken silinecekler."
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "Kapsayıcı ve içeriği"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "Yalnızca kapsayıcı"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "Girintiyi artır (Alt+Shift+Sağ)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "Girintiyi azalt (Alt+Shift+Sol)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "{} sonu"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "Kapsayıcılar"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "Klonlanan eklenti sayısı: {}"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Eklentiler klonlanamadı: {}"

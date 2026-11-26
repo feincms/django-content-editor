@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/feincms/"
@@ -20,90 +20,100 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "新建"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "没有项目。"
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "没有项目。该区域可能会继承内容。"
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "没有可用的区域。"
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "此区域不允许任何插件。"
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "新项目"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "未知区域"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "折叠所有项目"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "展开所有项目"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "已标记为删除"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr "按住 Ctrl 单击可选择并移动多个项目。"
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "从区域克隆"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "没有找到可克隆的内容"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "全选"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
 msgstr "此容器不为空。应将哪些项目标记为删除？它们将在保存时被删除。"
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "容器及其内容"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "仅容器"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "增加缩进 (Alt+Shift+右箭头)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "减少缩进 (Alt+Shift+左箭头)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "{} 结束"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "容器"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "已成功克隆 {} 个插件。"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "克隆插件失败：{}"

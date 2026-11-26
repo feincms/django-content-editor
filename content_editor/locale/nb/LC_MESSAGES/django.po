@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/projects/p/feincms/"
@@ -19,63 +19,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "Legg til nytt objekt"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "Ingen objekter."
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "Ingen objekter. Regionen kan arve innhold."
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "Ingen regioner tilgjengelig."
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "Ingen plugins er tillatt i denne regionen."
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "Nytt objekt"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "Ukjent region"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "Skjul alle objekter"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "Vis alle objekter"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "merket for sletting"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr "Bruk Ctrl+klikk for å velge og flytte flere objekter."
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "Klon fra region"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "Fant ikke noe å klone"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "Velg alle"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
@@ -83,28 +83,38 @@ msgstr ""
 "Denne beholderen er ikke tom. Hvilke objekter skal merkes for sletting? De "
 "slettes når du lagrer."
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "Beholder og innhold"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "Bare beholderen"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "Øk innrykk (Alt+Shift+Høyre)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "Reduser innrykk (Alt+Shift+Venstre)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "Slutt på {}"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "Beholdere"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "Plugins klonet: {}"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Kloning av plugins mislyktes: {}"

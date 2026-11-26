@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/feincms/language/"
@@ -18,63 +18,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "Ajouter un autre"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "Aucun élément."
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "Aucun élément. La région peut hériter du contenu."
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "Aucune région disponible."
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "Aucun plugin n'est autorisé dans cette région."
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "Nouvel élément"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "Région inconnue"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "Replier tous les éléments"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "Déplier tous les éléments"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "marqué pour suppression"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr "Utilisez Ctrl+clic pour sélectionner et déplacer plusieurs éléments."
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "Cloner depuis une région"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "Rien à cloner"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "Tout sélectionner"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
@@ -82,28 +82,38 @@ msgstr ""
 "Ce conteneur n'est pas vide. Quels éléments faut-il marquer pour "
 "suppression ? Ils seront supprimés lors de l'enregistrement."
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "Conteneur et contenu"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "Seulement le conteneur"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "Augmenter le retrait (Alt+Maj+Droite)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "Diminuer le retrait (Alt+Maj+Gauche)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "Fin de {}"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "Conteneurs"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "Plugins clonés avec succès : {}"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Échec du clonage des plugins : {}"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FeinCMS\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 11:00-0500\n"
+"POT-Creation-Date: 2026-11-26 08:56+0100\n"
 "PO-Revision-Date: 2013-10-25 09:15+0000\n"
 "Last-Translator: Matthias Kestenholz <mk@feinheit.ch>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/feincms/language/"
@@ -21,64 +21,64 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
-#: admin.py:288
+#: admin.py:297
 msgid "Add new item"
 msgstr "Добавить элемент"
 
-#: admin.py:289
+#: admin.py:298
 msgid "No items."
 msgstr "Нет элементов."
 
-#: admin.py:290
+#: admin.py:299
 msgid "No items. Region may inherit content."
 msgstr "Нет элементов. Область может наследовать содержимое."
 
-#: admin.py:291
+#: admin.py:300
 msgid "No regions available."
 msgstr "Нет доступных областей."
 
-#: admin.py:292
+#: admin.py:301
 msgid "No plugins allowed in this region."
 msgstr "В этой области не разрешены плагины."
 
-#: admin.py:293
+#: admin.py:302
 msgid "New item"
 msgstr "Новый элемент"
 
-#: admin.py:294
+#: admin.py:303
 msgid "Unknown region"
 msgstr "Неизвестная область"
 
-#: admin.py:295
+#: admin.py:304
 msgid "Collapse all items"
 msgstr "Свернуть все элементы"
 
-#: admin.py:296
+#: admin.py:305
 msgid "Uncollapse all items"
 msgstr "Развернуть все элементы"
 
-#: admin.py:297
+#: admin.py:306
 msgid "marked for deletion"
 msgstr "отмечено для удаления"
 
-#: admin.py:299
+#: admin.py:308
 msgid "Use Ctrl-Click to select and move multiple items."
 msgstr ""
 "Используйте Ctrl+щелчок, чтобы выбрать и переместить несколько элементов."
 
-#: admin.py:301
+#: admin.py:310
 msgid "Clone from region"
 msgstr "Клонировать из области"
 
-#: admin.py:302
+#: admin.py:311
 msgid "Didn't find anything to clone"
 msgstr "Нечего клонировать"
 
-#: admin.py:303
+#: admin.py:312
 msgid "Select all"
 msgstr "Выбрать все"
 
-#: admin.py:305
+#: admin.py:314
 msgid ""
 "This container isn't empty. Which items should be marked for deletion? They "
 "will be deleted when saving."
@@ -86,28 +86,38 @@ msgstr ""
 "Этот контейнер не пуст. Какие элементы отметить для удаления? Они будут "
 "удалены при сохранении."
 
-#: admin.py:308
+#: admin.py:317
 msgid "Container and contents"
 msgstr "Контейнер и содержимое"
 
-#: admin.py:309
+#: admin.py:318
 msgid "Only the container"
 msgstr "Только контейнер"
 
-#: admin.py:310
+#: admin.py:319
 msgid "Indent (Alt+Shift+Right)"
 msgstr "Увеличить отступ (Alt+Shift+Вправо)"
 
-#: admin.py:311
+#: admin.py:320
 msgid "Outdent (Alt+Shift+Left)"
 msgstr "Уменьшить отступ (Alt+Shift+Влево)"
 
-#: admin.py:355
+#. Translators: {} is the type and label of a container
+#: admin.py:322
+#, python-brace-format
+msgid "End of {}"
+msgstr "Конец: {}"
+
+#: admin.py:323
+msgid "Containers"
+msgstr "Контейнеры"
+
+#: admin.py:376
 #, python-brace-format
 msgid "Cloning {} plugins succeeded."
 msgstr "Клонировано плагинов: {}"
 
-#: admin.py:360
+#: admin.py:381
 #, python-brace-format
 msgid "Cloning plugins failed: {}"
 msgstr "Не удалось клонировать плагины: {}"
