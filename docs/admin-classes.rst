@@ -131,6 +131,11 @@ collapsed, moved, cloned and deleted together with their contents:
 - Moving a container to another region moves its contents too.
 - Marking a container for deletion asks whether only the container should be
   marked for deletion (its contents move one level up), or the contents too.
+- Each container has a rail on the left in the colour of its nesting level
+  and ends with an "End of ..." label. The rails of the containers containing
+  the hovered or focused item are emphasized.
+- The sticky region tabs show the containers containing the topmost visible
+  item; clicking one scrolls to it.
 
 See :doc:`rendering` for rendering containers.
 

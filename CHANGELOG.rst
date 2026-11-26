@@ -5,6 +5,18 @@ Change log
 Next version
 ============
 
+- Made the structure of large pages easier to read: plugins are closed cards
+  with a visible border, containers have rails coloured by nesting level and
+  an end label, the containers of the hovered or focused plugin are
+  highlighted, and the sticky region tabs show the containers containing the
+  topmost visible plugin.
+- Made the controls in plugin headers and the insert buttons neutral until
+  they are used, and made adding plugins possible using the keyboard.
+- Replaced all literal colours with Django's admin CSS variables and added
+  ``--ce-*`` variables for theming the editor, see the theming section in the
+  admin classes documentation. ``--admin-border-strong`` and
+  ``--admin-radius`` are used if a theme sets them.
+
 10.0 (2026-11-13)
 =================
 
