@@ -184,8 +184,7 @@ export class Containers {
       }
     }
 
-    this.removeOutlines()
-    this.outlineMap = newOutlineMap
+    this.replaceOutlines(newOutlineMap)
     this.childrenMap = newChildrenMap
     this.closerMap = newCloserMap
     this.depthMap = newDepthMap
@@ -229,6 +228,7 @@ export class Containers {
         ? ""
         : this.ContentEditor.messages.endOf.replace("{}", label)
     div.style.setProperty("--ce-rail", rail)
+    div.style.setProperty("--ce-level", level)
     fromInline.style.setProperty("--ce-rail", rail)
     fromInline.classList.add("order-machine-opener")
 
@@ -240,13 +240,21 @@ export class Containers {
     )
   }
 
-  // Remove the outlines of containers which don't exist anymore
-  removeOutlines() {
+  // Remove the outlines of containers which don't exist anymore and put the
+  // others in the order of their containers, so that nested containers are
+  // drawn above the containers around them.
+  replaceOutlines(newOutlineMap) {
     for (const [inline, outline] of this.outlineMap) {
       outline.remove()
       inline.style.removeProperty("--ce-rail")
       inline.classList.remove("order-machine-opener")
     }
+    this.outlineMap = newOutlineMap
+    this.machine.wrapper.prepend(
+      ...[...newOutlineMap]
+        .sort(([a], [b]) => a.style.order - b.style.order)
+        .map(([, outline]) => outline),
+    )
   }
 
   // The plugin type and label of a container, e.g. "Accordion · FAQ"
@@ -339,8 +347,7 @@ export class Containers {
       `${space}px`,
     )
 
-    this.removeOutlines()
-    this.outlineMap = newOutlineMap
+    this.replaceOutlines(newOutlineMap)
 
     this.updateEndInsertTargets(...insertDepths())
   }

@@ -253,8 +253,9 @@ the editor:
     at least 4.5:1 contrast against the light and 3:1 against the dark admin
     background.
 ``--ce-rail-tint``
-    How strongly containers are tinted with their rail colour, as a
-    percentage. Defaults to ``5%``.
+    How strongly outermost containers are tinted with their rail colour, as a
+    percentage. Nested containers are tinted less: half as strongly on the
+    second level, a third on the third level and so on. Defaults to ``14%``.
 
 The ``--admin-radius`` variable, if set, is used as the corner radius of
 plugins.

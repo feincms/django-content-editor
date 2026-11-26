@@ -10,7 +10,7 @@
   --ce-depth-2: light-dark(#6b4fbb, #a990f0);
   --ce-depth-3: light-dark(#1f6fa8, #5fadeb);
   --ce-depth-4: light-dark(#b0631c, #e5965a);
-  --ce-rail-tint: 5%;
+  --ce-rail-tint: 14%;
 }
 
 html {
@@ -101,21 +101,23 @@ html {
   flex-flow: column nowrap;
 }
 
-/* Containers: a rail on the left in the colour of the nesting level, a faint
- * tint and an end cap with the label of the container */
+/* Containers: a rail on the left in the colour of the nesting level, a tint
+ * which is strongest for outermost containers and an end cap with the label
+ * of the container. The tint is opaque so that nested containers cover the
+ * containers around them instead of getting darker. */
 .order-machine-container {
   position: absolute;
   background: color-mix(
     in srgb,
-    var(--ce-rail) var(--ce-rail-tint),
-    transparent
+    var(--ce-rail) calc(var(--ce-rail-tint) / var(--ce-level, 1)),
+    var(--body-bg, #fff)
   );
   border-left: 3px solid var(--ce-rail);
   border-bottom: 1px solid var(--ce-rail);
   border-radius: var(--admin-radius, 4px);
   pointer-events: none;
   transition:
-    0.15s opacity,
+    0.15s border-color,
     0.15s box-shadow;
 }
 
@@ -126,7 +128,7 @@ html {
 
 .order-machine-highlighting
   .order-machine-container:not(.order-machine-container--current) {
-  opacity: 0.6;
+  border-color: color-mix(in srgb, var(--ce-rail) 40%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {
