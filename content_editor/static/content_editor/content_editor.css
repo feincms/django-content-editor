@@ -497,12 +497,12 @@ h3[draggable] {
 
 .order-machine-insert-target {
   position: absolute;
-  left: -28px;
+  left: -26px;
   top: -20px;
   font-size: 1.25rem;
-  width: 1.25em;
-  height: 1.25em;
-  line-height: 1.25em;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
   border-radius: 99px;
   background: var(--body-bg, #fff);
   color: var(--body-quiet-color, #666);
