@@ -551,6 +551,15 @@ export class Containers {
       (a, b) => a.style.order - b.style.order,
     )[0]
     const path = topmost?.isConnected ? this.pathOf(topmost) : []
+    // Keep the buttons while the path doesn't change, e.g. while scrolling
+    const key = [this.ContentEditor.currentRegion, ...path]
+    if (
+      this.breadcrumbKey?.length === key.length &&
+      this.breadcrumbKey.every((el, index) => el === key[index])
+    ) {
+      return
+    }
+    this.breadcrumbKey = key
     const step = (textContent, target) => {
       const button = crel("button", { type: "button", textContent })
       button.addEventListener("click", () => {

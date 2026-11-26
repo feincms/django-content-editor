@@ -538,6 +538,8 @@ def test_highlight_current_containers(page: Page, django_server, user):
 @pytest.mark.django_db
 def test_breadcrumb(page: Page, django_server, user, large_page):
     obj, _collapsed = large_page
+    # Scroll instantly
+    page.emulate_media(reduced_motion="reduce")
     page.set_viewport_size({"width": 1280, "height": 900})
     login_admin(page, django_server)
     open_page(page, django_server, obj)
