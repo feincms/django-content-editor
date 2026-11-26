@@ -237,6 +237,11 @@ h3[draggable] {
   position: relative;
 }
 
+/* The insert targets follow the fieldsets */
+.order-machine .inline-related > fieldset:last-of-type {
+  border-radius: 0 0 calc(var(--_radius) - 1px) calc(var(--_radius) - 1px);
+}
+
 .order-machine .inline-related.order-machine-opener {
   border-color: var(--ce-rail);
 }
