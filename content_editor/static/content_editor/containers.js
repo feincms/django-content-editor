@@ -30,8 +30,10 @@ import {
 export const INDENT = 30
 // Space below the last child of a container, and additionally per enclosing
 // container ending at the same child, in pixels
-const END_PADDING = 20
-const NESTED_END_PADDING = 10
+const END_PADDING = 24
+const NESTED_END_PADDING = 16
+// Containers are drawn using this many colours, by nesting level
+const DEPTH_COLORS = 4
 
 export class Containers {
   constructor(ContentEditor, machine) {
@@ -122,8 +124,13 @@ export class Containers {
     const newDepthMap = new Map()
 
     const closeSection = (atInline, open = false) => {
+      const level = stack.length
       const fromInline = stack.pop()
-      this.drawOutline(fromInline, atInline, open, newOutlineMap)
+      this.drawOutline(fromInline, atInline, newOutlineMap, {
+        open,
+        level,
+        padding: open ? 25 : 5,
+      })
       if (!open) newCloserMap.set(fromInline, atInline)
     }
 
@@ -170,25 +177,22 @@ export class Containers {
       }
     }
 
-    for (const outline of this.outlineMap.values()) {
-      outline.remove()
-    }
-
+    this.removeOutlines()
     this.outlineMap = newOutlineMap
     this.childrenMap = newChildrenMap
     this.closerMap = newCloserMap
     this.depthMap = newDepthMap
   }
 
-  // Draw the outline of the container ``fromInline`` until ``untilInline``
-  // with ``padding`` pixels below it, reusing the existing element if there is
-  // one.
+  // Draw the outline of the container ``fromInline`` at nesting ``level``
+  // until ``untilInline`` with ``padding`` pixels below it, reusing the
+  // existing element if there is one. Containers which have an end (not open
+  // sections) get an end cap with their label if there's room for it.
   drawOutline(
     fromInline,
     untilInline,
-    open,
     newOutlineMap,
-    padding = open ? 25 : 5,
+    { open, level, padding },
   ) {
     const wrapperRect = this.machine.wrapper.getBoundingClientRect()
     const from = fromInline.getBoundingClientRect()
@@ -209,12 +213,40 @@ export class Containers {
     div.style.right = "5px"
     div.style.height = `${until.top - from.top + until.height + 5 + padding}px`
 
+    const label = this.labelOf(fromInline)
+    const rail = `var(--ce-depth-${((level - 1) % DEPTH_COLORS) + 1})`
+    div.dataset.depth = level
+    div.dataset.label = label
+    div.dataset.end =
+      open || padding < END_PADDING
+        ? ""
+        : this.ContentEditor.messages.endOf.replace("{}", label)
+    div.style.setProperty("--ce-rail", rail)
+    fromInline.style.setProperty("--ce-rail", rail)
+    fromInline.classList.add("order-machine-opener")
+
     div.classList.toggle("order-machine-container--open", open)
     div.classList.toggle(
       "content-editor-hide",
       fromInline.classList.contains("collapsed") ||
         fromInline.classList.contains("content-editor-hide"),
     )
+  }
+
+  // Remove the outlines of containers which don't exist anymore
+  removeOutlines() {
+    for (const [inline, outline] of this.outlineMap) {
+      outline.remove()
+      inline.style.removeProperty("--ce-rail")
+      inline.classList.remove("order-machine-opener")
+    }
+  }
+
+  // The plugin type and label of a container, e.g. "Accordion · FAQ"
+  labelOf(inline) {
+    const type = this.machine.regions.getPluginTypeFromId(inline.id)?.title
+    const label = qs(":scope > h3 .inline_label", inline)?.firstChild
+    return [type, label?.textContent.trim()].filter(Boolean).join(" · ")
   }
 
   // The depth-based counterpart of ``update``. Also normalizes the depths: an
@@ -278,13 +310,11 @@ export class Containers {
           (el) => !el.classList.contains("content-editor-hide"),
         ) || container
       const count = ends.get(last) || 0
-      this.drawOutline(
-        container,
-        last,
-        false,
-        newOutlineMap,
-        END_PADDING + NESTED_END_PADDING * count,
-      )
+      this.drawOutline(container, last, newOutlineMap, {
+        open: false,
+        level: newDepthMap.get(container) + 1,
+        padding: END_PADDING + NESTED_END_PADDING * count,
+      })
       ends.set(last, count + 1)
     }
 
@@ -302,9 +332,7 @@ export class Containers {
       `${space}px`,
     )
 
-    for (const outline of this.outlineMap.values()) {
-      outline.remove()
-    }
+    this.removeOutlines()
     this.outlineMap = newOutlineMap
 
     this.updateEndInsertTargets(...insertDepths())

@@ -46,15 +46,52 @@ html {
   flex-flow: column nowrap;
 }
 
+/* Containers: a rail on the left in the colour of the nesting level, a faint
+ * tint and an end cap with the label of the container */
 .order-machine-container {
   position: absolute;
-  background: color-mix(in srgb, var(--body-fg, #333) 10%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--ce-rail) var(--ce-rail-tint),
+    transparent
+  );
+  border-left: 3px solid var(--ce-rail);
+  border-bottom: 1px solid var(--ce-rail);
+  border-radius: var(--admin-radius, 4px);
   pointer-events: none;
+}
+
+.order-machine-container::after {
+  content: attr(data-end);
+  position: absolute;
+  right: 8px;
+  bottom: 1px;
+  max-width: 60%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  line-height: 14px;
+  color: var(--ce-rail);
 }
 
 /* Closer-based sections which are still open at the end of the region */
 .order-machine-container--open {
+  border-bottom: none;
   mask-image: linear-gradient(to bottom, #000 calc(100% - 30px), transparent);
+}
+
+.order-machine .inline-related.order-machine-opener {
+  border-color: var(--ce-rail);
+}
+
+.order-machine .inline-related.order-machine-opener > h3 {
+  border-bottom-color: var(--ce-rail);
+  background-color: color-mix(
+    in srgb,
+    var(--ce-rail) 12%,
+    var(--ce-plugin-header-bg)
+  );
 }
 
 .order-machine .inline-related {

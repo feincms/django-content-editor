@@ -60,8 +60,14 @@ def test_containers_are_drawn(page: Page, django_server, user, container_page):
     login_admin(page, django_server)
     open_page(page, django_server, container_page)
 
-    expect(page.locator(".order-machine-container")).to_have_count(1)
+    outline = page.locator(".order-machine-container")
+    expect(outline).to_have_count(1)
     expect(page.locator(".order-machine-container--open")).to_have_count(0)
+    expect(outline).to_have_attribute("data-depth", "1")
+    expect(outline).to_have_attribute("data-end", "End of Page container · S")
+    expect(page.locator(CONTAINER.format(0))).to_have_class(
+        re.compile(r"\border-machine-opener\b")
+    )
     expect_indentation(page, CONTAINER.format(0), "0px")
     expect_indentation(page, TEXT.format(0), "30px")
     expect_indentation(page, TEXT.format(1), "0px")
@@ -429,6 +435,13 @@ def test_large_page_screenshots(
     page.wait_for_selector(".order-machine")
     page.evaluate("() => document.fonts.ready")
     expect(page.locator(".inline-related.collapsed")).to_have_count(len(collapsed))
+    # Rail colours cycle after four levels; there are three here
+    outlines = page.locator(".order-machine-container")
+    for depth in ("1", "2", "3"):
+        expect(
+            outlines.and_(page.locator(f"[data-depth='{depth}']")).first
+        ).to_be_attached()
+    expect(page.locator(".order-machine-container[data-depth='4']")).to_have_count(0)
 
     os.makedirs(SCREENSHOTS, exist_ok=True)
     page.screenshot(

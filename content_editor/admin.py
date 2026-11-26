@@ -318,6 +318,8 @@ class ContentEditor(RefinedModelAdmin):
                 "deleteContainerUnwrap": gettext("Only the container"),
                 "indent": gettext("Indent (Alt+Shift+Right)"),
                 "outdent": gettext("Outdent (Alt+Shift+Left)"),
+                # Translators: {} is the type and label of a container
+                "endOf": gettext("End of {}"),
             },
         }
 
